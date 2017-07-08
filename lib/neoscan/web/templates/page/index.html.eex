@@ -1,0 +1,31 @@
+
+<section class="section">
+  <div class="container">
+    <div class="tile is-ancestor">
+      <div class="tile is-4 is-parent">
+        <div class="tile is-child box">
+          <p class="title">Neo Market</p>
+        </div>
+      </div>
+      <div class="tile is-parent">
+        <div class="tile is-child box">
+          <p class="title">News</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="tile is-ancestor">
+      <div class="tile is-6 is-parent">
+        <div class="tile is-child box">
+          <p class="title">Last Blocks</p>
+        </div>
+      </div>
+      <div class="tile is-parent">
+        <div class="tile is-child box">
+          <p class="title">Last Transactions</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

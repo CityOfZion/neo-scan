@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Hello Neoscan!</title>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+
+  <body>
+    <section class="hero is-light">
+      <!-- Hero header: will stick at the top -->
+      <div class="hero-head">
+        <header class="nav">
+          <div class="container">
+            <div class="nav-left">
+              <a class="nav-item">
+                Hello
+              </a>
+            </div>
+            <span class="nav-toggle">
+              <span>alo</span>
+              <span>eiaa</span>
+              <span></span>
+            </span>
+            <div class="nav-right nav-menu">
+              <span class="nav-item">
+                <a class="button is-light is-inverted">
+                  <span class="icon">
+                    <i class="fa fa-github"></i>
+                  </span>
+                  <span>GitHub</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </header>
+      </div>
+
+      <!-- Hero content: will be in the left -->
+      <div class="hero-body">
+        <div class="container has-text-left">
+          <h1 class="title">
+            NEOscan
+          </h1>
+          <h2 class="subtitle">
+            Entering Matrix
+          </h2>
+        </div>
+      </div>
+
+      <!-- Hero footer: will stick at the bottom -->
+      <div class="hero-foot">
+        <nav class="tabs">
+          <div class="container">
+            <ul>
+              <li class="is-active"><a>Home</a></li>
+              <li><a>Search Block</a></li>
+              <li><a>Search Transaction</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </section>
+
+    <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+    <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+
+    <main role="main">
+      <%= render @view_module, @view_template, assigns %>
+    </main>
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="content has-text-centered">
+          <p>
+            <strong>NEOScan</strong> by <a href="https://github.com/CityOfZion">awesome people</a>. The source code is licensed
+            <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+            is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
+          </p>
+          <p>
+            <a class="icon" href="https://github.com/CityOfZion">
+              <i class="fa fa-github"></i>
+            </a>
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
