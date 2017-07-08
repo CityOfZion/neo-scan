@@ -20,7 +20,7 @@ defmodule Neoscan.Mixfile do
   def application do
     [
       mod: {Neoscan.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :httpoison, :ex_unit]
     ]
   end
 
@@ -40,7 +40,9 @@ defmodule Neoscan.Mixfile do
       {:phoenix_html, "~> 2.6"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:httpoison, "~> 0.12"},
+      {:poison, "~> 3.1"}
     ]
   end
 

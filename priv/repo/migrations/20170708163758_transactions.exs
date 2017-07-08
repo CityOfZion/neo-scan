@@ -3,16 +3,21 @@ defmodule Neoscan.Repo.Migrations.Transactions do
 
   def change do
     create table(:transactions) do
-      add :hash, :string
+      add :attributes, :string
+      add :blockhash, :string
       add :height, :string
-      add :merkleroot, :string
-      add :nextminer, :string
-      add :nonce, :string
-      add :previousblockhash, :string
-      add :script, :map
+      add :net_fee, :string
+      add :scripts, :string
       add :size, :string
+      add :sys_fee, :string
       add :time, :string
+      add :txid, :string
+      add :type, :string
       add :version, :string
+      add :vin, :string
+      add :vout, :string
+
+      timestamps()
     end
 
   end

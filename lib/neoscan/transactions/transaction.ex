@@ -4,7 +4,7 @@ defmodule Neoscan.Transactions.Transaction do
   alias Neoscan.Transactions.Transaction
 
 
-  schema "transactions_transaction" do
+  schema "transactions" do
     field :attributes, :string
     field :blockhash, :string
     field :height, :string

@@ -4,7 +4,7 @@ defmodule Neoscan.Blocks.Block do
   alias Neoscan.Blocks.Block
 
 
-  schema "blocks_block" do
+  schema "blocks" do
     field :hash, :string
     field :height, :string
     field :merkleroot, :string

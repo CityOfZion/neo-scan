@@ -13,7 +13,8 @@ defmodule Neoscan.Repo.Migrations.Blocks do
       add :size, :string
       add :time, :string
       add :version, :string
-      
+
+      timestamps()
     end
 
   end
