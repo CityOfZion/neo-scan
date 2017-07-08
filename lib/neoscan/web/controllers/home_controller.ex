@@ -1,4 +1,4 @@
-defmodule Neoscan.Web.PageController do
+defmodule Neoscan.Web.HomeController do
   use Neoscan.Web, :controller
 
   def index(conn, _params) do
