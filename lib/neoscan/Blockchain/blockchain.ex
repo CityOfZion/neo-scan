@@ -13,8 +13,8 @@ defmodule Neoscan.Blockchain do
 
   ## Examples
 
-    iex> Neoscan.Blockchain.url(0)
-    "http://seed1.antshares.org:10332"
+    iex> Neoscan.Blockchain.url(1)
+    "http://seed2.antshares.org:10332"
 
   """
   def url(index \\ 0) do
@@ -38,28 +38,37 @@ defmodule Neoscan.Blockchain do
   @doc """
    Makes a request to the 'index' seed
   """
-  def request(headers, data, index) do
+  defp request(headers, data, index) do
     url(index)
-    |> HTTPoison.post( data, headers )
+    |> HTTPoison.post( data, headers, ssl: [{:versions, [:'tlsv1.2']}] )
   end
 
   @doc """
    Handles the response of an HTTP call
   """
-  def handle_response(response, conn) do
-    IO.inspect(response)
+  defp handle_response(response) do
     case response do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        {conn, body}
+        %{"result" => result} = Poison.decode!(body)
+        result
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         IO.puts "404 Not found :("
-        {conn , ""}
+        ""
       {:error, %HTTPoison.Error{reason: reason}} ->
         IO.puts "urlopen error, retry."
         IO.inspect reason
-        {conn , ""}
+        ""
     end
   end
+
+
+  @doc """
+   Add the connection param back into response
+  """
+  defp add_conn( params, conn) do
+    {conn, params }
+  end
+
 
   @doc """
    Get the current block height from the Blockchain through seed 'index'
@@ -73,7 +82,8 @@ defmodule Neoscan.Blockchain do
     })
   	headers = [{"Content-Type", "application/json"}]
     request(headers, data, index)
-    |> handle_response(conn)
+    |> handle_response()
+    |> add_conn( conn )
   end
 
   @doc """
@@ -88,7 +98,8 @@ defmodule Neoscan.Blockchain do
     })
     headers = %{"Content-Type" => "application/json"}
     request(headers, data, index)
-    |> handle_response(conn)
+    |> handle_response()
+    |> add_conn( conn )
   end
 
 end
