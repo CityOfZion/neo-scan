@@ -35,17 +35,13 @@ defmodule Neoscan.Blockchain do
     |> Map.get(index)
   end
 
-  @doc """
-   Makes a request to the 'index' seed
-  """
+  #Makes a request to the 'index' seed
   defp request(headers, data, index) do
     url(index)
     |> HTTPoison.post( data, headers, ssl: [{:versions, [:'tlsv1.2']}] )
   end
 
-  @doc """
-   Handles the response of an HTTP call
-  """
+  #Handles the response of an HTTP call
   defp handle_response(response) do
     case response do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
@@ -61,14 +57,10 @@ defmodule Neoscan.Blockchain do
     end
   end
 
-
-  @doc """
-   Add the connection param back into response
-  """
+  #Add the connection param back into response
   defp add_conn( params, conn) do
     {conn, params }
   end
-
 
   @doc """
    Get the current block height from the Blockchain through seed 'index'

@@ -12,12 +12,13 @@ erl_crash.dump
 npm-debug.log
 
 # Static artifacts
-/assets/node_modules
+/apps/neoscan/assets/node_modules
+
 
 # Since we are building assets from assets/,
 # we ignore priv/static. You may want to comment
 # this depending on your deployment strategy.
-/priv/static/
+/apps/neoscan/priv/static/
 
 # Files matching config/*.secret.exs pattern contain sensitive
 # data and you should not commit them into version control.
@@ -26,3 +27,4 @@ npm-debug.log
 # secrets files as long as you replace their contents by environment
 # variables.
 /config/*.secret.exs
+/apps/neoscan/config/*.secret.exs
