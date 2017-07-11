@@ -6,9 +6,10 @@
     "watch": "brunch watch --stdin"
   },
   "dependencies": {
+    "bulma": "^0.4.3",
+    "jquery": ">= 2.1",
     "phoenix": "file:../deps/phoenix",
-    "phoenix_html": "file:../deps/phoenix_html",
-    "jquery": ">= 2.1"
+    "phoenix_html": "file:../deps/phoenix_html"
   },
   "devDependencies": {
     "babel-brunch": "6.1.1",

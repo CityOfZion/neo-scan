@@ -47,7 +47,7 @@ defmodule Neoscan.Mixfile do
       {:cowboy, "~> 1.0"},
       {:httpoison, "~> 0.12"},
       {:poison, "~> 3.1"},
-      {:certifi, "~> 1.2"}
+      {:certifi, "~> 1.2"},
     ]
   end
 
