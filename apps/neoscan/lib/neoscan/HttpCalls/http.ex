@@ -11,7 +11,7 @@ defmodule Neoscan.HttpCalls do
   """
   def url(index \\ 0) do
     %{
-      0 => "https://localhost:20332",
+      0 => "http://localhost:20332",
       1 => "http://seed2.antshares.org:10332",
       2 => "http://seed3.antshares.org:10332",
       3 => "http://seed4.antshares.org:10332",
@@ -41,12 +41,15 @@ defmodule Neoscan.HttpCalls do
         %{"result" => result} = Poison.decode!(body)
         {:ok, result }
       {:ok, %HTTPoison.Response{status_code: 404}} ->
-        IO.puts "404 Not found :("
-        { :ok, nil }
+        IO.puts "Error 404 Not found! :("
+        { :error , "Error 404 Not found! :(" }
+      {:ok, %HTTPoison.Response{status_code: 405}} ->
+        IO.puts "Error 405 Method not found! :("
+        { :error , "Error 405 Method not found! :(" }
       {:error, %HTTPoison.Error{reason: reason}} ->
         IO.puts "urlopen error, retry."
         IO.inspect reason
-        { :error, nil }
+        { :error , "urlopen error, retry."}
     end
   end
 

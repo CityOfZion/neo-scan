@@ -30,7 +30,7 @@ defmodule Neoscan.Blockchain do
        "params" => [ height, 1 ],
        "id" => 5
     })
-    headers = %{"Content-Type" => "application/json"}
+    headers = [{"Content-Type", "application/json"}]
     HttpCalls.request(headers, data, index)
   end
 
