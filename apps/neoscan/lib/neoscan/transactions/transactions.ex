@@ -49,9 +49,11 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_transaction(attrs \\ %{}) do
-    %Transaction{}
-    |> Transaction.changeset(attrs)
+  def create_transaction(block, attrs \\ %{}) do
+    transaction = %Transaction{}
+      |> Transaction.changeset(attrs)
+
+    Ecto.build_assoc(block, :transactions, transaction)
     |> Repo.insert()
   end
 
@@ -101,4 +103,20 @@ defmodule Neoscan.Transactions do
   def change_transaction(%Transaction{} = transaction) do
     Transaction.changeset(transaction, %{})
   end
+
+  @doc """
+  Creates many transactions.
+
+  ## Examples
+
+      iex> create_transactions([%{field: value}, ...])
+      {:ok, "Created"}
+
+      iex> create_transactions([%{field: value}, ...])
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_transactions(block, [transaction | tail]), do: [create_transaction(block, transaction) | create_transactions(block, tail) ]
+  def create_transactions(_block, []), do: {:ok , "Created"}
+
 end

@@ -28,25 +28,25 @@ defmodule Neoscan.HttpCalls do
   end
 
   #Makes a request to the 'index' seed
-  def request(conn, headers, data, index) do
+  def request(headers, data, index) do
     url(index)
     |> HTTPoison.post( data, headers, ssl: [{:versions, [:'tlsv1.2']}] )
-    |> handle_response(conn)
+    |> handle_response
   end
 
   #Handles the response of an HTTP call
-  defp handle_response(response, conn) do
+  defp handle_response(response) do
     case response do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         %{"result" => result} = Poison.decode!(body)
-        {conn, result}
+        {:ok, result }
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         IO.puts "404 Not found :("
-        conn
+        { :ok, nil }
       {:error, %HTTPoison.Error{reason: reason}} ->
         IO.puts "urlopen error, retry."
         IO.inspect reason
-        conn
+        { :error, nil }
     end
   end
 

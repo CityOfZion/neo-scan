@@ -5,19 +5,18 @@ defmodule Neoscan.Transactions.Transaction do
 
 
   schema "transactions" do
-    field :attributes, :string
-    field :blockhash, :string
-    field :height, :string
+    field :attributes, {:array, :string}
     field :net_fee, :string
-    field :scripts, :string
-    field :size, :string
+    field :nonce, :integer
+    field :scripts, {:array, :string}
+    field :size, :integer
     field :sys_fee, :string
-    field :time, :string
     field :txid, :string
     field :type, :string
-    field :version, :string
-    field :vin, :string
-    field :vout, :string
+    field :version, :integer
+    field :vin, {:array, :string}
+    field :vout, {:array, :string}
+    belongs_to :block, Neoscan.Blocks.Block
 
     timestamps()
   end
@@ -25,7 +24,7 @@ defmodule Neoscan.Transactions.Transaction do
   @doc false
   def changeset(%Transaction{} = transaction, attrs) do
     transaction
-    |> cast(attrs, [:height, :blockhash, :time, :txid, :size, :type, :version, :attributes, :vin, :vout, :sys_fee, :net_fee, :scripts])
-    |> validate_required([:height, :blockhash, :time, :txid, :size, :type, :version, :attributes, :vin, :vout, :sys_fee, :net_fee, :scripts])
+    |> cast(attrs, [:txid, :size, :type, :version, :attributes, :vin, :vout, :sys_fee, :net_fee, :scripts, :nonce])
+    |> validate_required([:txid, :size, :type, :version, :attributes, :vin, :vout, :sys_fee, :net_fee, :scripts, :nonce])
   end
 end

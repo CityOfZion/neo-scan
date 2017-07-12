@@ -101,4 +101,65 @@ defmodule Neoscan.Blocks do
   def change_block(%Block{} = block) do
     Block.changeset(block, %{})
   end
+
+
+  @doc """
+  Returns the heighest block in the database
+
+  ## Examples
+
+      iex> get_highest_block_in_db()
+      {:ok, %Block{}}
+
+  """
+  def get_highest_block_in_db() do
+    query = from e in Neoscan.Blocks.Block,
+      order_by: [desc: e.index],
+      limit: 1
+    Repo.one(query)
+  end
+
+  @doc """
+  get all blocks heigher than `height`
+
+  ## Examples
+
+      iex> get_higher_than(height)
+      [%Block{}, ...]
+
+  """
+  def get_higher_than(index) do
+    query = from e in Neoscan.Blocks.Block,
+      where: e.index > ^index,
+      select: e
+    Repo.all(query)
+  end
+
+
+  @doc """
+  delete all blocks in list
+
+  ## Examples
+
+      iex> delete_blocks([%Block{}, ...])
+      { :ok, "deleted"}
+
+  """
+  def delete_blocks([ block | tail ]), do: [ delete_block(block) | delete_blocks(tail)]
+  def delete_blocks([]), do: {:ok , "deleted" }
+
+  @doc """
+  delete all blocks heigher than `height`
+
+  ## Examples
+
+      iex> get_higher_than(height)
+      [%Block{}, ...]
+
+  """
+  def delete_higher_than(height) do
+    get_higher_than(height)
+    |> delete_blocks
+  end
+
 end

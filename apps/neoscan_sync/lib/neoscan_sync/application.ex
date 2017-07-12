@@ -10,6 +10,7 @@ defmodule NEOScanSync.Application do
 
     # Define workers and child supervisors to be supervised
     children = [
+      worker(NEOScanSync.BlockSync,[])
       # Starts a worker by calling: NEOScanSync.Worker.start_link(arg1, arg2, arg3)
       # worker(NEOScanSync.Worker, [arg1, arg2, arg3]),
     ]
