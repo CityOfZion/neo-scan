@@ -14,7 +14,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add :version, :integer
       add :vin, {:array, :string}
       add :vout, {:array, :string}
-      add :block, references(:blocks, on_delete: :delete_all)
+      add :block_id, references(:blocks, on_delete: :delete_all)
 
       timestamps()
     end

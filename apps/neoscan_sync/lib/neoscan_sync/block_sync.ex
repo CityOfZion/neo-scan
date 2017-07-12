@@ -29,10 +29,10 @@ defmodule NEOScanSync.BlockSync do
       nil ->
         get_block_by_height(seed, 1)
         |> add_block()
-        start(seed)
+        #start(seed)
       { :ok, %{:height => count}} ->
         evaluate(count, seed)
-        start(seed)
+        #start(seed)
       { :error, _reason} ->
         Process.whereis(@me)
         |> Process.exit(:error)
@@ -45,14 +45,11 @@ defmodule NEOScanSync.BlockSync do
       {:ok, height} when height > count  ->
         get_block_by_height( seed, count+1 )
         |> add_block()
-        start(seed)
       {:ok, height} when height == count  ->
         :timer.sleep(15000)
-        start(seed)
       {:ok, height} when height < count ->
         Blocks.delete_higher_than(height)
         :timer.sleep(15000)
-        start(seed)
       { :error , _reason } ->
         Process.whereis(@me)
         |> Process.exit(:error)
@@ -63,7 +60,6 @@ defmodule NEOScanSync.BlockSync do
   def add_block(block) do
     %{"tx" => transactions, "index" => n} = block
     Map.delete(block, "tx")
-    IO.inspect(block)
     |> Blocks.create_block()
     |> Transactions.create_transactions(transactions)
     IO.puts("Block #{n} stored")

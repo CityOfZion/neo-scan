@@ -3,7 +3,7 @@ defmodule Neoscan.Blocks do
   The boundary for the Blocks system.
   """
 
-  import Ecto.Query, warn: false
+  import Ecto.Query, warn: true
   alias Neoscan.Repo
 
   alias Neoscan.Blocks.Block

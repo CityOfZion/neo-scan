@@ -11,11 +11,11 @@ defmodule Neoscan.HttpCalls do
   """
   def url(index \\ 0) do
     %{
-      0 => "http://localhost:20332",
-      1 => "http://seed2.antshares.org:10332",
-      2 => "http://seed3.antshares.org:10332",
-      3 => "http://seed4.antshares.org:10332",
-      4 => "http://seed5.antshares.org:10332",
+      0 => "http://api.otcgo.cn:20332",
+      1 => "http://seed2.neo.org:10333",
+      2 => "http://seed3.neo.org:10333",
+      3 => "http://seed4.neo.org:10333",
+      4 => "http://seed5.neo.org:10333",
     }
     # %{
     #   0 => "http://seed1.antshares.org:10332",
