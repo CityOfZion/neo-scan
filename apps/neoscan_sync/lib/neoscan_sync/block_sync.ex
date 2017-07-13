@@ -23,8 +23,20 @@ defmodule NEOScanSync.BlockSync do
   end
 
 
-  #main function, reads and sync the db
+  #check if main endpoint is alive, otherwise shutdown process
   def start(seed \\ 0) do
+    alive = Process.whereis(Neoscan.Supervisor)
+    |> Process.alive?
+    case alive do
+      true ->
+        fetch_db(seed)
+      false ->
+        Process.exit(self(), :shutdown)
+    end
+  end
+
+  #get highest block from db and route functions forward
+  def fetch_db(seed) do
     case Blocks.get_highest_block_in_db() do
       nil ->
         get_block_by_height(seed, 1)
@@ -34,8 +46,7 @@ defmodule NEOScanSync.BlockSync do
         evaluate(seed, count)
         start(seed)
       { :error, _reason} ->
-        Process.whereis(@me)
-        |> Process.exit(:error)
+        Process.exit(self(), :error)
     end
   end
 
@@ -51,8 +62,7 @@ defmodule NEOScanSync.BlockSync do
         Blocks.delete_higher_than(height)
         :timer.sleep(15000)
       { :error , _reason } ->
-        Process.whereis(@me)
-        |> Process.exit(:error)
+        Process.exit(self(), :error)
     end
   end
 
@@ -71,8 +81,7 @@ defmodule NEOScanSync.BlockSync do
       { :ok , block } ->
         block
       { :error, _reason} ->
-        Process.whereis(@me)
-        |> Process.exit(:error)
+        Process.exit(self(), :error)
     end
   end
 
