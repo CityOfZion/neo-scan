@@ -11,10 +11,10 @@ defmodule Neoscan.Repo.Migrations.Blocks do
       add :nextconsensus, :string
       add :nonce, :string
       add :previousblockhash, :string
-      add :script, {:map, :string}
+      add :script, {:map , :string}
       add :size, :integer
       add :time, :integer
-      add :version, :string
+      add :version, :integer
 
       timestamps()
     end

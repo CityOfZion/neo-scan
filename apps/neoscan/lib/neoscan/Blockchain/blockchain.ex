@@ -9,7 +9,7 @@ defmodule Neoscan.Blockchain do
   @doc """
    Get the current block height from the Blockchain through seed 'index'
   """
-  def get_current_height(%{:index => index }) do
+  def get_current_height(index) do
     data = Poison.encode!(%{
       "jsonrpc": "2.0",
        "method": "getblockcount",
@@ -23,7 +23,7 @@ defmodule Neoscan.Blockchain do
   @doc """
    Get the current block by height through seed 'index'
   """
-  def get_block_by_height(%{:index => index , :height => height }) do
+  def get_block_by_height(index , height ) do
     data = Poison.encode!(%{
       "jsonrpc" => "2.0",
        "method" => "getblock",

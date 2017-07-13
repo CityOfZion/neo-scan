@@ -24,7 +24,8 @@ defmodule Neoscan.Transactions.Transaction do
   @doc false
   def changeset(%Transaction{} = transaction, attrs) do
     transaction
-    |> cast(attrs, [:txid, :size, :type, :version, :attributes, :vin, :vout, :sys_fee, :net_fee, :scripts, :nonce])
-    |> validate_required([:txid, :size, :type, :version, :attributes, :vin, :vout, :sys_fee, :net_fee, :scripts, :nonce])
+    |> cast(attrs, [:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :vout])
+    |> assoc_constraint(:block)
+    |> validate_required([:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :vout])
   end
 end

@@ -13,7 +13,7 @@ defmodule Neoscan.Blocks.Block do
     field :nextconsensus, :string
     field :nonce, :string
     field :previousblockhash, :string
-    field :script, {:map, :string}
+    field :script, {:map , :string}
     field :size, :integer
     field :time, :integer
     field :version, :integer
@@ -26,6 +26,7 @@ defmodule Neoscan.Blocks.Block do
   def changeset(%Block{} = block, attrs) do
     block
     |> cast(attrs, [:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus])
+    |> cast_assoc(:transactions, required: false)
     |> validate_required([:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus])
   end
 end

@@ -3,12 +3,12 @@ defmodule Neoscan.TransactionsTest do
 
   alias Neoscan.Transactions
 
-  describe "transactions" do
+  describe "transaction" do
     alias Neoscan.Transactions.Transaction
 
-    @valid_attrs %{attributes: [], block: "some blockhash", net_fee: "some net_fee", nonce: 1, scripts: [], size: 1, sys_fee: "some sys_fee", txid: "some txid", type: "some type", version: 1, vin: [], vout: []}
-    @update_attrs %{attributes: [], block: "some up blockhash", net_fee: "some up net_fee", nonce: 2, scripts: [], size: 2, sys_fee: "some up sys_fee", txid: "some up txid", type: "some up type", version: 2, vin: [], vout: []}
-    @invalid_attrs %{attributes: nil, block: nil, net_fee: nil, nonce: nil, scripts: nil, size: nil, sys_fee: nil, txid: nil, type: nil, version: nil, vin: nil, vout: nil}
+    @valid_attrs %{attributes: [], net_fee: "some net_fee", nonce: 42, scripts: [], size: 42, sys_fee: "some sys_fee", txid: "some txid", type: "some type", version: "some version", vin: [], vout: []}
+    @update_attrs %{attributes: [], net_fee: "some updated net_fee", nonce: 43, scripts: [], size: 43, sys_fee: "some updated sys_fee", txid: "some updated txid", type: "some updated type", version: "some updated version", vin: [], vout: []}
+    @invalid_attrs %{attributes: nil, net_fee: nil, nonce: nil, scripts: nil, size: nil, sys_fee: nil, txid: nil, type: nil, version: nil, vin: nil, vout: nil}
 
     def transaction_fixture(attrs \\ %{}) do
       {:ok, transaction} =
@@ -19,9 +19,9 @@ defmodule Neoscan.TransactionsTest do
       transaction
     end
 
-    # test "list_transactions/0 returns all transactions" do
+    # test "list_transaction/0 returns all transaction" do
     #   transaction = transaction_fixture()
-    #   assert Transactions.list_transactions() == [transaction]
+    #   assert Transactions.list_transaction() == [transaction]
     # end
     #
     # test "get_transaction!/1 returns the transaction with given id" do
@@ -33,13 +33,13 @@ defmodule Neoscan.TransactionsTest do
     #   assert {:ok, %Transaction{} = transaction} = Transactions.create_transaction(@valid_attrs)
     #   assert transaction.attributes == []
     #   assert transaction.net_fee == "some net_fee"
-    #   assert transaction.nonce == 1
+    #   assert transaction.nonce == 42
     #   assert transaction.scripts == []
-    #   assert transaction.size == 1
+    #   assert transaction.size == 42
     #   assert transaction.sys_fee == "some sys_fee"
     #   assert transaction.txid == "some txid"
     #   assert transaction.type == "some type"
-    #   assert transaction.version == 1
+    #   assert transaction.version == "some version"
     #   assert transaction.vin == []
     #   assert transaction.vout == []
     # end
@@ -53,14 +53,14 @@ defmodule Neoscan.TransactionsTest do
     #   assert {:ok, transaction} = Transactions.update_transaction(transaction, @update_attrs)
     #   assert %Transaction{} = transaction
     #   assert transaction.attributes == []
-    #   assert transaction.net_fee == "some up net_fee"
-    #   assert transaction.nonce == 2
+    #   assert transaction.net_fee == "some updated net_fee"
+    #   assert transaction.nonce == 43
     #   assert transaction.scripts == []
-    #   assert transaction.size == 2
-    #   assert transaction.sys_fee == "some up sys_fee"
-    #   assert transaction.txid == "some up txid"
-    #   assert transaction.type == "some up type"
-    #   assert transaction.version == 2
+    #   assert transaction.size == 43
+    #   assert transaction.sys_fee == "some updated sys_fee"
+    #   assert transaction.txid == "some updated txid"
+    #   assert transaction.type == "some updated type"
+    #   assert transaction.version == "some updated version"
     #   assert transaction.vin == []
     #   assert transaction.vout == []
     # end

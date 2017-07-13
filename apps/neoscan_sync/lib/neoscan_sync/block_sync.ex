@@ -29,10 +29,10 @@ defmodule NEOScanSync.BlockSync do
       nil ->
         get_block_by_height(seed, 1)
         |> add_block()
-        #start(seed)
-      { :ok, %{:height => count}} ->
-        evaluate(count, seed)
-        #start(seed)
+        start(seed)
+      { :ok, %Blocks.Block{:index => count}} ->
+        evaluate(seed, count)
+        start(seed)
       { :error, _reason} ->
         Process.whereis(@me)
         |> Process.exit(:error)
@@ -40,8 +40,8 @@ defmodule NEOScanSync.BlockSync do
   end
 
   #Evaluates db against external blockchain and route required functions
-  def evaluate(count, seed) do
-    case Blockchain.get_current_height(%{:index => seed}) do
+  def evaluate(seed, count) do
+    case Blockchain.get_current_height(seed) do
       {:ok, height} when height > count  ->
         get_block_by_height( seed, count+1 )
         |> add_block()
@@ -67,7 +67,7 @@ defmodule NEOScanSync.BlockSync do
 
   #handles error when fetching highest block from db
   def get_block_by_height(seed, index) do
-    case Blockchain.get_block_by_height(%{:index => seed, :height => index }) do
+    case Blockchain.get_block_by_height(seed, index) do
       { :ok , block } ->
         block
       { :error, _reason} ->

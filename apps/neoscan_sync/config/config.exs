@@ -22,6 +22,9 @@ use Mix.Config
 # Or configure a 3rd-party app:
 #
 #     config :logger, level: :info
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]
 #
 
 # It is also possible to import configuration files, relative to this
