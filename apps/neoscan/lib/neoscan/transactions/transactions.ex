@@ -50,7 +50,13 @@ defmodule Neoscan.Transactions do
 
   """
   def create_transaction({:ok, block}, attrs \\ %{}) do
-    Ecto.build_assoc(block, :transactions, attrs)
+    changeset = Transaction.changeset(block, attrs)
+    case Repo.insert(changeset) do
+      {:ok, transaction} ->
+        {:ok, transaction}
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """

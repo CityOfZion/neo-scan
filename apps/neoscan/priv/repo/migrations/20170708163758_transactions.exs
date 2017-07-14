@@ -5,7 +5,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
     create table(:transactions) do
       add :attributes, {:array, :string}
       add :net_fee, :string
-      add :nonce, :integer
+      add :nonce, :bigint
       add :scripts, {:array, :string}
       add :size, :integer
       add :sys_fee, :string

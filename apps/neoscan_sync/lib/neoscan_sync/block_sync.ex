@@ -68,11 +68,11 @@ defmodule NEOScanSync.BlockSync do
 
   #add block with transactions to the db
   def add_block(block) do
-    %{"tx" => transactions, "index" => n} = block
+    %{"tx" => transactions, "index" => _n} = block
     Map.delete(block, "tx")
     |> Blocks.create_block()
     |> Transactions.create_transactions(transactions)
-    IO.puts("Block #{n} stored")
+    #IO.puts("Block #{n} stored")
   end
 
   #handles error when fetching highest block from db

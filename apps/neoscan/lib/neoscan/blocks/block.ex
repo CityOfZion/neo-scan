@@ -26,7 +26,6 @@ defmodule Neoscan.Blocks.Block do
   def changeset(%Block{} = block, attrs) do
     block
     |> cast(attrs, [:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus])
-    |> cast_assoc(:transactions, required: false)
     |> validate_required([:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus])
   end
 end

@@ -19,18 +19,71 @@
       <div class="tile is-6 is-parent">
         <div class="tile is-child box">
           <p class="title">Last Blocks</p>
-            <ul class="collection">
-              <%= for block <- @blocks do %>
-                <li class="collection-item">
-                  <%=block.hash %>
-                </li>
-              <% end %>
-            </ul>
+          <ul class="collection">
+            <%= for block <- @blocks do %>
+              <div class="box">
+                <article class="media">
+                  <div class="media-content">
+                    <div class="content">
+                      <p>
+                        <strong>Nounce <%=block.index%></strong>
+                        <small>Date
+                        <%=
+                          {:ok, date_time} = DateTime.from_unix(block.time, :second)
+                          DateTime.to_date(date_time)
+                        %>
+                        </small>
+                        <small>Time
+                          <%=
+                            {:ok, date_time} = DateTime.from_unix(block.time, :second)
+                            DateTime.to_time(date_time)
+                          %>
+                        </small>
+                        <br> Hash
+                        <%=block.hash%>
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            <% end %>
+          </ul>
         </div>
       </div>
       <div class="tile is-parent">
         <div class="tile is-child box">
           <p class="title">Last Transactions</p>
+          <ul class="collection">
+            <%= for transaction <- @transactions do %>
+              <div class="box">
+                <article class="media">
+                  <div class="media-content">
+                    <div class="content">
+                      <p>
+                        <strong>TXid <%=transaction.txid%></strong>
+                        <small>Date
+                        <%=
+                          {:ok, date_time} = Neoscan.Web.HomeController.get_transaction_time(transaction)
+                                             |> DateTime.from_unix(:second)
+                          DateTime.to_date(date_time)
+                        %>
+                        </small>
+                        <small>Time
+                          <%=
+                            {:ok, date_time} = Neoscan.Web.HomeController.get_transaction_time(transaction)
+                                               |> DateTime.from_unix(:second)
+                            DateTime.to_time(date_time)
+                          %>
+                        </small>
+                        <br>
+                        
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            <% end %>
+          </ul>
         </div>
       </div>
     </div>

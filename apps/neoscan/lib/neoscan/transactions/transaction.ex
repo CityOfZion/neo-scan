@@ -1,7 +1,6 @@
 defmodule Neoscan.Transactions.Transaction do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Neoscan.Transactions.Transaction
 
 
   schema "transactions" do
@@ -22,10 +21,11 @@ defmodule Neoscan.Transactions.Transaction do
   end
 
   @doc false
-  def changeset(%Transaction{} = transaction, attrs) do
-    transaction
+  def changeset(block, attrs \\ %{}) do
+    block
+    |> Ecto.build_assoc(:transactions)
     |> cast(attrs, [:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :vout])
-    |> assoc_constraint(:block)
+    |> assoc_constraint(:block, required: true)
     |> validate_required([:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :vout])
   end
 end
