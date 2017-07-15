@@ -1,7 +1,66 @@
 <section class="section">
   <div class="container">
-    <div class="tile is-12 is-ancestor box">
-      <p class="title">Block</p>
+    <div class="tile is-12 is-ancestor box is-vertical">
+      <div class="tile is-parent box content">
+        <p class="title">Block <%=@block.hash%></p>
+      </div>
+      <div class="tile is-parent box content">
+        <ul>
+          <li>
+            <small>Date
+            <%=
+              {:ok, date_time} = DateTime.from_unix(@block.time, :second)
+              DateTime.to_date(date_time)
+            %>&nbsp&nbsp&nbsp
+            </small>
+            <small>Time
+              <%=
+                {:ok, date_time} = DateTime.from_unix(@block.time, :second)
+                DateTime.to_time(date_time)
+              %>
+            </small>
+          </li>
+          <li>
+            Height <%=@block.index%>
+          </li>
+          <li>
+            Transactions count <%=@block.tx_count%>
+          </li>
+          <li>
+            Confirmations <%=@block.confirmations%>
+          </li>
+          <li>
+            Merkle Tree Root <%=@block.merkleroot%>
+          </li>
+          <li>
+            Next Block Hash
+            <a href="<%=block_path(@conn, :show_block, @block.nextblockhash )%>">
+               <%=@block.nextblockhash%>
+            </a>
+          </li>
+          <li>
+            Previous Block Hash
+            <a href="<%=block_path(@conn, :show_block, @block.previousblockhash )%>">
+               <%=@block.previousblockhash%>
+            </a>
+          </li>
+          <li>
+            Data Size <%=@block.size%> bytes
+          </li>
+        </ul>
+      </div>
+      <div class="box content">
+        <p class="title">Transactions</p>
+        <ul>
+          <%= for transaction <- @block.transactions do %>
+            <li>
+              <a href="<%=transaction_path(@conn, :show_transaction, transaction.txid )%>">
+                <%=transaction.txid%>
+              </a>
+            </li>
+          <%end%>
+        </ul>
+      </div>
     </div>
   </div>
 </section>

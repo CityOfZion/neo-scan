@@ -9,6 +9,7 @@ defmodule Neoscan.Web.HomeController do
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Transactions
 
+  #load last blocks and transactions from db
   def index(conn, _params) do
     block_query = from e in Block,
       order_by: [desc: e.index],
@@ -26,40 +27,34 @@ defmodule Neoscan.Web.HomeController do
 
   #searches the database for the input value
   def search(conn, %{"search" => %{"for" => value}}) do
-    block =  Blocks.get_block_by_height(value) || Blocks.get_block_by_hash(value)
-    transaction =  Transactions.get_transaction_by_hash(value)
+    result = try  do
+      String.to_integer(value)
+    rescue
+      ArgumentError ->
+        Blocks.get_block_by_hash(value) || Transactions.get_transaction_by_hash(value)
+    else
+      value ->
+        Blocks.get_block_by_height(value)
+    end
 
-    redirect_search_result(conn,block, transaction)
+    redirect_search_result(conn, result)
   end
 
   #redirect search results to correct page
-  def redirect_search_result(conn, block, transaction) do
-    IO.inspect(block)
+  def redirect_search_result(conn, result) do
     cond  do
-      block != nil ->
-        redirect(conn, to: block_path(conn, :show_block, block.hash))
-
-      transaction != nil ->
-        redirect(conn, to: transaction_path(conn, :show_transaction, transaction.txid))
-
-      true ->
+      nil == result ->
         conn
         |> put_flash(:info, "Block or Transaction not Found in DB!")
         |> redirect(to: home_path(conn, :index))
+
+      Map.has_key?(result, :hash) ->
+        redirect(conn, to: block_path(conn, :show_block, result.hash))
+
+      Map.has_key?(result, :txid) ->
+        redirect(conn, to: transaction_path(conn, :show_transaction, result.txid))
+
     end
   end
-
-  #open block page
-  def show_block(conn, %{"id" => id}) do
-    block = Blocks.get_block!(id)
-    render(conn, "block.html", block: block)
-  end
-
-  #open transaction page
-  def show_transaction(conn, %{"id" => id}) do
-    transaction = Transactions.get_transaction!(id)
-    render(conn, "transaction.html", transaction: transaction)
-  end
-
 
 end

@@ -1,7 +1,69 @@
 <section class="section">
   <div class="container">
-    <div class="tile is-12 box">
-      <p class="title">Transactions</p>
+    <div class="tile is-12 is-ancestor box is-vertical">
+      <div class="tile is-parent box content">
+        <p class="title">Transaction <%=@transaction.txid%></p>
+      </div>
+      <div class="tile is-parent box content">
+        <ul>
+          <li>
+            <small>Date
+            <%=
+              {:ok, date_time} = DateTime.from_unix(@transaction.time, :second)
+              DateTime.to_date(date_time)
+            %>&nbsp&nbsp&nbsp
+            </small>
+            <small>Time
+              <%=
+                {:ok, date_time} = DateTime.from_unix(@transaction.time, :second)
+                DateTime.to_time(date_time)
+              %>
+            </small>
+          </li>
+          <li>
+            Transaction Type "<%=@transaction.type%>"
+          </li>
+          <li>
+            Included in Block <%=@transaction.block_height%>
+          </li>
+          <li>
+            Fees <%=String.to_integer(@transaction.sys_fee)+String.to_integer(@transaction.net_fee)%>
+          </li>
+          <%= if @transaction.asset != nil do %>
+            <li>
+              Asset <%=@transaction.asset.name%>
+            </li>
+          <%end%>
+          <li>
+            Data Size <%=@transaction.size%> bytes
+          </li>
+          <%= if @transaction.nonce != nil do %>
+            <li>
+              Nonce <%=@transaction.nonce%>
+            </li>
+          <%end%>
+          <%= if @transaction.pubkey != nil do %>
+            <li>
+              Public Key <%=@transaction.pubkey%>
+            </li>
+          <%end%>
+          <%= if @transaction.claims != nil do %>
+            <li>
+              Claims <%=@transaction.claims%>
+            </li>
+          <%end%>
+          <%= if @transaction.description != nil do %>
+            <li>
+              Description <%=@transaction.description%>
+            </li>
+          <%end%>
+          <%= if @transaction.contract != nil do %>
+            <li>
+              Contract <%=@transaction.contract%>
+            </li>
+          <%end%>
+        </ul>
+      </div>
     </div>
   </div>
 </section>

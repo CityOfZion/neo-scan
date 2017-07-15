@@ -5,7 +5,7 @@ defmodule Neoscan.Repo.Migrations.Blocks do
     create table(:blocks) do
       add :confirmations, :integer
       add :hash, :string
-      add :index, :integer
+      add :index, :bigint
       add :merkleroot, :string
       add :nextblockhash, :string
       add :nextconsensus, :string

@@ -8,7 +8,9 @@
     <meta name="author" content="">
 
     <title>Hello Neoscan!</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+
 </head>
 
   <body>
@@ -25,10 +27,12 @@
             <!-- <span class="nav-toggle">
               <span></span>
             </span> -->
-
             <div class="nav-right nav-menu">
+              <!-- <a class="nav-item">
+                Documentation
+              </a> -->
               <span class="nav-item">
-                <a href="https://github.com/CityOfZion/NEOScan" class="button is-light is-inverted">
+                <a href="https://github.com/CityOfZion/NEOScan" class="button is-light">
                   <span class="icon">
                     <i class="fa fa-github"></i>
                   </span>
@@ -74,7 +78,7 @@
       <div class="container">
         <div class="content has-text-centered">
           <p>
-            <strong>NEOScan</strong> by <a href="https://github.com/CityOfZion">awesome people</a>. The source code is licensed
+            <strong>NEOScan</strong> by <a href="https://github.com/CityOfZion">CityOfZion</a> community. The source code is licensed
             <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
             is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
           </p>

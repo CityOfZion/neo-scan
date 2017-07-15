@@ -57,11 +57,14 @@ defmodule NEOScanSync.BlockSync do
         get_block_by_height( seed, count+1 )
         |> add_block()
       {:ok, height} when height == count  ->
-        :timer.sleep(15000)
+        Process.sleep(15000)
       {:ok, height} when height < count ->
         Blocks.delete_higher_than(height)
-        :timer.sleep(15000)
-      { :error , _reason } ->
+        Process.sleep(15000)
+      { :error, :timeout} ->
+        Process.sleep(5000)
+        start(seed)
+      { :error, _reason} ->
         Process.exit(self(), :error)
     end
   end
@@ -81,6 +84,9 @@ defmodule NEOScanSync.BlockSync do
     case Blockchain.get_block_by_height(seed, index) do
       { :ok , block } ->
         block
+      { :error, :timeout} ->
+        Process.sleep(5000)
+        start(seed)
       { :error, _reason} ->
         Process.exit(self(), :error)
     end

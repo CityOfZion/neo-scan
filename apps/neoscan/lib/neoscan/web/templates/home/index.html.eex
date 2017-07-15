@@ -36,6 +36,7 @@
             <p class="control">
               <%= form_for @conn, home_path(@conn, :index), [as: :search], fn f -> %>
                 <%= text_input f, :for,placeholder: "Block Height, Hash or Transaction id",class: "input" %>
+                <%= error_tag f, :for %>
                 <%= submit "Search", class: "button btn-dark" %>
               <% end %>
             </p>
@@ -47,7 +48,7 @@
   <div class="container">
     <div class="tile is-ancestor">
       <div class="tile is-6 is-parent">
-        <div class="tile is-child box">
+        <div class="tile is-child box flex">
           <p class="title">Last Blocks</p>
           <ul class="collection">
             <%= for block <- @blocks do %>
@@ -56,7 +57,7 @@
                   <div class="media-content">
                     <div class="content ">
                       <p>
-                        <strong><%=block.hash%></strong>
+                        <strong>Height <%=block.index%></strong>
                         <small>Date
                         <%=
                           {:ok, date_time} = DateTime.from_unix(block.time, :second)
@@ -69,8 +70,8 @@
                             DateTime.to_time(date_time)
                           %>
                         </small>
-                        <br>
                       </p>
+                      <h5><%=block.hash%></h5>
                     </div>
                   </div>
                 </article>
@@ -79,8 +80,8 @@
           </ul>
         </div>
       </div>
-      <div class="tile is-parent">
-        <div class="tile is-child box">
+      <div class="tile is-6 is-parent">
+        <div class="tile is-child box flex">
           <p class="title">Last Transactions</p>
           <ul class="collection">
             <%= for transaction <- @transactions do %>
