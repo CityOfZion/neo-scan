@@ -38,6 +38,25 @@ defmodule Neoscan.Transactions do
   def get_transaction!(id), do: Repo.get!(Transaction, id)
 
   @doc """
+  Gets a single transaction by its hash value
+
+  ## Examples
+
+      iex> get_block_by_hash(123)
+      %Block{}
+
+      iex> get_block_by_hash(456)
+      nil
+
+  """
+  def get_transaction_by_hash(hash) do
+   query = from e in Transaction,
+     where: e.txid == ^hash,
+     select: e
+   Repo.one(query)
+  end
+
+  @doc """
   Creates a transaction.
 
   ## Examples

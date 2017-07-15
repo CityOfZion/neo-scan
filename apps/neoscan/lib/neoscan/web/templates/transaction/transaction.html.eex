@@ -2,9 +2,6 @@
   <div class="container">
     <div class="tile is-12 box">
       <p class="title">Transactions</p>
-      <%= if @transaction do %>
-
-      <%end%>
     </div>
   </div>
 </section>

@@ -1,10 +1,7 @@
 <section class="section">
   <div class="container">
-    <div class="tile is-12 box">
-      <p class="title">Blocks</p>
-      <%= if @block do %>
-
-      <%end%>
+    <div class="tile is-12 is-ancestor box">
+      <p class="title">Block</p>
     </div>
   </div>
 </section>

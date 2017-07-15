@@ -5,7 +5,6 @@ defmodule Neoscan.Blocks do
 
   import Ecto.Query, warn: true
   alias Neoscan.Repo
-
   alias Neoscan.Blocks.Block
 
   @doc """
@@ -36,6 +35,44 @@ defmodule Neoscan.Blocks do
 
   """
   def get_block!(id), do: Repo.get!(Block, id)
+
+  @doc """
+  Gets a single block by its hash value
+
+  ## Examples
+
+      iex> get_block_by_hash(123)
+      %Block{}
+
+      iex> get_block_by_hash(456)
+      nil
+
+  """
+  def get_block_by_hash(hash) do
+   query = from e in Block,
+     where: e.hash == ^hash,
+     select: e
+   Repo.one(query)
+  end
+
+  @doc """
+  Gets a single block by its heigh value
+
+  ## Examples
+
+      iex> get_block_by_height(123)
+      %Block{}
+
+      iex> get_block_by_height(456)
+      nill
+
+  """
+  def get_block_by_height(height) do
+   query = from e in Block,
+     where: e.index == ^height,
+     select: e
+   Repo.one(query)
+  end
 
   @doc """
   Creates a block.
@@ -134,7 +171,7 @@ defmodule Neoscan.Blocks do
 
   """
   def get_higher_than(index) do
-    query = from e in Neoscan.Blocks.Block,
+    query = from e in Block,
       where: e.index > ^index,
       select: e
     Repo.all(query)

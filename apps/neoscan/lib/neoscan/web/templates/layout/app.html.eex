@@ -9,8 +9,7 @@
 
     <title>Hello Neoscan!</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  </head>
+</head>
 
   <body>
     <section class="hero is-light">
@@ -19,13 +18,14 @@
         <header class="nav">
           <div class="container">
             <div class="nav-left">
-              <a class="nav-item">
-                Hello
-              </a>
+              <h1 class="nav-item">
+                NEO Donations are appreciated!!  AKNg9LEVRrTUov1gPkzRxStacNvpe8y9tE
+              </h1>
             </div>
-            <span class="nav-toggle">
+            <!-- <span class="nav-toggle">
               <span></span>
-            </span>
+            </span> -->
+
             <div class="nav-right nav-menu">
               <span class="nav-item">
                 <a href="https://github.com/CityOfZion/NEOScan" class="button is-light is-inverted">
@@ -44,7 +44,7 @@
       <div class="hero-body">
         <div class="container has-text-left">
           <h1 class="title">
-            NEOscan
+            NeoScan
           </h1>
           <h2 class="subtitle">
             Entering Matrix
@@ -58,16 +58,12 @@
           <div class="container">
             <ul>
               <li><a href="<%= home_path(@conn, :index) %>">Home</a></li>
-              <li><a href="<%= block_path(@conn, :no_block) %>">Search Block</a></li>
-              <li><a href="<%= transaction_path(@conn, :no_transaction) %>">Search Transaction</a></li>
             </ul>
           </div>
         </nav>
       </div>
     </section>
 
-    <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-    <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 
     <main role="main">
       <%= render @view_module, @view_template, assigns %>

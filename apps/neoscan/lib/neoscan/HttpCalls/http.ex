@@ -11,9 +11,9 @@ defmodule Neoscan.HttpCalls do
   """
   def url(index \\ 0) do
     %{
+      1 => "http://18.220.41.87:10332",
+      2 => "http://api.otcgo.cn:20332",
       0 => "https://localhost:20332",
-      1 => "http://api.otcgo.cn:10333",
-      2 => "http://seed3.neo.org:10333",
       3 => "http://seed4.neo.org:10333",
       4 => "http://seed5.neo.org:10333",
     }

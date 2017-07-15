@@ -3,15 +3,10 @@ defmodule Neoscan.Web.BlockController do
 
   alias Neoscan.Blocks
 
-  def show_block(conn, %{"id" => block_id}) do
-    block = Blocks.get_block!(block_id)
+  def show_block(conn, %{"hash" => block_hash}) do
+    block = Blocks.get_block_by_hash(block_hash)
     render(conn, "block.html", block: block)
   end
-
-  def no_block(conn, _params) do
-    render(conn, "block.html", block: %{})
-  end
-
 
 
 end
