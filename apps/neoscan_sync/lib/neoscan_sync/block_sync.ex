@@ -69,7 +69,8 @@ defmodule NEOScanSync.BlockSync do
   #add block with transactions to the db
   def add_block(block) do
     %{"tx" => transactions, "index" => _n} = block
-    Map.delete(block, "tx")
+    Map.put(block,"tx_count",Kernel.length(transactions))
+    |> Map.delete("tx")
     |> Blocks.create_block()
     |> Transactions.create_transactions(transactions)
     #IO.puts("Block #{n} stored")

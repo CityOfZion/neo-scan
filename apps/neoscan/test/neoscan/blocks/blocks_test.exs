@@ -84,4 +84,64 @@ defmodule Neoscan.BlocksTest do
       assert %Ecto.Changeset{} = Blocks.change_block(block)
     end
   end
+
+  describe "blocks" do
+    alias Neoscan.Blocks.BlockView
+
+    @valid_attrs %{hash: "some hash"}
+    @update_attrs %{hash: "some updated hash"}
+    @invalid_attrs %{hash: nil}
+
+    def block_view_fixture(attrs \\ %{}) do
+      {:ok, block_view} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Blocks.create_block_view()
+
+      block_view
+    end
+
+    test "list_blocks/0 returns all blocks" do
+      block_view = block_view_fixture()
+      assert Blocks.list_blocks() == [block_view]
+    end
+
+    test "get_block_view!/1 returns the block_view with given id" do
+      block_view = block_view_fixture()
+      assert Blocks.get_block_view!(block_view.id) == block_view
+    end
+
+    test "create_block_view/1 with valid data creates a block_view" do
+      assert {:ok, %BlockView{} = block_view} = Blocks.create_block_view(@valid_attrs)
+      assert block_view.hash == "some hash"
+    end
+
+    test "create_block_view/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Blocks.create_block_view(@invalid_attrs)
+    end
+
+    test "update_block_view/2 with valid data updates the block_view" do
+      block_view = block_view_fixture()
+      assert {:ok, block_view} = Blocks.update_block_view(block_view, @update_attrs)
+      assert %BlockView{} = block_view
+      assert block_view.hash == "some updated hash"
+    end
+
+    test "update_block_view/2 with invalid data returns error changeset" do
+      block_view = block_view_fixture()
+      assert {:error, %Ecto.Changeset{}} = Blocks.update_block_view(block_view, @invalid_attrs)
+      assert block_view == Blocks.get_block_view!(block_view.id)
+    end
+
+    test "delete_block_view/1 deletes the block_view" do
+      block_view = block_view_fixture()
+      assert {:ok, %BlockView{}} = Blocks.delete_block_view(block_view)
+      assert_raise Ecto.NoResultsError, fn -> Blocks.get_block_view!(block_view.id) end
+    end
+
+    test "change_block_view/1 returns a block_view changeset" do
+      block_view = block_view_fixture()
+      assert %Ecto.Changeset{} = Blocks.change_block_view(block_view)
+    end
+  end
 end

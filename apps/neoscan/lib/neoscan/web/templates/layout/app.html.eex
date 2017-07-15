@@ -24,8 +24,6 @@
               </a>
             </div>
             <span class="nav-toggle">
-              <span>alo</span>
-              <span>eiaa</span>
               <span></span>
             </span>
             <div class="nav-right nav-menu">
@@ -59,9 +57,9 @@
         <nav class="tabs">
           <div class="container">
             <ul>
-              <li class="is-active"><a>Home</a></li>
-              <li><a>Search Block</a></li>
-              <li><a>Search Transaction</a></li>
+              <li><a href="<%= home_path(@conn, :index) %>">Home</a></li>
+              <li><a href="<%= block_path(@conn, :no_block) %>">Search Block</a></li>
+              <li><a href="<%= transaction_path(@conn, :no_transaction) %>">Search Transaction</a></li>
             </ul>
           </div>
         </nav>

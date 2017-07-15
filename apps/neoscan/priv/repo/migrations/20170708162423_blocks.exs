@@ -15,6 +15,7 @@ defmodule Neoscan.Repo.Migrations.Blocks do
       add :size, :integer
       add :time, :integer
       add :version, :integer
+      add :tx_count, :integer
 
       timestamps()
     end

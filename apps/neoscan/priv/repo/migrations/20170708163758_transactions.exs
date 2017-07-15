@@ -5,7 +5,6 @@ defmodule Neoscan.Repo.Migrations.Transactions do
     create table(:transactions) do
       add :attributes, {:array, :string}
       add :net_fee, :string
-      add :nonce, :bigint
       add :scripts, {:array, :string}
       add :size, :integer
       add :sys_fee, :string
@@ -14,6 +13,18 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add :version, :integer
       add :vin, {:array, :string}
       add :vout, {:array, :string}
+
+      add :time, :integer
+      add :block_hash, :string
+      add :block_height, :integer
+
+      add :nonce, :bigint
+      add :claims, {:array, :string}
+      add :pubkey, :string
+      add :asset, {:array, :string}
+      add :description, :string
+      add :contract, :string
+
       add :block_id, references(:blocks, on_delete: :delete_all)
 
       timestamps()

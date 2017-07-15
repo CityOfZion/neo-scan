@@ -9,11 +9,6 @@ defmodule Neoscan.Web.HomeController do
   alias Neoscan.Transactions.Transaction
 
   def index(conn, _params) do
-    updates(conn,[])
-  end
-
-
-  def updates(conn, _params) do
     block_query = from e in Block,
       order_by: [desc: e.index],
       limit: 50
@@ -31,6 +26,16 @@ defmodule Neoscan.Web.HomeController do
   def get_transaction_time(%{:block_id => block_id}) do
     %{:time => time} = Blocks.get_block!(block_id)
     time
+  end
+
+  def show_block(conn, %{"id" => id}) do
+    block = Blocks.get_block!(id)
+    render(conn, "block.html", block: block)
+  end
+
+  def show_transaction(conn, %{"id" => id}) do
+    transaction = Transactions.get_transaction!(id)
+    render(conn, "transaction.html", transaction: transaction)
   end
 
 

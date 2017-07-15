@@ -17,6 +17,7 @@ defmodule Neoscan.Blocks.Block do
     field :size, :integer
     field :time, :integer
     field :version, :integer
+    field :tx_count, :integer
     has_many :transactions, Neoscan.Transactions.Transaction
 
     timestamps()
@@ -25,7 +26,7 @@ defmodule Neoscan.Blocks.Block do
   @doc false
   def changeset(%Block{} = block, attrs) do
     block
-    |> cast(attrs, [:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus])
-    |> validate_required([:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus])
+    |> cast(attrs, [:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count])
+    |> validate_required([:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count])
   end
 end

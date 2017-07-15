@@ -21,12 +21,12 @@
           <p class="title">Last Blocks</p>
           <ul class="collection">
             <%= for block <- @blocks do %>
-              <div class="box">
+              <a href="<%= block_path @conn, :show_block, block %>" class="box">
                 <article class="media">
                   <div class="media-content">
                     <div class="content">
                       <p>
-                        <strong>Nounce <%=block.index%></strong>
+                        <strong>Height <%=block.index%></strong>
                         <small>Date
                         <%=
                           {:ok, date_time} = DateTime.from_unix(block.time, :second)
@@ -45,7 +45,7 @@
                     </div>
                   </div>
                 </article>
-              </div>
+              </a>
             <% end %>
           </ul>
         </div>
@@ -55,7 +55,7 @@
           <p class="title">Last Transactions</p>
           <ul class="collection">
             <%= for transaction <- @transactions do %>
-              <div class="box">
+              <a href="<%= transaction_path @conn, :show_transaction, transaction %>" class="box">
                 <article class="media">
                   <div class="media-content">
                     <div class="content">
@@ -76,12 +76,12 @@
                           %>
                         </small>
                         <br>
-                        
+
                       </p>
                     </div>
                   </div>
                 </article>
-              </div>
+              </a>
             <% end %>
           </ul>
         </div>
