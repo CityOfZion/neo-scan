@@ -4,14 +4,14 @@ defmodule Neoscan.BlockchainTests  do
   alias Neoscan.Blockchain
 
   test "receive current block height" do
-    { nil , result } = Blockchain.get_current_height( nil, %{:index => 0})
-    assert is_number(result)
+    { :ok, result }  = Blockchain.get_current_height(0)
+    assert is_integer(result)
   end
 
 
   test "get block by height" do
-    { nil, count } = Blockchain.get_current_height( nil, %{:index => 0})
-    { nil , %{"index" => result} } = Blockchain.get_block_by_height( nil, %{:index => 0, :height => count-10})
+    { :ok, count } = Blockchain.get_current_height(0)
+    { :ok, %{"index" => result}} = Blockchain.get_block_by_height( 0, count-10)
     assert count-10 == result
   end
 

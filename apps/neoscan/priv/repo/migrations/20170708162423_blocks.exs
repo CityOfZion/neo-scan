@@ -3,16 +3,19 @@ defmodule Neoscan.Repo.Migrations.Blocks do
 
   def change do
     create table(:blocks) do
+      add :confirmations, :integer
       add :hash, :string
-      add :height, :string
+      add :index, :bigint
       add :merkleroot, :string
-      add :nextminer, :string
+      add :nextblockhash, :string
+      add :nextconsensus, :string
       add :nonce, :string
       add :previousblockhash, :string
-      add :script, :map
-      add :size, :string
-      add :time, :string
-      add :version, :string
+      add :script, {:map , :string}
+      add :size, :integer
+      add :time, :integer
+      add :version, :integer
+      add :tx_count, :integer
 
       timestamps()
     end

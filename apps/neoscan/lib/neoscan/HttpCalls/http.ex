@@ -11,11 +11,11 @@ defmodule Neoscan.HttpCalls do
   """
   def url(index \\ 0) do
     %{
-      0 => "https://localhost:20332",
-      1 => "http://seed2.antshares.org:10332",
-      2 => "http://seed3.antshares.org:10332",
-      3 => "http://seed4.antshares.org:10332",
-      4 => "http://seed5.antshares.org:10332",
+      2 => "http://18.220.41.87:10332",
+      3 => "http://api.otcgo.cn:10332",
+      1 => "https://localhost:20332",
+      0 => "http://seed8.antshares.org:10332",
+      4 => "http://seed5.neo.org:10333",
     }
     # %{
     #   0 => "http://seed1.antshares.org:10332",
@@ -28,25 +28,28 @@ defmodule Neoscan.HttpCalls do
   end
 
   #Makes a request to the 'index' seed
-  def request(conn, headers, data, index) do
+  def request(headers, data, index) do
     url(index)
     |> HTTPoison.post( data, headers, ssl: [{:versions, [:'tlsv1.2']}] )
-    |> handle_response(conn)
+    |> handle_response
   end
 
   #Handles the response of an HTTP call
-  defp handle_response(response, conn) do
+  defp handle_response(response) do
     case response do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         %{"result" => result} = Poison.decode!(body)
-        {conn, result}
+        {:ok, result }
       {:ok, %HTTPoison.Response{status_code: 404}} ->
-        IO.puts "404 Not found :("
-        conn
+        IO.puts "Error 404 Not found! :("
+        { :error , "Error 404 Not found! :(" }
+      {:ok, %HTTPoison.Response{status_code: 405}} ->
+        IO.puts "Error 405 Method not found! :("
+        { :error , "Error 405 Method not found! :(" }
       {:error, %HTTPoison.Error{reason: reason}} ->
         IO.puts "urlopen error, retry."
         IO.inspect reason
-        conn
+        { :error , "urlopen error, retry."}
     end
   end
 

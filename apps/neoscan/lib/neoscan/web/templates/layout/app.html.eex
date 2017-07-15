@@ -8,9 +8,10 @@
     <meta name="author" content="">
 
     <title>Hello Neoscan!</title>
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  </head>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+
+</head>
 
   <body>
     <section class="hero is-light">
@@ -19,18 +20,19 @@
         <header class="nav">
           <div class="container">
             <div class="nav-left">
-              <a class="nav-item">
-                Hello
-              </a>
+              <h1 class="nav-item">
+                NEO Donations are appreciated!!  AKNg9LEVRrTUov1gPkzRxStacNvpe8y9tE
+              </h1>
             </div>
-            <span class="nav-toggle">
-              <span>alo</span>
-              <span>eiaa</span>
+            <!-- <span class="nav-toggle">
               <span></span>
-            </span>
+            </span> -->
             <div class="nav-right nav-menu">
+              <!-- <a class="nav-item">
+                Documentation
+              </a> -->
               <span class="nav-item">
-                <a href="https://github.com/CityOfZion/NEOScan" class="button is-light is-inverted">
+                <a href="https://github.com/CityOfZion/NEOScan" class="button is-light">
                   <span class="icon">
                     <i class="fa fa-github"></i>
                   </span>
@@ -46,7 +48,7 @@
       <div class="hero-body">
         <div class="container has-text-left">
           <h1 class="title">
-            NEOscan
+            NeoScan
           </h1>
           <h2 class="subtitle">
             Entering Matrix
@@ -59,17 +61,13 @@
         <nav class="tabs">
           <div class="container">
             <ul>
-              <li class="is-active"><a>Home</a></li>
-              <li><a>Search Block</a></li>
-              <li><a>Search Transaction</a></li>
+              <li><a href="<%= home_path(@conn, :index) %>">Home</a></li>
             </ul>
           </div>
         </nav>
       </div>
     </section>
 
-    <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-    <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 
     <main role="main">
       <%= render @view_module, @view_template, assigns %>
@@ -80,7 +78,7 @@
       <div class="container">
         <div class="content has-text-centered">
           <p>
-            <strong>NEOScan</strong> by <a href="https://github.com/CityOfZion">awesome people</a>. The source code is licensed
+            <strong>NEOScan</strong> by <a href="https://github.com/CityOfZion">CityOfZion</a> community. The source code is licensed
             <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
             is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
           </p>

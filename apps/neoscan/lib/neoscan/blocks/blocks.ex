@@ -3,9 +3,8 @@ defmodule Neoscan.Blocks do
   The boundary for the Blocks system.
   """
 
-  import Ecto.Query, warn: false
+  import Ecto.Query, warn: true
   alias Neoscan.Repo
-
   alias Neoscan.Blocks.Block
 
   @doc """
@@ -36,6 +35,44 @@ defmodule Neoscan.Blocks do
 
   """
   def get_block!(id), do: Repo.get!(Block, id)
+
+  @doc """
+  Gets a single block by its hash value
+
+  ## Examples
+
+      iex> get_block_by_hash(123)
+      %Block{}
+
+      iex> get_block_by_hash(456)
+      nil
+
+  """
+  def get_block_by_hash(hash) do
+   query = from e in Block,
+     where: e.hash == ^hash,
+     select: e
+   Repo.one(query)
+  end
+
+  @doc """
+  Gets a single block by its heigh value
+
+  ## Examples
+
+      iex> get_block_by_height(123)
+      %Block{}
+
+      iex> get_block_by_height(456)
+      nill
+
+  """
+  def get_block_by_height(height) do
+   query = from e in Block,
+     where: e.index == ^height,
+     select: e
+   Repo.one(query)
+  end
 
   @doc """
   Creates a block.
@@ -101,4 +138,71 @@ defmodule Neoscan.Blocks do
   def change_block(%Block{} = block) do
     Block.changeset(block, %{})
   end
+
+
+  @doc """
+  Returns the heighest block in the database
+
+  ## Examples
+
+      iex> get_highest_block_in_db()
+      {:ok, %Block{}}
+
+  """
+  def get_highest_block_in_db() do
+    query = from e in Block,
+      order_by: [desc: e.index],
+      limit: 1
+    case Repo.all(query) do
+      [block] ->
+        {:ok , block}
+      [] ->
+        nil
+    end
+  end
+
+  @doc """
+  get all blocks heigher than `height`
+
+  ## Examples
+
+      iex> get_higher_than(height)
+      [%Block{}, ...]
+
+  """
+  def get_higher_than(index) do
+    query = from e in Block,
+      where: e.index > ^index,
+      select: e
+    Repo.all(query)
+  end
+
+
+  @doc """
+  delete all blocks in list
+
+  ## Examples
+
+      iex> delete_blocks([%Block{}, ...])
+      { :ok, "deleted"}
+
+  """
+  def delete_blocks([ block | tail ]), do: [ delete_block(block) | delete_blocks(tail)]
+  def delete_blocks([]), do: {:ok , "deleted" }
+
+  @doc """
+  delete all blocks heigher than `height`
+
+  ## Examples
+
+      iex> get_higher_than(height)
+      [%Block{}, ...]
+
+  """
+  def delete_higher_than(height) do
+    get_higher_than(height)
+    |> delete_blocks
+  end
+
+
 end

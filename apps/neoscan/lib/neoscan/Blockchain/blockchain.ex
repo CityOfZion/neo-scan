@@ -5,13 +5,11 @@ defmodule Neoscan.Blockchain do
   """
 
   alias Neoscan.HttpCalls
-  alias Neoscan.Blocks
-  alias Neoscan.Transactions
 
   @doc """
    Get the current block height from the Blockchain through seed 'index'
   """
-  def get_current_height(conn, %{:index => index }) do
+  def get_current_height(index) do
     data = Poison.encode!(%{
       "jsonrpc": "2.0",
        "method": "getblockcount",
@@ -19,21 +17,21 @@ defmodule Neoscan.Blockchain do
        "id": 5
     })
   	headers = [{"Content-Type", "application/json"}]
-    HttpCalls.request(conn, headers, data, index)
+    HttpCalls.request(headers, data, index)
   end
 
   @doc """
    Get the current block by height through seed 'index'
   """
-  def get_block_by_height(conn, %{:index => index , :height => height }) do
+  def get_block_by_height(index , height ) do
     data = Poison.encode!(%{
       "jsonrpc" => "2.0",
        "method" => "getblock",
        "params" => [ height, 1 ],
        "id" => 5
     })
-    headers = %{"Content-Type" => "application/json"}
-    HttpCalls.request(conn, headers, data, index)
+    headers = [{"Content-Type", "application/json"}]
+    HttpCalls.request(headers, data, index)
   end
 
 end

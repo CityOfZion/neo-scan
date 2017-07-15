@@ -38,6 +38,25 @@ defmodule Neoscan.Transactions do
   def get_transaction!(id), do: Repo.get!(Transaction, id)
 
   @doc """
+  Gets a single transaction by its hash value
+
+  ## Examples
+
+      iex> get_block_by_hash(123)
+      %Block{}
+
+      iex> get_block_by_hash(456)
+      nil
+
+  """
+  def get_transaction_by_hash(hash) do
+   query = from e in Transaction,
+     where: e.txid == ^hash,
+     select: e
+   Repo.one(query)
+  end
+
+  @doc """
   Creates a transaction.
 
   ## Examples
@@ -49,10 +68,17 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_transaction(attrs \\ %{}) do
-    %Transaction{}
-    |> Transaction.changeset(attrs)
-    |> Repo.insert()
+  def create_transaction({:ok, %{:time => time, :hash => hash, :index => height } = block}, attrs \\ %{}) do
+    transaction = Map.put(attrs,"time", time)
+    |> Map.put("block_hash", hash)
+    |> Map.put("block_height", height)
+    changeset = Transaction.changeset(block, transaction)
+    case Repo.insert(changeset) do
+      {:ok, transaction} ->
+        {:ok, transaction}
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
@@ -101,4 +127,20 @@ defmodule Neoscan.Transactions do
   def change_transaction(%Transaction{} = transaction) do
     Transaction.changeset(transaction, %{})
   end
+
+  @doc """
+  Creates many transactions.
+
+  ## Examples
+
+      iex> create_transactions([%{field: value}, ...])
+      {:ok, "Created"}
+
+      iex> create_transactions([%{field: value}, ...])
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_transactions(block, [transaction | tail]), do: [create_transaction(block, transaction) | create_transactions(block, tail) ]
+  def create_transactions(_block, []), do: {:ok , "Created"}
+
 end
