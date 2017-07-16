@@ -19,6 +19,7 @@ defmodule Neoscan.Web do
   def controller do
     quote do
       use Phoenix.Controller, namespace: Neoscan.Web
+      use ScoutApm.Instrumentation
       import Plug.Conn
       import Neoscan.Web.Router.Helpers
       import Neoscan.Web.Gettext

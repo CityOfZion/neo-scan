@@ -24,7 +24,7 @@ defmodule Neoscan.Mixfile do
   def application do
     [
       mod: {Neoscan.Application, []},
-      extra_applications: [:logger, :runtime_tools, :httpoison, :ex_unit]
+      extra_applications: [:logger, :runtime_tools, :httpoison, :ex_unit, :scout_apm]
     ]
   end
 
@@ -48,6 +48,7 @@ defmodule Neoscan.Mixfile do
       {:httpoison, "~> 0.12"},
       {:poison, "~> 3.1"},
       {:certifi, "~> 1.2"},
+      {:scout_apm, "~> 0.0"},
     ]
   end
 
