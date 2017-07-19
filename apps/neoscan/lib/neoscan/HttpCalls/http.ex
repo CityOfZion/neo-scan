@@ -15,7 +15,7 @@ defmodule Neoscan.HttpCalls do
       3 => "http://api.otcgo.cn:10332",
       1 => "https://localhost:20332",
       0 => "http://seed8.antshares.org:10332",
-      4 => "http://seed5.neo.org:10333",
+      4 => "http://rpc.neeeo.org:10332",
     }
     # %{
     #   0 => "http://seed1.antshares.org:10332",
@@ -46,6 +46,9 @@ defmodule Neoscan.HttpCalls do
       {:ok, %HTTPoison.Response{status_code: 405}} ->
         IO.puts "Error 405 Method not found! :("
         { :error , "Error 405 Method not found! :(" }
+      {:error, %HTTPoison.Error{reason: :timeout}} ->
+        IO.puts "timeout, retrying....."
+        { :error , :timeout}
       {:error, %HTTPoison.Error{reason: reason}} ->
         IO.puts "urlopen error, retry."
         IO.inspect reason

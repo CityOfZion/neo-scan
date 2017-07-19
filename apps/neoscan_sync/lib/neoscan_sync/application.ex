@@ -11,6 +11,7 @@ defmodule NEOScanSync.Application do
     # Define workers and child supervisors to be supervised
     children = [
       worker(NEOScanSync.BlockSync,[], [restart: :transient, max_restarts: 30, max_seconds: 30]),
+      #worker(NEOScanSync.AddressSync,[], [restart: :transient, max_restarts: 30, max_seconds: 30]),
       # Starts a worker by calling: NEOScanSync.Worker.start_link(arg1, arg2, arg3)
       # worker(NEOScanSync.Worker, [arg1, arg2, arg3]),
     ]

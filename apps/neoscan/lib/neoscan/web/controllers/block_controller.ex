@@ -1,5 +1,6 @@
 defmodule Neoscan.Web.BlockController do
   use Neoscan.Web, :controller
+  import Ecto.Query, warn: false
 
   alias Neoscan.Blocks
   alias Neoscan.Repo

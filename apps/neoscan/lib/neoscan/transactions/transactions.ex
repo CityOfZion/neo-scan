@@ -68,17 +68,12 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_transaction({:ok, %{:time => time, :hash => hash, :index => height } = block}, attrs \\ %{}) do
+  def create_transaction(%{:time => time, :hash => hash, :index => height } = block, attrs \\ %{}) do
     transaction = Map.put(attrs,"time", time)
     |> Map.put("block_hash", hash)
     |> Map.put("block_height", height)
-    changeset = Transaction.changeset(block, transaction)
-    case Repo.insert(changeset) do
-      {:ok, transaction} ->
-        {:ok, transaction}
-      {:error, changeset} ->
-        {:error, changeset}
-    end
+    Transaction.changeset(block, transaction)
+    |> Repo.insert!()
   end
 
   @doc """

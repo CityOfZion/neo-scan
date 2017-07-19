@@ -27,7 +27,10 @@
             Included in Block <%=@transaction.block_height%>
           </li>
           <li>
-            Fees <%=String.to_integer(@transaction.sys_fee)+String.to_integer(@transaction.net_fee)%>
+            System Fees <%=@transaction.sys_fee%>
+          </li>
+          <li>
+            Net Fees <%=@transaction.net_fee%>
           </li>
           <%= if @transaction.asset != nil do %>
             <li>
@@ -63,6 +66,24 @@
             </li>
           <%end%>
         </ul>
+        <%= if @transaction.vout != [] do %>
+        <ul>
+            <p>
+              Outputs
+            </p>
+            <%= for output <- @transaction.vout do %>
+              <li>
+                Address <%=output.adress%>
+              </li>
+              <li>
+                Asset <%=output.asset%>
+              </li>
+              <li>
+                Amount <%=output.value%>
+              </li>
+            <%end%>
+        </ul>
+        <%end%>
       </div>
     </div>
   </div>

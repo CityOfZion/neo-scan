@@ -89,7 +89,7 @@ defmodule Neoscan.Blocks do
   def create_block(attrs \\ %{}) do
     %Block{}
     |> Block.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert!()
   end
 
   @doc """
@@ -107,7 +107,7 @@ defmodule Neoscan.Blocks do
   def update_block(%Block{} = block, attrs) do
     block
     |> Block.changeset(attrs)
-    |> Repo.update()
+    |> Repo.update!()
   end
 
   @doc """
@@ -123,7 +123,7 @@ defmodule Neoscan.Blocks do
 
   """
   def delete_block(%Block{} = block) do
-    Repo.delete(block)
+    Repo.delete!(block)
   end
 
   @doc """
@@ -188,7 +188,7 @@ defmodule Neoscan.Blocks do
 
   """
   def delete_blocks([ block | tail ]), do: [ delete_block(block) | delete_blocks(tail)]
-  def delete_blocks([]), do: {:ok , "deleted" }
+  def delete_blocks([]), do: {:ok , "Deleted" }
 
   @doc """
   delete all blocks heigher than `height`

@@ -40,11 +40,9 @@ defmodule NEOScanSync.BlockSync do
     case Blocks.get_highest_block_in_db() do
       nil ->
         get_block_by_height(seed, 1)
-        |> add_block()
-        start(seed)
+        |> add_block(seed)
       { :ok, %Blocks.Block{:index => count}} ->
         evaluate(seed, count)
-        start(seed)
       { :error, _reason} ->
         Process.exit(self(), :error)
     end
@@ -53,14 +51,16 @@ defmodule NEOScanSync.BlockSync do
   #Evaluates db against external blockchain and route required functions
   def evaluate(seed, count) do
     case Blockchain.get_current_height(seed) do
-      {:ok, height} when height > count  ->
+      {:ok, height} when height-2 > count  ->
         get_block_by_height( seed, count+1 )
-        |> add_block()
-      {:ok, height} when height == count  ->
+        |> add_block(seed)
+      {:ok, height} when height-2 == count  ->
         Process.sleep(15000)
-      {:ok, height} when height < count ->
-        Blocks.delete_higher_than(height)
+        start(seed)
+      {:ok, height} when height-2 < count ->
+        Blocks.delete_higher_than(height-2)
         Process.sleep(15000)
+        start(seed)
       { :error, :timeout} ->
         Process.sleep(5000)
         start(seed)
@@ -70,14 +70,24 @@ defmodule NEOScanSync.BlockSync do
   end
 
   #add block with transactions to the db
-  def add_block(block) do
-    %{"tx" => transactions, "index" => _n} = block
-    Map.put(block,"tx_count",Kernel.length(transactions))
+  def add_block(%{"tx" => transactions, "index" => n} = block, seed) do
+    Map.put(block,"tx_count",Enum.count(transactions))
     |> Map.delete("tx")
     |> Blocks.create_block()
     |> Transactions.create_transactions(transactions)
-    #IO.puts("Block #{n} stored")
+    |> check(seed,n)
   end
+
+  def check([_h | t], seed, n) do
+    cond do
+      {:ok, "Created"} == t or {:ok, "Deleted"} == t ->
+        IO.puts("Block #{n} stored")
+        start(seed)
+      true ->
+        Process.exit(self(), :error)
+    end
+  end
+
 
   #handles error when fetching highest block from db
   def get_block_by_height(seed, index) do

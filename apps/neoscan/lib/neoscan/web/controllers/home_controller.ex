@@ -13,11 +13,13 @@ defmodule Neoscan.Web.HomeController do
   def index(conn, _params) do
     block_query = from e in Block,
       order_by: [desc: e.index],
-      limit: 10
+      where: e.tx_count > 1,
+      limit: 50
 
     transaction_query = from e in Transaction,
       order_by: [desc: e.inserted_at],
-      limit: 10
+      where: e.type != "MinerTransaction",
+      limit: 50
 
     blocks = Repo.all(block_query)
     transactions = Repo.all(transaction_query)

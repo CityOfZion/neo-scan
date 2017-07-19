@@ -4,25 +4,25 @@ defmodule Neoscan.Transactions.Transaction do
 
 
   schema "transactions" do
-    field :attributes, {:array, :string}
+    field :attributes, {:array, :map}
     field :net_fee, :string
-    field :scripts, {:array, :string}
+    field :scripts, {:array, :map}
     field :size, :integer
     field :sys_fee, :string
     field :txid, :string
     field :type, :string
     field :version, :integer
-    field :vin, {:array, :string}
-    field :vout, {:array, :string}
+    field :vin, {:array, :map}
+    field :vout, {:array, :map}
 
     field :time, :integer
     field :block_hash, :string
     field :block_height, :integer
 
     field :nonce, :integer
-    field :claims, {:array, :string}
+    field :claims, {:array, :map}
     field :pubkey, :string
-    field :asset, {:array, :string}
+    field :asset, {:array, :map}
     field :description, :string
     field :contract, :string
 
