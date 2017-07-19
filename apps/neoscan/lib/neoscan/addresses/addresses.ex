@@ -115,8 +115,8 @@ defmodule Neoscan.Addresses do
 
   """
   def add_transaction(%{:tx_ids => list} = address, transaction_id) do
-    Map.put(address, :tx_ids, List.insert_at(list, 0, transaction_id))
-    |> Address.update_address(address)
+    Map.put_new(address, :tx_ids, List.insert_at(list, 0, transaction_id))
+    |> update_address(address)
   end
 
   @doc """
@@ -160,14 +160,19 @@ defmodule Neoscan.Addresses do
   def create_or_update(address, transaction_id, vout) do
     case check_if_exist(address) do
         true ->
-          Address.add_transaction(transaction_id)
-          |> Address.add_vout(vout)
+          add_transaction(address, transaction_id)
+          |> add_vout(vout)
         false ->
           %{"address" => address}
-          |> Address.create()
-          |> Address.add_transaction(transaction_id)
-          |> Address.add_vout(vout)
+          |> create_address()
+          |> add_transaction(transaction_id)
+          |> add_vout(vout)
     end
+  end
+
+  def add_vout(address, vout) do
+
+
   end
 
 

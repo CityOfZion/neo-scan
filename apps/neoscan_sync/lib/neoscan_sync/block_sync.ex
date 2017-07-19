@@ -31,6 +31,7 @@ defmodule NEOScanSync.BlockSync do
       true ->
         fetch_db(seed)
       false ->
+        IO.puts("Main process was killed")
         Process.exit(self(), :shutdown)
     end
   end
@@ -43,7 +44,8 @@ defmodule NEOScanSync.BlockSync do
         |> add_block(seed)
       { :ok, %Blocks.Block{:index => count}} ->
         evaluate(seed, count)
-      { :error, _reason} ->
+      { :error, reason} ->
+        IO.puts("Failed to get highest block from db, result =#{reason}")
         Process.exit(self(), :error)
     end
   end
@@ -64,7 +66,8 @@ defmodule NEOScanSync.BlockSync do
       { :error, :timeout} ->
         Process.sleep(5000)
         start(seed)
-      { :error, _reason} ->
+      { :error, reason} ->
+        IO.puts("Failed to get current height from chain, result =#{reason}")
         Process.exit(self(), :error)
     end
   end
@@ -78,18 +81,20 @@ defmodule NEOScanSync.BlockSync do
     |> check(seed,n)
   end
 
-  def check([_h | t], seed, n) do
+  def check(r, seed, n) do
     cond do
-      {:ok, "Created"} == t or {:ok, "Deleted"} == t ->
+      {:ok, "Created"} == r or {:ok, "Deleted"} == r ->
         IO.puts("Block #{n} stored")
         start(seed)
       true ->
+        IO.puts("Failed to create transactions")
+        IO.inspect(r)
         Process.exit(self(), :error)
     end
   end
 
 
-  #handles error when fetching highest block from db
+  #handles error when fetching highest block from chain
   def get_block_by_height(seed, index) do
     case Blockchain.get_block_by_height(seed, index) do
       { :ok , block } ->
@@ -97,7 +102,8 @@ defmodule NEOScanSync.BlockSync do
       { :error, :timeout} ->
         Process.sleep(5000)
         start(seed)
-      { :error, _reason} ->
+      { :error, reason} ->
+        IO.puts("Failed to get block from chain, result =#{reason}")
         Process.exit(self(), :error)
     end
   end

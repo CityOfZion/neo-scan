@@ -12,7 +12,6 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add :type, :string
       add :version, :integer
       add :vin, {:array, :map}
-      add :vout, {:array, :map}
 
       add :time, :integer
       add :block_hash, :string
@@ -21,7 +20,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add :nonce, :bigint
       add :claims, {:array, :map}
       add :pubkey, :string
-      add :asset, {:array, :map}
+      add :asset, :map
       add :description, :string
       add :contract, :string
 

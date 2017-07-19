@@ -7,6 +7,7 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Repo
 
   alias Neoscan.Transactions.Transaction
+  alias Neoscan.Transactions.Vout
 
   @doc """
   Returns the list of transactions.
@@ -68,13 +69,16 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_transaction(%{:time => time, :hash => hash, :index => height } = block, attrs \\ %{}) do
+  def create_transaction(%{:time => time, :hash => hash, :index => height } = block, %{"vout" => vouts} = attrs \\ %{}) do
     transaction = Map.put(attrs,"time", time)
     |> Map.put("block_hash", hash)
     |> Map.put("block_height", height)
+    |> Map.delete("vout")
     Transaction.changeset(block, transaction)
     |> Repo.insert!()
+    |> create_vouts(vouts)
   end
+
 
   @doc """
   Updates a transaction.
@@ -135,7 +139,46 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_transactions(block, [transaction | tail]), do: [create_transaction(block, transaction) | create_transactions(block, tail) ]
+  def create_transactions(block, [transaction | tail]) do
+    create_transaction(block, transaction)
+    create_transactions(block, tail)
+  end
   def create_transactions(_block, []), do: {:ok , "Created"}
 
+
+
+  @doc """
+  Creates a vout.
+
+  ## Examples
+
+      iex> create_transaction(%{field: value})
+      {:ok, %Transaction{}}
+
+      iex> create_transaction(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_vout(transaction, attrs \\ %{}) do
+    Vout.changeset(transaction, attrs)
+    |> Repo.insert!()
+  end
+
+  @doc """
+  Creates many vouts.
+
+  ## Examples
+
+      iex> create_vouts([%{field: value}, ...])
+      {:ok, "Created"}
+
+      iex> create_vouts([%{field: value}, ...])
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_vouts(transaction, [vout | tail]) do
+    create_vout(transaction, vout)
+    create_vouts(transaction, tail)
+  end
+  def create_vouts(_block, []), do: {:ok , "Created"}
 end

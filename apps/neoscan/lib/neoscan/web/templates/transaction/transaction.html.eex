@@ -66,20 +66,20 @@
             </li>
           <%end%>
         </ul>
-        <%= if @transaction.vout != [] do %>
+        <%= if @transaction.vouts != [] do %>
         <ul>
             <p>
               Outputs
             </p>
-            <%= for output <- @transaction.vout do %>
+            <%= for output <- @transaction.vouts do %>
               <li>
-                Address <%=output.adress%>
+                Address <%=output.address%>
               </li>
               <li>
                 Asset <%=output.asset%>
               </li>
               <li>
-                Amount <%=output.value%>
+                Amount <%=Neoscan.Web.TransactionController.round_or_not(output.value)%>
               </li>
             <%end%>
         </ul>
