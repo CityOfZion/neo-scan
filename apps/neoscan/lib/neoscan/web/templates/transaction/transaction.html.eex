@@ -32,11 +32,6 @@
           <li>
             Net Fees <%=@transaction.net_fee%>
           </li>
-          <%= if @transaction.asset != nil do %>
-            <li>
-              Asset <%=@transaction.asset.name%>
-            </li>
-          <%end%>
           <li>
             Data Size <%=@transaction.size%> bytes
           </li>
@@ -50,7 +45,7 @@
               Public Key <%=@transaction.pubkey%>
             </li>
           <%end%>
-          <%= if @transaction.claims != [] do %>
+          <%= if @transaction.claims != nil do %>
           <ul>
               <p>
                 Claims
@@ -79,17 +74,14 @@
         <%= if @transaction.vin != [] do %>
         <ul>
             <p>
-              Inputs
+              Sender
             </p>
             <%= for input <- @transaction.vin do %>
               <li>
-                Address <%=input.address%>
+                Address <%= Neoscan.Web.TransactionController.get_sender(input["vout"],@transaction.vouts)%>
               </li>
               <li>
-                Asset <%=input.asset%>
-              </li>
-              <li>
-                Amount <%=Neoscan.Web.TransactionController.round_or_not(input.value)%>
+                Amount <%= Neoscan.Web.TransactionController.get_amount(@transaction.vouts)%>
               </li>
             <%end%>
         </ul>
@@ -101,7 +93,7 @@
             </p>
             <%= for output <- @transaction.vouts do %>
               <li>
-                Address <%=output.address%>
+                Address <%=output.address_hash%>
               </li>
               <li>
                 Asset <%=output.asset%>
@@ -112,6 +104,22 @@
             <%end%>
         </ul>
         <%end%>
+        <ul>
+            <p>
+              Asset Issued
+            </p>
+            <%= if @transaction.asset != nil do %>
+              <li>
+                 Name <%=@transaction.asset["name"]%>
+              </li>
+              <li>
+                 Admin <%=@transaction.asset["admin"]%>
+              </li>
+              <li>
+                Amount <%=@transaction.asset["amount"]%>
+              </li>
+            <%end%>
+        </ul>
       </div>
     </div>
   </div>

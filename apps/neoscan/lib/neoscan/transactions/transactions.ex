@@ -53,11 +53,17 @@ defmodule Neoscan.Transactions do
   def get_transaction_by_hash(hash) do
    query = from e in Transaction,
      where: e.txid == ^hash,
-     join: v in assoc(e, :vouts),
-     join: a in assoc(v, :address),
-     preload: [vouts: {v, address: a}],
-     select: e
+     left_join: v in assoc(e, :vouts),
+     preload: [vouts: v]
    Repo.one(query)
+   |> clean_vouts
+  end
+  def clean_vouts(transaction) do
+    new_list = Enum.map(transaction.vouts, fn x -> apply(x) end)
+    Map.put(transaction, :vouts, new_list)
+  end
+  def apply(%{:asset => asset, :address_hash => address, :value => value, :n => n }) do
+    %{:asset => asset, :address_hash => address, :value => value, :n => n}
   end
 
   @doc """
