@@ -53,6 +53,7 @@ defmodule Neoscan.Transactions do
   def get_transaction_by_hash(hash) do
    query = from e in Transaction,
      where: e.txid == ^hash,
+     preload: [{:vouts, [:address]}],
      select: e
    Repo.one(query)
   end

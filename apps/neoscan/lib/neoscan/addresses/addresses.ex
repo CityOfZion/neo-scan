@@ -170,6 +170,32 @@ defmodule Neoscan.Addresses do
     end
   end
 
+  @doc """
+  Creates or add an address with a certain address string
+
+  ## Examples
+
+      iex> create_or_get(existing_address})
+      %Address{}
+
+      iex> create_or_get(new_address})
+      %Address{}
+
+  """
+  def create_or_get(address) do
+    query = from e in Address,
+    where: e.address == ^address,
+    select: e
+
+    result = Repo.one(query)
+    case  result do
+      nil ->
+        create_address(%{"address" => address})
+      %Address{} ->
+        result
+    end
+  end
+
   def add_vout(address, vout) do
 
 
