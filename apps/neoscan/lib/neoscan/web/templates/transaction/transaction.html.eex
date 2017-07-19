@@ -50,10 +50,20 @@
               Public Key <%=@transaction.pubkey%>
             </li>
           <%end%>
-          <%= if @transaction.claims != nil do %>
-            <li>
-              Claims <%=@transaction.claims%>
-            </li>
+          <%= if @transaction.claims != [] do %>
+          <ul>
+              <p>
+                Claims
+              </p>
+              <%= for claim <- @transaction.claims do %>
+                <li>
+                  Tx id <%=claim["txid"]%>
+                </li>
+                <li>
+                  Output <%=claim["vout"]%>
+                </li>
+              <%end%>
+          </ul>
           <%end%>
           <%= if @transaction.description != nil do %>
             <li>
@@ -66,6 +76,24 @@
             </li>
           <%end%>
         </ul>
+        <%= if @transaction.vin != [] do %>
+        <ul>
+            <p>
+              Inputs
+            </p>
+            <%= for input <- @transaction.vin do %>
+              <li>
+                Address <%=input.address%>
+              </li>
+              <li>
+                Asset <%=input.asset%>
+              </li>
+              <li>
+                Amount <%=Neoscan.Web.TransactionController.round_or_not(input.value)%>
+              </li>
+            <%end%>
+        </ul>
+        <%end%>
         <%= if @transaction.vouts != [] do %>
         <ul>
             <p>
