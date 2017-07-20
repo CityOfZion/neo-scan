@@ -40,7 +40,7 @@ defmodule NEOScanSync.BlockSync do
   def fetch_db(seed) do
     case Blocks.get_highest_block_in_db() do
       nil ->
-        get_block_by_height(seed, 1)
+        get_block_by_height(seed, 0)
         |> add_block(seed)
       { :ok, %Blocks.Block{:index => count}} ->
         evaluate(seed, count)
@@ -74,7 +74,7 @@ defmodule NEOScanSync.BlockSync do
 
   #add block with transactions to the db
   def add_block(%{"tx" => transactions, "index" => n} = block, seed) do
-    Map.put(block,"tx_count",Enum.count(transactions))
+    Map.put(block,"tx_count",Kernel.length(transactions))
     |> Map.delete("tx")
     |> Blocks.create_block()
     |> Transactions.create_transactions(transactions)

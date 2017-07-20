@@ -20,7 +20,7 @@ defmodule Neoscan.Transactions.Vout do
 
   @doc false
   def changeset(%{:id => transaction_id, :txid => txid}, %{"address" => address_hash, "value" => value } = attrs \\ %{}) do
-    %{:id => address_id} = Addresses.create_or_get_and_insert_vout(attrs)
+    %{:id => address_id} = Addresses.create_or_get_and_insert_vout(attrs, txid)
 
     {new_value, _} = Float.parse(value)
 

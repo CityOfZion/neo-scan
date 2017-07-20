@@ -157,7 +157,7 @@ defmodule Neoscan.Addresses do
       %Address{}
 
   """
-  def create_or_get_and_insert_vout(%{"address" => address} = vout) do
+  def create_or_get_and_insert_vout(%{"address" => address} = vout, txid) do
     query = from e in Address,
     where: e.address == ^address,
     select: e
@@ -167,28 +167,30 @@ defmodule Neoscan.Addresses do
       nil ->
         create_address(%{"address" => address})
         |> add_vout(vout)
+        |> add_tx_id(txid)
+        |> IO.inspect()
         |> change_address
         |> Repo.update!()
       %Address{} ->
         result
         |> add_vout(vout)
+        |> add_tx_id(txid)
         |> change_address
         |> Repo.update!()
     end
   end
 
-  def create_or_get_and_insert_vin(%{"address" => address} = vin) do
+  def get_and_insert_vin(%{:address_hash => address} = vin) do
     query = from e in Address,
     where: e.address == ^address,
+    where: e.balance != nil,
     select: e
 
     result = Repo.one(query)
     case  result do
       nil ->
-        create_address(%{"address" => address})
-        |> add_vin(vin)
-        |> change_address
-        |> Repo.update!()
+        IO.puts("Error in vin/vout")
+        {:error , "Cant spend if dont have!"}
       %Address{} ->
         result
         |> add_vin(vin)
@@ -214,18 +216,28 @@ defmodule Neoscan.Addresses do
   end
 
   def add_vin(%{:balance => balance} = address, vin) do
+      case Enum.find_index(balance, fn %{:asset => asset} -> asset == vin.asset end) do
+        nil ->
+          new_balance = Enum.concat(balance, [%{:asset => vin.asset, :amount => vin.value}])
+          Map.put(address, :balance, new_balance)
+        index ->
+          new_balance = List.update_at(balance, index, fn %{:asset => asset, :amount => amount} -> %{:asset => asset, :amount => amount-vin.value} end)
+          Map.put(address, :balance, new_balance)
+      end
+  end
+
+  def add_tx_id(address, txid) do
     cond do
-      balance == nil ->
-        IO.puts("Error in vin/vout")
-        {:error , "Cant spend if dont have!"}
-      balance != nil ->
-        case Enum.find_index(balance, fn %{:asset => asset} -> asset == vin["asset"] end) do
-          nil ->
-            new_balance = Enum.concat(balance, [%{:asset => vin["asset"], :amount => vin["value"]}])
-            Map.put(address, :balance, new_balance)
-          index ->
-            new_balance = List.update_at(balance, index, fn %{:asset => asset, :amount => amount} -> %{:asset => asset, :amount => amount-vin["value"]} end)
-            Map.put(address, :balance, new_balance)
+      address.tx_ids == nil ->
+        Map.put(address, :tx_ids, [txid])
+
+      address.tx_ids != nil ->
+        case Enum.member?(address.tx_ids, txid) do
+          true ->
+            address
+          false ->
+            new = List.wrap(txid)
+            Map.put(address, :tx_ids, Enum.concat(address.tx_ids, new))
         end
     end
   end

@@ -5,7 +5,13 @@ defmodule Neoscan.Transactions.Asset do
 
 
   schema "assets" do
-    field :txid, :string
+    field :txid, :string  #assets are referenced by their register transaction txid
+    field :admin, :string
+    field :amount, :float
+    field :name, {:array, :map}
+    field :owner, :string
+    field :precision, :integer
+    field :type, :string
 
 
     timestamps()
@@ -14,9 +20,8 @@ defmodule Neoscan.Transactions.Asset do
   @doc false
   def changeset(transaction_id,  attrs \\ %{}) do
     new_attrs = Map.put(attrs, "txid", transaction_id)
-    IO.inspect(new_attrs)
     %Asset{}
-    |> cast(new_attrs, [:txid])
-    |> validate_required([:txid])
+    |> cast(new_attrs, [:txid, :admin, :amount, :name, :owner, :precision, :type])
+    |> validate_required([:txid,:admin, :amount, :name, :owner, :precision, :type])
   end
 end

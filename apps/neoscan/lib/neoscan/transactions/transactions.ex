@@ -77,25 +77,31 @@ defmodule Neoscan.Transactions do
     new = cond do
        Kernel.length(vin) != 0 ->
 
-         new_vin = Enum.map(vin, fn %{"txid" => txid, "vout" => vout} ->
+         new_vin = Enum.map(vin, fn %{"txid" => txid, "vout" => vout_index} ->
            query = from e in Vout,
            where: e.txid == ^txid,
-           where: e.n == ^vout
+           where: e.n == ^vout_index
 
            Repo.one!(query)
          end)
 
-         Enum.map(new_vin, fn vin -> Addresses.create_or_get_and_insert_vin(vin) end)
+         Enum.map(new_vin, fn vin -> Addresses.get_and_insert_vin(vin) end)
          Map.put(attrs, "vin", new_vin)
        true ->
          attrs
     end
 
     #create asset if issue Transaction
-    case attrs["asset"] do
-      [%{} = map] -> create_asset(attrs["txid"], map)
-      nil -> nil
+    cond do
+      attrs["asset"] != nil ->
+        %{"amount" => amount} = attrs["asset"]
+        {float, _} = Float.parse(amount)
+        new_asset = Map.put(attrs["asset"], "amount", float)
+        create_asset(attrs["txid"], new_asset)
+      true ->
+        nil
     end
+
 
 
     #prepare and create transaction
