@@ -8,6 +8,8 @@ defmodule Neoscan.Transactions do
 
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Transactions.Vout
+  alias Neoscan.Transactions.Asset
+  alias Neoscan.Addresses
 
   @doc """
   Returns the list of transactions.
@@ -52,18 +54,9 @@ defmodule Neoscan.Transactions do
   """
   def get_transaction_by_hash(hash) do
    query = from e in Transaction,
-     where: e.txid == ^hash,
-     left_join: v in assoc(e, :vouts),
-     preload: [vouts: v]
+     where: e.txid == ^hash
+
    Repo.one(query)
-   |> clean_vouts
-  end
-  def clean_vouts(transaction) do
-    new_list = Enum.map(transaction.vouts, fn x -> apply(x) end)
-    Map.put(transaction, :vouts, new_list)
-  end
-  def apply(%{:asset => asset, :address_hash => address, :value => value, :n => n }) do
-    %{:asset => asset, :address_hash => address, :value => value, :n => n}
   end
 
   @doc """
@@ -78,11 +71,39 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_transaction(%{:time => time, :hash => hash, :index => height } = block, %{"vout" => vouts} = attrs \\ %{}) do
-    transaction = Map.put(attrs,"time", time)
+  def create_transaction(%{:time => time, :hash => hash, :index => height } = block, %{"vout" => vouts, "vin" => vin} = attrs) do
+
+    #get owner address and total amount sent
+    new = cond do
+       Kernel.length(vin) != 0 ->
+
+         new_vin = Enum.map(vin, fn %{"txid" => txid, "vout" => vout} ->
+           query = from e in Vout,
+           where: e.txid == ^txid,
+           where: e.n == ^vout
+
+           Repo.one!(query)
+         end)
+
+         Enum.map(new_vin, fn vin -> Addresses.create_or_get_and_insert_vin(vin) end)
+         Map.put(attrs, "vin", new_vin)
+       true ->
+         attrs
+    end
+
+    #create asset if issue Transaction
+    case attrs["asset"] do
+      [%{} = map] -> create_asset(attrs["txid"], map)
+      nil -> nil
+    end
+
+
+    #prepare and create transaction
+    transaction = Map.put(new,"time", time)
     |> Map.put("block_hash", hash)
     |> Map.put("block_height", height)
     |> Map.delete("vout")
+
     Transaction.changeset(block, transaction)
     |> Repo.insert!()
     |> create_vouts(vouts)
@@ -190,4 +211,24 @@ defmodule Neoscan.Transactions do
     create_vouts(transaction, tail)
   end
   def create_vouts(_block, []), do: {:ok , "Created"}
+
+
+  @doc """
+  Creates an asset.
+
+  ## Examples
+
+      iex> create_asset(%{field: value})
+      {:ok, %Asset{}}
+
+      iex> create_asset(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_asset(transaction_id, attrs) do
+    Asset.changeset(transaction_id, attrs)
+    |> Repo.insert!()
+  end
+
+
 end

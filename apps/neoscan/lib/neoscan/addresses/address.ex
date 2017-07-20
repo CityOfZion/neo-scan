@@ -7,7 +7,7 @@ defmodule Neoscan.Addresses.Address do
   schema "addresses" do
     field :address, :string
     field :tx_ids, {:array, :strings}
-    field :balance, :map
+    field :balance, {:array, :map}
     has_many :vouts, Neoscan.Addresses.Address
 
     timestamps()
