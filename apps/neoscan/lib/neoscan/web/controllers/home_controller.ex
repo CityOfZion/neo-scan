@@ -8,6 +8,7 @@ defmodule Neoscan.Web.HomeController do
   alias Neoscan.Blocks
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Transactions
+  alias Neoscan.Addresses
 
   #load last blocks and transactions from db
   def index(conn, _params) do
@@ -32,7 +33,7 @@ defmodule Neoscan.Web.HomeController do
       String.to_integer(value)
     rescue
       ArgumentError ->
-        Blocks.get_block_by_hash(value) || Transactions.get_transaction_by_hash(value)
+        Blocks.get_block_by_hash(value) || Transactions.get_transaction_by_hash(value) || Addresses.get_address_by_hash(value)
     else
       value ->
         Blocks.get_block_by_height(value)
@@ -54,6 +55,9 @@ defmodule Neoscan.Web.HomeController do
 
       Map.has_key?(result, :txid) ->
         redirect(conn, to: transaction_path(conn, :show_transaction, result.txid))
+
+      Map.has_key?(result, :address) ->
+        redirect(conn, to: address_path(conn, :show_address, result.address))
 
     end
   end

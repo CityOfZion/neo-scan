@@ -39,6 +39,55 @@ defmodule Neoscan.Addresses do
   def get_address!(id), do: Repo.get!(Address, id)
 
   @doc """
+  Gets a single address by its hash and send it as a map
+
+  ## Examples
+
+      iex> get_address_by_hash_for_view(123)
+      %{}
+
+      iex> get_address_by_hash_for_view(456)
+      nil
+
+  """
+  def get_address_by_hash_for_view(hash) do
+   vout_query = from v in Vout,
+     select: %{
+       asset: v.asset,
+       address_hash: v.address_hash,
+       value: v.value
+     }
+   query = from e in Address,
+     where: e.address == ^hash,
+     preload: [vouts: ^vout_query],
+     select: e
+
+   Repo.one(query)
+  end
+
+
+  @doc """
+  Gets a single address by its hash and send it as a map
+
+  ## Examples
+
+      iex> get_address_by_hash(123)
+      %{}
+
+      iex> get_address_by_hash(456)
+      nil
+
+  """
+  def get_address_by_hash(hash) do
+
+   query = from e in Address,
+     where: e.address == ^hash,
+     select: e
+
+   Repo.one(query)
+  end
+
+  @doc """
   Creates a address.
 
   ## Examples

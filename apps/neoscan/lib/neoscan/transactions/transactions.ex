@@ -265,4 +265,52 @@ defmodule Neoscan.Transactions do
   end
 
 
+  @doc """
+  Gets asset  by its hash value
+
+  ## Examples
+
+      iex> get_asset_by_hash(hash)
+      "NEO"
+
+      iex> get_asset_by_hash(hash)
+      "not found"
+
+  """
+  def get_asset_by_hash(hash) do
+   query = from e in Asset,
+     where: e.txid == ^hash
+   Repo.one(query)
+  end
+
+  @doc """
+  Gets asset name by its hash value
+
+  ## Examples
+
+      iex> get_asset_name_by_hash(hash)
+      "NEO"
+
+      iex> get_asset_name_by_hash(hash)
+      "not found"
+
+  """
+  def get_asset_name_by_hash(hash) do
+   query = from e in Asset,
+     where: e.txid == ^hash,
+     select: e.name
+   Repo.one(query)
+   |>filter_name
+  end
+
+  def filter_name(asset) do
+    case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
+      %{"name" => name} -> name
+      nil ->
+        %{"name" => name} = Enum.at(asset, 0)
+        name
+    end
+  end
+
+
 end

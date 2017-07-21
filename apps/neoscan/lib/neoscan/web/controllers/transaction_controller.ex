@@ -17,13 +17,4 @@ defmodule Neoscan.Web.TransactionController do
     end
   end
 
-  def get_sender(vout, vouts) do
-    %{:address_hash => sender} = Enum.at(vouts,vout)
-    sender
-  end
-
-  def get_amount(vouts) do
-    Enum.reduce(vouts, fn (%{:value => value}, acc) -> value + acc end)
-  end
-
 end

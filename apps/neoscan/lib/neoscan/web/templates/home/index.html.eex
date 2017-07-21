@@ -35,7 +35,7 @@
           <div class="field">
             <p class="control">
               <%= form_for @conn, home_path(@conn, :index), [as: :search], fn f -> %>
-                <%= text_input f, :for,placeholder: "Block Height, Hash or Transaction id",class: "input" %>
+                <%= text_input f, :for,placeholder: "Block Height, Hash, Address or Transaction id",class: "input" %>
                 <%= error_tag f, :for %>
                 <%= submit "Search", class: "button btn-dark" %>
               <% end %>

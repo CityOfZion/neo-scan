@@ -16,6 +16,7 @@ defmodule Neoscan.Web.Router do
   scope "/", Neoscan.Web do
     pipe_through :browser # Use the default browser stack
 
+    get "/address/:address", AddressController, :show_address
     get "/transaction/:txid", TransactionController, :show_transaction
     get "/block/:hash", BlockController, :show_block
 

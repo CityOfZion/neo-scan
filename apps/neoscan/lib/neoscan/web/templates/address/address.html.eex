@@ -1,0 +1,40 @@
+<section class="section">
+  <div class="container">
+    <div class="tile is-12 is-ancestor box is-vertical">
+      <div class="tile is-parent box content">
+        <p class="title">Address <%=@address.address%></p>
+      </div>
+      <div class="tile is-parent box content">
+        <%= if @address.tx_ids != nil do %>
+        <ul>
+            <p>
+              Transactions
+            </p>
+            <%= for tx <- @address.tx_ids do %>
+              <li>
+                <a href="<%=transaction_path(@conn, :show_transaction, tx )%>">
+                  <%=tx%>
+                </a>
+              </li>
+            <%end%>
+        </ul>
+        <%end%>
+
+        <%= if @address.balance != nil do %>
+        <ul>
+            <p>
+              Balance
+            </p>
+            <%= for asset <- @address.balance do %>
+              <li>
+                <%=Neoscan.Transactions.get_asset_name_by_hash(asset["asset"])%>  <%=Neoscan.Web.AddressController.round_or_not(asset["amount"])%>
+              </li>
+            <%end%>
+        </ul>
+        <%end%>
+
+
+      </div>
+    </div>
+  </div>
+</section>
