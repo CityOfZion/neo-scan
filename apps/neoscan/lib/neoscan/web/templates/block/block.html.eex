@@ -38,12 +38,14 @@
                <%=@block.nextblockhash%>
             </a>
           </li>
-          <li>
-            Previous Block Hash
-            <a href="<%=block_path(@conn, :show_block, @block.previousblockhash )%>">
-               <%=@block.previousblockhash%>
-            </a>
-          </li>
+          <%= if @block.index != 0 do %>
+            <li>
+              Previous Block Hash
+              <a href="<%=block_path(@conn, :show_block, @block.previousblockhash )%>">
+                 <%=@block.previousblockhash%>
+              </a>
+            </li>
+          <%end%>
           <li>
             Data Size <%=@block.size%> bytes
           </li>
