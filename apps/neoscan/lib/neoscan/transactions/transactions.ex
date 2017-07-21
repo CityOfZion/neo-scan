@@ -60,6 +60,33 @@ defmodule Neoscan.Transactions do
   end
 
   @doc """
+  Gets a single transaction by its hash and send it as a map
+
+  ## Examples
+
+      iex> get_block_by_hash_for_view(123)
+      %{}
+
+      iex> get_block_by_hash_for_view(456)
+      nil
+
+  """
+  def get_transaction_by_hash_for_view(hash) do
+   vout_query = from v in Vout,
+     select: %{
+       asset: v.asset,
+       address_hash: v.address_hash,
+       value: v.value
+     }
+   query = from e in Transaction,
+     where: e.txid == ^hash,
+     preload: [vouts: ^vout_query],
+     select: e
+
+   Repo.one(query)
+  end
+
+  @doc """
   Creates a transaction.
 
   ## Examples
@@ -80,12 +107,13 @@ defmodule Neoscan.Transactions do
          new_vin = Enum.map(vin, fn %{"txid" => txid, "vout" => vout_index} ->
            query = from e in Vout,
            where: e.txid == ^txid,
-           where: e.n == ^vout_index
+           where: e.n == ^vout_index,
+           select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
            Repo.one!(query)
          end)
 
-         Enum.map(new_vin, fn vin -> Addresses.get_and_insert_vin(vin) end)
+         Enum.map(new_vin, fn vin -> Addresses.insert_vin_in_addres(vin) end)
          Map.put(attrs, "vin", new_vin)
        true ->
          attrs

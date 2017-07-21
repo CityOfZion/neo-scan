@@ -13,8 +13,8 @@ defmodule Neoscan.HttpCalls do
     %{
       2 => "http://18.220.41.87:10332",
       3 => "http://api.otcgo.cn:10332",
-      1 => "https://localhost:20332",
-      0 => "http://seed8.antshares.org:10332",
+      0 => "https://localhost:20332",
+      1 => "http://seed8.antshares.org:10332",
       4 => "http://rpc.neeeo.org:10332",
     }
     # %{

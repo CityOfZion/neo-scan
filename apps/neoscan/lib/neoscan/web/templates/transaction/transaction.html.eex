@@ -78,10 +78,10 @@
             </p>
             <%= for input <- @transaction.vin do %>
               <li>
-                Address <%= Neoscan.Web.TransactionController.get_sender(input["vout"],@transaction.vouts)%>
+                Address <%= input["address_hash"]%>
               </li>
               <li>
-                Amount <%= Neoscan.Web.TransactionController.get_amount(@transaction.vouts)%>
+                Amount <%= Neoscan.Web.TransactionController.round_or_not(input["value"])%>
               </li>
             <%end%>
         </ul>
@@ -104,6 +104,7 @@
             <%end%>
         </ul>
         <%end%>
+        <%= if @transaction.asset != nil do %>
         <ul>
             <p>
               Asset Issued
@@ -120,6 +121,7 @@
               </li>
             <%end%>
         </ul>
+        <%end%>
       </div>
     </div>
   </div>

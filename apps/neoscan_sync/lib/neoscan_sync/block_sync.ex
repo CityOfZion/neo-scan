@@ -88,6 +88,8 @@ defmodule NEOScanSync.BlockSync do
         start(seed)
       true ->
         IO.puts("Failed to create transactions")
+        Blocks.get_block_by_height(n)
+        |> Blocks.delete_block()
         IO.inspect(r)
         Process.exit(self(), :error)
     end

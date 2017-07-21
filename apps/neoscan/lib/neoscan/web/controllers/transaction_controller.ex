@@ -4,8 +4,7 @@ defmodule Neoscan.Web.TransactionController do
   alias Neoscan.Transactions
 
   def show_transaction(conn, %{"txid" => transaction_hash}) do
-    transaction = Transactions.get_transaction_by_hash(transaction_hash)
-    IO.inspect(transaction)
+    transaction = Transactions.get_transaction_by_hash_for_view(transaction_hash)
     render(conn, "transaction.html", transaction: transaction)
   end
 

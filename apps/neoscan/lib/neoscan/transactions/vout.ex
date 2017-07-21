@@ -4,7 +4,6 @@ defmodule Neoscan.Transactions.Vout do
   alias Neoscan.Addresses
   alias Neoscan.Transactions.Vout
 
-
   schema "vouts" do
     field :asset, :string
     field :address_hash, :string
@@ -37,4 +36,6 @@ defmodule Neoscan.Transactions.Vout do
     |> assoc_constraint(:address, required: true)
     |> validate_required([:asset, :address_hash, :n, :value, :txid])
   end
+
+
 end

@@ -24,7 +24,7 @@ defmodule Neoscan.Transactions.Transaction do
     field :pubkey, :string
     field :asset, :map
     field :description, :string
-    field :contract, :string
+    field :contract, :map
 
     has_many :vouts, Neoscan.Transactions.Vout
     belongs_to :block, Neoscan.Blocks.Block

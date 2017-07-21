@@ -13,7 +13,6 @@ defmodule Neoscan.Web.HomeController do
   def index(conn, _params) do
     block_query = from e in Block,
       order_by: [desc: e.index],
-      where: e.tx_count > 1,
       limit: 50
 
     transaction_query = from e in Transaction,

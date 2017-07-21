@@ -7,6 +7,7 @@ defmodule Neoscan.Addresses do
   alias Neoscan.Repo
 
   alias Neoscan.Addresses.Address
+  alias Neoscan.Transactions.Vout
 
   @doc """
   Returns the list of addresses.
@@ -103,23 +104,6 @@ defmodule Neoscan.Addresses do
   end
 
   @doc """
-  Add transaction to address
-
-  ## Examples
-
-      iex> add_transaction(address, new_value})
-      {:ok, %Address{}}
-
-      iex> add_transaction(address, bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def add_transaction(%{:tx_ids => list} = address, transaction_id) do
-    Map.put_new(address, :tx_ids, List.insert_at(list, 0, transaction_id))
-    |> update_address(address)
-  end
-
-  @doc """
   Check if address exist in database
 
   ## Examples
@@ -163,65 +147,67 @@ defmodule Neoscan.Addresses do
     select: e
 
     result = Repo.one(query)
-    case  result do
-      nil ->
-        create_address(%{"address" => address})
+    cond do
+      is_nil(result) ->
+
+        %{:address => address, :balance => nil , :tx_ids => nil}
         |> add_vout(vout)
         |> add_tx_id(txid)
-        |> IO.inspect()
-        |> change_address
-        |> Repo.update!()
-      %Address{} ->
-        result
+        |>create_address()
+
+       true ->
+        attrs = %{:balance => result.balance , :tx_ids => result.tx_ids}
         |> add_vout(vout)
         |> add_tx_id(txid)
-        |> change_address
-        |> Repo.update!()
+
+        update_address(result, attrs)
     end
   end
 
-  def get_and_insert_vin(%{:address_hash => address} = vin) do
+  def insert_vin_in_addres(%{:address_hash => address} = vin) do
     query = from e in Address,
     where: e.address == ^address,
-    where: e.balance != nil,
     select: e
 
     result = Repo.one(query)
-    case  result do
-      nil ->
+    cond do
+      result == nil ->
         IO.puts("Error in vin/vout")
         {:error , "Cant spend if dont have!"}
-      %Address{} ->
-        result
+
+        vin
+      true ->
+        attrs = %{:balance => result.balance}
         |> add_vin(vin)
-        |> change_address
-        |> Repo.update!()
+
+        update_address(result, attrs)
     end
   end
 
-  def add_vout(%{:balance => balance} = address, vout) do
+  def add_vout(%{:balance => balance} = address, %{"value" => value} = vout) do
+    {float , _ } = Float.parse(value)
     cond do
       balance == nil ->
-        Map.put(address, :balance, [%{:asset => vout["asset"], :amount => vout["value"]}])
+        Map.put(address, :balance, [%{:asset => vout["asset"], :amount => float}])
       balance != nil ->
-        case Enum.find_index(balance, fn %{:asset => asset} -> asset == vout["asset"] end) do
+        case Enum.find_index(balance, fn %{"asset" => asset} -> asset == vout["asset"] end) do
           nil ->
-            new_balance = Enum.concat(balance, [%{:asset => vout["asset"], :amount => vout["value"]}])
+            new_balance = Enum.concat(balance, [%{"asset" => vout["asset"], "amount" => float}])
             Map.put(address, :balance, new_balance)
           index ->
-            new_balance = List.update_at(balance, index, fn %{:asset => asset, :amount => amount} -> %{:asset => asset, :amount => amount+vout["value"]} end)
+            new_balance = List.update_at(balance, index, fn %{"asset" => asset, "amount" => amount} -> %{"asset" => asset, "amount" => amount+float} end)
             Map.put(address, :balance, new_balance)
         end
     end
   end
 
   def add_vin(%{:balance => balance} = address, vin) do
-      case Enum.find_index(balance, fn %{:asset => asset} -> asset == vin.asset end) do
+      case Enum.find_index(balance, fn %{"asset" => asset} -> asset == vin.asset end) do
         nil ->
-          new_balance = Enum.concat(balance, [%{:asset => vin.asset, :amount => vin.value}])
+          new_balance = Enum.concat(balance, [%{"asset" => vin.asset, "amount" => vin.value}])
           Map.put(address, :balance, new_balance)
         index ->
-          new_balance = List.update_at(balance, index, fn %{:asset => asset, :amount => amount} -> %{:asset => asset, :amount => amount-vin.value} end)
+          new_balance = List.update_at(balance, index, fn %{"asset" => asset, "amount" => amount} -> %{"asset" => asset, "amount" => amount-vin.value} end)
           Map.put(address, :balance, new_balance)
       end
   end

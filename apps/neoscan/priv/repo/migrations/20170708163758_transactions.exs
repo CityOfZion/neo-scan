@@ -22,7 +22,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add :pubkey, :string
       add :asset, :map
       add :description, :string
-      add :contract, :string
+      add :contract, :map
 
       add :block_id, references(:blocks, on_delete: :delete_all)
 
