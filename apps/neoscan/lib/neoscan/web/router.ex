@@ -26,6 +26,13 @@ defmodule Neoscan.Web.Router do
     post "/", HomeController, :search
   end
 
+  scope "/api/V1", Neoscan.Web do
+    pipe_through :browser # Use the default browser stack
+
+
+    get "/assets", ApiController, :show_json
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", Neoscan.Web do
   #   pipe_through :api

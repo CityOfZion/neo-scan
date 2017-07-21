@@ -18,7 +18,7 @@ defmodule Neoscan.Web.HomeController do
 
     transaction_query = from e in Transaction,
       order_by: [desc: e.inserted_at],
-      where: e.type != "MinerTransaction",
+      #where: e.type == "EnrollmentTransaction",
       limit: 50
 
     blocks = Repo.all(block_query)
@@ -47,7 +47,7 @@ defmodule Neoscan.Web.HomeController do
     cond  do
       nil == result ->
         conn
-        |> put_flash(:info, "Block or Transaction not Found in DB!")
+        |> put_flash(:info, "Not Found in DB!")
         |> redirect(to: home_path(conn, :index))
 
       Map.has_key?(result, :hash) ->

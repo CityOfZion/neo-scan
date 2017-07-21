@@ -101,7 +101,7 @@ defmodule Neoscan.Transactions do
   def create_transaction(%{:time => time, :hash => hash, :index => height } = block, %{"vout" => vouts, "vin" => vin} = attrs) do
 
     #get owner address and total amount sent
-    new = cond do
+    new_attrs = cond do
        Kernel.length(vin) != 0 ->
 
          new_vin = Enum.map(vin, fn %{"txid" => txid, "vout" => vout_index} ->
@@ -119,6 +119,24 @@ defmodule Neoscan.Transactions do
          attrs
     end
 
+    #get claims
+    new_attrs1 = cond do
+       attrs["claims"] != nil ->
+
+         new_claim = Enum.map(attrs["claims"], fn %{"txid" => txid, "vout" => vout_index} ->
+           query = from e in Vout,
+           where: e.txid == ^txid,
+           where: e.n == ^vout_index,
+           select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+
+           Repo.one!(query)
+         end)
+
+         Map.put(new_attrs, "claims", new_claim)
+       true ->
+         new_attrs
+    end
+
     #create asset if issue Transaction
     cond do
       attrs["asset"] != nil ->
@@ -133,7 +151,7 @@ defmodule Neoscan.Transactions do
 
 
     #prepare and create transaction
-    transaction = Map.put(new,"time", time)
+    transaction = Map.put(new_attrs1,"time", time)
     |> Map.put("block_hash", hash)
     |> Map.put("block_height", height)
     |> Map.delete("vout")

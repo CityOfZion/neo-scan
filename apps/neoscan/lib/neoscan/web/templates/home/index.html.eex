@@ -91,7 +91,7 @@
                   <div class="media-content">
                     <div class="content">
                       <p>
-                        <strong><%=transaction.txid%></strong>
+                        <strong><%=transaction.type%></strong>
                         <small>Date
                         <%=
                           {:ok, date_time} =  DateTime.from_unix(transaction.time, :second)
