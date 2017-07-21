@@ -11,9 +11,9 @@
               <%=Neoscan.Transactions.get_asset_name_by_hash(asset.hash)%>  <%=Neoscan.Web.AssetsController.round_or_not(asset.amount)%>
               <br />
               Admin
-              <a href="<%=address_path(@conn, :show_address, asset.admin )%>">
+              <!-- <a href="<%=address_path(@conn, :show_address, asset.admin )%>">
                 <%=asset.admin%>
-              </a>
+              </a> -->
             </li>
           <%end%>
         </ul>
