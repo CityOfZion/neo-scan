@@ -40,4 +40,11 @@ defmodule Neoscan.Transactions.Transaction do
     |> assoc_constraint(:block, required: true)
     |> validate_required([:attributes, :net_fee, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height])
   end
+
+  def update_changeset(transaction, attrs) do
+    transaction
+    |> cast(attrs, [:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height, :claims, :pubkey, :asset, :description, :contract])
+    |> assoc_constraint(:block, required: true)
+    |> validate_required([:attributes, :net_fee, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height])
+  end
 end
