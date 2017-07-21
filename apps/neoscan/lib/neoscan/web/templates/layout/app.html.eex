@@ -61,6 +61,7 @@
           <div class="container">
             <ul>
               <li><a href="<%= home_path(@conn, :index) %>">Home</a></li>
+              <li><a href="<%= assets_path(@conn, :show_assets) %>">Assets</a></li>
             </ul>
           </div>
         </nav>

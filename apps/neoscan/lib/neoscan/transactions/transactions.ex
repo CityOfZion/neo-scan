@@ -313,4 +313,25 @@ defmodule Neoscan.Transactions do
   end
 
 
+  @doc """
+  Returns the list of assets.
+
+  ## Examples
+
+      iex> list_assets()
+      [%Asset{}, ...]
+
+  """
+  def list_assets do
+    query = from e in Asset,
+    select: %{
+      :hash => e.txid,
+      :admin => e.admin,
+      :amount => e.amount,
+      :type => e.type
+    }
+    Repo.all(query)
+  end
+
+
 end
