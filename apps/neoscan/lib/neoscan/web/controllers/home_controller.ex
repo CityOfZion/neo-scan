@@ -18,7 +18,7 @@ defmodule Neoscan.Web.HomeController do
 
     transaction_query = from e in Transaction,
       order_by: [desc: e.inserted_at],
-      where: e.type == "ContractTransaction",
+      where: e.type != "MinerTransaction",
       limit: 50
 
     blocks = Repo.all(block_query)

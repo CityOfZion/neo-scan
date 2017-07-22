@@ -43,15 +43,17 @@ defmodule Neoscan.Web.ApiController do
     json(conn, transaction)
   end
 
+  def get_last_transactions(conn, %{"type" => type}) do
+    transactions = Api.get_last_transactions(type)
+    json(conn, transactions)
+  end
+
   def get_last_transactions(conn, %{}) do
     transactions = Api.get_last_transactions(nil)
     json(conn, transactions)
   end
 
-  def get_last_transactions(conn, %{"type" => type}) do
-    transactions = Api.get_last_transactions(type)
-    json(conn, transactions)
-  end
+
 
 
 end
