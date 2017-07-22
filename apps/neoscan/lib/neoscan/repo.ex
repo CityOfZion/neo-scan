@@ -1,5 +1,6 @@
 defmodule Neoscan.Repo do
   use Ecto.Repo, otp_app: :neoscan
+  @moduledoc false
 
   @doc """
   Dynamically loads the repository url from the

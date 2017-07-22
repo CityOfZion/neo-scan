@@ -1,4 +1,5 @@
 defmodule Neoscan.DataCase do
+  @moduledoc false
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.

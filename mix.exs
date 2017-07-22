@@ -8,9 +8,9 @@ defmodule Neoscan.Umbrella.Mixfile do
       start_permanent: Mix.env == :prod,
       deps: deps(),
 
-      name: "NEOScan",
+      name: "NeoScan",
       docs: [
-        main: "NEOScan", # The main page in the docs
+        main: "NeoScan", # The main page in the docs
         extras: ["README.md"]
       ]
     ]

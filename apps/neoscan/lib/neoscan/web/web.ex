@@ -1,4 +1,5 @@
 defmodule Neoscan.Web do
+  @moduledoc false
   @moduledoc """
   A module that keeps using definitions for controllers,
   views and so on.

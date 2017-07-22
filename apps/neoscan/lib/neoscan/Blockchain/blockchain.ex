@@ -1,5 +1,7 @@
 defmodule Neoscan.Blockchain do
   use HTTPoison.Base
+
+  @moduledoc false
   @moduledoc """
   The boundary for the Blockchain requests.
   """

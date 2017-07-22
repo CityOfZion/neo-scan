@@ -1,4 +1,6 @@
 defmodule NEOScanSync.RepairSync do
+  @moduledoc false
+
   @moduledoc """
 
     External process to fetch blockchain from RCP node and sync the database

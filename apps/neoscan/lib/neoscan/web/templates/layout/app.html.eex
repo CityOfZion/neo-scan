@@ -31,6 +31,12 @@
                 Documentation
               </a> -->
               <span class="nav-item">
+                <a href="<%= doc_path(@conn, :index) %>" class="button is-light">
+                  <span class="icon">
+                    <i class="fa fa-code"></i>
+                  </span>
+                  <span>API</span>
+                </a>
                 <a href="https://github.com/CityOfZion/NEOScan" class="button is-light">
                   <span class="icon">
                     <i class="fa fa-github"></i>

@@ -1,4 +1,6 @@
 defmodule Neoscan.Blocks do
+  @moduledoc false
+  
   @moduledoc """
   The boundary for the Blocks system.
   """

@@ -1,4 +1,5 @@
 defmodule Neoscan.HttpCalls do
+  @moduledoc false
 
   @doc ~S"""
    Returns seed url according with 'index'
