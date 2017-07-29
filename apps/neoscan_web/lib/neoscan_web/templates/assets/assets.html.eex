@@ -1,0 +1,26 @@
+<section class="section">
+  <div class="container">
+    <div class="tile is-12 is-ancestor box is-vertical">
+      <div class="tile is-parent box content">
+        <p class="title">Assets</p>
+      </div>
+      <div class="tile is-parent box content">
+        <ul>
+          <%= for asset <- @assets do %>
+            <li>
+              <%=Neoscan.Transactions.get_asset_name_by_hash(asset.hash)%>  Registered <%=NeoscanWeb.AssetsController.round_or_not(asset.amount)%>
+              <%= if asset.issued != nil do %>
+                Issued <%=NeoscanWeb.AssetsController.round_or_not(asset.issued)%>
+              <%end%>
+              <br />
+              <!-- Admin
+              <a href="<%=address_path(@conn, :show_address, asset.admin )%>">
+                <%=asset.admin%>
+              </a> -->
+            </li>
+          <%end%>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
