@@ -13,7 +13,7 @@ config :neoscan_web,
 # Configures the endpoint
 config :neoscan_web, NeoscanWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "g8Z8aMElwfDOBE/qGnrj4tfbBI/XKwUiDVrj9/FIch4BW9ssKK23d5nuSJAmkJMv",
+  secret_key_base: "J8EWtXVVWp+AmNn4fmdodz17pug1X8v8QbjiPnNf0IkeFYhY140Dhei7UGUACHXs",
   render_errors: [view: NeoscanWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: NeoscanWeb.PubSub,
            adapter: Phoenix.PubSub.PG2]

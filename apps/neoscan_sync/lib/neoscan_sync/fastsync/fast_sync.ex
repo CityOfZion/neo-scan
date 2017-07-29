@@ -9,6 +9,7 @@ defmodule NeoscanSync.FastSync do
 
   alias NeoscanSync.Blockchain
   alias Neoscan.Pool
+  alias NeoscanSync.BlockSync
 
   @me __MODULE__
 
@@ -19,7 +20,7 @@ defmodule NeoscanSync.FastSync do
 
 
   #Start process, create file and get current height from the chain
-  def start(n \\ 10) do
+  def start(n \\ 250) do
     alive = Process.whereis(Neoscan.Supervisor)
     |> Process.alive?
     case alive do
@@ -34,7 +35,9 @@ defmodule NeoscanSync.FastSync do
 
   def fetch_chain(n) do
     count = Pool.get_highest_block_in_pool()
-    Blockchain.get_current_height(Enum.random(0..9))
+    # IO.puts(count)
+    # IO.puts(get_current_height(Enum.random(0..9)))
+    get_current_height(Enum.random(0..9))
     |> evaluate(n, count+1)
   end
 
@@ -43,25 +46,21 @@ defmodule NeoscanSync.FastSync do
     case result do
       {:ok, height} when (height-2) > count  ->
         cond do
-          height - 2 - count >= n ->
+          height - 100 - count >= n ->
             Enum.to_list(count..(count+n-1))
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
             |> Enum.map(&Task.await(&1, 20000))
             |> Enum.map(fn x -> add_block(x) end)
             start(n)
-           height - 2 - count < n ->
-            Enum.to_list(count..(height-2))
+           height - 100 - count < n ->
+            Enum.to_list(count..(height-100))
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
             |> Enum.map(&Task.await(&1, 20000))
             |> Enum.map(fn x -> add_block(x) end)
-            Process.sleep(15000)
-            start(n)
+            BlockSync.start()
         end
-      {:ok, height} when (height-2) == count  ->
-        start(n)
-      { :error, reason} ->
-        IO.puts("Failed to get current height from chain, result =#{reason}")
-        Process.exit(self(), :error)
+      {:ok, height} when (height-100) == count  ->
+        BlockSync.start()
     end
   end
 
@@ -101,6 +100,16 @@ defmodule NeoscanSync.FastSync do
         block
       { :error, _reason} ->
         get_block_by_height(random, height)
+    end
+  end
+
+  #handles error when fetching height from chain
+  def get_current_height(random) do
+    case Blockchain.get_current_height(random) do
+      { :ok , height } ->
+        { :ok , height }
+      { :error, _reason} ->
+        get_current_height(random)
     end
   end
 

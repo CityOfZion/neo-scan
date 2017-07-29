@@ -12,16 +12,16 @@ defmodule NeoscanSync.HttpCalls do
   """
   def url(index \\ 0) do
     %{
-      0 => "http://seed1.neo.org:10332",
-      1 => "http://seed1.neo.org:10332",
-      2 => "http://seed1.neo.org:10332",
-      3 => "http://seed1.neo.org:10332",
-      4 => "http://seed1.neo.org:10332",
-      5 => "http://seed1.neo.org:10332",
-      6 => "http://seed1.neo.org:10332",
-      7 => "http://seed1.neo.org:10332",
-      8 => "http://seed1.neo.org:10332",
-      9 => "http://seed1.neo.org:10332",
+      0 => "http://seed1.cityofzion.io:8080",
+      1 => "http://seed1.cityofzion.io:8080",
+      2 => "http://seed2.cityofzion.io:8080",
+      3 => "http://seed2.cityofzion.io:8080",
+      4 => "http://seed3.cityofzion.io:8080",
+      5 => "http://seed3.cityofzion.io:8080",
+      6 => "http://seed4.cityofzion.io:8080",
+      7 => "http://seed4.cityofzion.io:8080",
+      8 => "http://seed5.cityofzion.io:8080",
+      9 => "http://seed5.cityofzion.io:8080",
     }
     |> Map.get(index)
   end

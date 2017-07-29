@@ -42,7 +42,7 @@ defmodule NeoscanSync.BlockSync do
         evaluate(count)
       { :error, reason} ->
         IO.puts("Failed to get highest block from db, result =#{reason}")
-        Process.exit(self(), :error)
+        fetch_db()
     end
   end
 
@@ -53,13 +53,12 @@ defmodule NeoscanSync.BlockSync do
         get_block_from_pool( count+1 )
         |> add_block()
       height when height == count  ->
-        start()
+        FastSync.start()
       height when height < count ->
         Blocks.delete_higher_than(height)
-        Process.sleep(15000)
-        start()
+        FastSync.start()
       nil ->
-        start()
+        FastSync.start()
     end
   end
 
@@ -81,8 +80,7 @@ defmodule NeoscanSync.BlockSync do
         IO.puts("Failed to create transactions")
         Blocks.get_block_by_height(n)
         |> Blocks.delete_block()
-        IO.inspect(r)
-        Process.exit(self(), :error)
+        start()
     end
   end
 
@@ -93,7 +91,7 @@ defmodule NeoscanSync.BlockSync do
       %{} = block ->
         block
       nil ->
-        block = FastSync.get_block_by_height(Enum.random(0..9) , height)
+        block = FastSync.cross_check(height)
         FastSync.add_block(block)
         add_block(block)
         start()

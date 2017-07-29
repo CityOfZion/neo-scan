@@ -8,7 +8,7 @@
     <title>Neoscan.Api – NeoScan vdev</title>
     <link rel="stylesheet" href="dist/app-268c9dc719.css" />
 
-    <script src="dist/sidebar_items-8cc6e3cebc.js"></script>
+    <script src="dist/sidebar_items-00a1e678d9.js"></script>
   </head>
   <body data-type="modules">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -50,9 +50,9 @@
 
 
 
-  </ul> -->
+  </ul>
   <div class="gradient"></div>
-  <ul id="full-list" class="sidebar-fullList"></ul>
+  <ul id="full-list" class="sidebar-fullList"></ul> -->
 </section>
 
 <section class="content">
@@ -138,6 +138,15 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#get_claimed/1">get_claimed(hash)</a>
+  </div>
+
+    <div class="summary-synopsis"><p>Returns the claimed transactions for an address, from its <code class="inline">hash_string</code></p>
+</div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#get_highest_block/0">get_highest_block()</a>
   </div>
 
@@ -215,6 +224,12 @@ If no <code class="inline">type</code> is provided, returns all types</p>
 <pre><code class="elixir">/api/main_net/v1/get_address/{hash_string}
 &quot;{
   &quot;txids&quot;: [
+    &quot;tx_id_string&quot;,
+    &quot;tx_id_string&quot;,
+    &quot;tx_id_string&quot;,
+    ...
+  ],
+  &quot;claimed&quot;: [
     &quot;tx_id_string&quot;,
     &quot;tx_id_string&quot;,
     &quot;tx_id_string&quot;,
@@ -386,6 +401,38 @@ If no <code class="inline">type</code> is provided, returns all types</p>
   &quot;index&quot;: integer,
   &quot;hash&quot;: &quot;hash_string&quot;,
   &quot;confirmations&quot;: integer
+}&quot;</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="get_claimed/1">
+
+  <div class="detail-header">
+    <a href="#get_claimed/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">get_claimed(hash)</span>
+
+
+
+  </div>
+  <section class="docstring">
+    <p>Returns the claimed transactions for an address, from its <code class="inline">hash_string</code>.</p>
+<h2 id="get_claimed/1-examples" class="section-heading">
+  <a href="#get_claimed/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="elixir">/api/main_net/v1/get_claimed/{hash_string}
+&quot;{
+  &quot;claimed&quot;: [
+    &quot;tx_id_string&quot;,
+    &quot;tx_id_string&quot;,
+    &quot;tx_id_string&quot;,
+    ...
+  ],
+  &quot;address&quot;: &quot;hash_string&quot;
 }&quot;</code></pre>
 
   </section>
