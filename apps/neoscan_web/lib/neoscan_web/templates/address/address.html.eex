@@ -10,13 +10,13 @@
             <p>
               Transactions
             </p>
-            <%= for tx <- @address.tx_ids do %>
+            <%= for %{"txid" => tx} <- @address.tx_ids do %>
               <li>
                 <a href="<%=transaction_path(@conn, :show_transaction, tx )%>">
                   <%=tx%>
                 </a>
-                <%= if @address.claimed != nil && Enum.member?(@address.claimed, tx) do %>
-                  Claimed
+                <%= if @address.claimed != nil && Enum.any?(@address.claimed, fn %{"txid" => txid} -> txid == tx end) do %>
+                  Claimed <%= NeoscanWeb.AddressController.get_amount_claimed(@address.claimed, tx)%>
                 <%end%>
               </li>
             <%end%>

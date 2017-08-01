@@ -104,15 +104,18 @@ defmodule Neoscan.Api do
       /api/main_net/v1/get_address/{hash_string}
       "{
         \"txids\": [
-          \"tx_id_string\",
-          \"tx_id_string\",
-          \"tx_id_string\",
+          {
+            \"txid\": \"tx_id_string\",
+            \"balance\": \"balance_object_snapshot\"
+          },
           ...
         ],
         \"claimed\": [
-          \"tx_id_string\",
-          \"tx_id_string\",
-          \"tx_id_string\",
+          {
+            \"txid\": \"tx_id_string\",
+            \"amount\": \"float\",
+            \"asset\": \"name_string\",
+          },
           ...
         ],
         \"balance\": [

@@ -4,15 +4,15 @@ defmodule Neoscan.Repo.Migrations.Addresses do
   def change do
     create table(:addresses) do
       add :address, :string
-      add :tx_ids, {:array, :string}
+      add :tx_ids, {:array, :map}
       add :balance, {:array, :map}
-      add :claimed, {:array, :string}
+      add :claimed, {:array, :map}
 
 
       timestamps()
     end
 
-    create unique_index(:addresses, [:address])
+    create index(:addresses, [:address], unique: true)
 
   end
 end

@@ -333,13 +333,20 @@ defmodule Neoscan.Transactions do
    query = from e in Asset,
      where: e.txid == ^hash,
      select: e.name
-   Repo.one(query)
+   Repo.one!(query)
    |>filter_name
   end
 
   def filter_name(asset) do
     case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
-      %{"name" => name} -> name
+      %{"name" => name} -> cond do
+          name == "AntShare" ->
+            "NEO"
+          name == "AntCoin" ->
+            "GAS"
+          true ->
+            name
+        end
       nil ->
         %{"name" => name} = Enum.at(asset, 0)
         name
@@ -390,7 +397,7 @@ defmodule Neoscan.Transactions do
     result = get_asset_by_hash(asset_hash)
     cond do
       result == nil ->
-        IO.puts("Error in claim")
+        IO.puts("Error issuing asset")
         {:error , "Non existant asset cant be issued!"}
 
       true ->

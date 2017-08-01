@@ -49,7 +49,7 @@ defmodule NeoscanSync.BlockSync do
   #Evaluates db against external blockchain and route required functions
   def evaluate(count) do
     case Pool.get_highest_block_in_pool do
-      height when height > count  ->
+      height when height > count ->
         get_block_from_pool( count+1 )
         |> add_block()
       height when height == count  ->

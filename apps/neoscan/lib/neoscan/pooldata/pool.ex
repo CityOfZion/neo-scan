@@ -120,7 +120,7 @@ defmodule Neoscan.Pool do
        x when is_integer(x) ->
         x
       nil ->
-        0
+        -1
     end
   end
 

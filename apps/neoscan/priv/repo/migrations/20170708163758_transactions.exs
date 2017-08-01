@@ -30,7 +30,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
     end
 
     create index(:transactions, ["inserted_at DESC NULLS LAST"])
-    create unique_index(:transactions, [:txid])
+    create index(:transactions, [:txid], unique: true)
 
   end
 end

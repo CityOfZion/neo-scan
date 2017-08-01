@@ -35,8 +35,6 @@ defmodule NeoscanSync.FastSync do
 
   def fetch_chain(n) do
     count = Pool.get_highest_block_in_pool()
-    # IO.puts(count)
-    # IO.puts(get_current_height(Enum.random(0..9)))
     get_current_height(Enum.random(0..9))
     |> evaluate(n, count+1)
   end
@@ -44,22 +42,22 @@ defmodule NeoscanSync.FastSync do
   #evaluate number of process, current block count, and start async functions
   defp evaluate(result, n, count) do
     case result do
-      {:ok, height} when (height-2) > count  ->
+      {:ok, height} when (height-1000) > count  ->
         cond do
-          height - 100 - count >= n ->
+          height - 1000 - count >= n ->
             Enum.to_list(count..(count+n-1))
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
             |> Enum.map(&Task.await(&1, 20000))
             |> Enum.map(fn x -> add_block(x) end)
             start(n)
-           height - 100 - count < n ->
-            Enum.to_list(count..(height-100))
+           height - 1000 - count < n ->
+            Enum.to_list(count..(height-1000))
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
             |> Enum.map(&Task.await(&1, 20000))
             |> Enum.map(fn x -> add_block(x) end)
             BlockSync.start()
         end
-      {:ok, height} when (height-100) == count  ->
+      {:ok, height} when (height-1000) == count  ->
         BlockSync.start()
     end
   end

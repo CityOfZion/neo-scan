@@ -63,7 +63,7 @@ defmodule Neoscan.Addresses do
      preload: [vouts: ^vout_query],
      select: e
 
-   Repo.one(query)
+   Repo.one!(query)
   end
 
 
@@ -235,19 +235,21 @@ defmodule Neoscan.Addresses do
   end
 
   def insert_claim_in_addresses(vouts, txid) do
-    Enum.map(vouts, fn %{"address" => hash} -> insert_claim_in_address(hash, txid)end)
+    Enum.map(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} -> insert_claim_in_address(hash, txid, value, asset)end)
   end
 
-  def insert_claim_in_address(address_hash, txid) do
+  def insert_claim_in_address(address_hash, txid, value, asset) do
     result = get_address_by_hash(address_hash)
     cond do
       result == nil ->
-        IO.puts("Error in claim")
-        {:error , "Non existant address cant claim!"}
+        attrs = %{:address => address_hash, :claimed => nil}
+        |> add_claim(txid, value, asset)
+
+        create_address(attrs)
 
       true ->
         attrs = %{:claimed => result.claimed}
-        |> add_claim(txid)
+        |> add_claim(txid, value, asset)
 
         update_address(result, attrs)
     end
@@ -284,30 +286,30 @@ defmodule Neoscan.Addresses do
   def add_tx_id(address, txid) do
     cond do
       address.tx_ids == nil ->
-        Map.put(address, :tx_ids, [txid])
+        Map.put(address, :tx_ids, [%{ "txid" => txid, "balance" => address.balance}])
 
       address.tx_ids != nil ->
-        case Enum.member?(address.tx_ids, txid) do
+        case Enum.member?(address.tx_ids, %{"txid" => txid}) do
           true ->
             address
           false ->
-            new = List.wrap(txid)
+            new = List.wrap(%{ "txid" => txid, "balance" => address.balance})
             Map.put(address, :tx_ids, Enum.concat(address.tx_ids, new))
         end
     end
   end
 
-  def add_claim(address, txid) do
+  def add_claim(address, txid, amount, asset) do
     cond do
       address.claimed == nil ->
-        Map.put(address, :claimed, [txid])
+        Map.put(address, :claimed, [%{ "txid" => txid, "amount" => amount, "asset" => asset}])
 
       address.claimed != nil ->
-        case Enum.member?(address.claimed, txid) do
+        case Enum.member?(address.claimed, %{ "txid" => txid}) do
           true ->
             address
           false ->
-            new = List.wrap(txid)
+            new = List.wrap(%{ "txid" => txid, "amount" => amount, "asset" => asset})
             Map.put(address, :claimed, Enum.concat(address.claimed, new))
         end
     end

@@ -8,7 +8,7 @@
     <title>Neoscan.Api – NeoScan vdev</title>
     <link rel="stylesheet" href="dist/app-268c9dc719.css" />
 
-    <script src="dist/sidebar_items-00a1e678d9.js"></script>
+    <script src="dist/sidebar_items-b4a59f6bd8.js"></script>
   </head>
   <body data-type="modules">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -224,15 +224,18 @@ If no <code class="inline">type</code> is provided, returns all types</p>
 <pre><code class="elixir">/api/main_net/v1/get_address/{hash_string}
 &quot;{
   &quot;txids&quot;: [
-    &quot;tx_id_string&quot;,
-    &quot;tx_id_string&quot;,
-    &quot;tx_id_string&quot;,
+    {
+      &quot;txid&quot;: &quot;tx_id_string&quot;,
+      &quot;balance&quot;: &quot;balance_object_snapshot&quot;
+    },
     ...
   ],
   &quot;claimed&quot;: [
-    &quot;tx_id_string&quot;,
-    &quot;tx_id_string&quot;,
-    &quot;tx_id_string&quot;,
+    {
+      &quot;txid&quot;: &quot;tx_id_string&quot;,
+      &quot;amount&quot;: &quot;float&quot;,
+      &quot;asset&quot;: &quot;name_string&quot;,
+    },
     ...
   ],
   &quot;balance&quot;: [
