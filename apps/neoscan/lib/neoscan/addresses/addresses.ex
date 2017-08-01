@@ -235,23 +235,32 @@ defmodule Neoscan.Addresses do
   end
 
   def insert_claim_in_addresses(vouts, txid) do
-    Enum.map(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} -> insert_claim_in_address(hash, txid, value, asset)end)
+    lookups = Enum.map(vouts, &"#{&1["address"]}")
+
+    query =  from e in Address,
+     where: fragment("CAST(? AS text)", e.address) in ^lookups,
+     select: e
+
+    address_list = Repo.all(query)
+
+    Enum.map(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
+      insert_claim_in_address(Enum.find(address_list, fn %{:address => address} -> address == hash end) , txid, value, asset, hash)
+    end)
   end
 
-  def insert_claim_in_address(address_hash, txid, value, asset) do
-    result = get_address_by_hash(address_hash)
+  def insert_claim_in_address(address, txid, value, asset, address_hash) do
     cond do
-      result == nil ->
+      address == nil ->
         attrs = %{:address => address_hash, :claimed => nil}
         |> add_claim(txid, value, asset)
 
         create_address(attrs)
 
       true ->
-        attrs = %{:claimed => result.claimed}
+        attrs = %{:claimed => address.claimed}
         |> add_claim(txid, value, asset)
 
-        update_address(result, attrs)
+        update_address(address, attrs)
     end
   end
 

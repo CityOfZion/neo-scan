@@ -45,6 +45,7 @@ defmodule NeoscanSync.Mixfile do
       {:neoscan, in_umbrella: true},
       {:neoscan_web, in_umbrella: true},
       {:httpoison, "~> 0.12"},
+      {:flow, "~> 0.11"}
     ]
   end
 end

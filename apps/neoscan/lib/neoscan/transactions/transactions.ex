@@ -107,14 +107,13 @@ defmodule Neoscan.Transactions do
     new_attrs = cond do
        Kernel.length(vin) != 0 ->
 
-         new_vin = Enum.map(vin, fn %{"txid" => txid, "vout" => vout_index} ->
-           query = from e in Vout,
-           where: e.txid == ^txid,
-           where: e.n == ^vout_index,
-           select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+         lookups = Enum.map(vin, &"#{&1["vout"]}#{&1["txid"]}")
 
-           Repo.one!(query)
-         end)
+         query =  from e in Vout,
+          where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
+          select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+
+         new_vin = Repo.all(query)
 
          Enum.map(new_vin, fn vin -> Addresses.insert_vin_in_address(vin) end)
          Map.put(attrs, "vin", new_vin)
@@ -126,14 +125,13 @@ defmodule Neoscan.Transactions do
     new_attrs1 = cond do
        attrs["claims"] != nil ->
 
-         new_claim = Enum.map(attrs["claims"], fn %{"txid" => txid, "vout" => vout_index} ->
-           query = from e in Vout,
-           where: e.txid == ^txid,
-           where: e.n == ^vout_index,
-           select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+         lookups = Enum.map(attrs["claims"], &"#{&1["vout"]}#{&1["txid"]}")
 
-           Repo.one!(query)
-         end)
+         query =  from e in Vout,
+          where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
+          select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+
+         new_claim = Repo.all(query)
 
          Enum.map(new_claim, fn %{:txid => txid} -> Addresses.insert_claim_in_addresses(vouts, txid) end)
 
@@ -274,11 +272,8 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_vouts(transaction, [vout | tail]) do
-    create_vout(transaction, vout)
-    create_vouts(transaction, tail)
-  end
-  def create_vouts(_block, []), do: {:ok , "Created"}
+  def create_vouts(transaction, [vout | tail]), do: [create_vout(transaction, vout), create_vouts(transaction, tail)]
+  def create_vouts(_transaction, []), do: {:ok , "Created"}
 
 
   @doc """

@@ -80,10 +80,10 @@ defmodule NeoscanSync.FastSync do
     end
     blockA = get_block_by_height(random1, height)
     blockB = get_block_by_height(random2, height)
-    %{"hash" => hashA} = blockA
-    %{"hash" => hashB} = blockB
+    # %{"hash" => hashA} = blockA
+    # %{"hash" => hashB} = blockB
     cond do
-      hashA == hashB ->
+      blockA == blockB ->
         blockA
       true ->
         cross_check(height)
@@ -105,7 +105,8 @@ defmodule NeoscanSync.FastSync do
   def get_current_height(random) do
     case Blockchain.get_current_height(random) do
       { :ok , height } ->
-        { :ok , height }
+        { :ok , 6000 }
+        #{ :ok , height }
       { :error, _reason} ->
         get_current_height(random)
     end
