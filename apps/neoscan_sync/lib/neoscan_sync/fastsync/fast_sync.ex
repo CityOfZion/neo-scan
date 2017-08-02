@@ -21,20 +21,24 @@ defmodule NeoscanSync.FastSync do
 
   #Start process, create file and get current height from the chain
   def start(n \\ 250) do
+    count = Pool.get_highest_block_in_pool()
+    fetch_chain(n, count)
+  end
+
+  def check_process() do
     alive = Process.whereis(Neoscan.Supervisor)
     |> Process.alive?
     case alive do
       true ->
-        fetch_chain(n)
+        true
       false ->
         IO.puts("Main process was killed")
         Process.exit(self(), :shutdown)
     end
-
   end
 
-  def fetch_chain(n) do
-    count = Pool.get_highest_block_in_pool()
+  def fetch_chain(n, count) do
+    check_process()
     get_current_height(Enum.random(0..9))
     |> evaluate(n, count+1)
   end
@@ -49,7 +53,7 @@ defmodule NeoscanSync.FastSync do
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
             |> Enum.map(&Task.await(&1, 20000))
             |> Enum.map(fn x -> add_block(x) end)
-            start(n)
+           fetch_chain(n, count+n-1)
            height - 1000 - count < n ->
             Enum.to_list(count..(height-1000))
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
@@ -80,8 +84,6 @@ defmodule NeoscanSync.FastSync do
     end
     blockA = get_block_by_height(random1, height)
     blockB = get_block_by_height(random2, height)
-    # %{"hash" => hashA} = blockA
-    # %{"hash" => hashB} = blockB
     cond do
       blockA == blockB ->
         blockA

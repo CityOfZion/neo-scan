@@ -21,11 +21,17 @@ defmodule NeoscanSync.BlockSync do
 
   #check if main endpoint is alive, otherwise shutdown process
   def start() do
+    max_block_in_db = Blocks.get_highest_block_in_db()
+    max_block_in_pool = Pool.get_highest_block_in_pool
+    fetch_db(max_block_in_db, max_block_in_pool)
+  end
+
+  def check_process do
     alive = Process.whereis(Neoscan.Supervisor)
     |> Process.alive?
     case alive do
       true ->
-        fetch_db()
+        true
       false ->
         IO.puts("Main process was killed")
         Process.exit(self(), :shutdown)
@@ -33,25 +39,25 @@ defmodule NeoscanSync.BlockSync do
   end
 
   #get highest block from db and route functions forward
-  def fetch_db() do
-    case Blocks.get_highest_block_in_db() do
+  def fetch_db(max_block_in_db, max_block_in_pool) do
+    case max_block_in_db do
       nil ->
-        get_block_from_pool(0)
-        |> add_block()
+        get_block_from_pool(0, max_block_in_pool)
+        |> add_block(0, max_block_in_pool)
       { :ok, %Blocks.Block{:index => count}} ->
-        evaluate(count)
+        evaluate(count, max_block_in_pool)
       { :error, reason} ->
         IO.puts("Failed to get highest block from db, result =#{reason}")
-        fetch_db()
+        fetch_db(max_block_in_db, max_block_in_pool)
     end
   end
 
   #Evaluates db against external blockchain and route required functions
-  def evaluate(count) do
-    case Pool.get_highest_block_in_pool do
+  def evaluate(count, max_block_in_pool) do
+    case max_block_in_pool do
       height when height > count ->
-        get_block_from_pool( count+1 )
-        |> add_block()
+        get_block_from_pool( count+1 , max_block_in_pool)
+        |> add_block(count+1, max_block_in_pool)
       height when height == count  ->
         FastSync.start()
       height when height < count ->
@@ -63,38 +69,37 @@ defmodule NeoscanSync.BlockSync do
   end
 
   #add block with transactions to the db
-  def add_block(%{"tx" => transactions, "index" => n} = block) do
+  def add_block(%{"tx" => transactions, "index" => n} = block, count, max_block_in_pool) do
     Map.put(block,"tx_count",Kernel.length(transactions))
     |> Map.delete("tx")
     |> Blocks.create_block()
     |> Transactions.create_transactions(transactions)
-    |> check(n)
+    |> check(n, count, max_block_in_pool)
   end
 
-  def check(r, n) do
+  def check(r, n, count, max_block_in_pool) do
     cond do
       {:ok, "Created"} == r or {:ok, "Deleted"} == r ->
         IO.puts("Block #{n} stored")
-        start()
+        evaluate(count, max_block_in_pool)
       true ->
         IO.puts("Failed to create transactions")
         Blocks.get_block_by_height(n)
         |> Blocks.delete_block()
-        start()
+        evaluate(count, max_block_in_pool)
     end
   end
 
 
   #handles error when fetching highest block from chain
-  def get_block_from_pool(height) do
+  def get_block_from_pool(height, max_block_in_pool) do
     case Pool.get_block_in_pool(height) do
       %{} = block ->
         block
       nil ->
         block = FastSync.cross_check(height)
         FastSync.add_block(block)
-        add_block(block)
-        start()
+        evaluate(height-1, max_block_in_pool)
     end
   end
 
