@@ -214,25 +214,23 @@ defmodule Neoscan.Addresses do
     end
   end
 
-  def insert_vin_in_address(%{:address_hash => address} = vin) do
+  def insert_vins_in_address(address, vins) do
     query = from e in Address,
     where: e.address == ^address,
     select: e
 
-    result = Repo.one(query)
-    cond do
-      result == nil ->
-        IO.puts("Error in vin/vout")
-        {:error , "Cant spend if dont have!"}
+    result = Repo.one!(query)
 
-        vin
-      true ->
-        attrs = %{:balance => result.balance}
-        |> add_vin(vin)
-
-        update_address(result, attrs)
-    end
+    attrs = %{:balance => result.balance}
+    |> add_vins(vins)
+    update_address(result, attrs)
   end
+
+  def add_vins(attrs, [h | t]) do
+    add_vin(attrs, h)
+    add_vins(attrs, t)
+  end
+  def add_vins(attrs, []), do: attrs
 
   def insert_claim_in_addresses(vouts, txid) do
     lookups = Enum.map(vouts, &"#{&1["address"]}")

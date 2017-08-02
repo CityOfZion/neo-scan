@@ -115,7 +115,8 @@ defmodule Neoscan.Transactions do
 
          new_vin = Repo.all(query)
 
-         Enum.map(new_vin, fn vin -> Addresses.insert_vin_in_address(vin) end)
+         address_group = Enum.group_by(new_vin, fn %{:address_hash => address} -> address end)
+         Enum.map(Map.to_list(address_group), fn {address, vins} -> Addresses.insert_vins_in_address(address, vins) end)
          Map.put(attrs, "vin", new_vin)
        true ->
          attrs

@@ -69,22 +69,22 @@ defmodule NeoscanSync.BlockSync do
   end
 
   #add block with transactions to the db
-  def add_block(%{"tx" => transactions, "index" => n} = block, count, max_block_in_pool) do
+  def add_block(%{"tx" => transactions, "index" => height} = block, count, max_block_in_pool) do
     Map.put(block,"tx_count",Kernel.length(transactions))
     |> Map.delete("tx")
     |> Blocks.create_block()
     |> Transactions.create_transactions(transactions)
-    |> check(n, count, max_block_in_pool)
+    |> check(height, count, max_block_in_pool)
   end
 
-  def check(r, n, count, max_block_in_pool) do
+  def check(r, height, count, max_block_in_pool) do
     cond do
       {:ok, "Created"} == r or {:ok, "Deleted"} == r ->
-        IO.puts("Block #{n} stored")
+        IO.puts("Block #{height} stored")
         evaluate(count, max_block_in_pool)
       true ->
         IO.puts("Failed to create transactions")
-        Blocks.get_block_by_height(n)
+        Blocks.get_block_by_height(height)
         |> Blocks.delete_block()
         evaluate(count, max_block_in_pool)
     end
