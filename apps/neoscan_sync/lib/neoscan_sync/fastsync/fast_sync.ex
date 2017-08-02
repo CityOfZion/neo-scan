@@ -20,7 +20,7 @@ defmodule NeoscanSync.FastSync do
 
 
   #Start process, create file and get current height from the chain
-  def start(n \\ 250) do
+  def start(n \\ 500) do
     count = Pool.get_highest_block_in_pool()
     fetch_chain(n, count)
   end
@@ -107,7 +107,9 @@ defmodule NeoscanSync.FastSync do
   def get_current_height(random) do
     case Blockchain.get_current_height(random) do
       { :ok , height } ->
-        { :ok , height }
+        #{ :ok , height }
+
+        { :ok , 200000 }
       { :error, _reason} ->
         get_current_height(random)
     end

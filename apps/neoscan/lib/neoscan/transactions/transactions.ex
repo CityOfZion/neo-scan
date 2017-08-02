@@ -104,7 +104,7 @@ defmodule Neoscan.Transactions do
   def create_transaction(%{:time => time, :hash => hash, :index => height } = block, %{"vout" => vouts, "vin" => vin} = attrs) do
 
     #get owner address and total amount sent
-    new_attrs = cond do
+    new_vin = Task.async(fn -> cond do
        Kernel.length(vin) != 0 ->
 
          lookups = Enum.map(vin, &"#{&1["vout"]}#{&1["txid"]}")
@@ -115,16 +115,21 @@ defmodule Neoscan.Transactions do
 
          new_vin = Repo.all(query)
 
-         address_group = Enum.group_by(new_vin, fn %{:address_hash => address} -> address end)
-         Enum.map(Map.to_list(address_group), fn {address, vins} -> Addresses.insert_vins_in_address(address, vins) end)
-         Map.put(attrs, "vin", new_vin)
+         Enum.group_by(new_vin, fn %{:address_hash => address} -> address end)
+         |> Map.to_list()
+         |> Enum.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins) end)
+
+         new_vin
        true ->
-         attrs
-    end
+         vin
+      end
+    end)
 
     #get claims
-    new_attrs1 = cond do
+    new_claim = Task.async( fn -> cond do
        attrs["claims"] != nil ->
+
+         Enum.each(attrs["claims"], fn %{"txid" => txid} -> Addresses.insert_claim_in_addresses(vouts, txid) end)
 
          lookups = Enum.map(attrs["claims"], &"#{&1["vout"]}#{&1["txid"]}")
 
@@ -132,14 +137,12 @@ defmodule Neoscan.Transactions do
           where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
           select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
-         new_claim = Repo.all(query)
+         Repo.all(query)
 
-         Enum.map(new_claim, fn %{:txid => txid} -> Addresses.insert_claim_in_addresses(vouts, txid) end)
-
-         Map.put(new_attrs, "claims", new_claim)
        true ->
-         new_attrs
-    end
+         attrs["claims"]
+      end
+    end)
 
     #create asset if register Transaction
     cond do
@@ -155,7 +158,7 @@ defmodule Neoscan.Transactions do
     #create asset if issue Transaction
     cond do
       attrs["type"] == "IssueTransaction" ->
-        Enum.map(vouts, fn %{"asset" => asset_hash, "value" => value} ->
+        Enum.each(vouts, fn %{"asset" => asset_hash, "value" => value} ->
           {float, _} = Float.parse(value)
           add_issued_value(asset_hash, float)
         end)
@@ -166,7 +169,10 @@ defmodule Neoscan.Transactions do
 
 
     #prepare and create transaction
-    transaction = Map.put(new_attrs1,"time", time)
+
+    transaction = Map.put(attrs,"time", time)
+    |> Map.put("vin", Task.await(new_vin))
+    |> Map.put("claims", Task.await(new_claim))
     |> Map.put("block_hash", hash)
     |> Map.put("block_height", height)
     |> Map.delete("vout")

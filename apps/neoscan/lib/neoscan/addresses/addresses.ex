@@ -233,7 +233,7 @@ defmodule Neoscan.Addresses do
   def add_vins(attrs, []), do: attrs
 
   def insert_claim_in_addresses(vouts, txid) do
-    lookups = Enum.map(vouts, &"#{&1["address"]}")
+    lookups = Enum.uniq(Enum.map(vouts, &"#{&1["address"]}"))
 
     query =  from e in Address,
      where: fragment("CAST(? AS text)", e.address) in ^lookups,
@@ -241,7 +241,7 @@ defmodule Neoscan.Addresses do
 
     address_list = Repo.all(query)
 
-    Enum.map(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
+    Enum.each(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
       insert_claim_in_address(Enum.find(address_list, fn %{:address => address} -> address == hash end) , txid, value, asset, hash)
     end)
   end
