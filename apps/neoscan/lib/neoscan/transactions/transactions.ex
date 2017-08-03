@@ -59,7 +59,7 @@ defmodule Neoscan.Transactions do
   def list_contracts do
     transaction_query = from e in Transaction,
       order_by: [desc: e.inserted_at],
-      where: e.type == "PublishTransaction" or e.type == "InvocationTransaction" :: type,
+      where: e.type == "PublishTransaction" or e.type == "InvocationTransaction",
       select: %{:type => e.type, :time => e.time, :txid => e.txid}
 
     Repo.all(transaction_query)
@@ -339,7 +339,7 @@ defmodule Neoscan.Transactions do
   end
 
   def fetch_missing(address_list, lookups) do
-    lookups -- Enum.map(address_list, fn %{"address" => address} -> address end)
+    lookups -- Enum.map(address_list, fn %{:address => address} -> address end)
     |> Enum.map(fn address -> Addresses.create_address(%{"address" => address}) end)
     |> Enum.concat(address_list)
   end
