@@ -232,7 +232,7 @@ defmodule Neoscan.Addresses do
   end
   def add_vins(attrs, []), do: attrs
 
-  def insert_claim_in_addresses(vouts, txid) do
+  def insert_claim_in_addresses(transactions, vouts) do
     lookups = Enum.uniq(Enum.map(vouts, &"#{&1["address"]}"))
 
     query =  from e in Address,
@@ -242,21 +242,21 @@ defmodule Neoscan.Addresses do
     address_list = Repo.all(query)
 
     Enum.each(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
-      insert_claim_in_address(Enum.find(address_list, fn %{:address => address} -> address == hash end) , txid, value, asset, hash)
+      insert_claim_in_address(Enum.find(address_list, fn %{:address => address} -> address == hash end) , transactions, value, asset, hash)
     end)
   end
 
-  def insert_claim_in_address(address, txid, value, asset, address_hash) do
+  def insert_claim_in_address(address, transactions, value, asset, address_hash) do
     cond do
       address == nil ->
         attrs = %{:address => address_hash, :claimed => nil}
-        |> add_claim(txid, value, asset)
+        |> add_claim(transactions, value, asset)
 
         create_address(attrs)
 
       true ->
         attrs = %{:claimed => address.claimed}
-        |> add_claim(txid, value, asset)
+        |> add_claim(transactions, value, asset)
 
         update_address(address, attrs)
     end
@@ -306,17 +306,17 @@ defmodule Neoscan.Addresses do
     end
   end
 
-  def add_claim(address, txid, amount, asset) do
+  def add_claim(address, transactions, amount, asset) do
     cond do
       address.claimed == nil ->
-        Map.put(address, :claimed, [%{ "txid" => txid, "amount" => amount, "asset" => asset}])
+        Map.put(address, :claimed, [%{ "txids" => transactions, "amount" => amount, "asset" => asset}])
 
       address.claimed != nil ->
-        case Enum.member?(address.claimed, %{ "txid" => txid}) do
+        case Enum.member?(address.claimed, %{ "txids" => transactions}) do
           true ->
             address
           false ->
-            new = List.wrap(%{ "txid" => txid, "amount" => amount, "asset" => asset})
+            new = List.wrap(%{ "txids" => transactions, "amount" => amount, "asset" => asset})
             Map.put(address, :claimed, Enum.concat(address.claimed, new))
         end
     end

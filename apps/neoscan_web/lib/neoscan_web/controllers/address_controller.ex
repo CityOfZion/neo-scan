@@ -17,10 +17,4 @@ defmodule NeoscanWeb.AddressController do
     end
   end
 
-  def get_amount_claimed(claimed_map, tx) do
-    %{"amount" => amount, "asset" => asset} = Enum.find(claimed_map, fn %{"txid" => txid} -> txid == tx end)
-    "#{amount} #{Neoscan.Transactions.get_asset_name_by_hash(asset)}"
-  end
-
-
 end

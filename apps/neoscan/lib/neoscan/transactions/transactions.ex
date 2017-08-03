@@ -129,7 +129,9 @@ defmodule Neoscan.Transactions do
     new_claim = Task.async( fn -> cond do
        attrs["claims"] != nil ->
 
-         Enum.each(attrs["claims"], fn %{"txid" => txid} -> Addresses.insert_claim_in_addresses(vouts, txid) end)
+         Enum.map(attrs["claims"], fn %{"txid" => txid } -> txid end)
+         |> Enum.uniq()
+         |> Addresses.insert_claim_in_addresses(vouts)
 
          lookups = Enum.map(attrs["claims"], &"#{&1["vout"]}#{&1["txid"]}")
 
@@ -171,8 +173,8 @@ defmodule Neoscan.Transactions do
     #prepare and create transaction
 
     transaction = Map.put(attrs,"time", time)
-    |> Map.put("vin", Task.await(new_vin))
-    |> Map.put("claims", Task.await(new_claim))
+    |> Map.put("vin", Task.await(new_vin, 15000))
+    |> Map.put("claims", Task.await(new_claim, 15000))
     |> Map.put("block_hash", hash)
     |> Map.put("block_height", height)
     |> Map.delete("vout")

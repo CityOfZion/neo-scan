@@ -15,8 +15,8 @@
                 <a href="<%=transaction_path(@conn, :show_transaction, tx )%>">
                   <%=tx%>
                 </a>
-                <%= if @address.claimed != nil && Enum.any?(@address.claimed, fn %{"txid" => txid} -> txid == tx end) do %>
-                  Claimed <%= NeoscanWeb.AddressController.get_amount_claimed(@address.claimed, tx)%>
+                <%= if @address.claimed != nil && Enum.any?(@address.claimed, fn %{"txids" => txid} -> Enum.member?(txid, tx) == true end) do %>
+                  Claimed
                 <%end%>
               </li>
             <%end%>
