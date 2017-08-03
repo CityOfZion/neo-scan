@@ -14,7 +14,7 @@
               <%end%>
               <br />
               <!-- Admin
-              <a href="<%=address_path(@conn, :show_address, asset.admin )%>">
+              <a href="<%=address_path(@conn, :index, asset.admin )%>">
                 <%=asset.admin%>
               </a> -->
             </li>

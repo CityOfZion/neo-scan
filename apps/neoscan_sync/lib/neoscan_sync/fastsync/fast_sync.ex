@@ -107,7 +107,8 @@ defmodule NeoscanSync.FastSync do
   def get_current_height(random) do
     case Blockchain.get_current_height(random) do
       { :ok , height } ->
-        { :ok , height }
+        #{ :ok , height }
+        { :ok , 2000 }
       { :error, _reason} ->
         get_current_height(random)
     end

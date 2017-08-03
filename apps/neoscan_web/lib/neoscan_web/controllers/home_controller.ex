@@ -38,13 +38,13 @@ defmodule NeoscanWeb.HomeController do
         |> redirect(to: home_path(conn, :index))
 
       Map.has_key?(result, :hash) ->
-        redirect(conn, to: block_path(conn, :show_block, result.hash))
+        redirect(conn, to: block_path(conn, :index, result.hash))
 
       Map.has_key?(result, :txid) ->
-        redirect(conn, to: transaction_path(conn, :show_transaction, result.txid))
+        redirect(conn, to: transaction_path(conn, :index, result.txid))
 
       Map.has_key?(result, :address) ->
-        redirect(conn, to: address_path(conn, :show_address, result.address))
+        redirect(conn, to: address_path(conn, :index, result.address))
 
     end
   end

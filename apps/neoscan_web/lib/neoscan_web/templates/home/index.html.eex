@@ -52,7 +52,7 @@
           <p class="title">Last Blocks</p>
           <ul class="collection">
             <%= for block <- @blocks do %>
-              <a href="<%= block_path @conn, :show_block, block.hash %>" class="box">
+              <a href="<%= block_path @conn, :index, block.hash %>" class="box">
                 <article class="media">
                   <div class="media-content">
                     <div class="content ">
@@ -86,7 +86,7 @@
           <p class="title">Last Transactions</p>
           <ul class="collection">
             <%= for transaction <- @transactions do %>
-              <a href="<%= transaction_path @conn, :show_transaction, transaction.txid %>" class="box">
+              <a href="<%= transaction_path @conn, :index, transaction.txid %>" class="box">
                 <article class="media">
                   <div class="media-content">
                     <div class="content">

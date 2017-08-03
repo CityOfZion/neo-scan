@@ -12,7 +12,7 @@
             </p>
             <%= for %{"txid" => tx} <- @address.tx_ids do %>
               <li>
-                <a href="<%=transaction_path(@conn, :show_transaction, tx )%>">
+                <a href="<%=transaction_path(@conn, :index, tx )%>">
                   <%=tx%>
                 </a>
                 <%= if @address.claimed != nil && Enum.any?(@address.claimed, fn %{"txids" => txid} -> Enum.member?(txid, tx) == true end) do %>

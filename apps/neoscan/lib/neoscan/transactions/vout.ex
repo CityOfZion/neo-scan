@@ -18,15 +18,15 @@ defmodule Neoscan.Transactions.Vout do
   end
 
   @doc false
-  def changeset(%{:id => transaction_id, :txid => txid}, %{"address" => address_hash, "value" => value } = attrs \\ %{}) do
-    %{:id => address_id} = Addresses.create_or_get_and_insert_vout(attrs, txid)
+  def changeset(%{:id => transaction_id, :txid => txid}, %{"address" => address, "value" => value } = attrs \\ %{}) do
+    Addresses.insert_vout(attrs, txid)
 
     {new_value, _} = Float.parse(value)
 
     new_attrs= attrs
-    |> Map.put("address_id", address_id)
+    |> Map.put("address_id", address.id)
     |> Map.put("transaction_id", transaction_id)
-    |> Map.put("address_hash", address_hash)
+    |> Map.put("address_hash", address.address)
     |> Map.put("txid", txid)
     |> Map.put("value", new_value)
     |> Map.delete("address")

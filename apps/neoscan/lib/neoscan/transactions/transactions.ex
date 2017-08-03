@@ -13,6 +13,7 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Transactions.Vout
   alias Neoscan.Transactions.Asset
   alias Neoscan.Addresses
+  alias Neoscan.Addresses.Address
 
   @doc """
   Returns the list of transactions.
@@ -42,6 +43,24 @@ defmodule Neoscan.Transactions do
       where: e.type != "MinerTransaction",
       select: %{:type => e.type, :time => e.time, :txid => e.txid},
       limit: 15
+
+    Repo.all(transaction_query)
+  end
+
+  @doc """
+  Returns the list of contract transactions.
+
+  ## Examples
+
+      iex> list_contracts()
+      [%Transaction{}, ...]
+
+  """
+  def list_contracts do
+    transaction_query = from e in Transaction,
+      order_by: [desc: e.inserted_at],
+      where: e.type == "PublishTransaction" or e.type == "InvocationTransaction" :: type,
+      select: %{:type => e.type, :time => e.time, :txid => e.txid}
 
     Repo.all(transaction_query)
   end
@@ -300,8 +319,36 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_vouts(transaction, [vout | tail]), do: [create_vout(transaction, vout), create_vouts(transaction, tail)]
-  def create_vouts(_transaction, []), do: {:ok , "Created"}
+  def create_vouts( transaction, vouts) do
+    vouts
+    |> get_addresses()
+    |> Enum.each(fn x-> create_vout(transaction, x) end)
+  end
+
+  def get_addresses(vouts) do
+    lookups = Enum.map(vouts, &"#{&1["address"]}")
+    |> Enum.uniq
+
+    query =  from e in Address,
+     where: fragment("CAST(? AS text)", e.address) in ^lookups,
+     select: e
+
+    Repo.all(query)
+    |> fetch_missing(lookups)
+    |> insert_address(vouts)
+  end
+
+  def fetch_missing(address_list, lookups) do
+    lookups -- Enum.map(address_list, fn %{"address" => address} -> address end)
+    |> Enum.map(fn address -> Addresses.create_address(%{"address" => address}) end)
+    |> Enum.concat(address_list)
+  end
+
+  def insert_address(address_list, vouts) do
+    Enum.map(vouts, fn %{"address" => ad } = x ->
+      Map.put(x, "address", Enum.find(address_list, fn %{ :address => address } -> address == ad end))
+    end)
+  end
 
 
   @doc """

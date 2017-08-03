@@ -191,27 +191,11 @@ defmodule Neoscan.Addresses do
       %Address{}
 
   """
-  def create_or_get_and_insert_vout(%{"address" => address} = vout, txid) do
-    query = from e in Address,
-    where: e.address == ^address,
-    select: e
-
-    result = Repo.one(query)
-    cond do
-      is_nil(result) ->
-
-        %{:address => address, :balance => nil , :tx_ids => nil}
-        |> add_vout(vout)
-        |> add_tx_id(txid)
-        |>create_address()
-
-       true ->
-        attrs = %{:balance => result.balance , :tx_ids => result.tx_ids}
-        |> add_vout(vout)
-        |> add_tx_id(txid)
-
-        update_address(result, attrs)
-    end
+  def insert_vout(%{"address" => address} = vout, txid) do
+    attrs = %{:balance => address.balance , :tx_ids => address.tx_ids}
+    |> add_vout(vout)
+    |> add_tx_id(txid)
+    update_address(address, attrs)
   end
 
   def insert_vins_in_address(address, vins) do

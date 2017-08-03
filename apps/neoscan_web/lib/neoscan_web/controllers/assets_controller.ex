@@ -3,7 +3,7 @@ defmodule NeoscanWeb.AssetsController do
 
   alias Neoscan.Transactions
 
-  def show_assets(conn, _params) do
+  def index(conn, _params) do
     assets = Transactions.list_assets()
     render(conn, "assets.html", assets: assets)
   end

@@ -17,10 +17,11 @@ defmodule NeoscanWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/doc", DocController, :index
-    get "/assets", AssetsController, :show_assets
-    get "/address/:address", AddressController, :show_address
-    get "/transaction/:txid", TransactionController, :show_transaction
-    get "/block/:hash", BlockController, :show_block
+    get "/assets", AssetsController, :index
+    get "/contracts", ContractsController, :index
+    get "/address/:address", AddressController, :index
+    get "/transaction/:txid", TransactionController, :index
+    get "/block/:hash", BlockController, :index
 
     get "/", HomeController, :index
     post "/", HomeController, :search

@@ -34,14 +34,14 @@
           </li>
           <li>
             Next Block Hash
-            <a href="<%=block_path(@conn, :show_block, @block.nextblockhash )%>">
+            <a href="<%=block_path(@conn, :index, @block.nextblockhash )%>">
                <%=@block.nextblockhash%>
             </a>
           </li>
           <%= if @block.index != 0 do %>
             <li>
               Previous Block Hash
-              <a href="<%=block_path(@conn, :show_block, @block.previousblockhash )%>">
+              <a href="<%=block_path(@conn, :index, @block.previousblockhash )%>">
                  <%=@block.previousblockhash%>
               </a>
             </li>
@@ -56,8 +56,8 @@
         <ul>
           <%= for transaction <- @block.transactions do %>
             <li>
-              <%=transaction.type%> 
-              <a href="<%=transaction_path(@conn, :show_transaction, transaction.txid )%>">
+              <%=transaction.type%>
+              <a href="<%=transaction_path(@conn, :index, transaction.txid )%>">
                 <%=transaction.txid%>
               </a>
             </li>
