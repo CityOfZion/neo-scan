@@ -180,6 +180,29 @@ defmodule Neoscan.Addresses do
     end
   end
 
+  @doc """
+  Populates tuples {address_hash, vins} with {%Adddress{}, vins}
+
+  ## Examples
+
+      iex> populate_groups(groups})
+      [{%Address{}, _},...]
+
+
+  """
+  def populate_groups(groups) do
+    lookups = groups
+      |> Enum.map(fn {address, _ } -> address end)
+
+    query =  from e in Address,
+     where: fragment("CAST(? AS text)", e.address) in ^lookups,
+     select: e
+
+    address_list = Repo.all(query)
+
+    Enum.map(groups, fn {address, vins} -> {Enum.find(address_list, :address, address), vins} end)
+  end
+
 
   @doc """
   Creates or add an address with a certain address string
@@ -201,16 +224,9 @@ defmodule Neoscan.Addresses do
   end
 
   def insert_vins_in_address(address, vins) do
-    query = from e in Address,
-    where: e.address == ^address,
-    select: e
-
-    result = Repo.all(query)
-    |> List.first
-
-    attrs = %{:balance => result.balance}
+    attrs = %{:balance => address.balance}
     |> add_vins(vins)
-    update_address(result, attrs)
+    update_address(address, attrs)
   end
 
   def add_vins(attrs, [h | t]) do

@@ -157,6 +157,7 @@ defmodule Neoscan.Transactions do
 
          Enum.group_by(new_vin, fn %{:address_hash => address} -> address end)
          |> Map.to_list()
+         |> Addresses.populate_groups
          |> Enum.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins) end)
 
          new_vin
