@@ -63,7 +63,8 @@ defmodule Neoscan.Addresses do
      preload: [vouts: ^vout_query],
      select: e
 
-   Repo.one!(query)
+   Repo.all(query)
+   |> List.first
   end
 
 
@@ -85,7 +86,8 @@ defmodule Neoscan.Addresses do
      where: e.address == ^hash,
      select: e
 
-   Repo.one(query)
+   Repo.all(query)
+   |> List.first
   end
 
   @doc """
@@ -170,7 +172,7 @@ defmodule Neoscan.Addresses do
       where: e.address == ^address,
       select: e.addres
 
-    case Repo.one(query) do
+    case Repo.all(query) |> List.first do
       nil ->
         false
       :string ->
@@ -203,7 +205,8 @@ defmodule Neoscan.Addresses do
     where: e.address == ^address,
     select: e
 
-    result = Repo.one!(query)
+    result = Repo.all(query)
+    |> List.first
 
     attrs = %{:balance => result.balance}
     |> add_vins(vins)

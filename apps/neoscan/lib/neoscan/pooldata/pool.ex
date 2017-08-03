@@ -116,7 +116,7 @@ defmodule Neoscan.Pool do
       order_by: [desc: e.height],
       limit: 1,
       select: e.height
-    case Repo.one(query) do
+    case Repo.all(query) |> List.first do
        x when is_integer(x) ->
         x
       nil ->
@@ -138,7 +138,8 @@ defmodule Neoscan.Pool do
       where: e.height == ^height,
       limit: 1,
       select: e.block
-    Repo.one(query)
+    Repo.all(query)
+    |> List.first
   end
 
 end

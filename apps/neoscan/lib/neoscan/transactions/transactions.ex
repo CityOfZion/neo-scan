@@ -97,7 +97,8 @@ defmodule Neoscan.Transactions do
    query = from e in Transaction,
      where: e.txid == ^hash
 
-   Repo.one(query)
+   Repo.all(query)
+   |> List.first
   end
 
   @doc """
@@ -124,7 +125,8 @@ defmodule Neoscan.Transactions do
      preload: [vouts: ^vout_query],
      select: e
 
-   Repo.one(query)
+   Repo.all(query)
+   |> List.first
   end
 
   @doc """
@@ -384,7 +386,8 @@ defmodule Neoscan.Transactions do
   def get_asset_by_hash(hash) do
    query = from e in Asset,
      where: e.txid == ^hash
-   Repo.one(query)
+   Repo.all(query)
+   |> List.first
   end
 
   @doc """
@@ -403,7 +406,8 @@ defmodule Neoscan.Transactions do
    query = from e in Asset,
      where: e.txid == ^hash,
      select: e.name
-   Repo.one!(query)
+   Repo.all(query)
+   |> List.first
    |>filter_name
   end
 

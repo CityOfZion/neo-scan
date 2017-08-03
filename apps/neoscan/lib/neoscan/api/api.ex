@@ -52,7 +52,7 @@ defmodule Neoscan.Api do
     where: e.address == ^hash,
     select: %{:address => e.address, :balance => e.balance}
 
-    result = case Repo.one(query) do
+    result = case Repo.all(query) |> List.first do
         nil -> %{:address => "not found", :balance => nil}
 
         %{} = address ->
@@ -93,7 +93,7 @@ defmodule Neoscan.Api do
     where: e.address == ^hash,
     select: %{:address => e.address, :claimed => e.claimed}
 
-    result = case Repo.one(query) do
+    result = case Repo.all(query) |> List.first do
         nil -> %{:address => "not found", :claimed => nil}
 
         %{} = address ->
@@ -146,7 +146,7 @@ defmodule Neoscan.Api do
     where: e.address == ^hash,
     select: %{:address => e.address, :balance => e.balance, :txids => e.tx_ids, :claimed => e.claimed}
 
-    result = case Repo.one(query) do
+    result = case Repo.all(query) |> List.first do
         nil -> %{:address => "not found", :balance => nil, :txids => nil, :claimed => nil}
 
         %{} = address ->
@@ -223,7 +223,7 @@ defmodule Neoscan.Api do
     query = from e in Asset,
     where: e.txid == ^hash
 
-    result = case Repo.one(query) do
+    result = case Repo.all(query) |> List.first do
         nil -> %{:txid => "not found",
          :admin => nil,
          :amount => nil,
@@ -291,7 +291,7 @@ defmodule Neoscan.Api do
          preload: [transactions: ^tran_query]
     end
 
-    result = case Repo.one(query) do
+    result = case Repo.all(query) |> List.first do
         nil -> %{:hash => "not found",
          :confirmations => nil,
          :index => nil,
@@ -406,7 +406,8 @@ defmodule Neoscan.Api do
       preload: [transactions: ^tran_query],
       limit: 1
 
-      Repo.one(query)
+      Repo.all(query)
+      |> List.first
       |> Map.delete(:inserted_at)
       |> Map.delete(:updated_at)
       |> Map.delete(:id)
@@ -476,7 +477,7 @@ defmodule Neoscan.Api do
          where: t.txid == ^hash,
          preload: [vouts: ^vout_query]
 
-    result = case Repo.one(query) do
+    result = case Repo.all(query) |> List.first do
         nil -> %{:txid => "not found",
          :attributes => nil,
          :net_fee => nil,

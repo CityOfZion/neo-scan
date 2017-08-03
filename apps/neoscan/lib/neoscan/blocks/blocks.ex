@@ -36,7 +36,7 @@ defmodule Neoscan.Blocks do
       order_by: [desc: e.index],
       select: %{:index => e.index, :time => e.time, :tx_count => e.tx_count, :hash => e.hash},
       limit: 15
-      
+
     Repo.all(block_query)
   end
 
@@ -72,7 +72,8 @@ defmodule Neoscan.Blocks do
    query = from e in Block,
      where: e.hash == ^hash,
      select: e
-   Repo.one(query)
+   Repo.all(query)
+   |> List.first
   end
 
   @doc """
@@ -91,7 +92,8 @@ defmodule Neoscan.Blocks do
    query = from e in Block,
      where: e.index == ^height,
      select: e
-   Repo.one(query)
+   Repo.all(query)
+   |> List.first
   end
 
   @doc """
