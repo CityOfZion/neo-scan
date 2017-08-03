@@ -1,6 +1,6 @@
 defmodule Neoscan.Blocks do
   @moduledoc false
-  
+
   @moduledoc """
   The boundary for the Blocks system.
   """
@@ -20,6 +20,24 @@ defmodule Neoscan.Blocks do
   """
   def list_blocks do
     Repo.all(Block)
+  end
+
+  @doc """
+  Returns the list of blocks in the home page.
+
+  ## Examples
+
+      iex> home_blocks()
+      [%Block{}, ...]
+
+  """
+  def home_blocks do
+    block_query = from e in Block,
+      order_by: [desc: e.index],
+      select: %{:index => e.index, :time => e.time, :tx_count => e.tx_count, :hash => e.hash},
+      limit: 15
+      
+    Repo.all(block_query)
   end
 
   @doc """

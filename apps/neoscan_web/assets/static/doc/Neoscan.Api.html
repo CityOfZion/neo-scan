@@ -8,7 +8,7 @@
     <title>Neoscan.Api – NeoScan vdev</title>
     <link rel="stylesheet" href="dist/app-268c9dc719.css" />
 
-    <script src="dist/sidebar_items-b4a59f6bd8.js"></script>
+    <script src="dist/sidebar_items-608316c337.js"></script>
   </head>
   <body data-type="modules">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -21,7 +21,7 @@
 <section class="sidebar">
 
 
-  <a  class="sidebar-projectLink">
+  <a href="<%= home_path(@conn, :index) %>" class="sidebar-projectLink">
     <div class="sidebar-projectDetails">
       <h1 class="sidebar-projectName">
         NeoScan
@@ -232,9 +232,14 @@ If no <code class="inline">type</code> is provided, returns all types</p>
   ],
   &quot;claimed&quot;: [
     {
-      &quot;txid&quot;: &quot;tx_id_string&quot;,
-      &quot;amount&quot;: &quot;float&quot;,
+      &quot;txids&quot;: [
+        &quot;tx_id_string&quot;,
+        &quot;tx_id_string&quot;,
+        &quot;tx_id_string&quot;,
+        ...
+      ],
       &quot;asset&quot;: &quot;name_string&quot;,
+      &quot;amount&quot;: &quot;float&quot;,
     },
     ...
   ],
@@ -282,6 +287,7 @@ If no <code class="inline">type</code> is provided, returns all types</p>
     },
     ...
   ],
+  &quot;issued&quot;: float,
   &quot;amount&quot;: float,
   &quot;admin&quot;: &quot;hash_string&quot;
 }&quot;</code></pre>
@@ -321,6 +327,7 @@ If no <code class="inline">type</code> is provided, returns all types</p>
       },
       ...
     ],
+    &quot;issued&quot;: float,
     &quot;amount&quot;: float,
     &quot;admin&quot;: &quot;hash_string&quot;
   },
@@ -430,9 +437,16 @@ If no <code class="inline">type</code> is provided, returns all types</p>
 <pre><code class="elixir">/api/main_net/v1/get_claimed/{hash_string}
 &quot;{
   &quot;claimed&quot;: [
-    &quot;tx_id_string&quot;,
-    &quot;tx_id_string&quot;,
-    &quot;tx_id_string&quot;,
+    {
+      &quot;txids&quot;: [
+        &quot;tx_id_string&quot;,
+        &quot;tx_id_string&quot;,
+        &quot;tx_id_string&quot;,
+        ...
+      ],
+      &quot;asset&quot;: &quot;name_string&quot;,
+      &quot;amount&quot;: &quot;float&quot;,
+    },
     ...
   ],
   &quot;address&quot;: &quot;hash_string&quot;

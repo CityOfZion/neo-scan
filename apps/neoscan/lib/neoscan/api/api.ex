@@ -72,9 +72,16 @@ defmodule Neoscan.Api do
       /api/main_net/v1/get_claimed/{hash_string}
       "{
         \"claimed\": [
-          \"tx_id_string\",
-          \"tx_id_string\",
-          \"tx_id_string\",
+          {
+            \"txids\": [
+              \"tx_id_string\",
+              \"tx_id_string\",
+              \"tx_id_string\",
+              ...
+            ],
+            \"asset\": \"name_string\",
+            \"amount\": \"float\",
+          },
           ...
         ],
         \"address\": \"hash_string\"
@@ -112,9 +119,14 @@ defmodule Neoscan.Api do
         ],
         \"claimed\": [
           {
-            \"txid\": \"tx_id_string\",
-            \"amount\": \"float\",
+            \"txids\": [
+              \"tx_id_string\",
+              \"tx_id_string\",
+              \"tx_id_string\",
+              ...
+            ],
             \"asset\": \"name_string\",
+            \"amount\": \"float\",
           },
           ...
         ],
@@ -165,6 +177,7 @@ defmodule Neoscan.Api do
             },
             ...
           ],
+          \"issued\": float,
           \"amount\": float,
           \"admin\": \"hash_string\"
         },
@@ -200,6 +213,7 @@ defmodule Neoscan.Api do
           },
           ...
         ],
+        \"issued\": float,
         \"amount\": float,
         \"admin\": \"hash_string\"
       }"

@@ -28,6 +28,25 @@ defmodule Neoscan.Transactions do
   end
 
   @doc """
+  Returns the list of transactions in the home page.
+
+  ## Examples
+
+      iex> home_transactions()
+      [%Transaction{}, ...]
+
+  """
+  def home_transactions do
+    transaction_query = from e in Transaction,
+      order_by: [desc: e.inserted_at],
+      where: e.type != "MinerTransaction",
+      select: %{:type => e.type, :time => e.time, :txid => e.txid},
+      limit: 15
+
+    Repo.all(transaction_query)
+  end
+
+  @doc """
   Gets a single transaction.
 
   Raises `Ecto.NoResultsError` if the Transaction does not exist.

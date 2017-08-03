@@ -1,30 +1,15 @@
 defmodule NeoscanWeb.HomeController do
   use NeoscanWeb, :controller
-  import Ecto.Query, warn: true
 
-
-  alias Neoscan.Repo
-  alias Neoscan.Blocks.Block
   alias Neoscan.Blocks
-  alias Neoscan.Transactions.Transaction
   alias Neoscan.Transactions
   alias Neoscan.Addresses
 
   #load last blocks and transactions from db
   def index(conn, _params) do
-    block_query = from e in Block,
-      order_by: [desc: e.index],
-      select: e,
-      limit: 15
 
-    transaction_query = from e in Transaction,
-      order_by: [desc: e.inserted_at],
-      where: e.type != "MinerTransaction",
-      select: e,
-      limit: 15
-
-    blocks = Repo.all(block_query)
-    transactions = Repo.all(transaction_query)
+    blocks = Blocks.home_blocks()
+    transactions = Transactions.home_transactions()
 
     render conn, "index.html", blocks: blocks, transactions: transactions
   end
