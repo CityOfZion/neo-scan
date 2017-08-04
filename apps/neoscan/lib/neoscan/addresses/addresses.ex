@@ -236,7 +236,8 @@ defmodule Neoscan.Addresses do
   def add_vins(attrs, []), do: attrs
 
   def insert_claim_in_addresses(transactions, vouts) do
-    lookups = Enum.uniq(Enum.map(vouts, &"#{&1["address"]}"))
+    lookups = Enum.map(vouts, &"#{&1["address"]}")
+      |> Enum.uniq
 
     query =  from e in Address,
      where: fragment("CAST(? AS text)", e.address) in ^lookups,
