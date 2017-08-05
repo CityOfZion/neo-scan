@@ -192,7 +192,8 @@ defmodule Neoscan.Addresses do
   """
   def populate_groups(groups) do
     lookups = groups
-      |> Enum.map(fn {address, _ } -> address end)
+      |> Stream.map(fn {address, _ } -> address end)
+      |> Enum.to_list
 
     query =  from e in Address,
      where: fragment("CAST(? AS text)", e.address) in ^lookups,
@@ -200,7 +201,8 @@ defmodule Neoscan.Addresses do
 
     address_list = Repo.all(query)
 
-    Enum.map(groups, fn {address, vins} -> {Enum.find(address_list, fn %{:address => ad} -> ad == address end), vins} end)
+    Stream.map(groups, fn {address, vins} -> {Enum.find(address_list, fn %{:address => ad} -> ad == address end), vins} end)
+    |> Enum.to_list
   end
 
 
@@ -236,8 +238,9 @@ defmodule Neoscan.Addresses do
   def add_vins(attrs, []), do: attrs
 
   def insert_claim_in_addresses(transactions, vouts) do
-    lookups = Enum.map(vouts, &"#{&1["address"]}")
-      |> Enum.uniq
+    lookups = Stream.map(vouts, &"#{&1["address"]}")
+      |> Stream.uniq
+      |> Enum.to_list
 
     query =  from e in Address,
      where: fragment("CAST(? AS text)", e.address) in ^lookups,
@@ -245,9 +248,10 @@ defmodule Neoscan.Addresses do
 
     address_list = Repo.all(query)
 
-    Enum.each(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
+    Stream.each(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
       insert_claim_in_address(Enum.find(address_list, fn %{:address => address} -> address == hash end) , transactions, value, asset, hash)
     end)
+    |> Enum.to_list 
   end
 
   def insert_claim_in_address(address, transactions, value, asset, address_hash) do

@@ -147,7 +147,8 @@ defmodule Neoscan.Transactions do
     new_vin = Task.async(fn -> cond do
        Kernel.length(vin) != 0 ->
 
-         lookups = Enum.map(vin, &"#{&1["vout"]}#{&1["txid"]}")
+         lookups = Stream.map(vin, &"#{&1["vout"]}#{&1["txid"]}")
+         |> Enum.to_list
 
          query =  from e in Vout,
           where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
@@ -158,7 +159,8 @@ defmodule Neoscan.Transactions do
          Enum.group_by(new_vin, fn %{:address_hash => address} -> address end)
          |> Map.to_list()
          |> Addresses.populate_groups
-         |> Enum.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins) end)
+         |> Stream.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins) end)
+         |> Enum.to_list
 
          new_vin
        true ->
@@ -170,11 +172,13 @@ defmodule Neoscan.Transactions do
     new_claim = Task.async( fn -> cond do
        attrs["claims"] != nil ->
 
-         Enum.map(attrs["claims"], fn %{"txid" => txid } -> txid end)
-         |> Enum.uniq()
+         Stream.map(attrs["claims"], fn %{"txid" => txid } -> txid end)
+         |> Stream.uniq()
+         |> Enum.to_list
          |> Addresses.insert_claim_in_addresses(vouts)
 
-         lookups = Enum.map(attrs["claims"], &"#{&1["vout"]}#{&1["txid"]}")
+         lookups = Stream.map(attrs["claims"], &"#{&1["vout"]}#{&1["txid"]}")
+         |> Enum.to_list
 
          query =  from e in Vout,
           where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
@@ -201,10 +205,11 @@ defmodule Neoscan.Transactions do
     #create asset if issue Transaction
     cond do
       attrs["type"] == "IssueTransaction" ->
-        Enum.each(vouts, fn %{"asset" => asset_hash, "value" => value} ->
+        Stream.each(vouts, fn %{"asset" => asset_hash, "value" => value} ->
           {float, _} = Float.parse(value)
           add_issued_value(asset_hash, float)
         end)
+        |> Enum.to_list
       true ->
         nil
     end
@@ -325,12 +330,14 @@ defmodule Neoscan.Transactions do
   def create_vouts( transaction, vouts) do
     vouts
     |> get_addresses()
-    |> Enum.each(fn x-> create_vout(transaction, x) end)
+    |> Stream.each(fn x-> create_vout(transaction, x) end)
+    |> Enum.to_list
   end
 
   def get_addresses(vouts) do
-    lookups = Enum.map(vouts, &"#{&1["address"]}")
-    |> Enum.uniq
+    lookups = Stream.map(vouts, &"#{&1["address"]}")
+    |> Stream.uniq
+    |> Enum.to_list
 
     query =  from e in Address,
      where: fragment("CAST(? AS text)", e.address) in ^lookups,
@@ -343,14 +350,16 @@ defmodule Neoscan.Transactions do
 
   def fetch_missing(address_list, lookups) do
     lookups -- Enum.map(address_list, fn %{:address => address} -> address end)
-    |> Enum.map(fn address -> Addresses.create_address(%{"address" => address}) end)
+    |> Stream.map(fn address -> Addresses.create_address(%{"address" => address}) end)
+    |> Enum.to_list
     |> Enum.concat(address_list)
   end
 
   def insert_address(address_list, vouts) do
-    Enum.map(vouts, fn %{"address" => ad } = x ->
+    Stream.map(vouts, fn %{"address" => ad } = x ->
       Map.put(x, "address", Enum.find(address_list, fn %{ :address => address } -> address == ad end))
     end)
+    |> Enum.to_list
   end
 
 
