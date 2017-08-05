@@ -14,5 +14,9 @@ defmodule Neoscan.Repo.Migrations.Vouts do
 
       timestamps()
     end
+
+
+    create index(:vouts, [:address_hash])
+    
   end
 end
