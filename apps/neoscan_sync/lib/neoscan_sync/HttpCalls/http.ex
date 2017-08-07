@@ -37,8 +37,12 @@ defmodule NeoscanSync.HttpCalls do
   defp handle_response(response) do
     case response do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        %{"result" => result} = Poison.decode!(body)
-        {:ok, result }
+        case Poison.decode!(body) do
+          %{"result" => result} ->
+            {:ok, result }
+          %{"error" => error} ->
+            {:error, error}
+        end
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         IO.puts "Error 404 Not found! :("
         { :error , "Error 404 Not found! :(" }
