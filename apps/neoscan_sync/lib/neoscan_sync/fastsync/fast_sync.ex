@@ -39,7 +39,7 @@ defmodule NeoscanSync.FastSync do
 
   def fetch_chain(n, count) do
     check_process()
-    get_current_height(Enum.random(0..9))
+    get_current_height()
     |> evaluate(n, count+1)
   end
 
@@ -112,12 +112,12 @@ defmodule NeoscanSync.FastSync do
   end
 
   #handles error when fetching height from chain
-  def get_current_height(random) do
-    case Blockchain.get_current_height(random) do
+  def get_current_height() do
+    case Blockchain.get_current_height() do
       { :ok , height } ->
         { :ok , height }
       { :error, _reason} ->
-        get_current_height(random)
+        get_current_height()
     end
   end
 
