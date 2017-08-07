@@ -175,10 +175,12 @@ defmodule Neoscan.Blocks do
   def get_highest_block_in_db() do
     query = from e in Block,
       order_by: [desc: e.index],
-      limit: 1
+      limit: 1,
+      select: e.index
+
     case Repo.all(query) do
-      [block] ->
-        {:ok , block}
+      [index] ->
+        {:ok , index}
       [] ->
         nil
     end

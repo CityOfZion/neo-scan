@@ -251,7 +251,7 @@ defmodule Neoscan.Addresses do
     Stream.each(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
       insert_claim_in_address(Enum.find(address_list, fn %{:address => address} -> address == hash end) , transactions, value, asset, hash)
     end)
-    |> Enum.to_list 
+    |> Enum.to_list
   end
 
   def insert_claim_in_address(address, transactions, value, asset, address_hash) do
@@ -287,15 +287,10 @@ defmodule Neoscan.Addresses do
     end
   end
 
-  def add_vin(%{:balance => balance} = address, vin) do
-      case Enum.find_index(balance, fn %{"asset" => asset} -> asset == vin.asset end) do
-        nil ->
-          new_balance = Enum.concat(balance, [%{"asset" => vin.asset, "amount" => vin.value}])
-          Map.put(address, :balance, new_balance)
-        index ->
-          new_balance = List.update_at(balance, index, fn %{"asset" => asset, "amount" => amount} -> %{"asset" => asset, "amount" => amount-vin.value} end)
-          Map.put(address, :balance, new_balance)
-      end
+  def add_vin(%{:balance => balance} = attrs, vin) do
+      index = Enum.find_index(balance, fn %{"asset" => asset} -> asset == vin.asset end)
+      new_balance = List.update_at(balance, index, fn %{"asset" => asset, "amount" => amount} -> %{"asset" => asset, "amount" => amount-vin.value} end)
+      Map.put(attrs, :balance, new_balance)
   end
 
   def add_tx_id(address, txid) do

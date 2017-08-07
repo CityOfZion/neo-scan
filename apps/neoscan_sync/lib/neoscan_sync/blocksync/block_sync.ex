@@ -44,7 +44,7 @@ defmodule NeoscanSync.BlockSync do
       nil ->
         get_block_from_pool(0, max_block_in_pool)
         |> add_block(0, max_block_in_pool)
-      { :ok, %Blocks.Block{:index => count}} ->
+      { :ok, count} ->
         evaluate(count, max_block_in_pool)
       { :error, reason} ->
         IO.puts("Failed to get highest block from db, result =#{reason}")
