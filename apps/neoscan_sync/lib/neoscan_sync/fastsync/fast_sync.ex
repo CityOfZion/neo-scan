@@ -75,6 +75,10 @@ defmodule NeoscanSync.FastSync do
     IO.puts("Block #{num} saved in pool")
   end
 
+  def add_block(nil) do
+
+  end
+
   #cross check block hash between different seeds
   def cross_check(height) do
     random1 = Enum.random(0..9)
@@ -101,8 +105,7 @@ defmodule NeoscanSync.FastSync do
       { :ok , block } ->
         block
       { :error, %{"code" => num}} when num < 0 ->
-        Process.sleep(15000)
-        start()
+        nil
       { :error, _reason} ->
         get_block_by_height(random, height)
     end
@@ -113,9 +116,6 @@ defmodule NeoscanSync.FastSync do
     case Blockchain.get_current_height(random) do
       { :ok , height } ->
         { :ok , height }
-      { :error, %{"code" => num}} when num < 0 ->
-        Process.sleep(15000)
-        start()
       { :error, _reason} ->
         get_current_height(random)
     end
