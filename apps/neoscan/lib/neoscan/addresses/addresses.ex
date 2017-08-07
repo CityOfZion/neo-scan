@@ -233,7 +233,7 @@ defmodule Neoscan.Addresses do
 
   def add_vins(attrs, [h | t]) do
     add_vin(attrs, h)
-    add_vins(attrs, t)
+    |> add_vins(t)
   end
   def add_vins(attrs, []), do: attrs
 
