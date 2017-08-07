@@ -100,6 +100,9 @@ defmodule NeoscanSync.FastSync do
     case Blockchain.get_block_by_height(random, height) do
       { :ok , block } ->
         block
+      { :error, %{"code" => num}} when num < 0 ->
+        Process.sleep(15000)
+        start()
       { :error, _reason} ->
         get_block_by_height(random, height)
     end
@@ -110,6 +113,9 @@ defmodule NeoscanSync.FastSync do
     case Blockchain.get_current_height(random) do
       { :ok , height } ->
         { :ok , height }
+      { :error, %{"code" => num}} when num < 0 ->
+        Process.sleep(15000)
+        start()
       { :error, _reason} ->
         get_current_height(random)
     end

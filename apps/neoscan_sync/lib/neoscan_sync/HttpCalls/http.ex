@@ -18,8 +18,8 @@ defmodule NeoscanSync.HttpCalls do
       3 => "http://seed2.cityofzion.io:8080",
       4 => "http://seed3.cityofzion.io:8080",
       5 => "http://seed3.cityofzion.io:8080",
-      6 => "http://seed5.cityofzion.io:8080",
-      7 => "http://seed5.cityofzion.io:8080",
+      6 => "http://seed4.cityofzion.io:8080",
+      7 => "http://seed4.cityofzion.io:8080",
       8 => "http://seed5.cityofzion.io:8080",
       9 => "http://seed5.cityofzion.io:8080",
     }
