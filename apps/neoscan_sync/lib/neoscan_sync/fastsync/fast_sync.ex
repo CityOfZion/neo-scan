@@ -75,19 +75,9 @@ defmodule NeoscanSync.FastSync do
     IO.puts("Block #{num} saved in pool")
   end
 
-  def add_block(nil) do
-
-  end
-
   #cross check block hash between different seeds
   def cross_check(height) do
-    random1 = Enum.random(0..9)
-    random2= cond do
-      random1 == 9 ->
-         1
-      true ->
-        random1 + 1
-    end
+    [random1, random2] = Enum.to_list(0..9) |> Enum.take_random(2)
     blockA = get_block_by_height(random1, height)
     blockB = get_block_by_height(random2, height)
     cond do
@@ -105,7 +95,7 @@ defmodule NeoscanSync.FastSync do
       { :ok , block } ->
         block
       { :error, %{"code" => num}} when num < 0 ->
-        nil
+        get_block_by_height(Enum.random(0..9), height)
       { :error, _reason} ->
         get_block_by_height(random, height)
     end
