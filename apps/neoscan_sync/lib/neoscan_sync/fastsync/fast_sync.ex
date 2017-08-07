@@ -60,12 +60,12 @@ defmodule NeoscanSync.FastSync do
           |> Enum.map(&Task.await(&1, 20000))
           |> Enum.map(fn x -> add_block(x) end)
           BlockSync.start()
-        count > height - 1000 ->
-          Process.sleep(15000)
-          FastSync.start()
         end
       {:ok, height} when (height-1000) == count  ->
         BlockSync.start()
+      {:ok, height} when (height-1000) < count  ->
+        Process.sleep(15000)
+        FastSync.start()
     end
   end
 
