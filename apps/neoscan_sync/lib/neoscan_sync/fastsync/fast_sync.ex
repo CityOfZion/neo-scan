@@ -54,12 +54,15 @@ defmodule NeoscanSync.FastSync do
             |> Enum.map(&Task.await(&1, 20000))
             |> Enum.map(fn x -> add_block(x) end)
            fetch_chain(n, count+n-1)
-           height - 1000 - count < n ->
-            Enum.to_list(count..(height-1000))
-            |> Enum.map(&Task.async(fn -> cross_check(&1) end))
-            |> Enum.map(&Task.await(&1, 20000))
-            |> Enum.map(fn x -> add_block(x) end)
-            BlockSync.start()
+         height - 1000 - count < n ->
+          Enum.to_list(count..(height-1000))
+          |> Enum.map(&Task.async(fn -> cross_check(&1) end))
+          |> Enum.map(&Task.await(&1, 20000))
+          |> Enum.map(fn x -> add_block(x) end)
+          BlockSync.start()
+        count > height - 1000 ->
+          Process.sleep(15000)
+          FastSync.start()
         end
       {:ok, height} when (height-1000) == count  ->
         BlockSync.start()
