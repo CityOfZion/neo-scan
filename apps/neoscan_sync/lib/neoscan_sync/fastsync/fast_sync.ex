@@ -64,7 +64,7 @@ defmodule NeoscanSync.FastSync do
       {:ok, height} when (height-1000) == count  ->
         BlockSync.start()
       {:ok, height} when (height-1000) < count  ->
-        FastSync.start(n)
+        start(n)
     end
   end
 
