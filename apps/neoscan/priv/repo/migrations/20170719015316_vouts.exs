@@ -16,7 +16,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     end
 
 
-    create index(:vouts, [:address_hash])
-    
+    create index(:vouts, [:address_hash, :txid])
+
   end
 end
