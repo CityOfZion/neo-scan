@@ -9,6 +9,7 @@ defmodule Neoscan.Addresses do
 
   alias Neoscan.Addresses.Address
   alias Neoscan.Transactions.Vout
+  alias Neoscan.Transactions
 
   @doc """
   Returns the list of addresses.
@@ -218,9 +219,10 @@ defmodule Neoscan.Addresses do
       %Address{}
 
   """
-  def insert_vout(%{"address" => address} = vout, txid) do
+  def insert_vouts_in_address(%{:txid => txid} = transaction, vouts) do
+    %{"address" => address } = List.first(vouts)
     attrs = %{:balance => address.balance , :tx_ids => address.tx_ids}
-    |> add_vout(vout)
+    |> add_vouts(vouts, transaction)
     |> add_tx_id(txid)
     update_address(address, attrs)
   end
@@ -236,6 +238,13 @@ defmodule Neoscan.Addresses do
     |> add_vins(t)
   end
   def add_vins(attrs, []), do: attrs
+
+  def add_vouts(attrs, [h | t], transaction) do
+    Transactions.create_vout(transaction, h)
+    |> add_vout(attrs)
+    |> add_vouts(t, transaction)
+  end
+  def add_vouts(attrs, [], _transaction), do: attrs
 
   def insert_claim_in_addresses(transactions, vouts) do
     lookups = Stream.map(vouts, &"#{&1["address"]}")
@@ -270,18 +279,17 @@ defmodule Neoscan.Addresses do
     end
   end
 
-  def add_vout(%{:balance => balance} = address, %{"value" => value} = vout) do
-    {float , _ } = Float.parse(value)
+  def add_vout(%{:value => value} = vout, %{:balance => balance} = address) do
     cond do
       balance == nil ->
-        Map.put(address, :balance, [%{:asset => vout["asset"], :amount => float}])
+        Map.put(address, :balance, [%{"asset" => vout.asset, "amount" => value}])
       balance != nil ->
-        case Enum.find_index(balance, fn %{"asset" => asset} -> asset == vout["asset"] end) do
+        case Enum.find_index(balance, fn %{"asset" => asset} -> asset == vout.asset end) do
           nil ->
-            new_balance = Enum.concat(balance, [%{"asset" => vout["asset"], "amount" => float}])
+            new_balance = Enum.concat(balance, [%{"asset" => vout.asset, "amount" => value}])
             Map.put(address, :balance, new_balance)
           index ->
-            new_balance = List.update_at(balance, index, fn %{"asset" => asset, "amount" => amount} -> %{"asset" => asset, "amount" => amount+float} end)
+            new_balance = List.update_at(balance, index, fn %{"asset" => asset, "amount" => amount} -> %{"asset" => asset, "amount" => (amount + value)} end)
             Map.put(address, :balance, new_balance)
         end
     end
@@ -289,7 +297,7 @@ defmodule Neoscan.Addresses do
 
   def add_vin(%{:balance => balance} = attrs, vin) do
       index = Enum.find_index(balance, fn %{"asset" => asset} -> asset == vin.asset end)
-      new_balance = List.update_at(balance, index, fn %{"asset" => asset, "amount" => amount} -> %{"asset" => asset, "amount" => amount-vin.value} end)
+      new_balance = List.update_at(balance, index, fn %{"asset" => asset, "amount" => amount} -> %{"asset" => asset, "amount" => (amount - vin.value)} end)
       Map.put(attrs, :balance, new_balance)
   end
 

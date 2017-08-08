@@ -310,10 +310,11 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_vout(transaction, attrs \\ %{}) do
-    Vout.changeset(transaction, attrs)
-    |> Repo.insert!()
+  def create_vout( transaction, attrs \\ %{}) do
+      Vout.changeset(transaction, attrs)
+      |> Repo.insert!()
   end
+
 
   @doc """
   Creates many vouts.
@@ -330,13 +331,15 @@ defmodule Neoscan.Transactions do
   def create_vouts( transaction, vouts) do
     vouts
     |> get_addresses()
-    |> Stream.each(fn x-> create_vout(transaction, x) end)
+    |> Enum.group_by(fn %{"address" => address} -> address.address end)
+    |> Map.to_list()
+    |> Stream.each(fn {_address, vouts} -> Addresses.insert_vouts_in_address(transaction, vouts) end)
     |> Enum.to_list
   end
 
   def get_addresses(vouts) do
     lookups = Stream.map(vouts, &"#{&1["address"]}")
-    |> Stream.uniq
+    |> Stream.uniq()
     |> Enum.to_list
 
     query =  from e in Address,
@@ -349,7 +352,7 @@ defmodule Neoscan.Transactions do
   end
 
   def fetch_missing(address_list, lookups) do
-    lookups -- Enum.map(address_list, fn %{:address => address} -> address end)
+    (lookups -- Enum.map(address_list, fn %{:address => address} -> address end))
     |> Stream.map(fn address -> Addresses.create_address(%{"address" => address}) end)
     |> Enum.to_list
     |> Enum.concat(address_list)

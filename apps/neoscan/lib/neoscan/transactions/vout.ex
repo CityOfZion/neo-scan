@@ -1,7 +1,6 @@
 defmodule Neoscan.Transactions.Vout do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Neoscan.Addresses
   alias Neoscan.Transactions.Vout
 
   schema "vouts" do
@@ -19,8 +18,6 @@ defmodule Neoscan.Transactions.Vout do
 
   @doc false
   def changeset(%{:id => transaction_id, :txid => txid}, %{"address" => address, "value" => value } = attrs \\ %{}) do
-    Addresses.insert_vout(attrs, txid)
-
     {new_value, _} = Float.parse(value)
 
     new_attrs= attrs
