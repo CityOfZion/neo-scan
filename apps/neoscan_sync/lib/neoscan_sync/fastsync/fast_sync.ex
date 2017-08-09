@@ -20,7 +20,7 @@ defmodule NeoscanSync.FastSync do
 
 
   #Start process, create file and get current height from the chain
-  def start(n \\ 500) do
+  def start(n \\ 250) do
     count = Pool.get_highest_block_in_pool()
     fetch_chain(n, count)
   end

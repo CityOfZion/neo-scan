@@ -227,9 +227,10 @@ defmodule Neoscan.Addresses do
     update_address(address, attrs)
   end
 
-  def insert_vins_in_address(address, vins) do
+  def insert_vins_in_address(address, vins, txid) do
     attrs = %{:balance => address.balance}
     |> add_vins(vins)
+    |> add_tx_id(txid)
     update_address(address, attrs)
   end
 
@@ -309,7 +310,9 @@ defmodule Neoscan.Addresses do
       address.tx_ids != nil ->
         case Enum.member?(address.tx_ids, %{"txid" => txid}) do
           true ->
-            address
+            index = Enum.find_index(address.tx_ids, fn %{"txid" => tx} -> tx == txid end )
+            new = List.update_at(address.tx_ids, index, %{ "txid" => txid, "balance" => address.balance})
+            Map.put(address, :tx_ids, new)
           false ->
             new = List.wrap(%{ "txid" => txid, "balance" => address.balance})
             Map.put(address, :tx_ids, Enum.concat(address.tx_ids, new))
