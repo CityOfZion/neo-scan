@@ -193,7 +193,8 @@ defmodule Neoscan.Addresses do
   """
   def populate_groups(groups) do
     lookups = groups
-      |> Stream.map(fn {address, _ } -> address end)
+      |> Flow.from_enumerable()
+      |> Flow.map(fn {address, _ } -> address end)
       |> Enum.to_list
 
     query =  from e in Address,
@@ -202,7 +203,8 @@ defmodule Neoscan.Addresses do
 
     address_list = Repo.all(query)
 
-    Stream.map(groups, fn {address, vins} -> {Enum.find(address_list, fn %{:address => ad} -> ad == address end), vins} end)
+    Flow.from_enumerable(groups)
+    |> Flow.map(fn {address, vins} -> {Enum.find(address_list, fn %{:address => ad} -> ad == address end), vins} end)
     |> Enum.to_list
   end
 
