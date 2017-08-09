@@ -4,10 +4,10 @@ Elixir + Phoenix Blockchain explorer for NEO.
 
 To run, first install Elixir and Phoenix at:
 
--https://elixir-lang.org/install.html
--https://github.com/phoenixframework/phoenix
+* https://elixir-lang.org/install.html
+* https://github.com/phoenixframework/phoenix
 
-To start your Phoenix server:
+Then, to start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
