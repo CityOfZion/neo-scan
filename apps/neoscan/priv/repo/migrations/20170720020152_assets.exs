@@ -14,7 +14,8 @@ defmodule Neoscan.Repo.Migrations.Assets do
 
       timestamps()
     end
-  end
 
+    create unique_index(:assets, [:txid])
+  end
 
 end

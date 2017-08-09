@@ -174,6 +174,7 @@ defmodule Neoscan.Blocks do
   """
   def get_highest_block_in_db() do
     query = from e in Block,
+      where: e.index > -10,  #force postgres to use index
       order_by: [desc: e.index],
       limit: 1,
       select: e.index
