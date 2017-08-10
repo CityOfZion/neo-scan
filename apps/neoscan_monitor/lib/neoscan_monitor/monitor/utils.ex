@@ -23,7 +23,7 @@ defmodule NeoscanMonitor.Utils do
     |> Enum.to_list()
 
     height = filter_height(data)
-    %{:nodes => filter_nodes(data, height), :height => {:ok, height}}
+    %{:nodes => filter_nodes(data, height), :height => {:ok, height}, :data => data}
   end
 
   defp filter_nodes(data, height) do

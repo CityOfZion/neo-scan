@@ -26,6 +26,10 @@ defmodule NeoscanMonitor.Server do
     {:reply, state.height, state}
   end
 
+  def handle_call(:data, _from, state) do
+    {:reply, state.data, state}
+  end
+
   def handle_cast(:error, _state) do
     new_state = load()
     {:noreply, new_state}

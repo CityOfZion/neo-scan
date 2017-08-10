@@ -606,4 +606,76 @@ defmodule Neoscan.Api do
   end
 
 
+  @doc """
+  Returns all working nodes and their respective heights.
+  Information is updated each 5 minutes.
+
+  Currrent tested nodes are:
+
+  http://seed1.cityofzion.io:8080
+  http://seed2.cityofzion.io:8080
+  http://seed3.cityofzion.io:8080
+  http://seed4.cityofzion.io:8080
+  http://seed5.cityofzion.io:8080
+  http://api.otcgo.cn:10332
+  http://seed1.neo.org:10332
+  http://seed2.neo.org:10332
+  http://seed3.neo.org:10332
+  http://seed4.neo.org:10332
+  http://seed5.neo.org:10332
+
+  ## Examples
+
+      /api/main_net/v1/get_all_nodes
+      "[
+        {
+          \"url\": \"http: \/\/seed1.cityofzion.io: 8080\",
+          \"height\": 1239778
+        },
+        ...
+      ]"
+
+  """
+  def get_all_nodes() do
+    NeoscanMonitor.Api.get_data
+    |> Enum.map(fn { url, height } -> %{ :url => url, :height => height} end)
+    |> Poison.encode!()
+  end
+
+  @doc """
+  Returns nodes with the majority of block heigh value.
+
+  ## Examples
+
+      /api/main_net/v1/get_nodes
+      "{
+        \"urls\": [
+          \"http: \/\/seed1.cityofzion.io: 8080\",
+          ....
+        ]
+      }"
+
+  """
+  def get_nodes() do
+    %{ :urls => NeoscanMonitor.Api.get_nodes }
+    |> Poison.encode!()
+  end
+
+  @doc """
+  Returns the blockchain current height, as determined by the majority of working nodes.
+
+  ## Examples
+
+      /api/main_net/v1/get_height
+      "{
+        \"height\": 1239809
+      }"
+
+  """
+  def get_height() do
+    {:ok, height} = NeoscanMonitor.Api.get_height
+    Poison.encode!(%{:height => height})
+  end
+
+
 end

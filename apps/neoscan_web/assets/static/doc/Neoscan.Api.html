@@ -8,7 +8,7 @@
     <title>Neoscan.Api – NeoScan vdev</title>
     <link rel="stylesheet" href="dist/app-268c9dc719.css" />
 
-    <script src="dist/sidebar_items-608316c337.js"></script>
+    <script src="dist/sidebar_items-a00475cb07.js"></script>
   </head>
   <body data-type="modules">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -102,6 +102,16 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#get_all_nodes/0">get_all_nodes()</a>
+  </div>
+
+    <div class="summary-synopsis"><p>Returns all working nodes and their respective heights.
+Information is updated each 5 minutes</p>
+</div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#get_asset/1">get_asset(hash)</a>
   </div>
 
@@ -147,6 +157,15 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#get_height/0">get_height()</a>
+  </div>
+
+    <div class="summary-synopsis"><p>Returns the blockchain current height, as determined by the majority of working nodes</p>
+</div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#get_highest_block/0">get_highest_block()</a>
   </div>
 
@@ -170,6 +189,15 @@
 
     <div class="summary-synopsis"><p>Returns the last 20 transaction models in the chain for the selected <code class="inline">type</code>.
 If no <code class="inline">type</code> is provided, returns all types</p>
+</div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_nodes/0">get_nodes()</a>
+  </div>
+
+    <div class="summary-synopsis"><p>Returns nodes with the majority of block heigh value</p>
 </div>
 
 </div>
@@ -252,6 +280,49 @@ If no <code class="inline">type</code> is provided, returns all types</p>
   ],
   &quot;address&quot;: &quot;hash_string&quot;
 }&quot;</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="get_all_nodes/0">
+
+  <div class="detail-header">
+    <a href="#get_all_nodes/0" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">get_all_nodes()</span>
+
+
+
+  </div>
+  <section class="docstring">
+    <p>Returns all working nodes and their respective heights.
+Information is updated each 5 minutes.</p>
+<p>Currrent tested nodes are:</p>
+<p>http://seed1.cityofzion.io:8080
+http://seed2.cityofzion.io:8080
+http://seed3.cityofzion.io:8080
+http://seed4.cityofzion.io:8080
+http://seed5.cityofzion.io:8080
+http://api.otcgo.cn:10332
+http://seed1.neo.org:10332
+http://seed2.neo.org:10332
+http://seed3.neo.org:10332
+http://seed4.neo.org:10332
+http://seed5.neo.org:10332</p>
+<h2 id="get_all_nodes/0-examples" class="section-heading">
+  <a href="#get_all_nodes/0-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="elixir">/api/main_net/v1/get_all_nodes
+&quot;[
+  {
+    &quot;url&quot;: &quot;http: //seed1.cityofzion.io: 8080&quot;,
+    &quot;height&quot;: 1239778
+  },
+  ...
+]&quot;</code></pre>
 
   </section>
 </div>
@@ -454,6 +525,32 @@ If no <code class="inline">type</code> is provided, returns all types</p>
 
   </section>
 </div>
+<div class="detail" id="get_height/0">
+
+  <div class="detail-header">
+    <a href="#get_height/0" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">get_height()</span>
+
+
+
+  </div>
+  <section class="docstring">
+    <p>Returns the blockchain current height, as determined by the majority of working nodes.</p>
+<h2 id="get_height/0-examples" class="section-heading">
+  <a href="#get_height/0-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="elixir">/api/main_net/v1/get_height
+&quot;{
+  &quot;height&quot;: 1239809
+}&quot;</code></pre>
+
+  </section>
+</div>
 <div class="detail" id="get_highest_block/0">
 
   <div class="detail-header">
@@ -614,6 +711,35 @@ If no <code class="inline">type</code> is provided, returns all types</p>
   },
   ...
 ]&quot;</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="get_nodes/0">
+
+  <div class="detail-header">
+    <a href="#get_nodes/0" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">get_nodes()</span>
+
+
+
+  </div>
+  <section class="docstring">
+    <p>Returns nodes with the majority of block heigh value.</p>
+<h2 id="get_nodes/0-examples" class="section-heading">
+  <a href="#get_nodes/0-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="elixir">/api/main_net/v1/get_nodes
+&quot;{
+  &quot;urls&quot;: [
+    &quot;http: //seed1.cityofzion.io: 8080&quot;,
+    ....
+  ]
+}&quot;</code></pre>
 
   </section>
 </div>

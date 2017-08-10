@@ -13,4 +13,8 @@ defmodule NeoscanMonitor.Api do
     GenServer.cast(NeoscanMonitor.Server, :error)
   end
 
+  def get_data do
+    GenServer.call(NeoscanMonitor.Server, :data)
+  end
+
 end
