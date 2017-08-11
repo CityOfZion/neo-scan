@@ -59,14 +59,11 @@ defmodule NeoscanSync.BlockSync do
         get_block_from_pool( count+1 , max_block_in_pool)
         |> add_block(count+1, max_block_in_pool)
       height when height == count  ->
-        Process.sleep(self(), 15000)
         FastSync.start()
       height when height < count ->
         Blocks.delete_higher_than(height)
-        Process.sleep(self(), 15000)
         FastSync.start()
       nil ->
-        Process.sleep(self(), 15000)
         FastSync.start()
     end
   end
