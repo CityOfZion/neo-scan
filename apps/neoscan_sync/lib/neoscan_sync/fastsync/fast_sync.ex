@@ -78,7 +78,7 @@ defmodule NeoscanSync.FastSync do
         |> Pool.create_data()
         IO.puts("Block #{num} saved in pool")
       true ->
-        start()
+        BlockSync.start()
     end
 
   end
