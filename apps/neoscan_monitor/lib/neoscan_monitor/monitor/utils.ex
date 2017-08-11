@@ -16,10 +16,10 @@ defmodule NeoscanMonitor.Utils do
   ]
 
   def load() do
-    data = Flow.from_enumerable(@seeds)
-    |> Flow.map(fn x -> {x, Blockchain.get_current_height(x)} end)
-    |> Flow.filter( fn { _x , result } -> evaluate_result(result)  end)
-    |> Flow.map(fn { x , { :ok, height } } -> { x, height } end)
+    data = @seeds
+    |> Stream.map(fn x -> {x, Blockchain.get_current_height(x)} end)
+    |> Stream.filter( fn { _x , result } -> evaluate_result(result)  end)
+    |> Stream.map(fn { x , { :ok, height } } -> { x, height } end)
     |> Enum.to_list()
 
     height = filter_height(data)
@@ -28,14 +28,15 @@ defmodule NeoscanMonitor.Utils do
 
   defp filter_nodes(data, height) do
     data
-    |> Enum.filter(fn { _url, hgt } -> hgt == height end)
-    |> Enum.map(fn {url, _height} -> url end)
+    |> Stream.filter(fn { _url, hgt } -> hgt == height end)
+    |> Stream.map(fn {url, _height} -> url end)
+    |> Enum.to_list
   end
 
   defp filter_height(data) do
     {height , _count} = data
-      |> Enum.map(fn { _url, height } -> height end)
-      |> Enum.reduce(%{}, fn(height, acc) -> Map.update(acc, height, 1, &(&1 + 1)) end)
+      |> Stream.map(fn { _url, height } -> height end)
+      |> Stream.reduce(%{}, fn(height, acc) -> Map.update(acc, height, 1, &(&1 + 1)) end)
       |> Enum.to_list
       |> Enum.max_by(fn { _height , count} -> count end)
     height
