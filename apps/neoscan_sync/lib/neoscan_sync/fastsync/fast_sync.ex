@@ -71,9 +71,9 @@ defmodule NeoscanSync.FastSync do
   end
 
   #write block to the file
-  def add_block(%{"index" => num, "nextblockhash" => next} = block) do
+  def add_block(%{"index" => num} = block) do
     cond do
-      next != nil ->
+      block["nextblockhash"] != nil ->
         %{"height" => num, "block" => block}
         |> Pool.create_data()
         IO.puts("Block #{num} saved in pool")
