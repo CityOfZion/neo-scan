@@ -202,7 +202,7 @@ defmodule Neoscan.Addresses do
 
     address_list = Repo.all(query)
 
-    Stream.map(fn {address, vins} -> {Enum.find(address_list, fn %{:address => ad} -> ad == address end), vins} end)
+    Stream.map(groups, fn {address, vins} -> {Enum.find(address_list, fn %{:address => ad} -> ad == address end), vins} end)
     |> Enum.to_list
   end
 
