@@ -71,10 +71,16 @@ defmodule NeoscanSync.FastSync do
   end
 
   #write block to the file
-  def add_block(%{"index" => num} = block) do
-    %{"height" => num, "block" => block}
-    |> Pool.create_data()
-    IO.puts("Block #{num} saved in pool")
+  def add_block(%{"index" => num, "nextblockhash" => next} = block) do
+    cond do
+      next != nil ->
+        %{"height" => num, "block" => block}
+        |> Pool.create_data()
+        IO.puts("Block #{num} saved in pool")
+      true ->
+        start()
+    end
+
   end
 
   #cross check block hash between different seeds
