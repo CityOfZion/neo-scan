@@ -36,7 +36,7 @@ defmodule NeoscanMonitor.Utils do
   defp filter_height(data) do
     {height , _count} = data
       |> Stream.map(fn { _url, height } -> height end)
-      |> Stream.reduce(%{}, fn(height, acc) -> Map.update(acc, height, 1, &(&1 + 1)) end)
+      |> Enum.reduce(%{}, fn(height, acc) -> Map.update(acc, height, 1, &(&1 + 1)) end)
       |> Enum.to_list
       |> Enum.max_by(fn { _height , count} -> count end)
     height
