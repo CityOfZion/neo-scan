@@ -13,11 +13,10 @@ defmodule NeoscanSync.FastSync do
   alias NeoscanSync.BlockSync
   alias NeoscanMonitor.Api
 
-  @me __MODULE__
 
   #Starts the application
   def start_link() do
-    Agent.start_link(fn -> start() end , name: @me)
+    Task.start_link(start())
   end
 
 
