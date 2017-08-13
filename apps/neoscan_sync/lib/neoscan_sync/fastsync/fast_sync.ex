@@ -16,13 +16,9 @@ defmodule NeoscanSync.FastSync do
   @me __MODULE__
   #Starts the application
   def start_link() do
-    Agent.start_link( @me, fire(), name: @me)
+    pid = spawn_link( @me, start(), [])
+    {:ok, pid}
   end
-
-  def fire() do
-    Agent.cast(@me, @me, start(), [])
-  end
-
 
   #Start process, create file and get current height from the chain
   def start(n \\ 400) do
