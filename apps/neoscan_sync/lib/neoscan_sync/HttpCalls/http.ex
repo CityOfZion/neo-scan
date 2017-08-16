@@ -10,25 +10,14 @@ defmodule NeoscanSync.HttpCalls do
     "http://seed2.antshares.org:10332"
 
   """
-  def url(index \\ 0) do
-    %{
-      0 => "http://seed1.cityofzion.io:8080",
-      1 => "http://seed1.cityofzion.io:8080",
-      2 => "http://seed2.cityofzion.io:8080",
-      3 => "http://seed2.cityofzion.io:8080",
-      4 => "http://seed3.cityofzion.io:8080",
-      5 => "http://seed3.cityofzion.io:8080",
-      6 => "http://seed4.cityofzion.io:8080",
-      7 => "http://seed4.cityofzion.io:8080",
-      8 => "http://seed5.cityofzion.io:8080",
-      9 => "http://seed5.cityofzion.io:8080",
-    }
-    |> Map.get(index)
+  def url(n) do
+    NeoscanMonitor.Api.get_nodes
+    |> Enum.take_random(n)
   end
 
   #Makes a request to the 'index' seed
-  def request(headers, data, index) do
-    url(index)
+  def request(headers, data, url) do
+    url
     |> HTTPoison.post( data, headers, ssl: [{:versions, [:'tlsv1.2']}] )
     |> handle_response
   end
@@ -41,7 +30,12 @@ defmodule NeoscanSync.HttpCalls do
           %{"result" => result} ->
             {:ok, result }
           %{"error" => error} ->
+            NeoscanMonitor.Api.error
             {:error, error}
+
+          _ ->
+            NeoscanMonitor.Api.error
+            {:error,"server error"}
         end
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         IO.puts "Error 404 Not found! :("
@@ -49,6 +43,9 @@ defmodule NeoscanSync.HttpCalls do
       {:ok, %HTTPoison.Response{status_code: 405}} ->
         IO.puts "Error 405 Method not found! :("
         { :error , "Error 405 Method not found! :(" }
+      {:ok, %HTTPoison.Response{}} ->
+        IO.puts "Web server error! :("
+        { :error , "Web server error! :(" }
       {:error, %HTTPoison.Error{reason: :timeout}} ->
         IO.puts "timeout, retrying....."
         { :error , :timeout}

@@ -58,7 +58,20 @@ defmodule NeoscanWeb.ApiController do
     json(conn, transactions)
   end
 
+  def get_all_nodes(conn, %{}) do
+    nodes = Api.get_all_nodes()
+    json(conn, nodes)
+  end
 
+  def get_nodes(conn, %{}) do
+    nodes = Api.get_nodes()
+    json(conn, nodes)
+  end
+
+  def get_height(conn, %{}) do
+    height = Api.get_height()
+    json(conn, height)
+  end
 
 
 end

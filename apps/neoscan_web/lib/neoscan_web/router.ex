@@ -41,6 +41,9 @@ defmodule NeoscanWeb.Router do
     get "/get_last_transactions", ApiController, :get_last_transactions
     get "/get_last_transactions/:type", ApiController, :get_last_transactions
     get "/get_transaction/:hash", ApiController, :get_transaction
+    get "/get_all_nodes", ApiController, :get_all_nodes
+    get "/get_height", ApiController, :get_height
+    get "/get_nodes", ApiController, :get_nodes
   end
   # Other scopes may use custom stacks.
   # scope "/api", NeoscanWeb do

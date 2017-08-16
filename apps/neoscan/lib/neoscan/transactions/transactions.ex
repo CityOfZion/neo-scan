@@ -159,8 +159,7 @@ defmodule Neoscan.Transactions do
          Enum.group_by(new_vin, fn %{:address_hash => address} -> address end)
          |> Map.to_list()
          |> Addresses.populate_groups
-         |> Flow.from_enumerable()
-         |> Flow.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins, attrs["txid"]) end)
+         |> Stream.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins, attrs["txid"]) end)
          |> Enum.to_list
 
          new_vin
@@ -220,8 +219,8 @@ defmodule Neoscan.Transactions do
     #prepare and create transaction
 
     transaction = Map.put(attrs,"time", time)
-    |> Map.put("vin", Task.await(new_vin, 15000))
-    |> Map.put("claims", Task.await(new_claim, 15000))
+    |> Map.put("vin", Task.await(new_vin, 60*60000))
+    |> Map.put("claims", Task.await(new_claim, 60*60000))
     |> Map.put("block_hash", hash)
     |> Map.put("block_height", height)
     |> Map.delete("vout")

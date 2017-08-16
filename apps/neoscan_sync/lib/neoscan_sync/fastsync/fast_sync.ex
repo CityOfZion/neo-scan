@@ -8,19 +8,20 @@ defmodule NeoscanSync.FastSync do
   """
 
   alias NeoscanSync.Blockchain
+  alias NeoscanSync.HttpCalls
   alias Neoscan.Pool
   alias NeoscanSync.BlockSync
+  alias NeoscanMonitor.Api
 
   @me __MODULE__
-
   #Starts the application
   def start_link() do
-    Agent.start_link(fn -> start() end , name: @me)
+    pid = spawn_link( @me, start(), [])
+    {:ok, pid}
   end
 
-
   #Start process, create file and get current height from the chain
-  def start(n \\ 500) do
+  def start(n \\ 400) do
     count = Pool.get_highest_block_in_pool()
     fetch_chain(n, count)
   end
@@ -51,13 +52,13 @@ defmodule NeoscanSync.FastSync do
           height  - count >= n ->
             Enum.to_list(count..(count+n-1))
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
-            |> Enum.map(&Task.await(&1, 20000))
+            |> Enum.map(&Task.await(&1, 60*60*1000))
             |> Enum.map(fn x -> add_block(x) end)
             fetch_chain(n, count+n-1)
           height  - count < n ->
             Enum.to_list(count..(height))
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
-            |> Enum.map(&Task.await(&1, 20000))
+            |> Enum.map(&Task.await(&1, 60*60*1000))
             |> Enum.map(fn x -> add_block(x) end)
             BlockSync.start()
         end
@@ -70,14 +71,20 @@ defmodule NeoscanSync.FastSync do
 
   #write block to the file
   def add_block(%{"index" => num} = block) do
-    %{"height" => num, "block" => block}
-    |> Pool.create_data()
-    IO.puts("Block #{num} saved in pool")
+    cond do
+      block["nextblockhash"] != nil ->
+        %{"height" => num, "block" => block}
+        |> Pool.create_data()
+        IO.puts("Block #{num} saved in pool")
+      true ->
+        BlockSync.start()
+    end
+
   end
 
   #cross check block hash between different seeds
   def cross_check(height) do
-    [random1, random2] = Enum.to_list(0..9) |> Enum.take_random(2)
+    [random1, random2] = HttpCalls.url(2)
     blockA = get_block_by_height(random1, height)
     blockB = get_block_by_height(random2, height)
     cond do
@@ -94,22 +101,14 @@ defmodule NeoscanSync.FastSync do
     case Blockchain.get_block_by_height(random, height) do
       { :ok , block } ->
         block
-      { :error, %{"code" => num}} when num < 0 ->
-        get_block_by_height(Enum.random(0..9), height)
       { :error, _reason} ->
-        get_block_by_height(random, height)
+        get_block_by_height(HttpCalls.url(1), height)
     end
   end
 
   #handles error when fetching height from chain
   def get_current_height() do
-    case Blockchain.get_current_height() do
-      { :ok , height } ->
-        #{ :ok , height }
-        { :ok , 16000 }
-      { :error, _reason} ->
-        get_current_height()
-    end
+    Api.get_height
   end
 
 end
