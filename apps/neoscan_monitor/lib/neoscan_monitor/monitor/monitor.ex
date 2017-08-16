@@ -36,7 +36,7 @@ defmodule NeoscanMonitor.Server do
   end
 
   defp schedule_work() do
-    Process.send_after(self(), :work, 5*60*1000) # In 5 minutes
+    Process.send_after(self(), :work, 1*60*1000) # In 5 minutes
   end
 
   defp load() do

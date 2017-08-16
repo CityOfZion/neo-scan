@@ -207,18 +207,7 @@ defmodule Neoscan.Addresses do
   end
 
 
-  @doc """
-  Creates or add an address with a certain address string
-
-  ## Examples
-
-      iex> create_or_get(existing_address})
-      %Address{}
-
-      iex> create_or_get(new_address})
-      %Address{}
-
-  """
+  #insert vouts into address balance
   def insert_vouts_in_address(%{:txid => txid} = transaction, vouts) do
     %{"address" => address } = List.first(vouts)
     attrs = %{:balance => address.balance , :tx_ids => address.tx_ids}
@@ -227,6 +216,7 @@ defmodule Neoscan.Addresses do
     update_address(address, attrs)
   end
 
+  #insert vins into address balance
   def insert_vins_in_address(address, vins, txid) do
     attrs = %{:balance => address.balance, :tx_ids => address.tx_ids}
     |> add_vins(vins)
@@ -234,12 +224,14 @@ defmodule Neoscan.Addresses do
     update_address(address, attrs)
   end
 
+  #add multiple vins
   def add_vins(attrs, [h | t]) do
     add_vin(attrs, h)
     |> add_vins(t)
   end
   def add_vins(attrs, []), do: attrs
 
+  #add multiple vouts
   def add_vouts(attrs, [h | t], transaction) do
     Transactions.create_vout(transaction, h)
     |> add_vout(attrs)
@@ -247,6 +239,7 @@ defmodule Neoscan.Addresses do
   end
   def add_vouts(attrs, [], _transaction), do: attrs
 
+  #get addresses and route for adding claims
   def insert_claim_in_addresses(transactions, vouts) do
     lookups = Stream.map(vouts, &"#{&1["address"]}")
       |> Stream.uniq
@@ -264,6 +257,7 @@ defmodule Neoscan.Addresses do
     |> Enum.to_list
   end
 
+  #insert claimed transactions and update address balance
   def insert_claim_in_address(address, transactions, value, asset, address_hash) do
     cond do
       address == nil ->
@@ -280,6 +274,7 @@ defmodule Neoscan.Addresses do
     end
   end
 
+  #add a single vout into adress
   def add_vout(%{:value => value} = vout, %{:balance => balance} = address) do
     cond do
       balance == nil ->
@@ -296,12 +291,14 @@ defmodule Neoscan.Addresses do
     end
   end
 
+  #add a single vin into adress
   def add_vin(%{:balance => balance} = attrs, vin) do
       index = Enum.find_index(balance, fn %{"asset" => asset} -> asset == vin.asset end)
       new_balance = List.update_at(balance, index, fn %{"asset" => asset, "amount" => amount} -> %{"asset" => asset, "amount" => (amount - vin.value)} end)
       Map.put(attrs, :balance, new_balance)
   end
 
+  #add a transaction id into address
   def add_tx_id(address, txid) do
     cond do
       address.tx_ids == nil ->
@@ -320,6 +317,7 @@ defmodule Neoscan.Addresses do
     end
   end
 
+  #add a single claim into address
   def add_claim(address, transactions, amount, asset) do
     cond do
       address.claimed == nil ->

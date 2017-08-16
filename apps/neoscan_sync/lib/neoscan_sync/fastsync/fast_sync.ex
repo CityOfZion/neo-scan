@@ -106,9 +106,10 @@ defmodule NeoscanSync.FastSync do
     end
   end
 
-  #handles error when fetching height from chain
+  #get current height from monitor
   def get_current_height() do
-    Api.get_height
+    #Api.get_height
+    {:ok, 170501}
   end
 
 end
