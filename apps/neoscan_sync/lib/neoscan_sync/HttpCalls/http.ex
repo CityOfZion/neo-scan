@@ -32,6 +32,10 @@ defmodule NeoscanSync.HttpCalls do
           %{"error" => error} ->
             NeoscanMonitor.Api.error
             {:error, error}
+
+          _ ->
+            NeoscanMonitor.Api.error
+            {:error,"server error"}
         end
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         IO.puts "Error 404 Not found! :("

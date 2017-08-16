@@ -219,8 +219,8 @@ defmodule Neoscan.Transactions do
     #prepare and create transaction
 
     transaction = Map.put(attrs,"time", time)
-    |> Map.put("vin", Task.await(new_vin, 60000))
-    |> Map.put("claims", Task.await(new_claim, 60000))
+    |> Map.put("vin", Task.await(new_vin, 60*60000))
+    |> Map.put("claims", Task.await(new_claim, 60*60000))
     |> Map.put("block_hash", hash)
     |> Map.put("block_height", height)
     |> Map.delete("vout")
