@@ -43,6 +43,9 @@ defmodule NeoscanSync.HttpCalls do
       {:ok, %HTTPoison.Response{status_code: 405}} ->
         IO.puts "Error 405 Method not found! :("
         { :error , "Error 405 Method not found! :(" }
+      {:ok, %HTTPoison.Response{}} ->
+        IO.puts "Web server error! :("
+        { :error , "Web server error! :(" }
       {:error, %HTTPoison.Error{reason: :timeout}} ->
         IO.puts "timeout, retrying....."
         { :error , :timeout}
