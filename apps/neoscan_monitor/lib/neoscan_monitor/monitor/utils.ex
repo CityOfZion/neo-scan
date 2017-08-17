@@ -17,13 +17,23 @@ defmodule NeoscanMonitor.Utils do
 
   def load() do
     data = @seeds
-    |> Stream.map(fn x -> {x, Blockchain.get_current_height(x)} end)
-    |> Stream.filter( fn { _x , result } -> evaluate_result(result)  end)
-    |> Stream.map(fn { x , { :ok, height } } -> { x, height } end)
+    |> Stream.map(fn url -> {url, Blockchain.get_current_height(url)} end)
+    |> Stream.filter( fn { url , result } -> evaluate_result(url, result)  end)
+    |> Stream.map(fn { url , { :ok, height } } -> { url, height } end)
     |> Enum.to_list()
 
-    height = filter_height(data)
-    %{:nodes => filter_nodes(data, height), :height => {:ok, height}, :data => data}
+
+    set_state(data)
+  end
+
+  defp set_state(data) do
+    cond do
+      Enum.count(data) > 0 ->
+        height = filter_height(data)
+        %{:nodes => filter_nodes(data, height), :height => {:ok, height}, :data => data}
+      true ->
+        %{:nodes => [], :height => {:ok, nil}, :data => []}
+    end
   end
 
   defp filter_nodes(data, height) do
@@ -42,11 +52,22 @@ defmodule NeoscanMonitor.Utils do
     height
   end
 
-  defp evaluate_result ({ :ok , _height}) do
-    true
+  defp evaluate_result(url, { :ok , height}) do
+    test_get_block(url, height)
+  end
+  defp evaluate_result(_url, { :error , _height}) do
+    false
   end
 
-  defp evaluate_result ({ :error , _height}) do
+  defp test_get_block(url, height) do
+    Blockchain.get_block_by_height(url, height-1)
+    |> test()
+  end
+
+  defp test({:ok, _block}) do
+    true
+  end
+  defp test({:error, _reason}) do
     false
   end
 

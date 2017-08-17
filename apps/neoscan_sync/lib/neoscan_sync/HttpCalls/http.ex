@@ -12,7 +12,16 @@ defmodule NeoscanSync.HttpCalls do
   """
   def url(n) do
     NeoscanMonitor.Api.get_nodes
-    |> Enum.take_random(n)
+    |> test_if_nodes(n)
+  end
+
+  defp test_if_nodes(list, n) do
+    cond do
+      Enum.count(list) > n ->
+        Enum.take_random(list, n)
+      true ->
+        list
+    end
   end
 
   #Makes a request to the 'index' seed
@@ -54,11 +63,9 @@ defmodule NeoscanSync.HttpCalls do
     {:ok, result }
   end
   defp handle_body(%{"error" => error}) do
-    NeoscanMonitor.Api.error
     {:error, error}
   end
   defp handle_body(_body) do
-    NeoscanMonitor.Api.error
     {:error,"server error"}
   end
 

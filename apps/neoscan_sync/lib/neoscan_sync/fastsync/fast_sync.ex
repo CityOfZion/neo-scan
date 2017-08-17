@@ -84,14 +84,31 @@ defmodule NeoscanSync.FastSync do
 
   #cross check block hash between different seeds
   def cross_check(height) do
-    [random1, random2] = HttpCalls.url(2)
-    blockA = get_block_by_height(random1, height)
-    blockB = get_block_by_height(random2, height)
+    nodes = check_if_nodes(2)
     cond do
-      blockA == blockB ->
-        blockA
+      nodes != nil ->
+        [random1, random2] = nodes
+        blockA = get_block_by_height(random1, height)
+        blockB = get_block_by_height(random2, height)
+        cond do
+          blockA == blockB ->
+            blockA
+          true ->
+            cross_check(height)
+        end
       true ->
-        cross_check(height)
+        NeoscanMonitor.Api.error
+        start()
+    end
+  end
+
+  defp check_if_nodes(n) do
+    nodes = HttpCalls.url(n)
+    cond do
+      Enum.count(nodes) == n ->
+        nodes
+      true ->
+        nil
     end
   end
 
@@ -102,14 +119,18 @@ defmodule NeoscanSync.FastSync do
       { :ok , block } ->
         block
       { :error, _reason} ->
-        get_block_by_height(HttpCalls.url(1), height)
+        get_block_by_height(check_if_nodes(1), height)
     end
   end
 
   #get current height from monitor
   def get_current_height() do
     Api.get_height
+<<<<<<< HEAD
     #{:ok, 10}
+=======
+    #{:ok, 5000}
+>>>>>>> efc397047e2fcbdba0e92a3e14ca7ff84b15844e
   end
 
 end

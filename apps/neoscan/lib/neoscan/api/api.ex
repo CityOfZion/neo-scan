@@ -8,6 +8,7 @@ defmodule Neoscan.Api do
   alias Neoscan.Blocks.Block
   alias Neoscan.Transactions.Vout
 
+
   @moduledoc """
     Main API for accessing data from the explorer.
     All data is provided through GET requests in `/api/main_net/v1`.
@@ -61,7 +62,7 @@ defmodule Neoscan.Api do
           Map.put(address, :balance, new_balance)
       end
 
-    Poison.encode!(result)
+    result
   end
 
   @doc """
@@ -100,7 +101,7 @@ defmodule Neoscan.Api do
           address
       end
 
-    Poison.encode!(result)
+    result
   end
 
   @doc """
@@ -155,7 +156,7 @@ defmodule Neoscan.Api do
           Map.put(address, :balance, new_balance)
       end
 
-    Poison.encode!(result)
+    result
   end
 
   @doc """
@@ -192,7 +193,6 @@ defmodule Neoscan.Api do
         |> Map.delete(:updated_at)
         |> Map.delete(:id)
     end)
-    |> Poison.encode!
   end
 
   @doc """
@@ -239,7 +239,6 @@ defmodule Neoscan.Api do
     Map.delete(result, :inserted_at)
     |> Map.delete(:updated_at)
     |> Map.delete(:id)
-    |> Poison.encode!
   end
 
   @doc """
@@ -313,7 +312,6 @@ defmodule Neoscan.Api do
       Map.delete(result, :inserted_at)
       |> Map.delete(:updated_at)
       |> Map.delete(:id)
-      |> Poison.encode!
   end
 
   @doc """
@@ -354,7 +352,7 @@ defmodule Neoscan.Api do
     select: t.txid
 
     query = from e in Block,
-      where: e.index > -10,
+      where: e.index > -1200000,
       order_by: [desc: e.index],
       preload: [transactions: ^tran_query],
       limit: 20
@@ -365,7 +363,6 @@ defmodule Neoscan.Api do
           |> Map.delete(:updated_at)
           |> Map.delete(:id)
       end)
-      |> Poison.encode!
   end
 
   @doc """
@@ -403,7 +400,7 @@ defmodule Neoscan.Api do
     select: t.txid
 
     query = from e in Block,
-      where: e.index > -10,
+      where: e.index > -1200000,
       order_by: [desc: e.index],
       preload: [transactions: ^tran_query],
       limit: 1
@@ -413,7 +410,6 @@ defmodule Neoscan.Api do
       |> Map.delete(:inserted_at)
       |> Map.delete(:updated_at)
       |> Map.delete(:id)
-      |> Poison.encode!
   end
 
   @doc """
@@ -512,7 +508,7 @@ defmodule Neoscan.Api do
           |> Map.put(:vin, new_vins)
       end
 
-      Poison.encode!(result)
+      result
   end
 
   @doc """
@@ -604,7 +600,6 @@ defmodule Neoscan.Api do
         |> Map.put(:vouts, new_vouts)
         |> Map.put(:vin, new_vins)
     end)
-    |> Poison.encode!
   end
 
 
@@ -641,7 +636,6 @@ defmodule Neoscan.Api do
   def get_all_nodes() do
     NeoscanMonitor.Api.get_data
     |> Enum.map(fn { url, height } -> %{ :url => url, :height => height} end)
-    |> Poison.encode!()
   end
 
   @doc """
@@ -660,7 +654,6 @@ defmodule Neoscan.Api do
   """
   def get_nodes() do
     %{ :urls => NeoscanMonitor.Api.get_nodes }
-    |> Poison.encode!()
   end
 
   @doc """
@@ -676,7 +669,7 @@ defmodule Neoscan.Api do
   """
   def get_height() do
     {:ok, height} = NeoscanMonitor.Api.get_height
-    Poison.encode!(%{:height => height})
+    %{:height => height}
   end
 
 
