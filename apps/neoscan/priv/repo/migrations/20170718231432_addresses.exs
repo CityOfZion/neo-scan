@@ -5,7 +5,7 @@ defmodule Neoscan.Repo.Migrations.Addresses do
     create table(:addresses) do
       add :address, :string
       add :tx_ids, :map
-      add :balance, {:array, :map}
+      add :balance, :map
       add :claimed, {:array, :map}
 
 

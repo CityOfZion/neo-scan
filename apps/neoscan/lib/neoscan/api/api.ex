@@ -576,13 +576,14 @@ defmodule Neoscan.Api do
 
     query = cond do
       type == nil -> from t in Transaction,
+        where: t.inserted_at > ago(1, "hour"),
         order_by: [desc: t.inserted_at],
         preload: [vouts: ^vout_query],
         limit: 20
 
       true -> from t in Transaction,
           order_by: [desc: t.inserted_at],
-          where: t.type == ^type,
+          where: t.type == ^type and t.inserted_at > ago(1, "hour"),
           preload: [vouts: ^vout_query],
           limit: 20
     end

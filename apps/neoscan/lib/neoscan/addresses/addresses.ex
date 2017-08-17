@@ -8,7 +8,6 @@ defmodule Neoscan.Addresses do
   alias Neoscan.Repo
 
   alias Neoscan.Addresses.Address
-  alias Neoscan.Transactions.Vout
   alias Neoscan.Transactions
 
   @doc """
@@ -53,17 +52,9 @@ defmodule Neoscan.Addresses do
 
   """
   def get_address_by_hash_for_view(hash) do
-   vout_query = from v in Vout,
-     select: %{
-       asset: v.asset,
-       address_hash: v.address_hash,
-       value: v.value
-     }
    query = from e in Address,
      where: e.address == ^hash,
-     preload: [vouts: ^vout_query],
-     select: e
-
+     select: %{:address => e.address, :tx_ids => e.tx_ids, :balance => e.balance, :claimed => e.claimed}
    Repo.all(query)
    |> List.first
   end
@@ -276,26 +267,16 @@ defmodule Neoscan.Addresses do
 
   #add a single vout into adress
   def add_vout(%{:value => value} = vout, %{:balance => balance} = address) do
-    cond do
-      balance == nil ->
-        Map.put(address, :balance, [%{"asset" => vout.asset, "amount" => value}])
-      balance != nil ->
-        case Enum.find_index(balance, fn %{"asset" => asset} -> asset == vout.asset end) do
-          nil ->
-            new_balance = Enum.concat(balance, [%{"asset" => vout.asset, "amount" => value}])
-            Map.put(address, :balance, new_balance)
-          index ->
-            new_balance = List.update_at(balance, index, fn %{"asset" => asset, "amount" => amount} -> %{"asset" => asset, "amount" => (amount + value)} end)
-            Map.put(address, :balance, new_balance)
-        end
-    end
+    current_amount = balance[vout.asset]["amount"] || 0
+    new_balance = %{"asset" => vout.asset, "amount" => current_amount + value}
+    %{address | balance: Map.put(address.balance || %{}, vout.asset, new_balance)}
   end
 
   #add a single vin into adress
   def add_vin(%{:balance => balance} = attrs, vin) do
-      index = Enum.find_index(balance, fn %{"asset" => asset} -> asset == vin.asset end)
-      new_balance = List.update_at(balance, index, fn %{"asset" => asset, "amount" => amount} -> %{"asset" => asset, "amount" => (amount - vin.value)} end)
-      Map.put(attrs, :balance, new_balance)
+    current_amount = balance[vin.asset]["amount"]
+    new_balance = %{"asset" => vin.asset, "amount" => current_amount - vin.value}
+    %{attrs | balance: Map.put(attrs.balance || %{}, vin.asset, new_balance)}
   end
 
   #add a transaction id into address

@@ -126,11 +126,7 @@ defmodule NeoscanSync.FastSync do
   #get current height from monitor
   def get_current_height() do
     Api.get_height
-<<<<<<< HEAD
-    #{:ok, 10}
-=======
-    #{:ok, 5000}
->>>>>>> efc397047e2fcbdba0e92a3e14ca7ff84b15844e
+    #{:ok, 15000}
   end
 
 end

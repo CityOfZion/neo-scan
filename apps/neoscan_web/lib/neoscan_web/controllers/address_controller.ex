@@ -5,7 +5,6 @@ defmodule NeoscanWeb.AddressController do
 
   def index(conn, %{"address" => address_hash}) do
     address = Addresses.get_address_by_hash_for_view(address_hash)
-    IO.inspect(address)
     render(conn, "address.html", address: address)
   end
 
