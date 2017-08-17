@@ -1,13 +1,10 @@
 defmodule NeoscanWeb.BlockController do
   use NeoscanWeb, :controller
-  import Ecto.Query, warn: false
 
   alias Neoscan.Blocks
-  alias Neoscan.Repo
 
   def index(conn, %{"hash" => block_hash}) do
-    block = Blocks.get_block_by_hash(block_hash)
-    |> Repo.preload(:transactions)
+    block = Blocks.get_block_by_hash_for_view(block_hash)
     render(conn, "block.html", block: block)
   end
 

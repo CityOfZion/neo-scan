@@ -26,20 +26,7 @@ defmodule NeoscanSync.FastSync do
     fetch_chain(n, count)
   end
 
-  def check_process() do
-    alive = Process.whereis(Neoscan.Supervisor)
-    |> Process.alive?
-    case alive do
-      true ->
-        true
-      false ->
-        IO.puts("Main process was killed")
-        Process.exit(self(), :shutdown)
-    end
-  end
-
   def fetch_chain(n, count) do
-    check_process()
     get_current_height()
     |> evaluate(n, count+1)
   end

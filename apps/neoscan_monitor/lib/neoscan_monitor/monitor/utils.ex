@@ -26,14 +26,12 @@ defmodule NeoscanMonitor.Utils do
     set_state(data)
   end
 
+  defp set_state([] = data) do
+    %{:nodes => [], :height => {:ok, nil}, :data => data}
+  end
   defp set_state(data) do
-    cond do
-      Enum.count(data) > 0 ->
-        height = filter_height(data)
-        %{:nodes => filter_nodes(data, height), :height => {:ok, height}, :data => data}
-      true ->
-        %{:nodes => [], :height => {:ok, nil}, :data => []}
-    end
+    height = filter_height(data)
+    %{:nodes => filter_nodes(data, height), :height => {:ok, height}, :data => data}
   end
 
   defp filter_nodes(data, height) do

@@ -26,18 +26,6 @@ defmodule NeoscanSync.BlockSync do
     fetch_db(max_block_in_db, max_block_in_pool)
   end
 
-  def check_process do
-    alive = Process.whereis(Neoscan.Supervisor)
-    |> Process.alive?
-    case alive do
-      true ->
-        true
-      false ->
-        IO.puts("Main process was killed")
-        Process.exit(self(), :shutdown)
-    end
-  end
-
   #get highest block from db and route functions forward
   def fetch_db(max_block_in_db, max_block_in_pool) do
     case max_block_in_db do

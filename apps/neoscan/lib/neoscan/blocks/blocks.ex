@@ -8,6 +8,7 @@ defmodule Neoscan.Blocks do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Blocks.Block
+  alias Neoscan.Transactions.Transaction
 
   @doc """
   Returns the list of blocks.
@@ -33,7 +34,7 @@ defmodule Neoscan.Blocks do
   """
   def home_blocks do
     block_query = from e in Block,
-      where: e.index > -1,
+      where: e.index > -1200000,
       order_by: [desc: e.index],
       select: %{:index => e.index, :time => e.time, :tx_count => e.tx_count, :hash => e.hash},
       limit: 15
@@ -72,6 +73,33 @@ defmodule Neoscan.Blocks do
   def get_block_by_hash(hash) do
    query = from e in Block,
      where: e.hash == ^hash,
+     select: e
+   Repo.all(query)
+   |> List.first
+  end
+
+
+  @doc """
+  Gets a single block by its hash value for blocks page
+
+  ## Examples
+
+      iex> get_block_by_hash_for_view(hash)
+      %Block{}
+
+      iex> get_block_by_hash_for_view(hash)
+      nil
+
+  """
+  def get_block_by_hash_for_view(hash) do
+    trans_query = from t in Transaction,
+      select: %{
+        type: t.type,
+        txid: t.txid
+      }
+   query = from e in Block,
+     where: e.hash == ^hash,
+     preload: [transactions: ^trans_query],
      select: e
    Repo.all(query)
    |> List.first
