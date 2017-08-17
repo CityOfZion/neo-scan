@@ -169,53 +169,46 @@ defmodule Neoscan.Transactions do
   end
 
   #get vins and add to addresses
+  defp get_vins([] = vin, _txid) do
+    vin
+  end
   defp get_vins(vin, txid) do
-    cond do
-       Kernel.length(vin) != 0 ->
+    lookups = Stream.map(vin, &"#{&1["vout"]}#{&1["txid"]}")
+    |> Enum.to_list
 
-         lookups = Stream.map(vin, &"#{&1["vout"]}#{&1["txid"]}")
-         |> Enum.to_list
+    query =  from e in Vout,
+     where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
+     select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
-         query =  from e in Vout,
-          where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
-          select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+    new_vin = Repo.all(query)
 
-         new_vin = Repo.all(query)
+    Enum.group_by(new_vin, fn %{:address_hash => address} -> address end)
+    |> Map.to_list()
+    |> Addresses.populate_groups
+    |> Stream.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins, txid) end)
+    |> Enum.to_list
 
-         Enum.group_by(new_vin, fn %{:address_hash => address} -> address end)
-         |> Map.to_list()
-         |> Addresses.populate_groups
-         |> Stream.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins, txid) end)
-         |> Enum.to_list
-
-         new_vin
-       true ->
-         vin
-      end
+    new_vin
   end
 
   #get claimed vouts and add to addresses
+  defp get_claims( nil = claims, _vouts) do
+    claims
+  end
   defp get_claims(claims, vouts) do
-    cond do
-       claims != nil ->
+    Stream.map(claims, fn %{"txid" => txid } -> txid end)
+    |> Stream.uniq()
+    |> Enum.to_list
+    |> Addresses.insert_claim_in_addresses(vouts)
 
-         Stream.map(claims, fn %{"txid" => txid } -> txid end)
-         |> Stream.uniq()
-         |> Enum.to_list
-         |> Addresses.insert_claim_in_addresses(vouts)
+    lookups = Stream.map(claims, &"#{&1["vout"]}#{&1["txid"]}")
+    |> Enum.to_list
 
-         lookups = Stream.map(claims, &"#{&1["vout"]}#{&1["txid"]}")
-         |> Enum.to_list
+    query =  from e in Vout,
+    where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
+    select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
-         query =  from e in Vout,
-          where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
-          select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
-
-         Repo.all(query)
-
-       true ->
-         claims
-      end
+    Repo.all(query)
   end
 
   #create new assets
