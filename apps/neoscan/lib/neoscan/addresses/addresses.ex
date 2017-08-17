@@ -300,21 +300,8 @@ defmodule Neoscan.Addresses do
 
   #add a transaction id into address
   def add_tx_id(address, txid) do
-    cond do
-      address.tx_ids == nil ->
-        Map.put(address, :tx_ids, [%{ "txid" => txid, "balance" => address.balance}])
-
-      address.tx_ids != nil ->
-        case Enum.any?(address.tx_ids, fn %{"txid" => tx } -> tx == txid end) do
-          true ->
-            index = Enum.find_index(address.tx_ids, fn %{"txid" => tx} -> tx == txid end )
-            new = List.update_at(address.tx_ids, index, fn %{ "txid" => tx} -> %{ "txid" => tx , "balance" => address.balance} end)
-            Map.put(address, :tx_ids, new)
-          false ->
-            new = List.wrap(%{ "txid" => txid, "balance" => address.balance})
-            Map.put(address, :tx_ids, Enum.concat(address.tx_ids, new))
-        end
-    end
+      new_tx = %{"txid" => txid, "balance" => address.balance}
+      %{address | tx_ids: Map.put(address.tx_ids || %{}, txid, new_tx)}
   end
 
   #add a single claim into address

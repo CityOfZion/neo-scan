@@ -21,7 +21,7 @@ defmodule NeoscanSync.FastSync do
   end
 
   #Start process, create file and get current height from the chain
-  def start(n \\ 400) do
+  def start(n \\ 500) do
     count = Pool.get_highest_block_in_pool()
     fetch_chain(n, count)
   end
@@ -108,8 +108,8 @@ defmodule NeoscanSync.FastSync do
 
   #get current height from monitor
   def get_current_height() do
-    #Api.get_height
-    {:ok, 170501}
+    Api.get_height
+    #{:ok, 10}
   end
 
 end

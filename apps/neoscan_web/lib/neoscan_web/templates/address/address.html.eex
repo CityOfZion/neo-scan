@@ -10,7 +10,7 @@
             <p>
               Transactions
             </p>
-            <%= for %{"txid" => tx} <- @address.tx_ids do %>
+            <%= for { tx, _map } <- Enum.to_list(@address.tx_ids) do %>
               <li>
                 <a href="<%=transaction_path(@conn, :index, tx )%>">
                   <%=tx%>
