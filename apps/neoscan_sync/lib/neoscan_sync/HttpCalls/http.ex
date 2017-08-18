@@ -53,7 +53,6 @@ defmodule NeoscanSync.HttpCalls do
     { :error , :timeout}
   end
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}) do
-    IO.puts "urlopen error, retry."
     IO.inspect reason
     { :error , "urlopen error, retry."}
   end

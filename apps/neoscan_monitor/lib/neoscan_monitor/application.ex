@@ -12,6 +12,7 @@ defmodule NeoscanMonitor.Application do
     children = [
       # Starts a worker by calling: NeoscanMonitor.Worker.start_link(arg1, arg2, arg3)
       worker(NeoscanMonitor.Server, []),
+      worker(NeoscanMonitor.Worker, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

@@ -22,7 +22,7 @@ defmodule NeoscanMonitor.Utils do
     |> Stream.map(fn { url , { :ok, height } } -> { url, height } end)
     |> Enum.to_list()
 
-
+    IO.inspect(data)
     set_state(data)
   end
 

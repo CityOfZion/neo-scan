@@ -1,20 +1,15 @@
 defmodule NeoscanMonitor.Server do
   use GenServer
-  alias NeoscanMonitor.Utils
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__ )
   end
 
   def init( :ok ) do
-    schedule_work() # Schedule work to be performed on start
-    state = load()
-    {:ok, state}
+    {:ok, []}
   end
 
-  def handle_info(:work, _state) do
-    schedule_work() # Reschedule once more
-    new_state = load()
+  def handle_info({:state_update, new_state}, _state) do
     {:noreply, new_state}
   end
 
@@ -28,18 +23,5 @@ defmodule NeoscanMonitor.Server do
 
   def handle_call(:data, _from, state) do
     {:reply, state.data, state}
-  end
-
-  def handle_cast(:error, _state) do
-    new_state = load()
-    {:noreply, new_state}
-  end
-
-  defp schedule_work() do
-    Process.send_after(self(), :work, 1*60*1000) # In 5 minutes
-  end
-
-  defp load() do
-    Utils.load()
   end
 end
