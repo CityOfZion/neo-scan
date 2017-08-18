@@ -8,7 +8,7 @@
     <title>Neoscan.Api – NeoScan vdev</title>
     <link rel="stylesheet" href="dist/app-268c9dc719.css" />
 
-    <script src="dist/sidebar_items-a00475cb07.js"></script>
+    <script src="dist/sidebar_items-017f9ccb4d.js"></script>
   </head>
   <body data-type="modules">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -250,7 +250,7 @@ If no <code class="inline">type</code> is provided, returns all types</p>
 </h2>
 
 <pre><code class="elixir">/api/main_net/v1/get_address/{hash_string}
-&quot;{
+{
   &quot;txids&quot;: [
     {
       &quot;txid&quot;: &quot;tx_id_string&quot;,
@@ -279,7 +279,7 @@ If no <code class="inline">type</code> is provided, returns all types</p>
     ...
   ],
   &quot;address&quot;: &quot;hash_string&quot;
-}&quot;</code></pre>
+}</code></pre>
 
   </section>
 </div>
@@ -297,7 +297,7 @@ If no <code class="inline">type</code> is provided, returns all types</p>
   </div>
   <section class="docstring">
     <p>Returns all working nodes and their respective heights.
-Information is updated each minute.</p>
+Information is updated each 5 minutes.</p>
 <p>Currrent tested nodes are:</p>
 <p>http://seed1.cityofzion.io:8080
 http://seed2.cityofzion.io:8080
@@ -316,13 +316,13 @@ http://seed5.neo.org:10332</p>
 </h2>
 
 <pre><code class="elixir">/api/main_net/v1/get_all_nodes
-&quot;[
+[
   {
-    &quot;url&quot;: &quot;http: //seed1.cityofzion.io: 8080&quot;,
+    &quot;url&quot;: &quot;http://seed1.cityofzion.io:8080&quot;,
     &quot;height&quot;: 1239778
   },
   ...
-]&quot;</code></pre>
+]</code></pre>
 
   </section>
 </div>
@@ -346,7 +346,7 @@ http://seed5.neo.org:10332</p>
 </h2>
 
 <pre><code class="elixir">/api/main_net/v1/get_asset/{hash_string}
-&quot;{
+{
   &quot;type&quot;: &quot;type_string&quot;,
   &quot;txid&quot;: &quot;tx_id_string&quot;,
   &quot;precision&quot;: integer,
@@ -361,7 +361,7 @@ http://seed5.neo.org:10332</p>
   &quot;issued&quot;: float,
   &quot;amount&quot;: float,
   &quot;admin&quot;: &quot;hash_string&quot;
-}&quot;</code></pre>
+}</code></pre>
 
   </section>
 </div>
@@ -385,7 +385,7 @@ http://seed5.neo.org:10332</p>
 </h2>
 
 <pre><code class="elixir">/api/main_net/v1/get_assets
-&quot;[
+[
   {
     &quot;type&quot;: &quot;type_string&quot;,
     &quot;txid&quot;: &quot;tx_id_string&quot;,
@@ -403,7 +403,7 @@ http://seed5.neo.org:10332</p>
     &quot;admin&quot;: &quot;hash_string&quot;
   },
   ...
-]&quot;</code></pre>
+]</code></pre>
 
   </section>
 </div>
@@ -427,7 +427,7 @@ http://seed5.neo.org:10332</p>
 </h2>
 
 <pre><code class="elixir">/api/main_net/v1/get_balance/{hash_string}
-&quot;{
+{
   &quot;balance&quot;: [
     {
       &quot;asset&quot;: &quot;name_string&quot;,
@@ -436,7 +436,7 @@ http://seed5.neo.org:10332</p>
     ...
   ],
   &quot;address&quot;: &quot;hash_string&quot;
-}&quot;</code></pre>
+}</code></pre>
 
   </section>
 </div>
@@ -461,7 +461,7 @@ http://seed5.neo.org:10332</p>
 
 <pre><code class="elixir">/api/main_net/v1/get_block/{hash_string}
 /api/main_net/v1/get_block/{height}
-&quot;{
+{
   &quot;version&quot;: integer,
   &quot;tx_count&quot;: integer,
   &quot;transactions&quot;: [
@@ -482,7 +482,7 @@ http://seed5.neo.org:10332</p>
   &quot;index&quot;: integer,
   &quot;hash&quot;: &quot;hash_string&quot;,
   &quot;confirmations&quot;: integer
-}&quot;</code></pre>
+}</code></pre>
 
   </section>
 </div>
@@ -506,7 +506,7 @@ http://seed5.neo.org:10332</p>
 </h2>
 
 <pre><code class="elixir">/api/main_net/v1/get_claimed/{hash_string}
-&quot;{
+{
   &quot;claimed&quot;: [
     {
       &quot;txids&quot;: [
@@ -521,7 +521,7 @@ http://seed5.neo.org:10332</p>
     ...
   ],
   &quot;address&quot;: &quot;hash_string&quot;
-}&quot;</code></pre>
+}</code></pre>
 
   </section>
 </div>
@@ -545,9 +545,9 @@ http://seed5.neo.org:10332</p>
 </h2>
 
 <pre><code class="elixir">/api/main_net/v1/get_height
-&quot;{
+{
   &quot;height&quot;: 1239809
-}&quot;</code></pre>
+}</code></pre>
 
   </section>
 </div>
@@ -571,7 +571,7 @@ http://seed5.neo.org:10332</p>
 </h2>
 
 <pre><code class="elixir">/api/main_net/v1/get_highest_block
-&quot;{
+{
   &quot;version&quot;: integer,
   &quot;tx_count&quot;: integer,
   &quot;transactions&quot;: [
@@ -592,7 +592,7 @@ http://seed5.neo.org:10332</p>
   &quot;index&quot;: integer,
   &quot;hash&quot;: &quot;hash_string&quot;,
   &quot;confirmations&quot;: integer
-}&quot;</code></pre>
+}</code></pre>
 
   </section>
 </div>
@@ -616,7 +616,7 @@ http://seed5.neo.org:10332</p>
 </h2>
 
 <pre><code class="elixir">/api/main_net/v1/get_last_blocks</code></pre>
-<p>   “[</p>
+<p>   [</p>
 <pre><code class="elixir">  {
     &quot;version&quot;: integer,
     &quot;tx_count&quot;: integer,
@@ -640,7 +640,7 @@ http://seed5.neo.org:10332</p>
     &quot;confirmations&quot;: integer
   },
   ...
-]&quot;</code></pre>
+]</code></pre>
 
   </section>
 </div>
@@ -666,7 +666,7 @@ If no <code class="inline">type</code> is provided, returns all types</p>
 
 <pre><code class="elixir">/api/main_net/v1/get_last_transactions/{type}
 /api/main_net/v1/get_last_transactions
-&quot;[{
+[{
     &quot;vouts&quot;: [
       {
         &quot;value&quot;: float,
@@ -710,7 +710,7 @@ If no <code class="inline">type</code> is provided, returns all types</p>
     &quot;asset&quot;: array
   },
   ...
-]&quot;</code></pre>
+]</code></pre>
 
   </section>
 </div>
@@ -734,12 +734,12 @@ If no <code class="inline">type</code> is provided, returns all types</p>
 </h2>
 
 <pre><code class="elixir">/api/main_net/v1/get_nodes
-&quot;{
+{
   &quot;urls&quot;: [
-    &quot;http: //seed1.cityofzion.io: 8080&quot;,
+    &quot;http://seed1.cityofzion.io: 8080&quot;,
     ....
   ]
-}&quot;</code></pre>
+}</code></pre>
 
   </section>
 </div>
@@ -763,7 +763,7 @@ If no <code class="inline">type</code> is provided, returns all types</p>
 </h2>
 
 <pre><code class="elixir">/api/main_net/v1/get_transaction/{hash_string}
-&quot;{
+{
   &quot;vouts&quot;: [
     {
       &quot;value&quot;: float,
@@ -805,7 +805,7 @@ If no <code class="inline">type</code> is provided, returns all types</p>
   &quot;block_hash&quot;: &quot;hash_string&quot;,
   &quot;attributes&quot;: array,
   &quot;asset&quot;: array
-}&quot;</code></pre>
+}</code></pre>
 
   </section>
 </div>
