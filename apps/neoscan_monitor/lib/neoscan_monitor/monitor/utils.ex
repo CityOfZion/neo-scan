@@ -1,6 +1,12 @@
 defmodule NeoscanMonitor.Utils do
   alias NeoscanSync.Blockchain
 
+
+  Module.register_attribute __MODULE__,
+    :seeds,
+    accumulate: false, persist: true
+
+    
  @seeds [
     "http://seed1.cityofzion.io:8080",
     "http://seed2.cityofzion.io:8080",
@@ -17,10 +23,10 @@ defmodule NeoscanMonitor.Utils do
 
   def load() do
     data = @seeds
-    |> Stream.map(fn url -> {url, Blockchain.get_current_height(url)} end)
-    |> Stream.filter( fn { url , result } -> evaluate_result(url, result)  end)
-    |> Stream.map(fn { url , { :ok, height } } -> { url, height } end)
-    |> Enum.to_list()
+      |> Stream.map(fn url -> {url, Blockchain.get_current_height(url)} end)
+      |> Stream.filter( fn { url , result } -> evaluate_result(url, result)  end)
+      |> Stream.map(fn { url , { :ok, height } } -> { url, height } end)
+      |> Enum.to_list()
 
     IO.inspect(data)
     set_state(data)
