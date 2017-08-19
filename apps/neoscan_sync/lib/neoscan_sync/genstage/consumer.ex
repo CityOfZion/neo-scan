@@ -8,7 +8,7 @@ defmodule NeoscanSync.Consumer do
   end
 
   def init(state) do
-    {:consumer, state, subscribe_to: [NeoscanSync.Producer]}
+    {:consumer, state, subscribe_to: [{NeoscanSync.Producer, max_demand: 500, min_demand: 300}]}
   end
 
   def handle_events(events, _from, state) do
