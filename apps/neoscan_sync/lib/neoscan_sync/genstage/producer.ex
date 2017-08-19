@@ -56,7 +56,7 @@ defmodule NeoscanSync.Producer do
             cross_check(height)
         end
       true ->
-        []
+        cross_check(height)
     end
   end
 
