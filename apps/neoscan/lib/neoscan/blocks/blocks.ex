@@ -212,7 +212,7 @@ defmodule Neoscan.Blocks do
       [index] ->
         {:ok , index}
       [] ->
-        nil
+        {:ok , -1 }
     end
   end
 
