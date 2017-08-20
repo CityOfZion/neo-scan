@@ -302,11 +302,11 @@ defmodule Neoscan.Addresses do
       select: a
 
     Repo.all(query)
-    |> route_if_results
+    |> route_if_results(time)
   end
 
-  def route_if_results([] = list), do: "no results"
-  def route_if_results(list) do
+  def route_if_results([] = _list, _time), do: "no results"
+  def route_if_results(list, time) do
     list
     |> Stream.each(fn a -> rollback_address(a, time) end)
     |> Enum.to_list
@@ -348,10 +348,10 @@ defmodule Neoscan.Addresses do
     remove_transaction(address_tx_ids, transaction)
     |> remove_transactions(tail)
   end
-  def remove_transactions(address_tx_ids, []), do: address
+  def remove_transactions(address_tx_ids, []), do: address_tx_ids
 
   #remove transaction from an address struct
   def remove_transaction(address_tx_ids, transaction) do
-    Map.delete(address.tx_ids, transaction)
+    Map.delete(address_tx_ids, transaction)
   end
 end
