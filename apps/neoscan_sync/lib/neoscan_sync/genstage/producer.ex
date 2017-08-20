@@ -66,11 +66,15 @@ defmodule NeoscanSync.Producer do
       Enum.count(nodes) == n ->
         nodes
       true ->
+        Process.sleep(60000)
         nil
     end
   end
 
   #handles error when fetching block from chain
+  def get_block_by_height(nil, height) do
+    get_block_by_height(check_if_nodes(1), height)
+  end
   def get_block_by_height(random, height) do
     case Blockchain.get_block_by_height(random, height) do
       { :ok , block } ->
