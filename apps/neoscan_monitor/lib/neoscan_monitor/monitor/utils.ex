@@ -2,27 +2,24 @@ defmodule NeoscanMonitor.Utils do
   alias NeoscanSync.Blockchain
 
 
-  Module.register_attribute __MODULE__,
-    :seeds,
-    accumulate: false, persist: true
-
-    
- @seeds [
-    "http://seed1.cityofzion.io:8080",
-    "http://seed2.cityofzion.io:8080",
-    "http://seed3.cityofzion.io:8080",
-    "http://seed4.cityofzion.io:8080",
-    "http://seed5.cityofzion.io:8080",
-    "http://api.otcgo.cn:10332",
-    "http://seed1.neo.org:10332",
-    "http://seed2.neo.org:10332",
-    "http://seed3.neo.org:10332",
-    "http://seed4.neo.org:10332",
-    "http://seed5.neo.org:10332"
-  ]
+  def seeds() do
+   [
+     "http://seed1.cityofzion.io:8080",
+     "http://seed2.cityofzion.io:8080",
+     "http://seed3.cityofzion.io:8080",
+     "http://seed4.cityofzion.io:8080",
+     "http://seed5.cityofzion.io:8080",
+     "http://api.otcgo.cn:10332",
+     "http://seed1.neo.org:10332",
+     "http://seed2.neo.org:10332",
+     "http://seed3.neo.org:10332",
+     "http://seed4.neo.org:10332",
+     "http://seed5.neo.org:10332"
+   ]
+  end
 
   def load() do
-    data = @seeds
+    data = seeds()
       |> Stream.map(fn url -> {url, Blockchain.get_current_height(url)} end)
       |> Stream.filter( fn { url , result } -> evaluate_result(url, result)  end)
       |> Stream.map(fn { url , { :ok, height } } -> { url, height } end)

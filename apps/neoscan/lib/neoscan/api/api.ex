@@ -363,7 +363,7 @@ defmodule Neoscan.Api do
     select: t.txid
 
     query = from e in Block,
-      where: e.index > -1200000,
+      where: e.index > 1200000,
       order_by: [desc: e.index],
       preload: [transactions: ^tran_query],
       limit: 20
@@ -411,7 +411,7 @@ defmodule Neoscan.Api do
     select: t.txid
 
     query = from e in Block,
-      where: e.index > -1200000,
+      where: e.index > 1200000,
       order_by: [desc: e.index],
       preload: [transactions: ^tran_query],
       limit: 1
