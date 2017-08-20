@@ -8,6 +8,7 @@ defmodule Neoscan.Addresses do
   alias Neoscan.Repo
   alias Neoscan.Addresses.Address
   alias Neoscan.Transactions
+  alias Neoscan.Transactions.Transaction
 
   @doc """
   Returns the list of addresses.
