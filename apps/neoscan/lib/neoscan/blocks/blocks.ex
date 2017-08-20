@@ -9,6 +9,7 @@ defmodule Neoscan.Blocks do
   alias Neoscan.Repo
   alias Neoscan.Blocks.Block
   alias Neoscan.Transactions.Transaction
+  alias Neoscan.Addresses
 
   @doc """
   Returns the list of blocks.
@@ -173,7 +174,8 @@ defmodule Neoscan.Blocks do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_block(%Block{} = block) do
+  def delete_block(%Block{:updated_at => time} = block) do
+    Addresses.rollback_addresses(time)
     Repo.delete!(block)
   end
 

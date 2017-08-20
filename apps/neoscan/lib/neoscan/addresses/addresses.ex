@@ -295,4 +295,63 @@ defmodule Neoscan.Addresses do
     end
   end
 
+  #rollback addresses to specific insertion time
+  def rollback_addresses(time) do
+    query = from a in Address,
+      where: a.updated_at > time,
+      select: a
+
+    Repo.all(query)
+    |> route_if_results
+  end
+
+  def route_if_results([] = list), do: "no results"
+  def route_if_results(list) do
+    list
+    |> Stream.each(fn a -> rollback_address(a, time) end)
+    |> Enum.to_list  
+  end
+
+  #rollback address to a previous insertion time
+  def rollback_address(address, time) do
+    transactions_time = get_address_transactions_time(address)
+
+    invalid_transactions = transactions_time
+      |> Stream.filter(fn %{ "time" => txtime} -> txtime > time end)
+      |> Stream.map(fn %{ "txid" => txid} -> txid end)
+      |> Enum.to_list
+
+    last_valid = transactions_time
+      |> Stream.filter(fn %{ "time" => txtime} -> txtime < time end)
+      |> Enum.to_list
+      |> Enum.max_by(fn %{"time" => txtime} -> txtime end)
+
+    new_tx_ids = remove_transactions(address.tx_ids, invalid_transactions)
+    new_balance = address.tx_ids[last_valid]["balance"]
+
+    update_address(address, %{"tx_ids" => new_tx_ids, "balance" => new_balance})
+  end
+
+  #get transaction times for an address
+  def get_address_transactions_time(address) do
+    lookups = Map.keys(address.tx_ids)
+
+    query =  from t in Transactions,
+     where: fragment("CAST(? AS text)", t.txid) in ^lookups,
+     select: %{"txid" => t.txid, "time" => t.inserted_at}
+
+    Repo.all(query)
+  end
+
+  #remove transactions from an address struct
+  def remove_transactions(address_tx_ids, [transaction | tail]) do
+    remove_transaction(address_tx_ids, transaction)
+    |> remove_transactions(tail)
+  end
+  def remove_transactions(address_tx_ids, []), do: address
+
+  #remove transaction from an address struct
+  def remove_transaction(address_tx_ids, transaction) do
+    Map.delete(address.tx_ids, transaction)
+  end
 end
