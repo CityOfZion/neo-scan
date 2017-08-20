@@ -298,7 +298,7 @@ defmodule Neoscan.Addresses do
   #rollback addresses to specific insertion time
   def rollback_addresses(time) do
     query = from a in Address,
-      where: a.updated_at > time,
+      where: a.updated_at > ^time,
       select: a
 
     Repo.all(query)
@@ -309,7 +309,7 @@ defmodule Neoscan.Addresses do
   def route_if_results(list) do
     list
     |> Stream.each(fn a -> rollback_address(a, time) end)
-    |> Enum.to_list  
+    |> Enum.to_list
   end
 
   #rollback address to a previous insertion time
