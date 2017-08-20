@@ -13,7 +13,7 @@ defmodule NeoscanSync.Producer do
 
   def init(counter), do: {:producer, counter}
 
-  def handle_demand(demand, state) do
+  def handle_demand(demand, state) when demand > 0 do
     events = get_current_height()
     |> evaluate(demand, state+1)
 
