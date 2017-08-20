@@ -337,7 +337,7 @@ defmodule Neoscan.Addresses do
   def get_address_transactions_time(address) do
     lookups = Map.keys(address.tx_ids)
 
-    query =  from t in Transactions,
+    query =  from t in Transaction,
      where: fragment("CAST(? AS text)", t.txid) in ^lookups,
      select: %{"txid" => t.txid, "time" => t.inserted_at}
 
