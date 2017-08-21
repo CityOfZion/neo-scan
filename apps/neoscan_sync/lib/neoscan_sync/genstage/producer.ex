@@ -19,9 +19,9 @@ defmodule NeoscanSync.Producer do
         get_current_height()
         |> evaluate(demand, state+1)
       end)
-      Task.await(task, 10000) # five sec
+      Task.await(task, 20000) # five sec
     catch
-      :exit, {:timeout, {Task, :await, [_, 10000]}} ->
+      :exit, {:timeout, {Task, :await, [_, 20000]}} ->
         {:noreply, [], state}
     else
       events when is_list(events) ->
