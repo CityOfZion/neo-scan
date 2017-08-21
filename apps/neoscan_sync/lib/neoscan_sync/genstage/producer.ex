@@ -14,10 +14,19 @@ defmodule NeoscanSync.Producer do
   def init(counter), do: {:producer, counter}
 
   def handle_demand(demand, state) when demand > 0 do
-    events = get_current_height()
-    |> evaluate(demand, state+1)
-
-    {:noreply, events, (state + demand)}
+    try do
+      task = Task.async(fn ->
+        get_current_height()
+        |> evaluate(demand, state+1)
+      end)
+      Task.await(task, 5000) # five sec
+    catch
+      :exit, {:timeout, {Task, :await, [_, 5000]}} ->
+        {:noreply, [], state}
+    else
+      events when is_list(events) ->
+        {:noreply, events, (state + Enum.count(events))}
+    end
   end
 
   #evaluate number of process, current block count, and start async functions
