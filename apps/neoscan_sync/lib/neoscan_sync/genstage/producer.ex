@@ -7,8 +7,8 @@ defmodule NeoscanSync.Producer do
   alias Neoscan.Blocks
 
   def start_link() do
-    { :ok, initial } = Blocks.get_highest_block_in_db()
-    GenStage.start_link(__MODULE__, initial, name: __MODULE__)
+    { :ok, counter } = Blocks.get_highest_block_in_db()
+    GenStage.start_link(__MODULE__, counter, name: __MODULE__)
   end
 
   def init(counter), do: {:producer, {counter, 0}}
@@ -25,8 +25,9 @@ defmodule NeoscanSync.Producer do
     events = get_current_height()
     |> evaluate(demand, counter+1)
 
-    check_if_demand(Enum.to_list(events), demand)
-    {:noreply, events, {(counter + Enum.count(events)), demand - Enum.count(events)}}
+    events_count = Enum.count(events)
+    check_if_demand(  events_count, demand)
+    {:noreply, events, {(counter + events_count), demand - events_count}}
   end
 
   def check_if_demand(events, demand) when events < demand do
