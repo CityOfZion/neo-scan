@@ -11,13 +11,29 @@ defmodule NeoscanSync.Producer do
     GenStage.start_link(__MODULE__, initial, name: __MODULE__)
   end
 
-  def init(counter), do: {:producer, counter}
+  def init(counter), do: {:producer, {counter, 0}}
 
-  def handle_demand(demand, state) when demand > 0 do
+  def handle_info(:fetch_more, {counter, pending_demand}) do
+    do_handle_demand(pending_demand, {counter, 0})
+  end
+
+  def handle_demand(demand, {counter, pending_demand}) do
+    do_handle_demand(demand, {counter, pending_demand})
+  end
+
+  def do_handle_demand(demand, {counter, _pending_demand}) do
     events = get_current_height()
-    |> evaluate(demand, state+1)
+    |> evaluate(demand, counter+1)
 
-    {:noreply, events, (state + demand)}
+    check_if_demand(Enum.to_list(events), demand)
+    {:noreply, events, {(counter + Enum.count(events)), demand - Enum.count(events)}}
+  end
+
+  def check_if_demand(events, demand) when events < demand do
+    Process.send_after(self(), :fetch_more, 15000)
+  end
+  def check_if_demand(events, demand) when events == demand do
+    IO.puts("demand fullfiled")
   end
 
   #evaluate number of process, current block count, and start async functions
