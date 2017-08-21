@@ -21,7 +21,7 @@ defmodule NeoscanSync.Producer do
       end)
       Task.await(task, 10000) # five sec
     catch
-      :exit, {:timeout, {Task, :await, [_, 5000]}} ->
+      :exit, {:timeout, {Task, :await, [_, 10000]}} ->
         {:noreply, [], state}
     else
       events when is_list(events) ->
