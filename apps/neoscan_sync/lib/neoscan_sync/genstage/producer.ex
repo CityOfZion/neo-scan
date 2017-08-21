@@ -11,44 +11,13 @@ defmodule NeoscanSync.Producer do
     GenStage.start_link(__MODULE__, initial, name: __MODULE__)
   end
 
-  @doc """
-  Sends an event and returns only after the event is dispatched.
-  """
-  def sync_notify(event, timeout \\ 5000) do
-    GenStage.call(__MODULE__, {:notify, event}, timeout)
-  end
+  def init(counter), do: {:producer, counter}
 
-  ## Callbacks
+  def handle_demand(demand, state) when demand > 0 do
+    events = get_current_height()
+    |> evaluate(demand, state+1)
 
-  def init(counter) do
-    {:producer, {:queue.new, 0, counter}, dispatcher: GenStage.BroadcastDispatcher}
-  end
-
-  def handle_call({:notify, event}, from, {queue, demand, counter}) do
-    dispatch_events(:queue.in({from, event}, queue), demand, [], counter)
-  end
-
-  def handle_demand(incoming_demand, {queue, demand, counter}) do
-    Process.spawn(get_demand(incoming_demand + demand, counter), [])
-    dispatch_events(queue, incoming_demand + demand, [], counter)
-  end
-
-  defp dispatch_events(queue, demand, events, counter) do
-    with d when d > 0 <- demand,
-         {{:value, {from, event}}, queue} <- :queue.out(queue) do
-      GenStage.reply(from, :ok)
-      dispatch_events(queue, demand - 1, [event | events], counter)
-    else
-      _ -> {:noreply, Enum.reverse(events), {queue, demand, counter}}
-    end
-  end
-
-  def get_demand(demand, counter) do
-    get_current_height()
-    |> evaluate(demand, counter+1)
-    |> Enum.each(fn event -> sync_notify(event) end)
-
-    #{:noreply, events, (state + demand)}
+    {:noreply, events, (state + demand)}
   end
 
   #evaluate number of process, current block count, and start async functions
