@@ -29,7 +29,7 @@ defmodule NeoscanSync.Producer do
   end
 
   def handle_demand(incoming_demand, {queue, demand, counter}) do
-    Task.start(get_demand(incoming_demand + demand, counter))
+    Process.spawn(get_demand(incoming_demand + demand, counter), [])
     dispatch_events(queue, incoming_demand + demand, [], counter)
   end
 
