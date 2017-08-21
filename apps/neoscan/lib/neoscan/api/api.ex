@@ -7,6 +7,7 @@ defmodule Neoscan.Api do
   alias Neoscan.Transactions.Asset
   alias Neoscan.Blocks.Block
   alias Neoscan.Transactions.Vout
+  alias NeoscanMonitor.Api
 
 
   @moduledoc """
@@ -198,7 +199,7 @@ defmodule Neoscan.Api do
 
   """
   def get_assets() do
-    Repo.all(Asset)
+    Api.get_assets
     |> Enum.map(fn x ->
         Map.delete(x, :inserted_at)
         |> Map.delete(:updated_at)

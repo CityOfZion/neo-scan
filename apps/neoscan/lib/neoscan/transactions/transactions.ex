@@ -41,7 +41,7 @@ defmodule Neoscan.Transactions do
     transaction_query = from e in Transaction,
       order_by: [desc: e.inserted_at],
       where: e.type != "MinerTransaction" and e.inserted_at > ago(1, "hour"),
-      select: %{:type => e.type, :time => e.time, :txid => e.txid},
+      select: e,
       limit: 15
 
     Repo.all(transaction_query)
@@ -156,11 +156,13 @@ defmodule Neoscan.Transactions do
     issue(type, vouts)
 
     #prepare and create transaction
-    transaction = Map.put(attrs,"time", time)
-    |> Map.put("vin", Task.await(new_vin, 60*60000))
-    |> Map.put("claims", Task.await(new_claim, 60*60000))
-    |> Map.put("block_hash", hash)
-    |> Map.put("block_height", height)
+    transaction = Map.merge(attrs, %{
+          "time" => time,
+          "vin" => Task.await(new_vin, 60*60000),
+          "claims" => Task.await(new_claim, 60*60000),
+          "block_hash" => hash,
+          "block_height" => height,
+    })
     |> Map.delete("vout")
 
     Transaction.changeset(block, transaction)
@@ -170,6 +172,11 @@ defmodule Neoscan.Transactions do
   end
   def update_transaction_state(%{:type => type } = transaction) when type != "MinerTransaction" do
     Api.add_transaction(transaction)
+    transaction
+  end
+  def update_transaction_state(%{:type => type } = transaction) when type == "PublishTransaction" or type == "InvocationTransaction" do
+    Api.add_transaction(transaction)
+    Api.add_contract(transaction)
     transaction
   end
   def update_transaction_state(transaction) do
