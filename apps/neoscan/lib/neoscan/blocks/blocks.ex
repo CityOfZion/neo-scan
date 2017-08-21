@@ -10,6 +10,7 @@ defmodule Neoscan.Blocks do
   alias Neoscan.Blocks.Block
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Addresses
+  alias NeoscanMonitor.Api
 
   @doc """
   Returns the list of blocks.
@@ -35,7 +36,7 @@ defmodule Neoscan.Blocks do
   """
   def home_blocks do
     block_query = from e in Block,
-      where: e.index > -1200000,
+      where: e.index > 0,
       order_by: [desc: e.index],
       select: %{:index => e.index, :time => e.time, :tx_count => e.tx_count, :hash => e.hash},
       limit: 15
@@ -142,6 +143,11 @@ defmodule Neoscan.Blocks do
     %Block{}
     |> Block.changeset(attrs)
     |> Repo.insert!()
+    |> update_blocks_state
+  end
+  def update_blocks_state(block) do
+    Api.add_block(block)
+    block
   end
 
   @doc """

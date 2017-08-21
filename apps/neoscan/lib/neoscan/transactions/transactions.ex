@@ -8,7 +8,7 @@ defmodule Neoscan.Transactions do
 
   import Ecto.Query, warn: false
   alias Neoscan.Repo
-
+  alias NeoscanMonitor.Api
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Transactions.Vout
   alias Neoscan.Transactions.Asset
@@ -165,7 +165,15 @@ defmodule Neoscan.Transactions do
 
     Transaction.changeset(block, transaction)
     |> Repo.insert!()
+    |> update_transaction_state
     |> create_vouts(vouts)
+  end
+  def update_transaction_state(%{:type => type } = transaction) when type != "MinerTransaction" do
+    Api.add_transaction(transaction)
+    transaction
+  end
+  def update_transaction_state(transaction) do
+    transaction
   end
 
   #get vins and add to addresses
@@ -387,6 +395,11 @@ defmodule Neoscan.Transactions do
   def create_asset(transaction_id, attrs) do
     Asset.changeset(transaction_id, attrs)
     |> Repo.insert!()
+    |> update_asset_state
+  end
+  def update_asset_state(asset) do
+    Api.add_asset(asset)
+    asset
   end
 
 

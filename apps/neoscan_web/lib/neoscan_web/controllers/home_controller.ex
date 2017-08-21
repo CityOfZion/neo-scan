@@ -4,12 +4,13 @@ defmodule NeoscanWeb.HomeController do
   alias Neoscan.Blocks
   alias Neoscan.Transactions
   alias Neoscan.Addresses
+  alias NeoscanMonitor.Api
 
   #load last blocks and transactions from db
   def index(conn, _params) do
 
-    blocks = Blocks.home_blocks()
-    transactions = Transactions.home_transactions()
+    blocks = Api.get_blocks
+    transactions = Api.get_transactions
 
     render conn, "index.html", blocks: blocks, transactions: transactions
   end
