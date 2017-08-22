@@ -41,7 +41,7 @@ defmodule Neoscan.Transactions do
     transaction_query = from e in Transaction,
       order_by: [desc: e.inserted_at],
       where: e.type != "MinerTransaction" and e.inserted_at > ago(1, "hour"),
-      select: e,
+      select: %{:type => e.type, :time => e.time, :txid => e.txid},
       limit: 15
 
     Repo.all(transaction_query)

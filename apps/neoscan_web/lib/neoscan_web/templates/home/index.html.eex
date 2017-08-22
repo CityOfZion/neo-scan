@@ -50,8 +50,8 @@
       <div class="tile is-6 is-parent">
         <div class="tile is-child box flex">
           <p class="title">Last Blocks</p>
-          <ul class="collection">
-            <%= for block <- @blocks do %>
+          <ul class="collection" id="show-blocks">
+            <!-- <%= for block <- @blocks do %>
               <a href="<%= block_path @conn, :index, block.hash %>" class="box">
                 <article class="media">
                   <div class="media-content">
@@ -77,15 +77,18 @@
                   </div>
                 </article>
               </a>
-            <% end %>
+            <% end %> -->
           </ul>
         </div>
       </div>
       <div class="tile is-6 is-parent">
         <div class="tile is-child box flex">
           <p class="title">Last Transactions</p>
-          <ul class="collection">
-            <%= for transaction <- @transactions do %>
+          <ul class="collection" id="show-transactions">
+            <li v-for="item in items">
+              {{item.type}}
+            </li>
+            <!-- <%= for transaction <- @transactions do %>
               <a href="<%= transaction_path @conn, :index, transaction.txid %>" class="box">
                 <article class="media">
                   <div class="media-content">
@@ -111,7 +114,7 @@
                   </div>
                 </article>
               </a>
-            <% end %>
+            <% end %> -->
           </ul>
         </div>
       </div>

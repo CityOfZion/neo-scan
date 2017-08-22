@@ -26,21 +26,27 @@ defmodule NeoscanMonitor.Worker do
     {:noreply, new_state}
   end
 
+  def handle_info( { _ref, { :ok, _port, _pid } }, state) do
+    {:noreply, state}
+  end
+
   def handle_cast({:add_block, block}, state) do
-      new_blocks = [block | state.blocks]
+      new_blocks = [%{:index => block.index, :time => block.time, :tx_count => block.tx_count, :hash => block.hash} | state.blocks]
         |> Enum.drop(-1)
 
       new_state = Map.put(state, :blocks, new_blocks)
       Process.send(NeoscanMonitor.Server, {:state_update, new_state}, [])
+      NeoscanWeb.RoomChannel.broadcast_change(new_state)
       {:noreply, new_state}
   end
 
   def handle_cast({:add_transaction, transaction}, state) do
-      new_transactions = [transaction | state.transactions]
+      new_transactions = [%{:type => transaction.type, :time => transaction.time, :txid => transaction.txid} | state.transactions]
         |> Enum.drop(-1)
 
       new_state = Map.put(state, :transactions, new_transactions)
       Process.send(NeoscanMonitor.Server, {:state_update, new_state}, [])
+      NeoscanWeb.RoomChannel.broadcast_change(new_state)
       {:noreply, new_state}
   end
 

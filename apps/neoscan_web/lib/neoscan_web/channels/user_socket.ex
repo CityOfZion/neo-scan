@@ -2,7 +2,7 @@ defmodule NeoscanWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", NeoscanWeb.RoomChannel
+  channel "room:*", NeoscanWeb.RoomChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

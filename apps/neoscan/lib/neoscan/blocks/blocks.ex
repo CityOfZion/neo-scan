@@ -38,7 +38,7 @@ defmodule Neoscan.Blocks do
     block_query = from e in Block,
       where: e.index > 0,
       order_by: [desc: e.index],
-      select: e,
+      select: %{:index => e.index, :time => e.time, :tx_count => e.tx_count, :hash => e.hash},
       limit: 15
 
     Repo.all(block_query)
