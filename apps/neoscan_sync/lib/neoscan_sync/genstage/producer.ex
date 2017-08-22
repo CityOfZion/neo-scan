@@ -83,7 +83,8 @@ defmodule NeoscanSync.Producer do
       Enum.count(nodes) == n ->
         nodes
       true ->
-        Process.sleep(60000)
+        Supervisor.terminate_child(NeoscanMonitor.Supervisor, NeoscanMonitor.Worker)
+        Process.sleep(5000)
         nil
     end
   end
