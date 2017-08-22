@@ -85,9 +85,6 @@
         <div class="tile is-child box flex">
           <p class="title">Last Transactions</p>
           <ul class="collection" id="show-transactions">
-            <li v-for="item in items">
-              {{item.type}}
-            </li>
             <!-- <%= for transaction <- @transactions do %>
               <a href="<%= transaction_path @conn, :index, transaction.txid %>" class="box">
                 <article class="media">
