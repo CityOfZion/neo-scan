@@ -41,21 +41,21 @@ const transactionRow = row => (
 )
 
 window.onload = function () {
-  let payload = {
-    blocks: [],
-    transactions: []
+  if (window.location.pathname === '/') {
+    let payload = {
+      blocks: [],
+      transactions: []
+    }
+    let home = new HomeSocket(payload)
+
+    setInterval(function () {
+      Inferno.render((
+        <List class='collection' sync={false} data={home.payload.blocks} rowHeight={15} rowRender={blockRow} />
+      ), blocksContainer)
+      Inferno.render((
+        <List class='collection' sync={false} data={home.payload.transactions} rowHeight={15} rowRender={transactionRow} />
+      ), transactionsContainer)
+    }, 500)
+    home.connect()
   }
-  let home = new HomeSocket(payload)
-
-  setInterval(function () {
-    Inferno.render((
-      <List class='collection' sync={false} data={home.payload.blocks} rowHeight={15} rowRender={blockRow} />
-    ), blocksContainer)
-
-    Inferno.render((
-      <List class='collection' sync={false} data={home.payload.transactions} rowHeight={15} rowRender={transactionRow} />
-    ), transactionsContainer)
-  }, 500)
-
-  home.connect()
 }
