@@ -27,9 +27,6 @@
             Transactions count <%=@block.tx_count%>
           </li>
           <li>
-            Confirmations <%=@block.confirmations%>
-          </li>
-          <li>
             Merkle Tree Root <%=@block.merkleroot%>
           </li>
           <li>

@@ -1,10 +1,10 @@
-import HomeSocket from "./home_socket"
-import Inferno from 'inferno';
-import List from 'inferno-virtual-list';
+import HomeSocket from './home_socket'
+import Inferno from 'inferno'
+import List from 'inferno-virtual-list'
 
-var moment = require('moment');
+var moment = require('moment')
 
-const blocksContainer = document.getElementById("show-blocks")
+const blocksContainer = document.getElementById('show-blocks')
 const transactionsContainer = document.getElementById('show-transactions')
 
 const blockRow = row => (

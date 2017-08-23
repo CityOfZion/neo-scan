@@ -84,6 +84,7 @@ defmodule NeoscanSync.Producer do
         nodes
       true ->
         Supervisor.terminate_child(NeoscanMonitor.Supervisor, NeoscanMonitor.Worker)
+        Supervisor.restart_child(NeoscanMonitor.Supervisor, NeoscanMonitor.Worker)
         Process.sleep(5000)
         nil
     end
