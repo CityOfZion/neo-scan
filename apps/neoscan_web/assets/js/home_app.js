@@ -14,12 +14,9 @@ const blockRow = row => (
         <div class='content'>
           <p>
             <strong>Height {row.index}&nbsp;&nbsp;&nbsp;</strong>
-            <small>Date&nbsp;&nbsp;{moment.unix(row.time).format('DD-MM-YYYY')}&nbsp;&nbsp;
-            </small>
-            <small>Time&nbsp;&nbsp;{moment.unix(row.time).format('HH:mm:ss')}&nbsp;&nbsp;
-            </small>
-            <small class='is-pulled-right'>Number of Transactions {row.tx_count}
-            </small>
+            <small>Date&nbsp;&nbsp;{moment.unix(row.time).format('DD-MM-YYYY')}&nbsp;&nbsp;</small>
+            <small>Time&nbsp;&nbsp;{moment.unix(row.time).format('HH:mm:ss')}&nbsp;&nbsp;</small>
+            <small class='is-pulled-right'>Number of Transactions {row.tx_count}</small>
           </p>
         </div>
       </div>
@@ -34,10 +31,8 @@ const transactionRow = row => (
         <div class='content'>
           <p>
             <strong>{row.type}&nbsp;&nbsp;&nbsp;</strong>
-            <small>Date&nbsp;&nbsp;{moment.unix(row.time).format('DD-MM-YYYY')}&nbsp;&nbsp;
-            </small>
-            <small>Time&nbsp;&nbsp;{moment.unix(row.time).format('HH:mm:ss')}&nbsp;&nbsp;
-            </small>
+            <small>Date&nbsp;&nbsp;{moment.unix(row.time).format('DD-MM-YYYY')}&nbsp;&nbsp;</small>
+            <small>Time&nbsp;&nbsp;{moment.unix(row.time).format('HH:mm:ss')}&nbsp;&nbsp;</small>
           </p>
         </div>
       </div>
