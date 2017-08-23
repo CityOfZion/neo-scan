@@ -194,7 +194,7 @@ defmodule Neoscan.Addresses do
     address_list = Repo.all(query)
 
     Stream.map(groups, fn {address, vins} -> {Enum.find(address_list, fn %{:address => ad} -> ad == address end), vins} end)
-    |> Enum.to_list
+    |> Enum.to_list()
   end
 
 
@@ -245,7 +245,7 @@ defmodule Neoscan.Addresses do
     Stream.each(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
       insert_claim_in_address(Enum.find(address_list, fn %{:address => address} -> address == hash end) , transactions, value, asset, hash)
     end)
-    |> Enum.to_list
+    |> Stream.run()
   end
 
   #insert claimed transactions and update address balance
@@ -310,7 +310,7 @@ defmodule Neoscan.Addresses do
   def route_if_results(list, time) do
     list
     |> Stream.each(fn a -> rollback_address(a, time) end)
-    |> Enum.to_list
+    |> Stream.run()
   end
 
   #rollback address to a previous insertion time

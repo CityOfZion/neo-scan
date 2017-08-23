@@ -201,7 +201,7 @@ defmodule Neoscan.Transactions do
     |> Map.to_list()
     |> Addresses.populate_groups
     |> Stream.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins, txid) end)
-    |> Enum.to_list
+    |> Stream.run()
 
     new_vin
   end
@@ -242,7 +242,7 @@ defmodule Neoscan.Transactions do
       {float, _} = Float.parse(value)
       add_issued_value(asset_hash, float)
     end)
-    |> Enum.to_list
+    |> Stream.run()
   end
   defp issue(_type, _vouts) do
     nil
@@ -352,7 +352,7 @@ defmodule Neoscan.Transactions do
     |> Enum.group_by(fn %{"address" => address} -> address.address end)
     |> Map.to_list()
     |> Stream.each(fn {_address, vouts} -> Addresses.insert_vouts_in_address(transaction, vouts) end)
-    |> Enum.to_list
+    |> Stream.run()
   end
 
   #get vouts addresses

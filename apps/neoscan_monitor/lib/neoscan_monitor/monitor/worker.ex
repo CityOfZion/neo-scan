@@ -40,8 +40,9 @@ defmodule NeoscanMonitor.Worker do
   end
 
   def handle_cast({:add_transaction, transaction}, state) do
+      count = Enum.count(state.transactions)
       new_transactions = [%{:type => transaction.type, :time => transaction.time, :txid => transaction.txid} | state.transactions]
-        |> Enum.drop(-1)
+        |> cut_if_more(count)
 
       new_state = Map.put(state, :transactions, new_transactions)
       Process.send(NeoscanMonitor.Server, {:state_update, new_state}, [])
@@ -66,6 +67,14 @@ defmodule NeoscanMonitor.Worker do
 
   defp schedule_work() do
     Process.send_after(self(), :update_nodes, 1*60*1000) # In 1 minute
+  end
+
+  defp cut_if_more(transactions, count) when count == 15 do
+    transactions
+    |> Enum.drop(-1)
+  end
+  defp cut_if_more(transactions, _count) do
+    transactions
   end
 
 
