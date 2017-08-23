@@ -12,7 +12,16 @@ defmodule NeoscanSync.HttpCalls do
   """
   def url(n) do
     NeoscanMonitor.Api.get_nodes
-    |> Enum.take_random(n)
+    |> test_if_nodes(n)
+  end
+
+  defp test_if_nodes(list, n) do
+    cond do
+      Enum.count(list) > n ->
+        Enum.take_random(list, n)
+      true ->
+        list
+    end
   end
 
   #Makes a request to the 'index' seed
@@ -23,37 +32,41 @@ defmodule NeoscanSync.HttpCalls do
   end
 
   #Handles the response of an HTTP call
-  defp handle_response(response) do
-    case response do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        case Poison.decode!(body) do
-          %{"result" => result} ->
-            {:ok, result }
-          %{"error" => error} ->
-            NeoscanMonitor.Api.error
-            {:error, error}
-
-          _ ->
-            NeoscanMonitor.Api.error
-            {:error,"server error"}
-        end
-      {:ok, %HTTPoison.Response{status_code: 404}} ->
-        IO.puts "Error 404 Not found! :("
-        { :error , "Error 404 Not found! :(" }
-      {:ok, %HTTPoison.Response{status_code: 405}} ->
-        IO.puts "Error 405 Method not found! :("
-        { :error , "Error 405 Method not found! :(" }
-      {:ok, %HTTPoison.Response{}} ->
-        IO.puts "Web server error! :("
-        { :error , "Web server error! :(" }
-      {:error, %HTTPoison.Error{reason: :timeout}} ->
-        IO.puts "timeout, retrying....."
-        { :error , :timeout}
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.puts "urlopen error, retry."
-        IO.inspect reason
-        { :error , "urlopen error, retry."}
-    end
+  defp handle_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
+    Poison.decode!(body)
+    |> handle_body
   end
+  defp handle_response({:ok, %HTTPoison.Response{status_code: 404}}) do
+    IO.puts "Error 404 Not found! :("
+    { :error , "Error 404 Not found! :(" }
+  end
+  defp handle_response({:ok, %HTTPoison.Response{status_code: 405}}) do
+    IO.puts "Error 405 Method not found! :("
+    { :error , "Error 405 Method not found! :(" }
+  end
+  defp handle_response({:ok, %HTTPoison.Response{}}) do
+    IO.puts "Web server error! :("
+    { :error , "Web server error! :(" }
+  end
+  defp handle_response({:error, %HTTPoison.Error{reason: :timeout}}) do
+    IO.puts "timeout, retrying....."
+    { :error , :timeout}
+  end
+  defp handle_response({:error, %HTTPoison.Error{reason: reason}}) do
+    IO.inspect reason
+    { :error , "urlopen error, retry."}
+  end
+
+  #handles a sucessful response
+  defp handle_body(%{"result" => result}) do
+    {:ok, result }
+  end
+  defp handle_body(%{"error" => error}) do
+    {:error, error}
+  end
+  defp handle_body(_body) do
+    {:error,"server error"}
+  end
+
 
 end

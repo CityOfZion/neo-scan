@@ -8,6 +8,9 @@ defmodule Neoscan.Blocks do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Blocks.Block
+  alias Neoscan.Transactions.Transaction
+  alias Neoscan.Addresses
+  alias NeoscanMonitor.Api
 
   @doc """
   Returns the list of blocks.
@@ -33,7 +36,7 @@ defmodule Neoscan.Blocks do
   """
   def home_blocks do
     block_query = from e in Block,
-      where: e.index > 1200000,
+      where: e.index > 0,
       order_by: [desc: e.index],
       select: %{:index => e.index, :time => e.time, :tx_count => e.tx_count, :hash => e.hash},
       limit: 15
@@ -77,6 +80,33 @@ defmodule Neoscan.Blocks do
    |> List.first
   end
 
+
+  @doc """
+  Gets a single block by its hash value for blocks page
+
+  ## Examples
+
+      iex> get_block_by_hash_for_view(hash)
+      %Block{}
+
+      iex> get_block_by_hash_for_view(hash)
+      nil
+
+  """
+  def get_block_by_hash_for_view(hash) do
+    trans_query = from t in Transaction,
+      select: %{
+        type: t.type,
+        txid: t.txid
+      }
+   query = from e in Block,
+     where: e.hash == ^hash,
+     preload: [transactions: ^trans_query],
+     select: e
+   Repo.all(query)
+   |> List.first
+  end
+
   @doc """
   Gets a single block by its heigh value
 
@@ -113,6 +143,11 @@ defmodule Neoscan.Blocks do
     %Block{}
     |> Block.changeset(attrs)
     |> Repo.insert!()
+    |> update_blocks_state
+  end
+  def update_blocks_state(block) do
+    Api.add_block(block)
+    block
   end
 
   @doc """
@@ -145,7 +180,8 @@ defmodule Neoscan.Blocks do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_block(%Block{} = block) do
+  def delete_block(%Block{:updated_at => time} = block) do
+    Addresses.rollback_addresses(time)
     Repo.delete!(block)
   end
 
@@ -184,7 +220,7 @@ defmodule Neoscan.Blocks do
       [index] ->
         {:ok , index}
       [] ->
-        nil
+        {:ok , -1 }
     end
   end
 

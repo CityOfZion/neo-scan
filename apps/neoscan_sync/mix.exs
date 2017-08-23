@@ -45,6 +45,7 @@ defmodule NeoscanSync.Mixfile do
       {:neoscan, in_umbrella: true},
       {:neoscan_web, in_umbrella: true},
       {:neoscan_monitor, in_umbrella: true},
+      {:gen_stage, "~> 0.11"},
     ]
   end
 end

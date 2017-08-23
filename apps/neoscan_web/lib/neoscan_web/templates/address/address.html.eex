@@ -10,7 +10,7 @@
             <p>
               Transactions
             </p>
-            <%= for %{"txid" => tx} <- @address.tx_ids do %>
+            <%= for  tx <- Map.keys(@address.tx_ids) do %>
               <li>
                 <a href="<%=transaction_path(@conn, :index, tx )%>">
                   <%=tx%>
@@ -28,9 +28,9 @@
             <p>
               Balance
             </p>
-            <%= for asset <- @address.balance do %>
+            <%= for {asset, %{"amount" => amount}} <- Enum.to_list(@address.balance) do %>
               <li>
-                <%=Neoscan.Transactions.get_asset_name_by_hash(asset["asset"])%>  <%=NeoscanWeb.AddressController.round_or_not(asset["amount"])%>
+                <%=Neoscan.Transactions.get_asset_name_by_hash(asset)%>  <%=NeoscanWeb.AddressController.round_or_not(amount)%>
               </li>
             <%end%>
         </ul>

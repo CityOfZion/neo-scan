@@ -7,7 +7,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Hello Neoscan!</title>
+    <link rel="icon" type="image/x-icon" href="<%= static_path(@conn, "/favicon.ico") %>" >
+    <title>CoZ - NeoScan</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
 
@@ -85,7 +86,7 @@
       <div class="container">
         <div class="content has-text-centered">
           <p>
-            <strong>NEOScan</strong> by <a href="https://github.com/CityOfZion">CityOfZion</a> community. The source code is licensed
+            <strong>NeoScan</strong> by <a href="http://cityofzion.io/">CityOfZion</a> community. The source code is licensed
             <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
             is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
           </p>

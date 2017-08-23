@@ -24,7 +24,7 @@ defmodule NeoscanWeb.Mixfile do
   def application do
     [
       mod: {NeoscanWeb.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :scout_apm]
     ]
   end
 

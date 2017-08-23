@@ -1,10 +1,10 @@
 defmodule NeoscanWeb.AssetsController do
   use NeoscanWeb, :controller
 
-  alias Neoscan.Transactions
+  alias NeoscanMonitor.Api
 
   def index(conn, _params) do
-    assets = Transactions.list_assets()
+    assets = Api.get_assets
     render(conn, "assets.html", assets: assets)
   end
 

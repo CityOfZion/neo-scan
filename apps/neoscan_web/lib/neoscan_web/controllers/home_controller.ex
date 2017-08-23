@@ -8,10 +8,10 @@ defmodule NeoscanWeb.HomeController do
   #load last blocks and transactions from db
   def index(conn, _params) do
 
-    blocks = Blocks.home_blocks()
-    transactions = Transactions.home_transactions()
+    # blocks = Api.get_blocks
+    # transactions = Api.get_transactions
 
-    render conn, "index.html", blocks: blocks, transactions: transactions
+    render conn, "index.html"
   end
 
   #searches the database for the input value

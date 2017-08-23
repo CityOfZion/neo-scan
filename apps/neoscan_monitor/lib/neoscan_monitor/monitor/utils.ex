@@ -1,27 +1,38 @@
 defmodule NeoscanMonitor.Utils do
   alias NeoscanSync.Blockchain
 
- @seeds [
-    "http://seed1.cityofzion.io:8080",
-    "http://seed2.cityofzion.io:8080",
-    "http://seed3.cityofzion.io:8080",
-    "http://seed4.cityofzion.io:8080",
-    "http://seed5.cityofzion.io:8080",
-    "http://api.otcgo.cn:10332",
-    "http://seed1.neo.org:10332",
-    "http://seed2.neo.org:10332",
-    "http://seed3.neo.org:10332",
-    "http://seed4.neo.org:10332",
-    "http://seed5.neo.org:10332"
-  ]
+
+  def seeds() do
+   [
+     "http://seed1.cityofzion.io:8080",
+     "http://seed2.cityofzion.io:8080",
+     "http://seed3.cityofzion.io:8080",
+     "http://seed4.cityofzion.io:8080",
+     "http://seed5.cityofzion.io:8080",
+     "http://api.otcgo.cn:10332",
+     "http://seed1.neo.org:10332",
+     "http://seed2.neo.org:10332",
+     "http://seed3.neo.org:10332",
+     "http://seed4.neo.org:10332",
+     "http://seed5.neo.org:10332"
+   ]
+  end
 
   def load() do
-    data = @seeds
-    |> Stream.map(fn x -> {x, Blockchain.get_current_height(x)} end)
-    |> Stream.filter( fn { _x , result } -> evaluate_result(result)  end)
-    |> Stream.map(fn { x , { :ok, height } } -> { x, height } end)
-    |> Enum.to_list()
+    data = seeds()
+      |> Stream.map(fn url -> {url, Blockchain.get_current_height(url)} end)
+      |> Stream.filter( fn { url , result } -> evaluate_result(url, result)  end)
+      |> Stream.map(fn { url , { :ok, height } } -> { url, height } end)
+      |> Enum.to_list()
 
+    IO.inspect(data)
+    set_state(data)
+  end
+
+  defp set_state([] = data) do
+    %{:nodes => [], :height => {:ok, nil}, :data => data}
+  end
+  defp set_state(data) do
     height = filter_height(data)
     %{:nodes => filter_nodes(data, height), :height => {:ok, height}, :data => data}
   end
@@ -42,11 +53,22 @@ defmodule NeoscanMonitor.Utils do
     height
   end
 
-  defp evaluate_result ({ :ok , _height}) do
-    true
+  defp evaluate_result(url, { :ok , height}) do
+    test_get_block(url, height)
+  end
+  defp evaluate_result(_url, { :error , _height}) do
+    false
   end
 
-  defp evaluate_result ({ :error , _height}) do
+  defp test_get_block(url, height) do
+    Blockchain.get_block_by_height(url, height-1)
+    |> test()
+  end
+
+  defp test({:ok, _block}) do
+    true
+  end
+  defp test({:error, _reason}) do
     false
   end
 

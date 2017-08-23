@@ -1,4 +1,3 @@
-
 <section class="section">
   <div class="container">
     <div class="tile is-ancestor">
@@ -50,69 +49,13 @@
       <div class="tile is-6 is-parent">
         <div class="tile is-child box flex">
           <p class="title">Last Blocks</p>
-          <ul class="collection">
-            <%= for block <- @blocks do %>
-              <a href="<%= block_path @conn, :index, block.hash %>" class="box">
-                <article class="media">
-                  <div class="media-content">
-                    <div class="content ">
-                      <p>
-                        <strong>Height <%=block.index%></strong>
-                        <small>Date
-                        <%=
-                          {:ok, date_time} = DateTime.from_unix(block.time, :second)
-                          DateTime.to_date(date_time)
-                        %>&nbsp&nbsp&nbsp
-                        </small>
-                        <small>Time
-                          <%=
-                            {:ok, date_time} = DateTime.from_unix(block.time, :second)
-                            DateTime.to_time(date_time)
-                          %>
-                        </small>
-                        <small class="is-pulled-right">Number of Transactions <%= block.tx_count %>
-                        </small>
-                      </p>
-                    </div>
-                  </div>
-                </article>
-              </a>
-            <% end %>
-          </ul>
+          <ul class="collection" id="show-blocks"></ul>
         </div>
       </div>
       <div class="tile is-6 is-parent">
         <div class="tile is-child box flex">
           <p class="title">Last Transactions</p>
-          <ul class="collection">
-            <%= for transaction <- @transactions do %>
-              <a href="<%= transaction_path @conn, :index, transaction.txid %>" class="box">
-                <article class="media">
-                  <div class="media-content">
-                    <div class="content">
-                      <p>
-                        <strong><%=transaction.type%></strong>
-                        <small>Date
-                        <%=
-                          {:ok, date_time} =  DateTime.from_unix(transaction.time, :second)
-                          DateTime.to_date(date_time)
-                        %>&nbsp&nbsp&nbsp
-                        </small>
-                        <small>Time
-                          <%=
-                            {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
-                            DateTime.to_time(date_time)
-                          %>
-                        </small>
-                        <br>
-
-                      </p>
-                    </div>
-                  </div>
-                </article>
-              </a>
-            <% end %>
-          </ul>
+          <ul class="collection" id="show-transactions"></ul>
         </div>
       </div>
     </div>

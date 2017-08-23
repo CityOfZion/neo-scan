@@ -8,7 +8,7 @@ defmodule Neoscan.Transactions do
 
   import Ecto.Query, warn: false
   alias Neoscan.Repo
-
+  alias NeoscanMonitor.Api
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Transactions.Vout
   alias Neoscan.Transactions.Asset
@@ -40,7 +40,7 @@ defmodule Neoscan.Transactions do
   def home_transactions do
     transaction_query = from e in Transaction,
       order_by: [desc: e.inserted_at],
-      where: e.type != "MinerTransaction" and e.block_height > 1200000,
+      where: e.type != "MinerTransaction" and e.inserted_at > ago(1, "hour"),
       select: %{:type => e.type, :time => e.time, :txid => e.txid},
       limit: 15
 
@@ -141,93 +141,111 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_transaction(%{:time => time, :hash => hash, :index => height } = block, %{"vout" => vouts, "vin" => vin} = attrs) do
+  def create_transaction(%{:time => time, :hash => hash, :index => height } = block, %{"vout" => vouts, "vin" => vin, "txid" => txid, "type" => type} = attrs) do
 
-    #get owner address and total amount sent
-    new_vin = Task.async(fn -> cond do
-       Kernel.length(vin) != 0 ->
-
-         lookups = Stream.map(vin, &"#{&1["vout"]}#{&1["txid"]}")
-         |> Enum.to_list
-
-         query =  from e in Vout,
-          where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
-          select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
-
-         new_vin = Repo.all(query)
-
-         Enum.group_by(new_vin, fn %{:address_hash => address} -> address end)
-         |> Map.to_list()
-         |> Addresses.populate_groups
-         |> Stream.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins, attrs["txid"]) end)
-         |> Enum.to_list
-
-         new_vin
-       true ->
-         vin
-      end
-    end)
+    #get vins and add to addresses
+    new_vin = Task.async(fn -> get_vins(vin, txid) end)
 
     #get claims
-    new_claim = Task.async( fn -> cond do
-       attrs["claims"] != nil ->
-
-         Stream.map(attrs["claims"], fn %{"txid" => txid } -> txid end)
-         |> Stream.uniq()
-         |> Enum.to_list
-         |> Addresses.insert_claim_in_addresses(vouts)
-
-         lookups = Stream.map(attrs["claims"], &"#{&1["vout"]}#{&1["txid"]}")
-         |> Enum.to_list
-
-         query =  from e in Vout,
-          where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
-          select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
-
-         Repo.all(query)
-
-       true ->
-         attrs["claims"]
-      end
-    end)
+    new_claim = Task.async(fn -> get_claims(attrs["claims"], vouts) end)
 
     #create asset if register Transaction
-    cond do
-      attrs["asset"] != nil ->
-        %{"amount" => amount} = attrs["asset"]
-        {float, _} = Float.parse(amount)
-        new_asset = Map.put(attrs["asset"], "amount", float)
-        create_asset(attrs["txid"], new_asset)
-      true ->
-        nil
-    end
+    assets(attrs["asset"], txid)
 
     #create asset if issue Transaction
-    cond do
-      attrs["type"] == "IssueTransaction" ->
-        Stream.each(vouts, fn %{"asset" => asset_hash, "value" => value} ->
-          {float, _} = Float.parse(value)
-          add_issued_value(asset_hash, float)
-        end)
-        |> Enum.to_list
-      true ->
-        nil
-    end
-
-
+    issue(type, vouts)
 
     #prepare and create transaction
-
-    transaction = Map.put(attrs,"time", time)
-    |> Map.put("vin", Task.await(new_vin, 60*60000))
-    |> Map.put("claims", Task.await(new_claim, 60*60000))
-    |> Map.put("block_hash", hash)
-    |> Map.put("block_height", height)
+    transaction = Map.merge(attrs, %{
+          "time" => time,
+          "vin" => Task.await(new_vin, 60*60000),
+          "claims" => Task.await(new_claim, 60*60000),
+          "block_hash" => hash,
+          "block_height" => height,
+    })
     |> Map.delete("vout")
 
     Transaction.changeset(block, transaction)
     |> Repo.insert!()
+    |> update_transaction_state
     |> create_vouts(vouts)
+  end
+  def update_transaction_state(%{:type => type } = transaction) when type != "MinerTransaction" do
+    Api.add_transaction(transaction)
+    transaction
+  end
+  def update_transaction_state(%{:type => type } = transaction) when type == "PublishTransaction" or type == "InvocationTransaction" do
+    Api.add_transaction(transaction)
+    Api.add_contract(transaction)
+    transaction
+  end
+  def update_transaction_state(transaction) do
+    transaction
+  end
+
+  #get vins and add to addresses
+  defp get_vins([] = vin, _txid) do
+    vin
+  end
+  defp get_vins(vin, txid) do
+    lookups = Stream.map(vin, &"#{&1["vout"]}#{&1["txid"]}")
+    |> Enum.to_list
+
+    query =  from e in Vout,
+     where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
+     select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+
+    new_vin = Repo.all(query)
+
+    Enum.group_by(new_vin, fn %{:address_hash => address} -> address end)
+    |> Map.to_list()
+    |> Addresses.populate_groups
+    |> Stream.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins, txid) end)
+    |> Enum.to_list
+
+    new_vin
+  end
+
+  #get claimed vouts and add to addresses
+  defp get_claims( nil = claims, _vouts) do
+    claims
+  end
+  defp get_claims(claims, vouts) do
+    Stream.map(claims, fn %{"txid" => txid } -> txid end)
+    |> Stream.uniq()
+    |> Enum.to_list
+    |> Addresses.insert_claim_in_addresses(vouts)
+
+    lookups = Stream.map(claims, &"#{&1["vout"]}#{&1["txid"]}")
+    |> Enum.to_list
+
+    query =  from e in Vout,
+    where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
+    select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+
+    Repo.all(query)
+  end
+
+  #create new assets
+  defp assets(%{"amount" => amount} = assets, txid) do
+    {float, _} = Float.parse(amount)
+    new_asset = Map.put(assets, "amount", float)
+    create_asset(txid, new_asset)
+  end
+  defp assets( nil, _txid) do
+    nil
+  end
+
+  #issue assets
+  defp issue("IssueTransaction", vouts) do
+    Stream.each(vouts, fn %{"asset" => asset_hash, "value" => value} ->
+      {float, _} = Float.parse(value)
+      add_issued_value(asset_hash, float)
+    end)
+    |> Enum.to_list
+  end
+  defp issue(_type, _vouts) do
+    nil
   end
 
 
@@ -337,6 +355,7 @@ defmodule Neoscan.Transactions do
     |> Enum.to_list
   end
 
+  #get vouts addresses
   def get_addresses(vouts) do
     lookups = Stream.map(vouts, &"#{&1["address"]}")
     |> Stream.uniq()
@@ -351,6 +370,7 @@ defmodule Neoscan.Transactions do
     |> insert_address(vouts)
   end
 
+  #create missing addresses
   def fetch_missing(address_list, lookups) do
     (lookups -- Enum.map(address_list, fn %{:address => address} -> address end))
     |> Stream.map(fn address -> Addresses.create_address(%{"address" => address}) end)
@@ -358,6 +378,7 @@ defmodule Neoscan.Transactions do
     |> Enum.concat(address_list)
   end
 
+  #insert address struct into vout
   def insert_address(address_list, vouts) do
     Stream.map(vouts, fn %{"address" => ad } = x ->
       Map.put(x, "address", Enum.find(address_list, fn %{ :address => address } -> address == ad end))
@@ -381,6 +402,11 @@ defmodule Neoscan.Transactions do
   def create_asset(transaction_id, attrs) do
     Asset.changeset(transaction_id, attrs)
     |> Repo.insert!()
+    |> update_asset_state
+  end
+  def update_asset_state(asset) do
+    Api.add_asset(asset)
+    asset
   end
 
 
@@ -480,6 +506,7 @@ defmodule Neoscan.Transactions do
     |> Repo.update!()
   end
 
+  #add issued value to an existing asset
   def add_issued_value(asset_hash, value) do
     result = get_asset_by_hash(asset_hash)
     cond do

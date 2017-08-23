@@ -7,6 +7,8 @@ defmodule Neoscan.Api do
   alias Neoscan.Transactions.Asset
   alias Neoscan.Blocks.Block
   alias Neoscan.Transactions.Vout
+  alias NeoscanMonitor.Api
+
 
   @moduledoc """
     Main API for accessing data from the explorer.
@@ -35,16 +37,16 @@ defmodule Neoscan.Api do
   ## Examples
 
       /api/main_net/v1/get_balance/{hash_string}
-      "{
-        \"balance\": [
+      {
+        "balance": [
           {
-            \"asset\": \"name_string\",
-            \"amount\": float
+            "asset": "name_string",
+            "amount": float
           }
           ...
         ],
-        \"address\": \"hash_string\"
-      }"
+        "address": "hash_string"
+      }
 
   """
   def get_balance(hash) do
@@ -56,12 +58,11 @@ defmodule Neoscan.Api do
         nil -> %{:address => "not found", :balance => nil}
 
         %{} = address ->
-          new_balance =Enum.map(address.balance, fn %{"asset" => asset, "amount" => amount} ->
-            %{"asset" => Transactions.get_asset_name_by_hash(asset), "amount" => amount} end)
+          new_balance = filter_balance(address.balance)
           Map.put(address, :balance, new_balance)
       end
 
-    Poison.encode!(result)
+    result
   end
 
   @doc """
@@ -70,22 +71,22 @@ defmodule Neoscan.Api do
   ## Examples
 
       /api/main_net/v1/get_claimed/{hash_string}
-      "{
-        \"claimed\": [
+      {
+        "claimed": [
           {
-            \"txids\": [
-              \"tx_id_string\",
-              \"tx_id_string\",
-              \"tx_id_string\",
+            "txids": [
+              "tx_id_string",
+              "tx_id_string",
+              "tx_id_string",
               ...
             ],
-            \"asset\": \"name_string\",
-            \"amount\": \"float\",
+            "asset": "name_string",
+            "amount": "float",
           },
           ...
         ],
-        \"address\": \"hash_string\"
-      }"
+        "address": "hash_string"
+      }
 
   """
   def get_claimed(hash) do
@@ -100,7 +101,7 @@ defmodule Neoscan.Api do
           address
       end
 
-    Poison.encode!(result)
+    result
   end
 
   @doc """
@@ -109,36 +110,36 @@ defmodule Neoscan.Api do
   ## Examples
 
       /api/main_net/v1/get_address/{hash_string}
-      "{
-        \"txids\": [
+      {
+        "txids": [
           {
-            \"txid\": \"tx_id_string\",
-            \"balance\": \"balance_object_snapshot\"
+            "txid": "tx_id_string",
+            "balance": "balance_object_snapshot"
           },
           ...
         ],
-        \"claimed\": [
+        "claimed": [
           {
-            \"txids\": [
-              \"tx_id_string\",
-              \"tx_id_string\",
-              \"tx_id_string\",
+            "txids": [
+              "tx_id_string",
+              "tx_id_string",
+              "tx_id_string",
               ...
             ],
-            \"asset\": \"name_string\",
-            \"amount\": \"float\",
+            "asset": "name_string",
+            "amount": "float",
           },
           ...
         ],
-        \"balance\": [
+        "balance": [
           {
-            \"asset\": \"name_string\",
-            \"amount\": float
+            "asset": "name_string",
+            "amount": float
           }
           ...
         ],
-        \"address\": \"hash_string\"
-      }"
+        "address": "hash_string"
+      }
 
   """
   def get_address(hash) do
@@ -150,12 +151,24 @@ defmodule Neoscan.Api do
         nil -> %{:address => "not found", :balance => nil, :txids => nil, :claimed => nil}
 
         %{} = address ->
-          new_balance =Enum.map(address.balance, fn %{"asset" => asset, "amount" => amount} ->
-            %{"asset" => Transactions.get_asset_name_by_hash(asset), "amount" => amount} end)
+          new_balance = filter_balance(address.balance)
+
+          new_tx = Map.to_list(address.txids)
+          |> Enum.map(fn { _tx, %{"txid" => txid, "balance" => balance}} ->
+            %{"txid" => txid, "balance" => filter_balance(balance)} end)
+
+
           Map.put(address, :balance, new_balance)
+          |> Map.put(:txids, new_tx)
       end
 
-    Poison.encode!(result)
+    result
+  end
+
+  defp filter_balance(balance) do
+    Map.to_list(balance)
+    |> Enum.map(fn { _as, %{"asset" => asset, "amount" => amount}} ->
+      %{"asset" => Transactions.get_asset_name_by_hash(asset), "amount" => amount} end)
   end
 
   @doc """
@@ -164,35 +177,34 @@ defmodule Neoscan.Api do
   ## Examples
 
       /api/main_net/v1/get_assets
-      "[
+      [
         {
-          \"type\": \"type_string\",
-          \"txid\": \"tx_id_string\",
-          \"precision\": integer,
-          \"owner\": \"hash_string\",
-          \"name\": [
+          "type": "type_string",
+          "txid": "tx_id_string",
+          "precision": integer,
+          "owner": "hash_string",
+          "name": [
             {
-              \"name\": \"name_string\",
-              \"lang\": \"language_code_string\"
+              "name": "name_string",
+              "lang": "language_code_string"
             },
             ...
           ],
-          \"issued\": float,
-          \"amount\": float,
-          \"admin\": \"hash_string\"
+          "issued": float,
+          "amount": float,
+          "admin": "hash_string"
         },
         ...
-      ]"
+      ]
 
   """
   def get_assets() do
-    Repo.all(Asset)
+    Api.get_assets
     |> Enum.map(fn x ->
         Map.delete(x, :inserted_at)
         |> Map.delete(:updated_at)
         |> Map.delete(:id)
     end)
-    |> Poison.encode!
   end
 
   @doc """
@@ -201,22 +213,22 @@ defmodule Neoscan.Api do
   ## Examples
 
       /api/main_net/v1/get_asset/{hash_string}
-      "{
-        \"type\": \"type_string\",
-        \"txid\": \"tx_id_string\",
-        \"precision\": integer,
-        \"owner\": \"hash_string\",
-        \"name\": [
+      {
+        "type": "type_string",
+        "txid": "tx_id_string",
+        "precision": integer,
+        "owner": "hash_string",
+        "name": [
           {
-            \"name\": \"name_string\",
-            \"lang\": \"language_code_string\"
+            "name": "name_string",
+            "lang": "language_code_string"
           },
           ...
         ],
-        \"issued\": float,
-        \"amount\": float,
-        \"admin\": \"hash_string\"
-      }"
+        "issued": float,
+        "amount": float,
+        "admin": "hash_string"
+      }
 
   """
   def get_asset(hash) do
@@ -239,7 +251,6 @@ defmodule Neoscan.Api do
     Map.delete(result, :inserted_at)
     |> Map.delete(:updated_at)
     |> Map.delete(:id)
-    |> Poison.encode!
   end
 
   @doc """
@@ -249,28 +260,28 @@ defmodule Neoscan.Api do
 
       /api/main_net/v1/get_block/{hash_string}
       /api/main_net/v1/get_block/{height}
-      "{
-        \"version\": integer,
-        \"tx_count\": integer,
-        \"transactions\": [
-          \"tx_id_string\",
+      {
+        "version": integer,
+        "tx_count": integer,
+        "transactions": [
+          "tx_id_string",
           ...
         ],
-        \"time\": unix_time,
-        \"size\": integer,
-        \"script\": {
-          \"verification\": \"hash_string\",
-          \"invocation\": \"hash_string\"
+        "time": unix_time,
+        "size": integer,
+        "script": {
+          "verification": "hash_string",
+          "invocation": "hash_string"
         },
-        \"previousblockhash\": \"hash_string\",
-        \"nonce\": \"hash_string\",
-        \"nextconsensus\": \"hash_string\",
-        \"nextblockhash\": \"hash_string\",
-        \"merkleroot\": \"hash_string\",
-        \"index\": integer,
-        \"hash\": \"hash_string\",
-        \"confirmations\": integer
-      }"
+        "previousblockhash": "hash_string",
+        "nonce": "hash_string",
+        "nextconsensus": "hash_string",
+        "nextblockhash": "hash_string",
+        "merkleroot": "hash_string",
+        "index": integer,
+        "hash": "hash_string",
+        "confirmations": integer
+      }
 
   """
   def get_block(hash_or_integer) do
@@ -313,7 +324,6 @@ defmodule Neoscan.Api do
       Map.delete(result, :inserted_at)
       |> Map.delete(:updated_at)
       |> Map.delete(:id)
-      |> Poison.encode!
   end
 
   @doc """
@@ -322,31 +332,31 @@ defmodule Neoscan.Api do
   ## Examples
 
       /api/main_net/v1/get_last_blocks
-     "[
+     [
         {
-          \"version\": integer,
-          \"tx_count\": integer,
-          \"transactions\": [
-            \"tx_id_string\",
+          "version": integer,
+          "tx_count": integer,
+          "transactions": [
+            "tx_id_string",
             ...
           ],
-          \"time\": unix_time,
-          \"size\": integer,
-          \"script\": {
-            \"verification\": \"hash_string\",
-            \"invocation\": \"hash_string\"
+          "time": unix_time,
+          "size": integer,
+          "script": {
+            "verification": "hash_string",
+            "invocation": "hash_string"
           },
-          \"previousblockhash\": \"hash_string\",
-          \"nonce\": \"hash_string\",
-          \"nextconsensus\": \"hash_string\",
-          \"nextblockhash\": \"hash_string\",
-          \"merkleroot\": \"hash_string\",
-          \"index\": integer,
-          \"hash\": \"hash_string\",
-          \"confirmations\": integer
+          "previousblockhash": "hash_string",
+          "nonce": "hash_string",
+          "nextconsensus": "hash_string",
+          "nextblockhash": "hash_string",
+          "merkleroot": "hash_string",
+          "index": integer,
+          "hash": "hash_string",
+          "confirmations": integer
         },
         ...
-      ]"
+      ]
 
   """
   def get_last_blocks() do
@@ -354,7 +364,7 @@ defmodule Neoscan.Api do
     select: t.txid
 
     query = from e in Block,
-      where: e.index > -10,
+      where: e.index > 1200000,
       order_by: [desc: e.index],
       preload: [transactions: ^tran_query],
       limit: 20
@@ -365,7 +375,6 @@ defmodule Neoscan.Api do
           |> Map.delete(:updated_at)
           |> Map.delete(:id)
       end)
-      |> Poison.encode!
   end
 
   @doc """
@@ -374,28 +383,28 @@ defmodule Neoscan.Api do
   ## Examples
 
       /api/main_net/v1/get_highest_block
-      "{
-        \"version\": integer,
-        \"tx_count\": integer,
-        \"transactions\": [
-          \"tx_id_string\",
+      {
+        "version": integer,
+        "tx_count": integer,
+        "transactions": [
+          "tx_id_string",
           ...
         ],
-        \"time\": unix_time,
-        \"size\": integer,
-        \"script\": {
-          \"verification\": \"hash_string\",
-          \"invocation\": \"hash_string\"
+        "time": unix_time,
+        "size": integer,
+        "script": {
+          "verification": "hash_string",
+          "invocation": "hash_string"
         },
-        \"previousblockhash\": \"hash_string\",
-        \"nonce\": \"hash_string\",
-        \"nextconsensus\": \"hash_string\",
-        \"nextblockhash\": \"hash_string\",
-        \"merkleroot\": \"hash_string\",
-        \"index\": integer,
-        \"hash\": \"hash_string\",
-        \"confirmations\": integer
-      }"
+        "previousblockhash": "hash_string",
+        "nonce": "hash_string",
+        "nextconsensus": "hash_string",
+        "nextblockhash": "hash_string",
+        "merkleroot": "hash_string",
+        "index": integer,
+        "hash": "hash_string",
+        "confirmations": integer
+      }
 
   """
   def get_highest_block() do
@@ -403,7 +412,7 @@ defmodule Neoscan.Api do
     select: t.txid
 
     query = from e in Block,
-      where: e.index > -10,
+      where: e.index > 1200000,
       order_by: [desc: e.index],
       preload: [transactions: ^tran_query],
       limit: 1
@@ -413,7 +422,6 @@ defmodule Neoscan.Api do
       |> Map.delete(:inserted_at)
       |> Map.delete(:updated_at)
       |> Map.delete(:id)
-      |> Poison.encode!
   end
 
   @doc """
@@ -422,49 +430,49 @@ defmodule Neoscan.Api do
   ## Examples
 
       /api/main_net/v1/get_transaction/{hash_string}
-      "{
-        \"vouts\": [
+      {
+        "vouts": [
           {
-            \"value\": float,
-            \"n\": integer,
-            \"asset\": \"name_string\",
-            \"address\": \"hash_string\"
+            "value": float,
+            "n": integer,
+            "asset": "name_string",
+            "address": "hash_string"
           },
           ...
         ],
-        \"vin\": [
+        "vin": [
           {
-            \"value\": float,
-            \"txid\": \"tx_id_string\",
-            \"n\": integer,
-            \"asset\": \"name_string\",
-            \"address_hash\": \"hash_string\"
+            "value": float,
+            "txid": "tx_id_string",
+            "n": integer,
+            "asset": "name_string",
+            "address_hash": "hash_string"
           },
           ...
         ],
-        \"version\": integer,
-        \"type\": \"type_string\",
-        \"txid\": \"tx_id_string\",
-        \"time\": unix_time,
-        \"sys_fee\": \"string\",
-        \"size\": integer,
-        \"scripts\": [
+        "version": integer,
+        "type": "type_string",
+        "txid": "tx_id_string",
+        "time": unix_time,
+        "sys_fee": "string",
+        "size": integer,
+        "scripts": [
           {
-            \"verification\": \"hash_string\",
-            \"invocation\": \"hash_string\"
+            "verification": "hash_string",
+            "invocation": "hash_string"
           }
         ],
-        \"pubkey\": hash_string,
-        \"nonce\": integer,
-        \"net_fee\": \"string\",
-        \"description\": string,
-        \"contract\": array,
-        \"claims\": array,
-        \"block_height\": integer,
-        \"block_hash\": \"hash_string\",
-        \"attributes\": array,
-        \"asset\": array
-      }"
+        "pubkey": hash_string,
+        "nonce": integer,
+        "net_fee": "string",
+        "description": string,
+        "contract": array,
+        "claims": array,
+        "block_height": integer,
+        "block_hash": "hash_string",
+        "attributes": array,
+        "asset": array
+      }
 
   """
   def get_transaction(hash) do
@@ -512,7 +520,7 @@ defmodule Neoscan.Api do
           |> Map.put(:vin, new_vins)
       end
 
-      Poison.encode!(result)
+      result
   end
 
   @doc """
@@ -523,51 +531,51 @@ defmodule Neoscan.Api do
 
       /api/main_net/v1/get_last_transactions/{type}
       /api/main_net/v1/get_last_transactions
-      "[{
-          \"vouts\": [
+      [{
+          "vouts": [
             {
-              \"value\": float,
-              \"n\": integer,
-              \"asset\": \"name_string\",
-              \"address\": \"hash_string\"
+              "value": float,
+              "n": integer,
+              "asset": "name_string",
+              "address": "hash_string"
             },
             ...
           ],
-          \"vin\": [
+          "vin": [
             {
-              \"value\": float,
-              \"txid\": \"tx_id_string\",
-              \"n\": integer,
-              \"asset\": \"name_string\",
-              \"address_hash\": \"hash_string\"
+              "value": float,
+              "txid": "tx_id_string",
+              "n": integer,
+              "asset": "name_string",
+              "address_hash": "hash_string"
             },
             ...
           ],
-          \"version\": integer,
-          \"type\": \"type_string\",
-          \"txid\": \"tx_id_string\",
-          \"time\": unix_time,
-          \"sys_fee\": \"string\",
-          \"size\": integer,
-          \"scripts\": [
+          "version": integer,
+          "type": "type_string",
+          "txid": "tx_id_string",
+          "time": unix_time,
+          "sys_fee": "string",
+          "size": integer,
+          "scripts": [
             {
-              \"verification\": \"hash_string\",
-              \"invocation\": \"hash_string\"
+              "verification": "hash_string",
+              "invocation": "hash_string"
             }
           ],
-          \"pubkey\": hash_string,
-          \"nonce\": integer,
-          \"net_fee\": \"string\",
-          \"description\": string,
-          \"contract\": array,
-          \"claims\": array,
-          \"block_height\": integer,
-          \"block_hash\": \"hash_string\",
-          \"attributes\": array,
-          \"asset\": array
+          "pubkey": hash_string,
+          "nonce": integer,
+          "net_fee": "string",
+          "description": string,
+          "contract": array,
+          "claims": array,
+          "block_height": integer,
+          "block_hash": "hash_string",
+          "attributes": array,
+          "asset": array
         },
         ...
-      ]"
+      ]
 
   """
   def get_last_transactions(type) do
@@ -580,13 +588,14 @@ defmodule Neoscan.Api do
 
     query = cond do
       type == nil -> from t in Transaction,
+        where: t.inserted_at > ago(1, "hour"),
         order_by: [desc: t.inserted_at],
         preload: [vouts: ^vout_query],
         limit: 20
 
       true -> from t in Transaction,
           order_by: [desc: t.inserted_at],
-          where: t.type == ^type,
+          where: t.type == ^type and t.inserted_at > ago(1, "hour"),
           preload: [vouts: ^vout_query],
           limit: 20
     end
@@ -604,7 +613,6 @@ defmodule Neoscan.Api do
         |> Map.put(:vouts, new_vouts)
         |> Map.put(:vin, new_vins)
     end)
-    |> Poison.encode!
   end
 
 
@@ -629,19 +637,18 @@ defmodule Neoscan.Api do
   ## Examples
 
       /api/main_net/v1/get_all_nodes
-      "[
+      [
         {
-          \"url\": \"http: \/\/seed1.cityofzion.io: 8080\",
-          \"height\": 1239778
+          "url": "http://seed1.cityofzion.io:8080",
+          "height": 1239778
         },
         ...
-      ]"
+      ]
 
   """
   def get_all_nodes() do
     NeoscanMonitor.Api.get_data
     |> Enum.map(fn { url, height } -> %{ :url => url, :height => height} end)
-    |> Poison.encode!()
   end
 
   @doc """
@@ -650,17 +657,16 @@ defmodule Neoscan.Api do
   ## Examples
 
       /api/main_net/v1/get_nodes
-      "{
-        \"urls\": [
-          \"http: \/\/seed1.cityofzion.io: 8080\",
+      {
+        "urls": [
+          "http://seed1.cityofzion.io: 8080",
           ....
         ]
-      }"
+      }
 
   """
   def get_nodes() do
     %{ :urls => NeoscanMonitor.Api.get_nodes }
-    |> Poison.encode!()
   end
 
   @doc """
@@ -669,14 +675,14 @@ defmodule Neoscan.Api do
   ## Examples
 
       /api/main_net/v1/get_height
-      "{
-        \"height\": 1239809
-      }"
+      {
+        "height": 1239809
+      }
 
   """
   def get_height() do
     {:ok, height} = NeoscanMonitor.Api.get_height
-    Poison.encode!(%{:height => height})
+    %{:height => height}
   end
 
 
