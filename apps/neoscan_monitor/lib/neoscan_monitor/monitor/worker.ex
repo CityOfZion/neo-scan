@@ -36,7 +36,6 @@ defmodule NeoscanMonitor.Worker do
 
       new_state = Map.put(state, :blocks, new_blocks)
       Process.send(NeoscanMonitor.Server, {:state_update, new_state}, [])
-      NeoscanWeb.RoomChannel.broadcast_change(new_state)
       {:noreply, new_state}
   end
 
@@ -46,7 +45,6 @@ defmodule NeoscanMonitor.Worker do
 
       new_state = Map.put(state, :transactions, new_transactions)
       Process.send(NeoscanMonitor.Server, {:state_update, new_state}, [])
-      NeoscanWeb.RoomChannel.broadcast_change(new_state)
       {:noreply, new_state}
   end
 

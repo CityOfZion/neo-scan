@@ -10,7 +10,14 @@ defmodule NeoscanMonitor.Server do
   end
 
   def handle_info({:state_update, new_state}, _state) do
+    schedule_work()
     {:noreply, new_state}
+  end
+
+  def handle_info(:broadcast, state) do
+    schedule_work() # Reschedule once more
+    NeoscanWeb.RoomChannel.broadcast_change(state)
+    {:noreply, state}
   end
 
   def handle_call(:nodes, _from, state) do
@@ -39,5 +46,9 @@ defmodule NeoscanMonitor.Server do
 
   def handle_call(:data, _from, state) do
     {:reply, state.monitor.data, state}
+  end
+
+  defp schedule_work() do
+    Process.send_after(self(), :broadcast, 15000) # In 15 seconds
   end
 end
