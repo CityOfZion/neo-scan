@@ -118,6 +118,12 @@ defmodule Neoscan.Addresses do
     |> Repo.update!()
   end
 
+  def update_multiple_addresses(list) do
+    list
+    |> Stream.each(fn {address, attrs} -> update_address(address, attrs) end)
+    |> Stream.run()
+  end
+
   @doc """
   Deletes a Address.
 
@@ -183,7 +189,7 @@ defmodule Neoscan.Addresses do
 
   """
   def populate_groups(groups, address_list) do
-    Stream.map(groups, fn {address, vins} -> {Enum.find(address_list, fn %{:address => ad} -> ad == address end), vins} end)
+    Stream.map(groups, fn {address, vins} -> {Enum.find(address_list, fn {%{:address => ad}, _attrs} -> ad == address end), vins} end)
     |> Enum.to_list()
   end
 
@@ -198,6 +204,7 @@ defmodule Neoscan.Addresses do
 
      Repo.all(query)
      |> fetch_missing(lookups)
+     |> gen_attrs()
   end
 
   #helper to filter nil cases
@@ -239,50 +246,99 @@ defmodule Neoscan.Addresses do
 
 
   #Update vins and claims into addresses
-  def update_all_addresses(nil, claims, vouts, address_list, _txid) do
-    separate_txids_and_insert_claims(claims, vouts, address_list)
+  def update_all_addresses(address_list,[], nil, _vouts, _txid) do
+    address_list
   end
-  def update_all_addresses(vins, nil, _vouts, address_list, txid) do
-    group_vins_by_address_and_update(vins, address_list, txid)
+  def update_all_addresses(address_list,[], claims, vouts, _txid) do
+    address_list
+    |> separate_txids_and_insert_claims(claims, vouts)
   end
-  def update_all_addresses(vins, claims, vouts, address_list, txid) do
-    group_vins_by_address_and_update(vins, address_list, txid)
-    separate_txids_and_insert_claims(claims, vouts, address_list)
+  def update_all_addresses(address_list, vins, nil, _vouts, txid) do
+    address_list
+    |> group_vins_by_address_and_update(vins, txid)
+  end
+  def update_all_addresses(address_list, vins, claims, vouts, txid) do
+    address_list
+    |> group_vins_by_address_and_update(vins, txid)
+    |> separate_txids_and_insert_claims(claims, vouts)
+  end
+
+  def gen_attrs(address_list) do
+    address_list
+    |> Stream.map(fn address -> {address, %{}} end)
+    |> Enum.to_list
   end
 
   #separate vins by address hash, insert vins and update the address
-  def group_vins_by_address_and_update(vins, address_list, txid) do
-    Enum.group_by(vins, fn %{:address_hash => address} -> address end)
+  def group_vins_by_address_and_update(address_list, vins, txid) do
+    updates = Enum.group_by(vins, fn %{:address_hash => address} -> address end)
     |> Map.to_list()
     |> populate_groups(address_list)
-    |> Stream.each(fn {address, vins} -> insert_vins_in_address(address, vins, txid) end)
-    |> Stream.run()
+    |> Stream.map(fn {address, vins} -> insert_vins_in_address(address, vins, txid) end)
+    |> Enum.to_list
+
+
+    Enum.map(address_list, fn {address, attrs} -> substitute_if_updated(address, attrs, updates) end)
   end
 
   #separate claimed transactions and insert in the claiming addresses
-  def separate_txids_and_insert_claims(claims, vouts, address_list) do
-    Stream.map(claims, fn %{:txid => txid } -> txid end)
+  def separate_txids_and_insert_claims(address_list, claims, vouts) do
+    updates = Stream.map(claims, fn %{:txid => txid } -> txid end)
     |> Stream.uniq()
     |> Enum.to_list
     |> insert_claim_in_addresses(vouts, address_list)
+
+    Enum.map(address_list, fn {address, attrs} -> substitute_if_updated(address, attrs, updates) end)
+  end
+
+  #helper to substitute main address list with updated addresses tuples
+  def substitute_if_updated(%{:address => address_hash} = address, attrs, updates) do
+    index = Enum.find_index(updates, fn {%{:address => ad} , _attrs} -> ad == address_hash end)
+    case index do
+      nil ->
+        {address, attrs}
+      _ ->
+        Enum.at(updates, index)
+    end
+  end
+
+
+  #helpers to check if there is attrs updates already
+  def check_if_attrs_balance_exists(%{:balance => balance}) do
+    balance
+  end
+  def check_if_attrs_balance_exists(_attrs) do
+    false
+  end
+  def check_if_attrs_txids_exists(%{:tx_ids => tx_ids}) do
+    tx_ids
+  end
+  def check_if_attrs_txids_exists(_attrs) do
+    false
+  end
+  def check_if_attrs_claimed_exists(%{:claimed => claimed}) do
+    claimed
+  end
+  def check_if_attrs_claimed_exists(_attrs) do
+    false
   end
 
 
   #insert vouts into address balance
   def insert_vouts_in_address(%{:txid => txid} = transaction, vouts) do
-    %{"address" => address } = List.first(vouts)
-    attrs = %{:balance => address.balance , :tx_ids => address.tx_ids}
+    %{"address" => {address , attrs }} = List.first(vouts)
+    attrs = %{:balance => check_if_attrs_balance_exists(attrs) || address.balance , :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids}
     |> add_vouts(vouts, transaction)
     |> add_tx_id(txid)
-    update_address(address, attrs)
+    {address, attrs}
   end
 
   #insert vins into address balance
-  def insert_vins_in_address(address, vins, txid) do
-    attrs = %{:balance => address.balance, :tx_ids => address.tx_ids}
+  def insert_vins_in_address({address, attrs}, vins, txid) do
+    new_attrs = %{:balance => check_if_attrs_balance_exists(attrs) || address.balance, :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids}
     |> add_vins(vins)
     |> add_tx_id(txid)
-    update_address(address, attrs)
+    {address, new_attrs}
   end
 
   #add multiple vins
@@ -302,18 +358,18 @@ defmodule Neoscan.Addresses do
 
   #get addresses and route for adding claims
   def insert_claim_in_addresses(transactions, vouts, address_list) do
-    Stream.each(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
-      insert_claim_in_address(Enum.find(address_list, fn %{:address => address} -> address == hash end) , transactions, value, asset, hash)
+    Stream.map(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
+      insert_claim_in_address(Enum.find(address_list, fn {%{:address => address}, _attrs} -> address == hash end) , transactions, value, asset, hash)
     end)
-    |> Stream.run()
+    |> Enum.to_list
   end
 
   #insert claimed transactions and update address balance
-  def insert_claim_in_address(address, transactions, value, asset, _address_hash) do
-    attrs = %{:claimed => address.claimed}
+  def insert_claim_in_address({address, attrs}, transactions, value, asset, _address_hash) do
+    new_attrs = %{:claimed => check_if_attrs_claimed_exists(attrs) || address.claimed}
     |> add_claim(transactions, value, asset)
 
-    update_address(address, attrs)
+    {address, new_attrs}
   end
 
   #add a single vout into adress
