@@ -182,19 +182,89 @@ defmodule Neoscan.Addresses do
 
 
   """
-  def populate_groups(groups) do
-    lookups = groups
-      |> Stream.map(fn {address, _ } -> address end)
-      |> Enum.to_list
+  def populate_groups(groups, address_list) do
+    Stream.map(groups, fn {address, vins} -> {Enum.find(address_list, fn %{:address => ad} -> ad == address end), vins} end)
+    |> Enum.to_list()
+  end
+
+  #get all addresses involved in a transaction
+  def get_transaction_addresses(vins, claims, vouts) do
+
+    lookups = (map_vins(vins) ++ map_claims(claims) ++ map_vouts(vouts)) |> Enum.uniq
 
     query =  from e in Address,
      where: fragment("CAST(? AS text)", e.address) in ^lookups,
      select: e
 
-    address_list = Repo.all(query)
+     Repo.all(query)
+     |> fetch_missing(lookups)
+  end
 
-    Stream.map(groups, fn {address, vins} -> {Enum.find(address_list, fn %{:address => ad} -> ad == address end), vins} end)
-    |> Enum.to_list()
+  #helper to filter nil cases
+  def map_vins(nil) do
+    []
+  end
+  def map_vins(vins) do
+    Stream.map(vins, fn %{:address_hash => address} -> address end)
+      |> Enum.to_list
+  end
+
+  #helper to filter nil cases
+  def map_claims(nil) do
+    []
+  end
+  def map_claims(claims) do
+    Stream.map(claims, fn %{:address_hash => address} -> address end)
+      |> Enum.to_list
+  end
+
+  #helper to filter nil cases
+  def map_vouts(nil) do
+    []
+  end
+  def map_vouts(vouts) do
+    #not in db, so still uses string keys
+    Stream.map(vouts, fn %{"address" => address} -> address end)
+      |> Enum.to_list
+  end
+
+  #create missing addresses
+  def fetch_missing(address_list, lookups) do
+    (lookups -- Enum.map(address_list, fn %{:address => address} -> address end))
+    |> Stream.map(fn address -> create_address(%{"address" => address}) end)
+    |> Enum.to_list
+    |> Enum.concat(address_list)
+  end
+
+
+
+  #Update vins and claims into addresses
+  def update_all_addresses(nil, claims, vouts, address_list, _txid) do
+    separate_txids_and_insert_claims(claims, vouts, address_list)
+  end
+  def update_all_addresses(vins, nil, _vouts, address_list, txid) do
+    group_vins_by_address_and_update(vins, address_list, txid)
+  end
+  def update_all_addresses(vins, claims, vouts, address_list, txid) do
+    group_vins_by_address_and_update(vins, address_list, txid)
+    separate_txids_and_insert_claims(claims, vouts, address_list)
+  end
+
+  #separate vins by address hash, insert vins and update the address
+  def group_vins_by_address_and_update(vins, address_list, txid) do
+    Enum.group_by(vins, fn %{:address_hash => address} -> address end)
+    |> Map.to_list()
+    |> populate_groups(address_list)
+    |> Stream.each(fn {address, vins} -> insert_vins_in_address(address, vins, txid) end)
+    |> Stream.run()
+  end
+
+  #separate claimed transactions and insert in the claiming addresses
+  def separate_txids_and_insert_claims(claims, vouts, address_list) do
+    Stream.map(claims, fn %{:txid => txid } -> txid end)
+    |> Stream.uniq()
+    |> Enum.to_list
+    |> insert_claim_in_addresses(vouts, address_list)
   end
 
 
@@ -231,17 +301,7 @@ defmodule Neoscan.Addresses do
   def add_vouts(attrs, [], _transaction), do: attrs
 
   #get addresses and route for adding claims
-  def insert_claim_in_addresses(transactions, vouts) do
-    lookups = Stream.map(vouts, &"#{&1["address"]}")
-      |> Stream.uniq
-      |> Enum.to_list
-
-    query =  from e in Address,
-     where: fragment("CAST(? AS text)", e.address) in ^lookups,
-     select: e
-
-    address_list = Repo.all(query)
-
+  def insert_claim_in_addresses(transactions, vouts, address_list) do
     Stream.each(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
       insert_claim_in_address(Enum.find(address_list, fn %{:address => address} -> address == hash end) , transactions, value, asset, hash)
     end)
@@ -249,12 +309,6 @@ defmodule Neoscan.Addresses do
   end
 
   #insert claimed transactions and update address balance
-  def insert_claim_in_address(nil, transactions, value, asset, address_hash) do
-    attrs = %{:address => address_hash, :claimed => nil}
-    |> add_claim(transactions, value, asset)
-
-    create_address(attrs)
-  end
   def insert_claim_in_address(address, transactions, value, asset, _address_hash) do
     attrs = %{:claimed => address.claimed}
     |> add_claim(transactions, value, asset)
@@ -333,7 +387,7 @@ defmodule Neoscan.Addresses do
     update_address(address, %{"tx_ids" => new_tx_ids, "balance" => new_balance})
   end
 
-  #get transaction times for an address
+  #get transactions time for an address
   def get_address_transactions_time(address) do
     lookups = Map.keys(address.tx_ids)
 

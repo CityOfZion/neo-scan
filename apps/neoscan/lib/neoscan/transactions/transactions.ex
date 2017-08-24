@@ -13,7 +13,6 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Transactions.Vout
   alias Neoscan.Transactions.Asset
   alias Neoscan.Addresses
-  alias Neoscan.Addresses.Address
 
   @doc """
   Returns the list of transactions.
@@ -143,11 +142,17 @@ defmodule Neoscan.Transactions do
   """
   def create_transaction(%{:time => time, :hash => hash, :index => height } = block, %{"vout" => vouts, "vin" => vin, "txid" => txid, "type" => type} = attrs) do
 
-    #get vins and add to addresses
-    new_vin = Task.async(fn -> get_vins(vin, txid) end)
+    #get inputs from db
+    new_vin = get_vins(vin)
 
-    #get claims
-    new_claim = Task.async(fn -> get_claims(attrs["claims"], vouts) end)
+    #get claims from db
+    new_claim = get_claims(attrs["claims"])
+
+    #fetch all addresses involved in the transaction
+    address_list = Addresses.get_transaction_addresses( new_vin, new_claim, vouts )
+
+    #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
+    Addresses.update_all_addresses(new_vin, new_claim, vouts, address_list, txid)
 
     #create asset if register Transaction
     assets(attrs["asset"], txid)
@@ -158,8 +163,8 @@ defmodule Neoscan.Transactions do
     #prepare and create transaction
     transaction = Map.merge(attrs, %{
           "time" => time,
-          "vin" => Task.await(new_vin, 60*60000),
-          "claims" => Task.await(new_claim, 60*60000),
+          "vin" => new_vin,
+          "claims" => new_claim,
           "block_hash" => hash,
           "block_height" => height,
     })
@@ -168,8 +173,10 @@ defmodule Neoscan.Transactions do
     Transaction.changeset(block, transaction)
     |> Repo.insert!()
     |> update_transaction_state
-    |> create_vouts(vouts)
+    |> create_vouts(vouts, address_list)
   end
+
+  #add transaction to monitor cache
   def update_transaction_state(%{:type => type } = transaction) when type != "MinerTransaction" do
     Api.add_transaction(transaction)
     transaction
@@ -184,10 +191,10 @@ defmodule Neoscan.Transactions do
   end
 
   #get vins and add to addresses
-  defp get_vins([] = vin, _txid) do
+  defp get_vins([] = vin) do
     vin
   end
-  defp get_vins(vin, txid) do
+  defp get_vins(vin) do
     lookups = Stream.map(vin, &"#{&1["vout"]}#{&1["txid"]}")
     |> Enum.to_list
 
@@ -195,26 +202,14 @@ defmodule Neoscan.Transactions do
      where: fragment("CAST(? AS text) || ?", e.n, e.txid) in ^lookups,
      select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
-    new_vin = Repo.all(query)
-
-    Enum.group_by(new_vin, fn %{:address_hash => address} -> address end)
-    |> Map.to_list()
-    |> Addresses.populate_groups
-    |> Stream.each(fn {address, vins} -> Addresses.insert_vins_in_address(address, vins, txid) end)
-    |> Stream.run()
-
-    new_vin
+    Repo.all(query)
   end
 
   #get claimed vouts and add to addresses
-  defp get_claims( nil = claims, _vouts) do
+  defp get_claims( nil = claims) do
     claims
   end
-  defp get_claims(claims, vouts) do
-    Stream.map(claims, fn %{"txid" => txid } -> txid end)
-    |> Stream.uniq()
-    |> Enum.to_list
-    |> Addresses.insert_claim_in_addresses(vouts)
+  defp get_claims(claims) do
 
     lookups = Stream.map(claims, &"#{&1["vout"]}#{&1["txid"]}")
     |> Enum.to_list
@@ -346,40 +341,18 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_vouts( transaction, vouts) do
+  def create_vouts( transaction, vouts, address_list) do
     vouts
-    |> get_addresses()
+    |> insert_address(address_list)
     |> Enum.group_by(fn %{"address" => address} -> address.address end)
     |> Map.to_list()
     |> Stream.each(fn {_address, vouts} -> Addresses.insert_vouts_in_address(transaction, vouts) end)
     |> Stream.run()
   end
 
-  #get vouts addresses
-  def get_addresses(vouts) do
-    lookups = Stream.map(vouts, &"#{&1["address"]}")
-    |> Stream.uniq()
-    |> Enum.to_list
-
-    query =  from e in Address,
-     where: fragment("CAST(? AS text)", e.address) in ^lookups,
-     select: e
-
-    Repo.all(query)
-    |> fetch_missing(lookups)
-    |> insert_address(vouts)
-  end
-
-  #create missing addresses
-  def fetch_missing(address_list, lookups) do
-    (lookups -- Enum.map(address_list, fn %{:address => address} -> address end))
-    |> Stream.map(fn address -> Addresses.create_address(%{"address" => address}) end)
-    |> Enum.to_list
-    |> Enum.concat(address_list)
-  end
 
   #insert address struct into vout
-  def insert_address(address_list, vouts) do
+  def insert_address(vouts, address_list) do
     Stream.map(vouts, fn %{"address" => ad } = x ->
       Map.put(x, "address", Enum.find(address_list, fn %{ :address => address } -> address == ad end))
     end)
