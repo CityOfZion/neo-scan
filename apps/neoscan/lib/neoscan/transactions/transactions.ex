@@ -149,7 +149,7 @@ defmodule Neoscan.Transactions do
     new_claim = get_claims(attrs["claims"])
 
     #fetch all addresses involved in the transaction
-    address_list = Addresses.get_transaction_addresses( new_vin, new_claim, vouts )
+    address_list = Addresses.get_transaction_addresses( new_vin, vouts )
     |> Addresses.update_all_addresses(new_vin, new_claim, vouts, txid) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
 
     #create asset if register Transaction

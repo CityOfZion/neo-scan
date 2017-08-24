@@ -194,9 +194,9 @@ defmodule Neoscan.Addresses do
   end
 
   #get all addresses involved in a transaction
-  def get_transaction_addresses(vins, claims, vouts) do
+  def get_transaction_addresses(vins, vouts) do
 
-    lookups = (map_vins(vins) ++ map_claims(claims) ++ map_vouts(vouts)) |> Enum.uniq
+    lookups = (map_vins(vins) ++ map_vouts(vouts)) |> Enum.uniq
 
     query =  from e in Address,
      where: fragment("CAST(? AS text)", e.address) in ^lookups,
@@ -327,15 +327,15 @@ defmodule Neoscan.Addresses do
   #insert vouts into address balance
   def insert_vouts_in_address(%{:txid => txid} = transaction, vouts) do
     %{"address" => {address , attrs }} = List.first(vouts)
-    attrs = %{:balance => check_if_attrs_balance_exists(attrs) || address.balance , :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids}
-    |> add_vouts(vouts, transaction)
-    |> add_tx_id(txid)
-    {address, attrs}
+    new_attrs = Map.merge( attrs, %{:balance => check_if_attrs_balance_exists(attrs) || address.balance , :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids})
+      |> add_vouts(vouts, transaction)
+      |> add_tx_id(txid)
+    {address, new_attrs}
   end
 
   #insert vins into address balance
   def insert_vins_in_address({address, attrs}, vins, txid) do
-    new_attrs = %{:balance => check_if_attrs_balance_exists(attrs) || address.balance, :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids}
+    new_attrs = Map.merge(attrs, %{:balance => check_if_attrs_balance_exists(attrs) || address.balance, :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids})
     |> add_vins(vins)
     |> add_tx_id(txid)
     {address, new_attrs}
@@ -366,7 +366,7 @@ defmodule Neoscan.Addresses do
 
   #insert claimed transactions and update address balance
   def insert_claim_in_address({address, attrs}, transactions, value, asset, _address_hash) do
-    new_attrs = %{:claimed => check_if_attrs_claimed_exists(attrs) || address.claimed}
+    new_attrs = Map.merge(attrs, %{:claimed => check_if_attrs_claimed_exists(attrs) || address.claimed })
     |> add_claim(transactions, value, asset)
 
     {address, new_attrs}
