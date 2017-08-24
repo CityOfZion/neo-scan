@@ -9,6 +9,7 @@ defmodule Neoscan.Addresses do
   alias Neoscan.Addresses.Address
   alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
+  alias Ecto.Multi
 
   @doc """
   Returns the list of addresses.
@@ -120,8 +121,25 @@ defmodule Neoscan.Addresses do
 
   def update_multiple_addresses(list) do
     list
-    |> Stream.each(fn {address, attrs} -> update_address(address, attrs) end)
-    |> Stream.run()
+    |> Stream.map(fn {address, attrs} -> {address.address, change_address(address, attrs)} end)
+    |> Enum.to_list
+    |> create_multi
+    |> Repo.transaction
+  end
+
+  def create_multi(changesets) do
+    Multi.new
+    |> insert_updates(changesets)
+  end
+
+  def insert_updates(multi, [{hash, changeset} | t]) do
+    name = String.to_atom(hash)
+    multi
+    |> Multi.update(name, changeset, [])
+    |> insert_updates(t)
+  end
+  def insert_updates(multi, []) do
+    multi
   end
 
   @doc """
@@ -149,8 +167,8 @@ defmodule Neoscan.Addresses do
       %Ecto.Changeset{source: %Address{}}
 
   """
-  def change_address(%Address{} = address) do
-    Address.changeset(address, %{})
+  def change_address(%Address{} = address, attrs) do
+    Address.changeset(address, attrs)
   end
 
   @doc """
