@@ -149,10 +149,8 @@ defmodule Neoscan.Transactions do
     new_claim = get_claims(attrs["claims"])
 
     #fetch all addresses involved in the transaction
-    address_list = Addresses.get_transaction_addresses( new_vin, new_claim, vouts )
-
-    #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
-    Addresses.update_all_addresses(new_vin, new_claim, vouts, address_list, txid)
+    address_list = Addresses.get_transaction_addresses( new_vin, vouts )
+    |> Addresses.update_all_addresses(new_vin, new_claim, vouts, txid) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
 
     #create asset if register Transaction
     assets(attrs["asset"], txid)
@@ -344,17 +342,18 @@ defmodule Neoscan.Transactions do
   def create_vouts( transaction, vouts, address_list) do
     vouts
     |> insert_address(address_list)
-    |> Enum.group_by(fn %{"address" => address} -> address.address end)
+    |> Enum.group_by(fn %{"address" => {address , _attrs}} -> address.address end)
     |> Map.to_list()
-    |> Stream.each(fn {_address, vouts} -> Addresses.insert_vouts_in_address(transaction, vouts) end)
-    |> Stream.run()
+    |> Stream.map(fn {_address, vouts} -> Addresses.insert_vouts_in_address(transaction, vouts) end)
+    |> Enum.to_list
+    |> Addresses.update_multiple_addresses()
   end
 
 
   #insert address struct into vout
   def insert_address(vouts, address_list) do
     Stream.map(vouts, fn %{"address" => ad } = x ->
-      Map.put(x, "address", Enum.find(address_list, fn %{ :address => address } -> address == ad end))
+      Map.put(x, "address", Enum.find(address_list, fn {%{ :address => address }, _attrs} -> address == ad end))
     end)
     |> Enum.to_list
   end

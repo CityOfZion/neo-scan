@@ -17,7 +17,7 @@ defmodule Neoscan.Transactions.Vout do
   end
 
   @doc false
-  def changeset(%{:id => transaction_id, :txid => txid}, %{"address" => address, "value" => value } = attrs \\ %{}) do
+  def changeset(%{:id => transaction_id, :txid => txid}, %{"address" => {address, _attrs}, "value" => value } = attrs \\ %{}) do
     {new_value, _} = Float.parse(value)
 
     new_attrs= attrs
