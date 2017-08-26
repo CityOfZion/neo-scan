@@ -39,7 +39,7 @@ defmodule Neoscan.Transactions do
   def home_transactions do
     transaction_query = from e in Transaction,
       order_by: [desc: e.inserted_at],
-      where: e.type != "MinerTransaction" and e.inserted_at > ago(1, "hour"),
+      where: e.inserted_at > ago(1, "hour") and  e.type != "MinerTransaction",
       select: %{:type => e.type, :time => e.time, :txid => e.txid},
       limit: 15
 

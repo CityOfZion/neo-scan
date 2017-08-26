@@ -7,10 +7,6 @@ defmodule NeoscanWeb.HomeController do
 
   #load last blocks and transactions from db
   def index(conn, _params) do
-
-    # blocks = Api.get_blocks
-    # transactions = Api.get_transactions
-
     render conn, "index.html"
   end
 
@@ -33,9 +29,7 @@ defmodule NeoscanWeb.HomeController do
   def redirect_search_result(conn, result) do
     cond  do
       nil == result ->
-        conn
-        |> put_flash(:info, "Not Found in DB!")
-        |> redirect(to: home_path(conn, :index))
+        no_result(conn, [])
 
       Map.has_key?(result, :hash) ->
         redirect(conn, to: block_path(conn, :index, result.hash))
@@ -47,6 +41,12 @@ defmodule NeoscanWeb.HomeController do
         redirect(conn, to: address_path(conn, :index, result.address))
 
     end
+  end
+
+  def no_result(conn, _params) do
+    conn
+    |> put_flash(:info, "Not Found in DB!")
+    |> redirect(to: home_path(conn, :index))
   end
 
 end

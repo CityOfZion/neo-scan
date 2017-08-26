@@ -4,7 +4,16 @@ defmodule NeoscanWeb.TransactionController do
   alias Neoscan.Transactions
 
   def index(conn, %{"txid" => transaction_hash}) do
-    transaction = Transactions.get_transaction_by_hash_for_view(transaction_hash)
+    Transactions.get_transaction_by_hash_for_view(transaction_hash)
+    |> route(conn)
+  end
+
+  def route(nil, conn) do
+    conn
+    |> put_flash(:info, "Not Found in DB!")
+    |> redirect( to: home_path(conn, :index))
+  end
+  def route(transaction, conn) do
     render(conn, "transaction.html", transaction: transaction)
   end
 

@@ -4,7 +4,16 @@ defmodule NeoscanWeb.AddressController do
   alias Neoscan.Addresses
 
   def index(conn, %{"address" => address_hash}) do
-    address = Addresses.get_address_by_hash_for_view(address_hash)
+    Addresses.get_address_by_hash_for_view(address_hash)
+    |> route(conn)
+  end
+
+  def route(nil, conn) do
+    conn
+    |> put_flash(:info, "Not Found in DB!")
+    |> redirect(to: home_path(conn, :index))
+  end
+  def route(address, conn) do
     render(conn, "address.html", address: address)
   end
 
