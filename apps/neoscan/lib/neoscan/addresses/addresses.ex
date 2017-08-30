@@ -281,8 +281,7 @@ defmodule Neoscan.Addresses do
     updates = Enum.group_by(vins, fn %{:address_hash => address} -> address end)
     |> Map.to_list()
     |> populate_groups(address_list)
-    |> Stream.map(fn {address, vins} -> insert_vins_in_address(address, vins, txid) end)
-    |> Enum.to_list
+    |> Enum.map(fn {address, vins} -> insert_vins_in_address(address, vins, txid) end)
 
 
     Enum.map(address_list, fn {address, attrs} -> substitute_if_updated(address, attrs, updates) end)
@@ -364,10 +363,9 @@ defmodule Neoscan.Addresses do
 
   #get addresses and route for adding claims
   def insert_claim_in_addresses(transactions, vouts, address_list) do
-    Stream.map(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
+    Enum.map(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
       insert_claim_in_address(Enum.find(address_list, fn {%{:address => address}, _attrs} -> address == hash end) , transactions, value, asset, hash)
     end)
-    |> Enum.to_list
   end
 
   #insert claimed transactions and update address balance
