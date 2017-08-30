@@ -13,6 +13,8 @@ defmodule NeoscanWeb.Router do
     plug :accepts, ["json"]
   end
 
+  forward "/wobserver", Wobserver.Web.Router
+
   scope "/", NeoscanWeb do
     pipe_through :browser # Use the default browser stack
 

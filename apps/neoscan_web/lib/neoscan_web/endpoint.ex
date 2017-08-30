@@ -2,6 +2,7 @@ defmodule NeoscanWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :neoscan_web
 
   socket "/socket", NeoscanWeb.UserSocket
+  socket "/wobserver", Wobserver.Web.PhoenixSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #

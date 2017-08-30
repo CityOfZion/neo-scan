@@ -47,6 +47,7 @@ defmodule NeoscanWeb.Mixfile do
       {:cowboy, "~> 1.0"},
       {:scout_apm, "~> 0.0"},
       {:cors_plug, "~> 1.2"},
+      {:wobserver, "~> 0.1"}
     ]
   end
 
