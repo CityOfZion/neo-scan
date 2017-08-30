@@ -4,16 +4,16 @@ defmodule NeoscanSync.Consumer do
   alias Neoscan.Transactions
 
   def start_link do
-    GenStage.start_link(__MODULE__, :state_doesnt_matter)
+    GenStage.start_link(__MODULE__, :state_doesnt_matter, name: __MODULE__)
   end
 
   def init(state) do
-    {:consumer, state, subscribe_to: [{NeoscanSync.Producer, max_demand: 200, min_demand: 100}]}
+    {:consumer, state, subscribe_to: [{NeoscanSync.ProducerConsumer, max_demand: 200, min_demand: 100}]}
   end
 
   def handle_events(events, _from, state) do
     for event <- events do
-      add_block(event)
+      add_transactions(event)
     end
 
     # As a consumer we never emit events
@@ -21,10 +21,8 @@ defmodule NeoscanSync.Consumer do
   end
 
   #add block with transactions to the db
-  defp add_block(%{"tx" => transactions, "index" => height} = block) do
-    Map.put(block,"tx_count",Kernel.length(transactions))
-    |> Map.delete("tx")
-    |> Blocks.create_block()
+  defp add_transactions(%{"tx" => transactions, "index" => height} = block) do
+    block
     |> Transactions.create_transactions(transactions)
     |> check(height)
   end
