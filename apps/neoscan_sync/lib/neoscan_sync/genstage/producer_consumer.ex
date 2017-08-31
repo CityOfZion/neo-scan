@@ -3,11 +3,11 @@ defmodule NeoscanSync.ProducerConsumer do
   alias Neoscan.Blocks
 
   def start_link do
-    GenStage.start_link(__MODULE__, :state_doesnt_matter, name: __MODULE__)
+    GenStage.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
   def init(state) do
-    {:producer_consumer, state, subscribe_to: [{NeoscanSync.Producer, []}]}
+    {:producer_consumer, state, subscribe_to: [{NeoscanSync.Producer, max_demand: 200, min_demand: 100}]}
   end
 
   def handle_events(events, _from, state) do
@@ -20,8 +20,10 @@ defmodule NeoscanSync.ProducerConsumer do
 
   #add block with transactions to the db
   defp add_block(%{"tx" => transactions} = block) do
-    Map.put(block,"tx_count",Kernel.length(transactions))
+    struct = Map.put(block,"tx_count",Kernel.length(transactions))
     |> Map.delete("tx")
     |> Blocks.create_block()
+
+    {block, struct}
   end
 end

@@ -272,8 +272,7 @@ defmodule Neoscan.Addresses do
 
   def gen_attrs(address_list) do
     address_list
-    |> Stream.map(fn address -> {address, %{}} end)
-    |> Enum.to_list
+    |> Enum.map(fn address -> {address, %{}} end)
   end
 
   #separate vins by address hash, insert vins and update the address
@@ -423,8 +422,7 @@ defmodule Neoscan.Addresses do
   def route_if_results([] = _list, _time), do: "no results"
   def route_if_results(list, time) do
     list
-    |> Stream.each(fn a -> rollback_address(a, time) end)
-    |> Stream.run()
+    |> Enum.each(fn a -> rollback_address(a, time) end)
   end
 
   #rollback address to a previous insertion time
@@ -437,8 +435,7 @@ defmodule Neoscan.Addresses do
       |> Enum.to_list
 
     last_valid = transactions_time
-      |> Stream.filter(fn %{ "time" => txtime} -> txtime < time end)
-      |> Enum.to_list
+      |> Enum.filter(fn %{ "time" => txtime} -> txtime < time end)
       |> Enum.max_by(fn %{"time" => txtime} -> txtime end)
 
     new_tx_ids = remove_transactions(address.tx_ids, invalid_transactions)

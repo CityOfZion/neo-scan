@@ -21,8 +21,8 @@ defmodule NeoscanSync.Consumer do
   end
 
   #add block with transactions to the db
-  defp add_transactions(%{"tx" => transactions, "index" => height} = block) do
-    block
+  defp add_transactions({%{"tx" => transactions, "index" => height}, struct}) do
+    struct
     |> Transactions.create_transactions(transactions)
     |> check(height)
   end
