@@ -121,26 +121,20 @@ defmodule Neoscan.Addresses do
 
   def update_multiple_addresses(list) do
     list
-    |> Stream.map(fn {address, attrs} -> {address.address, change_address(address, attrs)} end)
-    |> Enum.to_list
+    |> Enum.map(fn {address, attrs} -> {address.address, change_address(address, attrs)} end)
     |> create_multi
     |> Repo.transaction
   end
 
   def create_multi(changesets) do
-    Multi.new
-    |> insert_updates(changesets)
+    Enum.reduce(changesets, Multi.new, fn (tuple, acc) -> insert_updates(tuple, acc) end)
   end
 
-  def insert_updates(multi, [{hash, changeset} | t]) do
-    name = String.to_atom(hash)
-    multi
-    |> Multi.update(name, changeset, [])
-    |> insert_updates(t)
+  def insert_updates({hash, changeset}, acc) do
+      name = String.to_atom(hash)
+      acc |> Multi.update(name, changeset, [])
   end
-  def insert_updates(multi, []) do
-    multi
-  end
+
 
   @doc """
   Deletes a Address.
@@ -207,8 +201,7 @@ defmodule Neoscan.Addresses do
 
   """
   def populate_groups(groups, address_list) do
-    Stream.map(groups, fn {address, vins} -> {Enum.find(address_list, fn {%{:address => ad}, _attrs} -> ad == address end), vins} end)
-    |> Enum.to_list()
+    Enum.map(groups, fn {address, vins} -> {Enum.find(address_list, fn {%{:address => ad}, _attrs} -> ad == address end), vins} end)
   end
 
   #get all addresses involved in a transaction
@@ -230,8 +223,7 @@ defmodule Neoscan.Addresses do
     []
   end
   def map_vins(vins) do
-    Stream.map(vins, fn %{:address_hash => address} -> address end)
-      |> Enum.to_list
+    Enum.map(vins, fn %{:address_hash => address} -> address end)
   end
 
   #helper to filter nil cases
@@ -239,8 +231,7 @@ defmodule Neoscan.Addresses do
     []
   end
   def map_claims(claims) do
-    Stream.map(claims, fn %{:address_hash => address} -> address end)
-      |> Enum.to_list
+    Enum.map(claims, fn %{:address_hash => address} -> address end)
   end
 
   #helper to filter nil cases
@@ -249,15 +240,13 @@ defmodule Neoscan.Addresses do
   end
   def map_vouts(vouts) do
     #not in db, so still uses string keys
-    Stream.map(vouts, fn %{"address" => address} -> address end)
-      |> Enum.to_list
+    Enum.map(vouts, fn %{"address" => address} -> address end)
   end
 
   #create missing addresses
   def fetch_missing(address_list, lookups) do
     (lookups -- Enum.map(address_list, fn %{:address => address} -> address end))
-    |> Stream.map(fn address -> create_address(%{"address" => address}) end)
-    |> Enum.to_list
+    |> Enum.map(fn address -> create_address(%{"address" => address}) end)
     |> Enum.concat(address_list)
   end
 
@@ -283,8 +272,7 @@ defmodule Neoscan.Addresses do
 
   def gen_attrs(address_list) do
     address_list
-    |> Stream.map(fn address -> {address, %{}} end)
-    |> Enum.to_list
+    |> Enum.map(fn address -> {address, %{}} end)
   end
 
   #separate vins by address hash, insert vins and update the address
@@ -292,8 +280,7 @@ defmodule Neoscan.Addresses do
     updates = Enum.group_by(vins, fn %{:address_hash => address} -> address end)
     |> Map.to_list()
     |> populate_groups(address_list)
-    |> Stream.map(fn {address, vins} -> insert_vins_in_address(address, vins, txid) end)
-    |> Enum.to_list
+    |> Enum.map(fn {address, vins} -> insert_vins_in_address(address, vins, txid) end)
 
 
     Enum.map(address_list, fn {address, attrs} -> substitute_if_updated(address, attrs, updates) end)
@@ -360,26 +347,24 @@ defmodule Neoscan.Addresses do
   end
 
   #add multiple vins
-  def add_vins(attrs, [h | t]) do
-    add_vin(attrs, h)
-    |> add_vins(t)
+  def add_vins(attrs, vins) do
+    Enum.reduce(vins, attrs, fn (vin, acc) -> add_vin(acc, vin) end)
   end
-  def add_vins(attrs, []), do: attrs
+
 
   #add multiple vouts
-  def add_vouts(attrs, [h | t], transaction) do
-    Transactions.create_vout(transaction, h)
-    |> add_vout(attrs)
-    |> add_vouts(t, transaction)
+  def add_vouts(attrs, vouts, transaction) do
+    Enum.reduce(vouts, attrs, fn (vout, acc) ->
+      Transactions.create_vout(transaction, vout)
+      |> add_vout(acc)
+    end)
   end
-  def add_vouts(attrs, [], _transaction), do: attrs
 
   #get addresses and route for adding claims
   def insert_claim_in_addresses(transactions, vouts, address_list) do
-    Stream.map(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
+    Enum.map(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
       insert_claim_in_address(Enum.find(address_list, fn {%{:address => address}, _attrs} -> address == hash end) , transactions, value, asset, hash)
     end)
-    |> Enum.to_list
   end
 
   #insert claimed transactions and update address balance
@@ -437,8 +422,7 @@ defmodule Neoscan.Addresses do
   def route_if_results([] = _list, _time), do: "no results"
   def route_if_results(list, time) do
     list
-    |> Stream.each(fn a -> rollback_address(a, time) end)
-    |> Stream.run()
+    |> Enum.each(fn a -> rollback_address(a, time) end)
   end
 
   #rollback address to a previous insertion time
@@ -451,8 +435,7 @@ defmodule Neoscan.Addresses do
       |> Enum.to_list
 
     last_valid = transactions_time
-      |> Stream.filter(fn %{ "time" => txtime} -> txtime < time end)
-      |> Enum.to_list
+      |> Enum.filter(fn %{ "time" => txtime} -> txtime < time end)
       |> Enum.max_by(fn %{"time" => txtime} -> txtime end)
 
     new_tx_ids = remove_transactions(address.tx_ids, invalid_transactions)
