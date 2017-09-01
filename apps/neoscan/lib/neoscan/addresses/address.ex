@@ -24,7 +24,7 @@ defmodule Neoscan.Addresses.Address do
 
   def update_changeset(%Address{} = address, attrs) do
 
-    Sql.add_tx(attrs.tx_ids)
+    Sql.add_tx(address.address, attrs.tx_ids)
 
     address
     |> cast(attrs, [:address, :balance, :claimed])
