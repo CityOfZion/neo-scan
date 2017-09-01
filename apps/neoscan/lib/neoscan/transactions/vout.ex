@@ -27,6 +27,7 @@ defmodule Neoscan.Transactions.Vout do
     |> Map.put("txid", txid)
     |> Map.put("value", new_value)
     |> Map.delete("address")
+    
     %Vout{}
     |> cast(new_attrs, [:asset, :address_hash, :n, :value, :address_id, :transaction_id, :txid])
     |> assoc_constraint(:transaction, required: true)
