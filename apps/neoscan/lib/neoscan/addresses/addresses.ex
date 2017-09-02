@@ -97,7 +97,7 @@ defmodule Neoscan.Addresses do
   """
   def create_address(attrs \\ %{}) do
     %Address{}
-    |> Address.changeset(attrs)
+    |> Address.create_changeset(attrs)
     |> Repo.insert!()
   end
 
@@ -115,7 +115,7 @@ defmodule Neoscan.Addresses do
   """
   def update_address(%Address{} = address, attrs) do
     address
-    |> Address.changeset(attrs)
+    |> Address.update_changeset(attrs)
     |> Repo.update!()
   end
 
@@ -162,7 +162,7 @@ defmodule Neoscan.Addresses do
 
   """
   def change_address(%Address{} = address, attrs) do
-    Address.changeset(address, attrs)
+    Address.update_changeset(address, attrs)
   end
 
   @doc """
@@ -211,7 +211,7 @@ defmodule Neoscan.Addresses do
 
     query =  from e in Address,
      where: fragment("CAST(? AS text)", e.address) in ^lookups,
-     select: e
+     select: struct(e, [:id, :address, :balance, :claimed])
 
      Repo.all(query)
      |> fetch_missing(lookups)
@@ -272,7 +272,7 @@ defmodule Neoscan.Addresses do
 
   def gen_attrs(address_list) do
     address_list
-    |> Enum.map(fn address -> {address, %{}} end)
+    |> Enum.map(fn address -> {Map.merge(address, %{:tx_ids => %{}}), %{}} end)
   end
 
   #separate vins by address hash, insert vins and update the address

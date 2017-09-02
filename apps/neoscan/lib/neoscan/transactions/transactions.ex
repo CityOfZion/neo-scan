@@ -196,7 +196,7 @@ defmodule Neoscan.Transactions do
     lookups = Enum.map(vin, &"#{&1["txid"]}#{&1["vout"]}")
 
     query =  from e in Vout,
-     where: fragment("CAST(? AS text) || ?", e.txid, e.n) in ^lookups,
+     where: fragment("? || CAST(? AS text)", e.txid, e.n) in ^lookups,
      select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
     Repo.all(query)
@@ -211,7 +211,7 @@ defmodule Neoscan.Transactions do
     lookups = Enum.map(claims, &"#{&1["txid"]}#{&1["vout"]}")
 
     query =  from e in Vout,
-    where: fragment("CAST(? AS text) || ?", e.txid, e.n) in ^lookups,
+    where: fragment("? || CAST(? AS text)", e.txid, e.n) in ^lookups,
     select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
     Repo.all(query)
