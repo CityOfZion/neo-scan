@@ -49,6 +49,6 @@ defmodule NeoscanMonitor.Server do
   end
 
   defp schedule_work() do
-    Process.send_after(self(), :broadcast, 15000) # In 15 seconds
+    Process.send_after(self(), :broadcast, 10000) # In 10 seconds
   end
 end

@@ -42,11 +42,11 @@ defmodule NeoscanSync.Producer do
     case result do
       {:ok, height} when (height) > count  ->
         cond do
-          height  - count >= n ->
+          height - count >= n ->
             Enum.to_list(count..(count+n-1))
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
             |> Enum.map(&Task.await(&1, 60*60*1000))
-          height  - count < n ->
+          height - count < n ->
             Enum.to_list(count..(height))
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
             |> Enum.map(&Task.await(&1, 60*60*1000))

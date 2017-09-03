@@ -36,7 +36,6 @@ defmodule NeoscanMonitor.Worker do
         |> cut_if_more(count)
 
       new_state = Map.put(state, :blocks, new_blocks)
-      Process.send(NeoscanMonitor.Server, {:state_update, new_state}, [])
       {:noreply, new_state}
   end
 
@@ -46,7 +45,6 @@ defmodule NeoscanMonitor.Worker do
         |> cut_if_more(count)
 
       new_state = Map.put(state, :transactions, new_transactions)
-      Process.send(NeoscanMonitor.Server, {:state_update, new_state}, [])
       {:noreply, new_state}
   end
 
@@ -54,7 +52,6 @@ defmodule NeoscanMonitor.Worker do
       new_assets = [asset | state.assets]
 
       new_state = Map.put(state, :assets, new_assets)
-      Process.send(NeoscanMonitor.Server, {:state_update, new_state}, [])
       {:noreply, new_state}
   end
 
@@ -62,12 +59,11 @@ defmodule NeoscanMonitor.Worker do
       new_contracts = [contract | state.contracts]
 
       new_state = Map.put(state, :assets, new_contracts)
-      Process.send(NeoscanMonitor.Server, {:state_update, new_state}, [])
       {:noreply, new_state}
   end
 
   defp schedule_work() do
-    Process.send_after(self(), :update_nodes, 1*60*1000) # In 1 minute
+    Process.send_after(self(), :update_nodes, 10000) # In 10s
   end
 
   defp cut_if_more(list, count) when count == 15 do
