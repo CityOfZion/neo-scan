@@ -121,7 +121,7 @@ defmodule Neoscan.Addresses do
 
   def update_multiple_addresses(list) do
     list
-    |> Enum.map(fn {address, attrs} -> {address, change_address(address, attrs)} end)
+    |> Enum.map(fn {address, attrs} -> {address, attrs, change_address(address, attrs)} end)
     |> create_multi
     |> Repo.transaction
   end
@@ -130,10 +130,13 @@ defmodule Neoscan.Addresses do
     Enum.reduce(changesets, Multi.new, fn (tuple, acc) -> insert_updates(tuple, acc) end)
   end
 
-  def insert_updates({address, changeset}, acc) do
+  def insert_updates({address, attrs, changeset}, acc) do
       name = String.to_atom(address.address)
       name1 = String.to_atom("#{address.address}_run")
-      acc |> Multi.update(name, changeset, []) |> Multi.run(name1, Neoscan.Sql, :add_tx, [address.address, address.tx_ids])
+
+      acc
+      |> Multi.update(name, changeset, [])
+      |> Multi.run(name1, Neoscan.Sql, :add_tx, [address.address, attrs.tx_ids])  #adds transactions to address without prior loading
   end
 
 
