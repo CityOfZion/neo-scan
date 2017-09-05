@@ -2,6 +2,7 @@ defmodule Neoscan.Api do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Addresses.Address
+  alias Neoscan.Addresses.History
   alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Transactions.Asset
@@ -143,9 +144,17 @@ defmodule Neoscan.Api do
 
   """
   def get_address(hash) do
+    his_query = from h in History,
+      select: %{
+        txid: h.txid,
+        balance: h.balance,
+        block_height: h.block_height,
+      }
+
     query = from e in Address,
     where: e.address == ^hash,
-    select: %{:address => e.address, :balance => e.balance, :txids => e.tx_ids, :claimed => e.claimed}
+    preload: [histories: ^his_query ],
+    select: e
 
     result = case Repo.all(query) |> List.first do
         nil -> %{:address => "not found", :balance => nil, :txids => nil, :claimed => nil}
@@ -153,13 +162,18 @@ defmodule Neoscan.Api do
         %{} = address ->
           new_balance = filter_balance(address.balance)
 
-          new_tx = Map.to_list(address.txids)
-          |> Enum.map(fn { _tx, %{"txid" => txid, "balance" => balance}} ->
-            %{"txid" => txid, "balance" => filter_balance(balance)} end)
+          new_tx = Enum.map(address.histories, fn %{:txid => txid, :balance => balance, :block_height => block_height } ->
+            %{:txid => txid, :balance => filter_balance(balance), :block_height => block_height} end)
 
-
-          Map.put(address, :balance, new_balance)
-          |> Map.put(:txids, new_tx)
+          Map.merge(address, %{
+            :balance => new_balance,
+            :txids => new_tx,
+          })
+          |> Map.delete(:inserted_at)
+          |> Map.delete(:histories)
+          |> Map.delete(:updated_at)
+          |> Map.delete(:vouts)
+          |> Map.delete(:id)
       end
 
     result

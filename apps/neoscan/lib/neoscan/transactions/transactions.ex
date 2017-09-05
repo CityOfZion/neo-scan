@@ -429,6 +429,7 @@ defmodule Neoscan.Transactions do
   end
 
   def filter_name(asset) do
+    IO.inspect(asset)
     case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
       %{"name" => name} -> cond do
           name == "AntShare" ->
@@ -457,7 +458,7 @@ defmodule Neoscan.Transactions do
   def list_assets do
     query = from e in Asset,
     select: %{
-      :hash => e.txid,
+      :txid => e.txid,
       :admin => e.admin,
       :amount => e.amount,
       :issued => e.issued,

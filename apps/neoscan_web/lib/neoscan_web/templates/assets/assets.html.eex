@@ -8,7 +8,7 @@
         <ul>
           <%= for asset <- @assets do %>
             <li>
-              <%=Neoscan.Transactions.get_asset_name_by_hash(asset.hash)%>  Registered <%=NeoscanWeb.AssetsController.round_or_not(asset.amount)%>
+              <%=Neoscan.Transactions.get_asset_name_by_hash(asset.txid)%>  Registered <%=NeoscanWeb.AssetsController.round_or_not(asset.amount)%>
               <%= if asset.issued != nil do %>
                 Issued <%=NeoscanWeb.AssetsController.round_or_not(asset.issued)%>
               <%end%>
