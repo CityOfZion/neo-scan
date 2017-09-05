@@ -7,6 +7,7 @@ defmodule Neoscan.Addresses do
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.Addresses.Address
+  alias Neoscan.Addresses.History
   alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
   alias Ecto.Multi
@@ -53,9 +54,14 @@ defmodule Neoscan.Addresses do
 
   """
   def get_address_by_hash_for_view(hash) do
+   his_query = from h in History,
+     select: %{
+       txid: h.txid
+     }
    query = from e in Address,
      where: e.address == ^hash,
-     select: %{:address => e.address, :tx_ids => e.tx_ids, :balance => e.balance, :claimed => e.claimed}
+     preload: [histories: ^his_query],
+     select: e #%{:address => e.address, :tx_ids => e.histories, :balance => e.balance, :claimed => e.claimed}
    Repo.all(query)
    |> List.first
   end
@@ -102,6 +108,24 @@ defmodule Neoscan.Addresses do
   end
 
   @doc """
+  Creates a address history point.
+
+  ## Examples
+
+      iex> create_history(%{field: value})
+      %History{}
+
+      iex> create_history(%{field: bad_value})
+      no_return
+
+  """
+  def create_history(attrs \\ %{}, address) do
+    %History{}
+    |> History.changeset(address, attrs)
+    |> Repo.insert!()
+  end
+
+  @doc """
   Updates a address.
 
   ## Examples
@@ -121,7 +145,7 @@ defmodule Neoscan.Addresses do
 
   def update_multiple_addresses(list) do
     list
-    |> Enum.map(fn {address, attrs} -> {address, attrs, change_address(address, attrs)} end)
+    |> Enum.map(fn {address, attrs} -> {address, change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)} end)
     |> create_multi
     |> Repo.transaction
   end
@@ -130,13 +154,14 @@ defmodule Neoscan.Addresses do
     Enum.reduce(changesets, Multi.new, fn (tuple, acc) -> insert_updates(tuple, acc) end)
   end
 
-  def insert_updates({address, attrs, changeset}, acc) do
+  def insert_updates({address, history_changeset, address_changeset}, acc) do
       name = String.to_atom(address.address)
-      name1 = String.to_atom("#{address.address}_run")
+      name1 = String.to_atom("#{address.address}_history")
 
       acc
-      |> Multi.update(name, changeset, [])
-      |> Multi.run(name1, Neoscan.Sql, :add_tx, [address.address, attrs.tx_ids])  #adds transactions to address without prior loading
+      |> Multi.update(name, address_changeset, [])
+      |> Multi.insert(name1, history_changeset, [])
+      #|> Multi.run(name1, Neoscan.Sql, :add_tx, [address.address, attrs.tx_ids])  #adds transactions to address without prior loading
   end
 
 
@@ -167,6 +192,19 @@ defmodule Neoscan.Addresses do
   """
   def change_address(%Address{} = address, attrs) do
     Address.update_changeset(address, attrs)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking address history changes.
+
+  ## Examples
+
+      iex> change_history(history)
+      %Ecto.Changeset{source: %History{}}
+
+  """
+  def change_history(%History{} = history, address, attrs) do
+    History.changeset(history, address, attrs)
   end
 
   @doc """
@@ -214,7 +252,7 @@ defmodule Neoscan.Addresses do
     lookups = (map_vins(vins) ++ map_vouts(vouts)) |> Enum.uniq
 
     query =  from e in Address,
-     where: fragment("CAST(? AS text)", e.address) in ^lookups,
+     where: e.address in ^lookups,
      select: struct(e, [:id, :address, :balance, :claimed])
 
      Repo.all(query)
@@ -257,20 +295,20 @@ defmodule Neoscan.Addresses do
 
 
   #Update vins and claims into addresses
-  def update_all_addresses(address_list,[], nil, _vouts, _txid) do
+  def update_all_addresses(address_list,[], nil, _vouts, _txid, _index) do
     address_list
   end
-  def update_all_addresses(address_list,[], claims, vouts, _txid) do
+  def update_all_addresses(address_list,[], claims, vouts, _txid, _index) do
     address_list
     |> separate_txids_and_insert_claims(claims, vouts)
   end
-  def update_all_addresses(address_list, vins, nil, _vouts, txid) do
+  def update_all_addresses(address_list, vins, nil, _vouts, txid, index) do
     address_list
-    |> group_vins_by_address_and_update(vins, txid)
+    |> group_vins_by_address_and_update(vins, txid, index)
   end
-  def update_all_addresses(address_list, vins, claims, vouts, txid) do
+  def update_all_addresses(address_list, vins, claims, vouts, txid, index) do
     address_list
-    |> group_vins_by_address_and_update(vins, txid)
+    |> group_vins_by_address_and_update(vins, txid, index)
     |> separate_txids_and_insert_claims(claims, vouts)
   end
 
@@ -280,11 +318,11 @@ defmodule Neoscan.Addresses do
   end
 
   #separate vins by address hash, insert vins and update the address
-  def group_vins_by_address_and_update(address_list, vins, txid) do
+  def group_vins_by_address_and_update(address_list, vins, txid, index) do
     updates = Enum.group_by(vins, fn %{:address_hash => address} -> address end)
     |> Map.to_list()
     |> populate_groups(address_list)
-    |> Enum.map(fn {address, vins} -> insert_vins_in_address(address, vins, txid) end)
+    |> Enum.map(fn {address, vins} -> insert_vins_in_address(address, vins, txid, index) end)
 
 
     Enum.map(address_list, fn {address, attrs} -> substitute_if_updated(address, attrs, updates) end)
@@ -334,19 +372,19 @@ defmodule Neoscan.Addresses do
 
 
   #insert vouts into address balance
-  def insert_vouts_in_address(%{:txid => txid} = transaction, vouts) do
+  def insert_vouts_in_address(%{:txid => txid, :block_height => index} = transaction, vouts) do
     %{"address" => {address , attrs }} = List.first(vouts)
     new_attrs = Map.merge( attrs, %{:balance => check_if_attrs_balance_exists(attrs) || address.balance , :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids})
       |> add_vouts(vouts, transaction)
-      |> add_tx_id(txid)
+      |> add_tx_id(txid, index)
     {address, new_attrs}
   end
 
   #insert vins into address balance
-  def insert_vins_in_address({address, attrs}, vins, txid) do
+  def insert_vins_in_address({address, attrs}, vins, txid, index) do
     new_attrs = Map.merge(attrs, %{:balance => check_if_attrs_balance_exists(attrs) || address.balance, :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids})
     |> add_vins(vins)
-    |> add_tx_id(txid)
+    |> add_tx_id(txid, index)
     {address, new_attrs}
   end
 
@@ -394,9 +432,9 @@ defmodule Neoscan.Addresses do
   end
 
   #add a transaction id into address
-  def add_tx_id(address, txid) do
-      new_tx = %{"txid" => txid, "balance" => address.balance}
-      %{address | tx_ids: Map.put(address.tx_ids || %{}, txid, new_tx)}
+  def add_tx_id(address, txid, index) do
+      new_tx = %{:txid => txid, :balance => address.balance, :block_height => index}
+      %{address | tx_ids: new_tx}
   end
 
   #add a single claim into address
