@@ -2,7 +2,6 @@ defmodule Neoscan.Addresses.Address do
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.Addresses.Address
-  alias Neoscan.Sql
 
 
   schema "addresses" do
@@ -23,9 +22,6 @@ defmodule Neoscan.Addresses.Address do
   end
 
   def update_changeset(%Address{} = address, attrs) do
-
-    Sql.add_tx(address.address, attrs.tx_ids)
-
     address
     |> cast(attrs, [:address, :balance, :claimed])
     |> validate_required([:address])

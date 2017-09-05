@@ -9,21 +9,27 @@ defmodule NeoscanMonitor.Worker do
   end
 
   def init( :ok ) do
-    schedule_work()
     monitor_nodes = Utils.load()
     blocks = Blocks.home_blocks
     transactions = Transactions.home_transactions
     assets = Transactions.list_assets
     contracts = Transactions.list_contracts
     Process.send(NeoscanMonitor.Server, {:state_update, %{:monitor => monitor_nodes, :blocks => blocks, :transactions => transactions, :assets => assets, :contracts => contracts}}, [])
+    schedule_nodes()
+    schedule_update()
     {:ok, %{:monitor => monitor_nodes, :blocks => blocks, :transactions => transactions, :assets => assets, :contracts => contracts}}
   end
 
   def handle_info(:update_nodes, state) do
-    schedule_work() # Reschedule once more
+    schedule_nodes() # Reschedule once more
     new_state = Map.put(state, :monitor, Utils.load())
-    Process.send(NeoscanMonitor.Server, {:state_update, new_state}, [])
     {:noreply, new_state}
+  end
+
+  def handle_info(:update, state) do
+    schedule_update() # Reschedule once more
+    Process.send(NeoscanMonitor.Server, {:state_update,state}, [])
+    {:noreply, state}
   end
 
   def handle_info( { _ref, { :ok, _port, _pid } }, state) do
@@ -62,8 +68,12 @@ defmodule NeoscanMonitor.Worker do
       {:noreply, new_state}
   end
 
-  defp schedule_work() do
-    Process.send_after(self(), :update_nodes, 10000) # In 10s
+  defp schedule_nodes() do
+    Process.send_after(self(), :update_nodes, 30000) # In 10s
+  end
+
+  defp schedule_update() do
+    Process.send_after(self(), :update, 10000) # In 10s
   end
 
   defp cut_if_more(list, count) when count == 15 do

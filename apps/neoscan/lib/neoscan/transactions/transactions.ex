@@ -200,6 +200,7 @@ defmodule Neoscan.Transactions do
      select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
     Repo.all(query)
+    |> verify_vouts(lookups)
   end
 
   #get claimed vouts and add to addresses
@@ -215,6 +216,17 @@ defmodule Neoscan.Transactions do
     select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
     Repo.all(query)
+    |> verify_vouts(lookups)
+  end
+
+  def verify_vouts(result, lookups) do
+    cond do
+      Enum.count(result) == Enum.count(lookups) ->
+        result
+      true ->
+        IO.puts("Missing Vouts!")
+        result
+    end
   end
 
   #create new assets
