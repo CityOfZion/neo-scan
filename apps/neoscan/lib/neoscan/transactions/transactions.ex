@@ -224,7 +224,7 @@ defmodule Neoscan.Transactions do
       Enum.count(result) == Enum.count(lookups) ->
         result
       true ->
-        UO.puts("Missing Vouts!")
+        IO.puts("Missing Vouts!")
         result
     end
   end
