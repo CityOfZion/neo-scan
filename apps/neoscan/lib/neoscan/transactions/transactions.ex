@@ -150,16 +150,17 @@ defmodule Neoscan.Transactions do
 
     #fetch all addresses involved in the transaction
     address_list = Task.async(fn -> Addresses.get_transaction_addresses( new_vin, vouts )
-    |> Addresses.update_all_addresses(new_vin, new_claim, vouts, txid, index) end) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
+    |> Addresses.update_all_addresses(new_vin, new_claim, vouts, String.slice(txid, -64..-1), index) end) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
 
     #create asset if register Transaction
-    assets(attrs["asset"], txid)
+    assets(attrs["asset"], String.slice(txid, -64..-1))
 
     #create asset if issue Transaction
     issue(type, vouts)
 
     #prepare and create transaction
     transaction = Map.merge(attrs, %{
+          "txid" => String.slice(txid, -64..-1),
           "time" => time,
           "vin" => new_vin,
           "claims" => new_claim,
@@ -245,7 +246,7 @@ defmodule Neoscan.Transactions do
   defp issue("IssueTransaction", vouts) do
     Enum.each(vouts, fn %{"asset" => asset_hash, "value" => value} ->
       {float, _} = Float.parse(value)
-      add_issued_value(asset_hash, float)
+      add_issued_value(String.slice(asset_hash, -64..-1), float)
     end)
   end
   defp issue(_type, _vouts) do
@@ -313,8 +314,12 @@ defmodule Neoscan.Transactions do
 
   """
   def create_transactions(block, transactions) do
-    Enum.each(transactions, fn transaction -> create_transaction(block, transaction) end)
-    {:ok , "Created"}
+    case Enum.each(transactions, fn transaction -> create_transaction(block, transaction) end) do
+      :ok ->
+        {:ok , "Created"}
+      _ ->
+        {:error, "failed to create transactions"}
+    end
   end
 
 

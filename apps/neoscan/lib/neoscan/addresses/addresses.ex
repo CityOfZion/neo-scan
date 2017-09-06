@@ -55,6 +55,7 @@ defmodule Neoscan.Addresses do
   """
   def get_address_by_hash_for_view(hash) do
    his_query = from h in History,
+     order_by: [desc: h.block_height],
      select: %{
        txid: h.txid
      }
@@ -330,7 +331,7 @@ defmodule Neoscan.Addresses do
 
   #separate claimed transactions and insert in the claiming addresses
   def separate_txids_and_insert_claims(address_list, claims, vouts) do
-    updates = Stream.map(claims, fn %{:txid => txid } -> txid end)
+    updates = Stream.map(claims, fn %{:txid => txid } -> String.slice(txid, -64..-1) end)
     |> Stream.uniq()
     |> Enum.to_list
     |> insert_claim_in_addresses(vouts, address_list)

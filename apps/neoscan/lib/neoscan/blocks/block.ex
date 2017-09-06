@@ -25,8 +25,14 @@ defmodule Neoscan.Blocks.Block do
 
   @doc false
   def changeset(%Block{} = block, attrs) do
+    new_attrs = Map.merge(attrs, %{
+         "hash" =>  String.slice(attrs["hash"], -64..-1),
+         "nextblockhash" => String.slice(attrs["nextblockhash"], -64..-1),
+         "previousblockhash" => String.slice(attrs["previousblockhash"], -64..-1),
+         "merkleroot" => String.slice(attrs["merkleroot"], -64..-1),
+      })
     block
-    |> cast(attrs, [:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count])
+    |> cast(new_attrs, [:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count])
     |> validate_required([:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count])
   end
 end
