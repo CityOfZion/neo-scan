@@ -193,14 +193,14 @@ defmodule Neoscan.Transactions do
     vin
   end
   defp get_vins(vin) do
-    lookups = Enum.map(vin, &"#{&1["txid"]}#{&1["vout"]}")
+    lookups = Enum.map(vin, &"#{String.slice(&1["txid"], -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
 
     query =  from e in Vout,
      where: e.query in ^lookups,
      select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
     Repo.all(query)
-    |> verify_vouts(lookups)
+    |> verify_vouts(lookups, vin)
   end
 
   #get claimed vouts and add to addresses
@@ -209,22 +209,24 @@ defmodule Neoscan.Transactions do
   end
   defp get_claims(claims) do
 
-    lookups = Enum.map(claims, &"#{&1["txid"]}#{&1["vout"]}")
+    lookups = Enum.map(claims, &"#{String.slice(&1["txid"], -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
 
     query =  from e in Vout,
     where: e.query in ^lookups,
     select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
     Repo.all(query)
-    |> verify_vouts(lookups)
+    |> verify_vouts(lookups, claims)
   end
 
-  def verify_vouts(result, lookups) do
+  #check if all vouts were found
+  def verify_vouts(result, lookups, root) do
     cond do
       Enum.count(result) == Enum.count(lookups) ->
         result
       true ->
-        IO.puts("Missing Vouts!")
+        IO.inspect(%{:result => result, :lookups => lookups, :root => root})
+        raise "vout error"
         result
     end
   end
