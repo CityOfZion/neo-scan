@@ -18,11 +18,12 @@ defmodule Neoscan.Transactions.Vout do
   end
 
   @doc false
-  def changeset(%{:id => transaction_id, :txid => txid}, %{"address" => {address, _attrs}, "value" => value, "n" => n } = attrs \\ %{}) do
+  def changeset(%{:id => transaction_id, :txid => txid}, %{"address" => {address, _attrs}, "value" => value, "n" => n, "asset" => asset} = attrs \\ %{}) do
     {new_value, _} = Float.parse(value)
 
     new_attrs= attrs
     |> Map.merge( %{
+      "asset" => String.slice(asset, -64..-1),
       "address_id" => address.id,
       "transaction_id" => transaction_id,
       "address_hash" => address.address,
