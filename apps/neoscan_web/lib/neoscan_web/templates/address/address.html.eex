@@ -5,17 +5,17 @@
         <p class="title">Address <%=@address.address%></p>
       </div>
       <div class="tile is-parent box content">
-        <%= if @address.tx_ids != nil do %>
+        <%= if @address.histories != [] do %>
         <ul>
             <p>
               Transactions
             </p>
-            <%= for  tx <- Map.keys(@address.tx_ids) do %>
+            <%= for  tx <- @address.histories do %>
               <li>
-                <a href="<%=transaction_path(@conn, :index, tx )%>">
-                  <%=tx%>
+                <a href="<%=transaction_path(@conn, :index, tx.txid )%>">
+                  <%=tx.txid%>
                 </a>
-                <%= if @address.claimed != nil && Enum.any?(@address.claimed, fn %{"txids" => txid} -> Enum.member?(txid, tx) == true end) do %>
+                <%= if @address.claimed != nil && Enum.any?(@address.claimed, fn %{"txids" => txid} -> Enum.member?(txid, tx.txid) == true end) do %>
                   Claimed
                 <%end%>
               </li>

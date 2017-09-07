@@ -4,9 +4,49 @@ defmodule Neoscan.Factory do
   alias Neoscan.Addresses
   alias Neoscan.Transactions
 
+
+  def block_factory do
+    %Blocks.Block{
+      confirmations: 50,
+      hash: sequence("blockhash"),
+      index: 05,
+      merkleroot: sequence("merklehash"),
+      nextblockhash: sequence("nexthash"),
+      nextconsensus: sequence("consensushash"),
+      nonce: sequence("nonce"),
+      previousblockhash: sequence("previoushash"),
+      script: %{sequence("scripthash") => sequence("scripthashinner")},
+      size: 1526,
+      time: 15154813,
+      version: 2,
+      tx_count: 5,
+    }
+  end
+
+  def transaction_factory do
+    %Transactions.Transaction{
+      attributes: [%{sequence("attributehash") => sequence("attributeinnerhash")}],
+      net_fee: "0",
+      scripts: [%{sequence("scripthash") => sequence("scriptinnerhash")}],
+      size: 5,
+      sys_fee: "0",
+      txid: sequence("txhash"),
+      type: "FactoryTransaction",
+      version: 1,
+      vin: [%{sequence("vinhash") => sequence("vininnerhash")}],
+      time: 1548656,
+      nonce: 15155,
+      claims: [%{sequence("claimhash") => sequence("claiminnerhash")}],
+      pubkey: sequence("pubkeyhash"),
+      asset: %{sequence("assethash") => sequence("assetinnerhash")},
+      description: sequence("description"),
+      contract:  %{sequence("contracthash") => sequence("contractinnerhash")},
+    }
+  end
+
   def address_factory do
     %Addresses.Address{
-      address: "sequence("hash")",
+      address: sequence("hash"),
       tx_ids: %{ sequence("txhash") => %{
         "txid" => sequence("txhash"),
         "balance" => %{
@@ -25,8 +65,7 @@ defmodule Neoscan.Factory do
         "txids" => [ sequence("txhash")],
         "amount" => 50,
         "asset" => sequence("assethash"),
-        }],
-      vouts: [build(:vout)],
+      }],
     }
   end
 

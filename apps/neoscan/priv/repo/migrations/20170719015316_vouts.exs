@@ -9,6 +9,8 @@ defmodule Neoscan.Repo.Migrations.Vouts do
       add :value, :float
       add :txid, :string
 
+      add :query, :string
+
       add :transaction_id, references(:transactions, on_delete: :delete_all)
       add :address_id, references(:addresses, on_delete: :delete_all)
 
@@ -16,7 +18,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     end
 
 
-    create index(:vouts, [:address_hash, :txid])
+    create unique_index(:vouts, [:query])
 
   end
 end

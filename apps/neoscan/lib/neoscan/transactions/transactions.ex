@@ -140,7 +140,7 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_transaction(%{:time => time, :hash => hash, :index => height } = block, %{"vout" => vouts, "vin" => vin, "txid" => txid, "type" => type} = attrs) do
+  def create_transaction(%{:time => time, :hash => hash, :index => index } = block, %{"vout" => vouts, "vin" => vin, "txid" => txid, "type" => type} = attrs) do
 
     #get inputs from db
     new_vin = get_vins(vin)
@@ -150,21 +150,22 @@ defmodule Neoscan.Transactions do
 
     #fetch all addresses involved in the transaction
     address_list = Task.async(fn -> Addresses.get_transaction_addresses( new_vin, vouts )
-    |> Addresses.update_all_addresses(new_vin, new_claim, vouts, txid) end) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
+    |> Addresses.update_all_addresses(new_vin, new_claim, vouts, String.slice(txid, -64..-1), index) end) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
 
     #create asset if register Transaction
-    assets(attrs["asset"], txid)
+    assets(attrs["asset"], String.slice(txid, -64..-1))
 
     #create asset if issue Transaction
     issue(type, vouts)
 
     #prepare and create transaction
     transaction = Map.merge(attrs, %{
+          "txid" => String.slice(txid, -64..-1),
           "time" => time,
           "vin" => new_vin,
           "claims" => new_claim,
           "block_hash" => hash,
-          "block_height" => height,
+          "block_height" => index,
     })
     |> Map.delete("vout")
 
@@ -193,14 +194,14 @@ defmodule Neoscan.Transactions do
     vin
   end
   defp get_vins(vin) do
-    lookups = Enum.map(vin, &"#{&1["txid"]}#{&1["vout"]}")
+    lookups = Enum.map(vin, &"#{String.slice(&1["txid"], -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
 
     query =  from e in Vout,
-     where: fragment("? || CAST(? AS text)", e.txid, e.n) in ^lookups,
+     where: e.query in ^lookups,
      select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
     Repo.all(query)
-    |> verify_vouts(lookups)
+    |> verify_vouts(lookups, vin)
   end
 
   #get claimed vouts and add to addresses
@@ -209,22 +210,24 @@ defmodule Neoscan.Transactions do
   end
   defp get_claims(claims) do
 
-    lookups = Enum.map(claims, &"#{&1["txid"]}#{&1["vout"]}")
+    lookups = Enum.map(claims, &"#{String.slice(&1["txid"], -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
 
     query =  from e in Vout,
-    where: fragment("? || CAST(? AS text)", e.txid, e.n) in ^lookups,
+    where: e.query in ^lookups,
     select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
 
     Repo.all(query)
-    |> verify_vouts(lookups)
+    |> verify_vouts(lookups, claims)
   end
 
-  def verify_vouts(result, lookups) do
+  #check if all vouts were found
+  def verify_vouts(result, lookups, root) do
     cond do
       Enum.count(result) == Enum.count(lookups) ->
         result
       true ->
-        IO.puts("Missing Vouts!")
+        IO.inspect(%{:result => result, :lookups => lookups, :root => root})
+        raise "vout error"
         result
     end
   end
@@ -243,7 +246,7 @@ defmodule Neoscan.Transactions do
   defp issue("IssueTransaction", vouts) do
     Enum.each(vouts, fn %{"asset" => asset_hash, "value" => value} ->
       {float, _} = Float.parse(value)
-      add_issued_value(asset_hash, float)
+      add_issued_value(String.slice(asset_hash, -64..-1), float)
     end)
   end
   defp issue(_type, _vouts) do
@@ -311,8 +314,12 @@ defmodule Neoscan.Transactions do
 
   """
   def create_transactions(block, transactions) do
-    Enum.each(transactions, fn transaction -> create_transaction(block, transaction) end)
-    {:ok , "Created"}
+    case Enum.each(transactions, fn transaction -> create_transaction(block, transaction) end) do
+      :ok ->
+        {:ok , "Created"}
+      _ ->
+        {:error, "failed to create transactions"}
+    end
   end
 
 
@@ -457,7 +464,7 @@ defmodule Neoscan.Transactions do
   def list_assets do
     query = from e in Asset,
     select: %{
-      :hash => e.txid,
+      :txid => e.txid,
       :admin => e.admin,
       :amount => e.amount,
       :issued => e.issued,
