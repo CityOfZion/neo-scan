@@ -267,5 +267,33 @@ defmodule Neoscan.Blocks do
     |> delete_blocks
   end
 
+  def check_if_transaction_blocks_are_missing(transactions) do
+    Enum.map(transactions, fn {:ok, %{"blockhash" => block_hash} = transaction } -> check_if_block_exists(String.slice(block_hash, -64..-1), transaction) end)
+  end
+
+  def check_if_block_exists(hash, transaction) do
+    query = from e in Block,
+      where: e.hash == ^hash,
+      select: e
+    case Repo.all(query) |> List.first() do
+      nil ->
+        {:block_missing , transaction}
+      block ->
+        {:transaction_missing, {block, transaction}}
+    end
+  end
+
+  def get_missing_blocks(transaction_tuples) do
+    Enum.filter(transaction_tuples, fn { key, _transaction} -> key == :block_missing end)
+    |> Enum.group_by( fn { _key, transaction} -> transaction["blockhash"] end)
+    |> Map.keys
+    |> Enum.each(fn hash -> get_missing_block(hash) end)
+  end
+
+  def get_missing_block(hash) do
+    {:ok, block} = NeoscanSync.Blockchain.get_block_by_hash(NeoscanSync.HttpCalls.url(1), hash)
+    NeoscanSync.Consumer.add_block(block)
+  end
+
 
 end
