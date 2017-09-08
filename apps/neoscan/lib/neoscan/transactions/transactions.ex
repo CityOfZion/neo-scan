@@ -13,6 +13,7 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Transactions.Vout
   alias Neoscan.Transactions.Asset
   alias Neoscan.Addresses
+  alias Neoscan.Blocks
 
   @doc """
   Returns the list of transactions.
@@ -226,11 +227,60 @@ defmodule Neoscan.Transactions do
       Enum.count(result) == Enum.count(lookups) ->
         result
       true ->
-        IO.inspect(%{:result => result, :lookups => lookups, :root => root})
-        raise "vout error"
-        result
+        repair_missing(result, root)
     end
   end
+
+  #trigger repair if information is missing
+  def repair_missing(result, root) do
+    missing = Enum.map(root, fn %{"txid" => txid} -> txid end) -- Enum.map(result, fn %{:txid => txid} -> txid end)
+    get_missing(missing, result)
+  end
+
+  #get missing information
+  def get_missing(missing, root) do
+    tuples = Enum.map(missing, fn txid -> NeoscanSync.Blockchain.get_transaction( NeoscanSync.HttpCalls.url(1), txid) end)
+    |> Blocks.check_if_transaction_blocks_are_missing()
+
+    Blocks.get_missing_blocks(tuples)
+    |> add_missing_transactions(tuples)
+    |> fetch_missing_vouts(root)
+  end
+
+  #fetch vouts again after repairing
+  def fetch_missing_vouts(_result , root) do
+    lookups = Enum.map(root, &"#{String.slice(&1["txid"], -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
+
+    query =  from e in Vout,
+    where: e.query in ^lookups,
+    select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+
+    Repo.all(query)
+    |> verify_vouts(lookups, root)
+  end
+
+  #adds missing transactions after verifying missing blocks
+  def add_missing_transactions(:ok, tuples) do
+    Enum.filter(tuples, fn { key, _tuple} -> key == :transaction_missing end)
+    |> Enum.map(fn {_key, {block, transaction}} -> {block, transaction} end)
+    |> Enum.group_by(fn {block, _transaction} -> block end)
+    |> Map.to_list
+    |> Enum.map(fn {block, transaction_tuples} -> { block, filter_tuples(transaction_tuples) } end)
+    |> Enum.map(fn {block, transaction_list} -> create_transactions(block, transaction_list) end)
+  end
+  def add_missing_transactions( _, _tuples) do
+    raise "error fetching and adding missing blocks"
+  end
+
+
+  def filter_tuples(tuples) do
+    Enum.map(tuples, fn {_block, transaction} -> transaction end)
+  end
+
+
+
+
+
 
   #create new assets
   defp assets(%{"amount" => amount} = assets, txid) do
