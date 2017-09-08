@@ -1,6 +1,12 @@
 # Neoscan Umbrella Application
 
 Elixir + Phoenix Blockchain explorer for NEO.
+# How to contribute
+
+Using docker you can start the project with:
+- docker-compose up -d
+- docker exec -it neoscan_phoenix_1 sh
+- cd /data
 
 To run, first install Elixir and Phoenix at:
 
