@@ -1,0 +1,17 @@
+version: "2"
+services:
+  postgresql:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  phoenix:
+    image: nikolauska/phoenix
+    command: sh -c "while true; do echo Alive; sleep 100; done"
+    volumes:
+        - ./:/data
+    links:
+      - postgresql:postgres

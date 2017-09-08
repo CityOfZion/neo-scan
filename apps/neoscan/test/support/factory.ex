@@ -1,12 +1,14 @@
 defmodule Neoscan.Factory do
   # with Ecto
   use ExMachina.Ecto, repo: Neoscan.Repo
-  alias Neoscan.Addresses
-  alias Neoscan.Transactions
+  alias Neoscan.Addresses.Address
+  alias Neoscan.Transactions.Transaction
+  alias Neoscan.Blocks.Block
+  alias Neoscan.Transactions.Vout
 
 
   def block_factory do
-    %Blocks.Block{
+    %Block{
       confirmations: 50,
       hash: sequence("blockhash"),
       index: 05,
@@ -24,7 +26,7 @@ defmodule Neoscan.Factory do
   end
 
   def transaction_factory do
-    %Transactions.Transaction{
+    %Transaction{
       attributes: [%{sequence("attributehash") => sequence("attributeinnerhash")}],
       net_fee: "0",
       scripts: [%{sequence("scripthash") => sequence("scriptinnerhash")}],
@@ -45,9 +47,9 @@ defmodule Neoscan.Factory do
   end
 
   def address_factory do
-    %Addresses.Address{
+    %Address{
       address: sequence("hash"),
-      tx_ids: %{ sequence("txhash") => %{
+      histories: %{ sequence("txhash") => %{
         "txid" => sequence("txhash"),
         "balance" => %{
           sequence("assethash") => %{
@@ -70,7 +72,7 @@ defmodule Neoscan.Factory do
   end
 
   def vout_factory do
-    %Transactions.Vout{
+    %Vout{
       asset: sequence("assethash"),
       address_hash: sequence("hash"),
       n: 0,
