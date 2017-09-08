@@ -291,7 +291,7 @@ defmodule Neoscan.Blocks do
   end
 
   def get_missing_block(hash) do
-    NeoscanSync.Blockchain.get_block_by_hash(hash)
+    NeoscanSync.Blockchain.get_block_by_hash(NeoscanSync.HttpCalls.url(1), hash)
     |> NeoscanSync.Consumer.add_block
   end
 
