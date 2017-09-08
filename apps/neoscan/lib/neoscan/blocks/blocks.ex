@@ -268,7 +268,7 @@ defmodule Neoscan.Blocks do
   end
 
   def check_if_transaction_blocks_are_missing(transactions) do
-    Enum.map(transactions, fn {:ok, %{"blockhash" => block_hash} = transaction } -> check_if_block_exists(block_hash, transaction) end)
+    Enum.map(transactions, fn {:ok, %{"blockhash" => block_hash} = transaction } -> check_if_block_exists(String.slice(block_hash, -64..-1), transaction) end)
   end
 
   def check_if_block_exists(hash, transaction) do
