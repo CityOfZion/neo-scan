@@ -275,10 +275,10 @@ defmodule Neoscan.Blocks do
     query = from e in Block,
       where: e.hash == ^hash,
       select: e
-    case Repo.all(query) do
-      [] ->
+    case Repo.all(query) |> List.first() do
+      nil ->
         {:block_missing , transaction}
-      [block] ->
+      block ->
         {:transaction_missing, {block, transaction}}
     end
   end
