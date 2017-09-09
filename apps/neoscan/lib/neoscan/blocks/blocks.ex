@@ -282,10 +282,15 @@ defmodule Neoscan.Blocks do
   end
 
   def get_missing_blocks(transaction_tuples) do
-    Enum.filter(transaction_tuples, fn { key, _transaction} -> key == :block_missing end)
-    |> Enum.group_by( fn { _key, transaction} -> transaction["blockhash"] end)
-    |> Map.keys
-    |> Enum.each(fn hash -> get_missing_block(hash) end)
+    case Enum.any?(transaction_tuples, fn {key, _value} -> key == :block_missing end) do
+      true ->
+        Enum.filter(transaction_tuples, fn { key, _transaction} -> key == :block_missing end)
+        |> Enum.group_by( fn { _key, transaction} -> transaction["blockhash"] end)
+        |> Map.keys
+        |> Enum.each(fn hash -> get_missing_block(hash) end)
+      false ->
+        :ok
+    end
   end
 
   def get_missing_block(hash) do

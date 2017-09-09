@@ -290,13 +290,19 @@ defmodule Neoscan.Transactions do
 
   #adds missing transactions after verifying missing blocks
   def add_missing_transactions(:ok, tuples) do
-    Enum.filter(tuples, fn { key, _tuple} -> key == :transaction_missing end)
-    |> Enum.map(fn {_key, {block, transaction}} -> {block, transaction} end)
-    |> Enum.group_by(fn {block, _transaction} -> block end)
-    |> Map.to_list
-    |> Enum.map(fn {block, transaction_tuples} -> { block, filter_tuples(transaction_tuples) } end)
-    |> Enum.map(fn {block, transaction_list} -> create_transactions(block, transaction_list) end)
-    |> Enum.uniq
+    case Enum.any?(tuples, fn {key, _value} -> key == :transaction_missing end) do
+      true ->
+        Enum.filter(tuples, fn { key, _tuple} -> key == :transaction_missing end)
+        |> Enum.map(fn {_key, {block, transaction}} -> {block, transaction} end)
+        |> Enum.group_by(fn {block, _transaction} -> block end)
+        |> Map.to_list
+        |> Enum.map(fn {block, transaction_tuples} -> { block, filter_tuples(transaction_tuples) } end)
+        |> Enum.map(fn {block, transaction_list} -> create_transactions(block, transaction_list) end)
+        |> Enum.uniq
+      false ->
+        [{:ok, "Created"}]
+    end
+
   end
   def add_missing_transactions( _, _tuples) do
     raise "error fetching and adding missing blocks"
