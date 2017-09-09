@@ -233,6 +233,7 @@ defmodule Neoscan.Transactions do
 
   #trigger repair if information is missing
   def repair_missing(result, root) do
+    IO.inspect({"repair input", result, root})
     missing = Enum.map(root, fn %{"txid" => txid} -> txid end) -- Enum.map(result, fn %{:txid => txid} -> txid end)
     get_missing(missing, result)
   end
