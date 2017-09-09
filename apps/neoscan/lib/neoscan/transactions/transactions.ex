@@ -296,13 +296,14 @@ defmodule Neoscan.Transactions do
     |> Map.to_list
     |> Enum.map(fn {block, transaction_tuples} -> { block, filter_tuples(transaction_tuples) } end)
     |> Enum.map(fn {block, transaction_list} -> create_transactions(block, transaction_list) end)
+    |> Enum.uniq
   end
   def add_missing_transactions( _, _tuples) do
     raise "error fetching and adding missing blocks"
   end
 
   #adds missing vouts after verifying missing blocks and transactions
-  def add_missing_vouts({:ok , "Created"}, tuples) do
+  def add_missing_vouts( list, tuples) when list == [{:ok, "Created"}] do
     Enum.filter(tuples, fn { key, _tuple} -> key == :vouts_missing end)
     |> Enum.map(fn {_key, {db_transaction, vouts}} -> {db_transaction, vouts} end)
     |> Enum.group_by(fn {db_transaction, _transaction} -> db_transaction end)
