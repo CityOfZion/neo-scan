@@ -23,7 +23,7 @@ defmodule Neoscan.Transactions.Vout do
 
     new_attrs= attrs
     |> Map.merge( %{
-      "asset" => String.slice(asset, -64..-1),
+      "asset" => String.slice(to_string(asset), -64..-1),
       "address_id" => address.id,
       "transaction_id" => transaction_id,
       "address_hash" => address.address,

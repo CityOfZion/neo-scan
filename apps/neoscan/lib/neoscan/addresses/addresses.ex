@@ -331,7 +331,7 @@ defmodule Neoscan.Addresses do
 
   #separate claimed transactions and insert in the claiming addresses
   def separate_txids_and_insert_claims(address_list, claims, vouts) do
-    updates = Stream.map(claims, fn %{:txid => txid } -> String.slice(txid, -64..-1) end)
+    updates = Stream.map(claims, fn %{:txid => txid } -> String.slice(to_string(txid), -64..-1) end)
     |> Stream.uniq()
     |> Enum.to_list
     |> insert_claim_in_addresses(vouts, address_list)
@@ -406,7 +406,7 @@ defmodule Neoscan.Addresses do
   #get addresses and route for adding claims
   def insert_claim_in_addresses(transactions, vouts, address_list) do
     Enum.map(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
-      insert_claim_in_address(Enum.find(address_list, fn {%{:address => address}, _attrs} -> address == hash end) , transactions, value, String.slice(asset, -64..-1), hash)
+      insert_claim_in_address(Enum.find(address_list, fn {%{:address => address}, _attrs} -> address == hash end) , transactions, value, String.slice(to_string(asset), -64..-1), hash)
     end)
   end
 

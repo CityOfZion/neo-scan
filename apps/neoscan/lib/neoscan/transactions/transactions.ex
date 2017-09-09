@@ -151,17 +151,17 @@ defmodule Neoscan.Transactions do
 
     #fetch all addresses involved in the transaction
     address_list = Task.async(fn -> Addresses.get_transaction_addresses( new_vin, vouts )
-    |> Addresses.update_all_addresses(new_vin, new_claim, vouts, String.slice(txid, -64..-1), index) end) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
+    |> Addresses.update_all_addresses(new_vin, new_claim, vouts, String.slice(to_string(txid), -64..-1), index) end) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
 
     #create asset if register Transaction
-    assets(attrs["asset"], String.slice(txid, -64..-1))
+    assets(attrs["asset"], String.slice(to_string(txid), -64..-1))
 
     #create asset if issue Transaction
     issue(type, vouts)
 
     #prepare and create transaction
     transaction = Map.merge(attrs, %{
-          "txid" => String.slice(txid, -64..-1),
+          "txid" => String.slice(to_string(txid), -64..-1),
           "time" => time,
           "vin" => new_vin,
           "claims" => new_claim,
@@ -195,7 +195,7 @@ defmodule Neoscan.Transactions do
     vin
   end
   defp get_vins(vin) do
-    lookups = Enum.map(vin, &"#{String.slice(&1["txid"], -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
+    lookups = Enum.map(vin, &"#{String.slice(to_string(&1["txid"]), -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
 
     query =  from e in Vout,
      where: e.query in ^lookups,
@@ -211,7 +211,7 @@ defmodule Neoscan.Transactions do
   end
   defp get_claims(claims) do
 
-    lookups = Enum.map(claims, &"#{String.slice(&1["txid"], -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
+    lookups = Enum.map(claims, &"#{String.slice(to_string(&1["txid"]), -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
 
     query =  from e in Vout,
     where: e.query in ^lookups,
@@ -240,16 +240,21 @@ defmodule Neoscan.Transactions do
   #get missing information
   def get_missing(missing, root) do
     tuples = Enum.map(missing, fn txid -> NeoscanSync.Blockchain.get_transaction( NeoscanSync.HttpCalls.url(1), txid) end)
-    |> Blocks.check_if_transaction_blocks_are_missing()
+    |> check_missing()
 
     Blocks.get_missing_blocks(tuples)
     |> add_missing_transactions(tuples)
+    |> add_missing_vouts(tuples)
     |> fetch_missing_vouts(root)
+  end
+
+  def check_missing(transactions) do
+    Enum.map(transactions, fn {:ok, %{"blockhash" => block_hash} = transaction } -> Blocks.check_if_block_exists(String.slice(to_string(block_hash), -64..-1), transaction) end)
   end
 
   #fetch vouts again after repairing
   def fetch_missing_vouts(_result , root) do
-    lookups = Enum.map(root, &"#{String.slice(&1["txid"], -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
+    lookups = Enum.map(root, &"#{String.slice(to_string(&1["txid"]), -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
 
     query =  from e in Vout,
     where: e.query in ^lookups,
@@ -257,6 +262,30 @@ defmodule Neoscan.Transactions do
 
     Repo.all(query)
     |> verify_vouts(lookups, root)
+  end
+
+  def check_if_transaction_exists(block, transaction) do
+    query = from t in Transaction,
+      where: t.txid == ^transaction["txid"],
+      select: t
+    case Repo.all(query) |> List.first() do
+      nil ->
+        {:transaction_missing , {block, transaction}}
+      db_transaction ->
+        Transactions.check_if_vouts_exists(db_transaction, transaction)
+    end
+  end
+
+  def check_if_vouts_exists(db_transaction, transaction) do
+    query = from v in Vout,
+      where: v.transaction_id == ^db_transaction.id,
+      select: v
+
+    db_vouts = Repo.all(query)
+
+    missing = Enum.map(transaction["vout"], fn %{"n"=> n} -> n end) -- Enum.map(db_vouts, fn %{:n => n} -> n end)
+
+    {:vouts_missing, {db_transaction, Enum.filter(transaction["vout"], fn %{"n" => n} -> n in missing end)}}
   end
 
   #adds missing transactions after verifying missing blocks
@@ -272,9 +301,25 @@ defmodule Neoscan.Transactions do
     raise "error fetching and adding missing blocks"
   end
 
+  #adds missing vouts after verifying missing blocks and transactions
+  def add_missing_vouts(:ok, tuples) do
+    Enum.filter(tuples, fn { key, _tuple} -> key == :transaction_missing end)
+    |> Enum.map(fn {_key, {db_transaction, vouts}} -> {db_transaction, vouts} end)
+    |> Enum.group_by(fn {db_transaction, _transaction} -> db_transaction end)
+    |> Map.to_list
+    |> Enum.map(fn {db_transaction, vouts_tuple} -> { db_transaction, filter_tuples(vouts_tuple) } end)
+    |> Enum.map(fn {db_transaction, vouts} ->
+      address_list = Addresses.get_transaction_addresses([], vouts)
+      create_vouts(db_transaction, vouts, address_list)
+    end)
+  end
+  def add_missing_vouts( _, _tuples) do
+    raise "error fetching and adding missing transactions"
+  end
+
 
   def filter_tuples(tuples) do
-    Enum.map(tuples, fn {_block, transaction} -> transaction end)
+    Enum.map(tuples, fn {_block, content} -> content end)
   end
 
 
@@ -296,7 +341,7 @@ defmodule Neoscan.Transactions do
   defp issue("IssueTransaction", vouts) do
     Enum.each(vouts, fn %{"asset" => asset_hash, "value" => value} ->
       {float, _} = Float.parse(value)
-      add_issued_value(String.slice(asset_hash, -64..-1), float)
+      add_issued_value(String.slice(to_string(asset_hash), -64..-1), float)
     end)
   end
   defp issue(_type, _vouts) do

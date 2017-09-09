@@ -267,10 +267,6 @@ defmodule Neoscan.Blocks do
     |> delete_blocks
   end
 
-  def check_if_transaction_blocks_are_missing(transactions) do
-    Enum.map(transactions, fn {:ok, %{"blockhash" => block_hash} = transaction } -> check_if_block_exists(String.slice(block_hash, -64..-1), transaction) end)
-  end
-
   def check_if_block_exists(hash, transaction) do
     query = from e in Block,
       where: e.hash == ^hash,
@@ -279,6 +275,7 @@ defmodule Neoscan.Blocks do
       nil ->
         {:block_missing , transaction}
       block ->
+        Transactions.check_if_transaction_exists(block, transaction)
         {:transaction_missing, {block, transaction}}
     end
   end
