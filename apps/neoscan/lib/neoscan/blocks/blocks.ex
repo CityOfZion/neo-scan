@@ -8,6 +8,7 @@ defmodule Neoscan.Blocks do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Blocks.Block
+  alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Addresses
   alias NeoscanMonitor.Api

@@ -272,7 +272,7 @@ defmodule Neoscan.Transactions do
       nil ->
         {:transaction_missing , {block, transaction}}
       db_transaction ->
-        Transactions.check_if_vouts_exists(db_transaction, transaction)
+        check_if_vouts_exists(db_transaction, transaction)
     end
   end
 
