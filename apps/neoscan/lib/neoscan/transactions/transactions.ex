@@ -270,8 +270,9 @@ defmodule Neoscan.Transactions do
   end
 
   def check_if_transaction_exists(block, transaction) do
+    txid = String.slice(to_string(transaction["txid"]))
     query = from t in Transaction,
-      where: t.txid == String.slice(to_string( ^transaction["txid"] )),
+      where: t.txid == ^txid,
       select: t
     case Repo.all(query) |> List.first() do
       nil ->
