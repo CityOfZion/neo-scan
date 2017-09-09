@@ -271,7 +271,7 @@ defmodule Neoscan.Transactions do
 
   def check_if_transaction_exists(block, transaction) do
     query = from t in Transaction,
-      where: t.txid == ^transaction["txid"],
+      where: t.txid == String.slice(to_string( ^transaction["txid"] )),
       select: t
     case Repo.all(query) |> List.first() do
       nil ->
@@ -288,7 +288,12 @@ defmodule Neoscan.Transactions do
 
     db_vouts = Repo.all(query)
 
-    missing = Enum.map(transaction["vout"], fn %{"n"=> n} -> n end) -- Enum.map(db_vouts, fn %{:n => n} -> n end)
+    missing = cond do
+      db_vouts == [] ->
+        Enum.map(transaction["vout"], fn %{"n"=> n} -> n end)
+      true ->
+        Enum.map(transaction["vout"], fn %{"n"=> n} -> n end) -- Enum.map(db_vouts, fn %{:n => n} -> n end)
+    end
 
     {:vouts_missing, {db_transaction, Enum.filter(transaction["vout"], fn %{"n" => n} -> n in missing end)}}
   end
