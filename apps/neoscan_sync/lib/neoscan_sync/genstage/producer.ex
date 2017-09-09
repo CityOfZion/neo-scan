@@ -106,7 +106,7 @@ defmodule NeoscanSync.Producer do
 
   #get current height from monitor
   def get_current_height() do
-    Api.get_height
-    #{ :ok, 5000}
+    { :ok, height } = Api.get_height
+    { :ok, height - 1}
   end
 end
