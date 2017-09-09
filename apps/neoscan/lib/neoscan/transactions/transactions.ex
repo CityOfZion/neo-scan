@@ -232,14 +232,14 @@ defmodule Neoscan.Transactions do
   end
 
   #trigger repair if information is missing
-  def repair_missing( [] = result, root) do
+  def repair_missing( [], root) do
     missing = Enum.map(root, fn %{"txid" => txid} -> String.slice(to_string(txid), -64..-1) end)
-    get_missing(missing, result)
+    get_missing(missing, root)
   end
   #trigger repair if information is missing
   def repair_missing(result, root) do
     missing = Enum.map(root, fn %{"txid" => txid} -> String.slice(to_string(txid), -64..-1) end) -- Enum.map(result, fn %{:txid => txid} -> txid end)
-    get_missing(missing, result)
+    get_missing(missing, root)
   end
 
   #get missing information
