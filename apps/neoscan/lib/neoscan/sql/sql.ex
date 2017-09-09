@@ -1,6 +1,7 @@
 defmodule Neoscan.Sql do
 
-  #TODO update to append claims
+  #deprecated
+  #TODO update to append claims instead of tx
   def add_tx(_changes, hash, tx_ids) do
     sql = "UPDATE addresses SET tx_ids = (
           CASE

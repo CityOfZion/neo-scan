@@ -14,6 +14,7 @@ defmodule NeoscanSync.Producer do
   def init(counter), do: {:producer, {counter, 0}}
 
   def handle_info(:fetch_more, {counter, pending_demand}) do
+    IO.puts("#{pending_demand} blocks pending")
     do_handle_demand(pending_demand, {counter, 0})
   end
 

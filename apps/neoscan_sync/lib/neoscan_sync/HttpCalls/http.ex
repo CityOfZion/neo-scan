@@ -24,7 +24,7 @@ defmodule NeoscanSync.HttpCalls do
     end
   end
 
-  #Makes a request to the 'index' seed
+  #Makes a request to the 'url' seed
   def request(headers, data, url) do
     url
     |> HTTPoison.post( data, headers, ssl: [{:versions, [:'tlsv1.2']}] )
