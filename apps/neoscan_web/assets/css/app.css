@@ -1,11 +1,5 @@
 /* This file is for your main application css. #222248*/
 
-.main-background {
-  background-image: url(/images/background-texture.png);
-  height: 100%;
-  width: 100%;
-}
-
 .content-background {
   background-color: #2A2B59;
 }

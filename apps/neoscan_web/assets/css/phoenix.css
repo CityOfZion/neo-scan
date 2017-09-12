@@ -8,6 +8,12 @@
   left:0; top:0; width:100%; height:100%height:100%
 }
 
+.main-background {
+  background-image: url("/images/background-texture.png");
+  height: 100%;
+  width: 100%;
+}
+
 
 /* Phoenix flash messages */
 .alert:empty { display: none; }
