@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="min-height-is-available">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,31 +15,36 @@
 
 </head>
 
-  <body class="main-background fill-all">
-    <section class="hero main-background">
+  <body class="main-background min-height-is-available fill-all">
+    <section class="hero transparent">
       <!-- Hero header: will stick at the top -->
       <div class="hero-head">
-        <header class="nav main-background">
-          <div class="nav-brand">
-            <a class="nav-item white-text neoscan-title sans-coz" href="/">
+        <nav class="navbar transparent">
+          <div class="navbar-brand">
+            <a class="navbar-item white-text sans-coz" href="/">
                 <img class="coz-logo" src="<%= static_path(@conn, "/images/coz.png")%>"></img>
                 &nbspNeoScan
             </a>
+
+            <div class="button navbar-burger" data-target="Options">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
           </div>
-          <!-- <span class="nav-toggle">
-            <span></span>
-          </span> -->
-          <div class="nav-right nav-tabs">
-            <!-- <a class="nav-item">
-              Documentation
-            </a> -->
-            <a  class="nav-item" href="<%= home_path(@conn, :index) %>">Explorer</a>
-            <a  class="nav-item" href="<%= assets_path(@conn, :index) %>">Assets</a>
-            <a  class="nav-item" href="<%= contracts_path(@conn, :index) %>">Contracts</a>
-            <a  class="nav-item" href="<%= doc_path(@conn, :index) %>" >API</a>
-            <a  class="nav-item" href="https://github.com/CityOfZion/NEOScan">GitHub</a>
+
+          <div class="navbar-menu" id="Options">
+            <div class="navbar-end">
+              <a  class="navbar-item" href="<%= home_path(@conn, :index) %>">Explorer</a>
+              <a  class="navbar-item" href="<%= assets_path(@conn, :index) %>">Assets</a>
+              <a  class="navbar-item" href="<%= contracts_path(@conn, :index) %>">Contracts</a>
+              <a  class="navbar-item" href="<%= doc_path(@conn, :index) %>" >API</a>
+              <a  class="navbar-item" href="https://github.com/CityOfZion/NEOScan">GitHub</a>
+            </div>
           </div>
-        </header>
+        </nav>
       </div>
     </section>
 
@@ -49,7 +54,7 @@
     </main>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
 
-    <footer class="footer main-background">
+    <footer class="footer transparent">
       <div class="container">
         <div class="content has-text-centered white-text">
           <p>

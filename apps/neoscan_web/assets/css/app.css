@@ -1,7 +1,9 @@
-/* This file is for your main application css. */
+/* This file is for your main application css. #222248*/
 
 .main-background {
-  background-color: #222248;
+  background-image: url(/images/background-texture.png);
+  height: 100%;
+  width: 100%;
 }
 
 .content-background {
@@ -16,13 +18,15 @@ h1.white-text {
   color:white;
 }
 
-a.nav-item:not(.button) {
+a.navbar-item:not(.button) {
   color: #7B80A6;
   text-decoration: none;
 }
 
-a.nav-item:not(.button):hover {
+a.navbar-item:not(.button):hover {
+  background-color: #3b3d7a;
   color: #FFFFFF;
+  border-bottom: white solid 2px;
 }
 
 a {
@@ -36,6 +40,7 @@ a:hover {
 
 a.link {
   color: #00d1b2;
+  overflow-wrap: break-word;
 }
 
 a.link:hover {
@@ -80,9 +85,44 @@ a.link:hover {
 }
 
 .fill-all {
-  height: -webkit-fill-available
+  height: fit-content;
 }
 
 .no-padding-top {
   padding-top: 0;
+}
+
+.navbar-burguer {
+  background-color: #7B80A6;
+}
+
+.navbar {
+  border-bottom: 1px solid white;
+}
+
+.break-word {
+  overflow-wrap: break-word;
+}
+
+strong {
+  font-weight: 500;
+}
+
+.transparent {
+  background-color: transparent;
+}
+
+.min-height-is-available {
+  min-height: -webkit-fill-available;
+}
+
+.ad {
+  max-height: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.text-center {
+  text-align: center;
 }

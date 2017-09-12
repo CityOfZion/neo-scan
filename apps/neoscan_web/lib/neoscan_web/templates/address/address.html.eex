@@ -1,6 +1,6 @@
-<section class="section main-background">
+<section class="section transparent">
   <div class="container">
-    <div class="tile is-12 is-ancestor box is-vertical main-background">
+    <div class="tile is-12 is-ancestor box is-vertical transparent">
       <div class="tile is-parent box content content-background">
         <p class="title  white-text">Address <%=@address.address%></p>
       </div>

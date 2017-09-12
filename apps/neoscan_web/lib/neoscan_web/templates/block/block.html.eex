@@ -1,6 +1,6 @@
-<section class="section main-background">
+<section class="section transparent">
   <div class="container">
-    <div class="tile is-12 is-ancestor box is-vertical main-background">
+    <div class="tile is-12 is-ancestor box is-vertical transparent">
       <div class="tile is-parent box content content-background">
         <p class="title white-text">Block <%=@block.hash%></p>
       </div>
@@ -26,7 +26,7 @@
           <li>
             Transactions count <%=@block.tx_count%>
           </li>
-          <li>
+          <li class="break-word">
             Merkle Tree Root <%=@block.merkleroot%>
           </li>
           <li>

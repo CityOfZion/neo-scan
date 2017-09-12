@@ -1,4 +1,4 @@
-<section class="hero main-background">
+<section class="hero transparent">
   <!-- Hero content: will be in the left -->
   <div class="hero-body">
     <div class="container has-text-left">
@@ -12,7 +12,7 @@
   </div>
 </section>
 
-<section class="section main-background no-padding-top">
+<section class="section transparent no-padding-top">
   <div class="container">
     <div class="tile is-ancestor">
       <!-- <div class="tile is-4 is-parent">
@@ -22,9 +22,9 @@
       </div> -->
       <div class="tile is-parent">
         <div class="tile is-child box content-background white-text">
-          <h1 class="title white-text">News</h1>
           <ul>
-            <li>
+            <img class="ad" src ="<%= static_path(@conn, "/images/competition.png") %>"></img>
+            <li class="text-center">
               The last reports from the dev community can be found <a class="link" href="https://medium.com/@cityofzion">here</a>.
             </li>
           </ul>
@@ -46,7 +46,7 @@
           <div class="field">
             <p class="control">
               <%= form_for @conn, home_path(@conn, :index), [as: :search], fn f -> %>
-                <%= text_input f, :for,placeholder: "Block Height, Hash, Address or Transaction id",class: "input main-background white-text" %>
+                <%= text_input f, :for,placeholder: "Block Height, Hash, Address or Transaction id",class: "input transparent white-text" %>
                 <%= error_tag f, :for %>
               <% end %>
             </p>
@@ -58,13 +58,13 @@
   <div class="container">
     <div class="tile is-ancestor">
       <div class="tile is-6 is-parent">
-        <div class="tile is-child box flex main-background">
+        <div class="tile is-child box flex transparent">
           <p class="title white-text">Last Blocks</p>
           <ul class="collection" id="show-blocks"></ul>
         </div>
       </div>
       <div class="tile is-6 is-parent">
-        <div class="tile is-child box flex main-background">
+        <div class="tile is-child box flex transparent">
           <p class="title white-text">Last Transactions</p>
           <ul class="collection" id="show-transactions"></ul>
         </div>
