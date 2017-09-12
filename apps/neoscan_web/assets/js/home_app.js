@@ -8,12 +8,12 @@ const blocksContainer = document.getElementById('show-blocks')
 const transactionsContainer = document.getElementById('show-transactions')
 
 const blockRow = row => (
-  <a href={'/block/' + row.hash} class='box'>
+  <a href={'/block/' + row.hash} class='box content-background'>
     <article class='media'>
       <div class='media-content'>
-        <div class='content'>
+        <div class='content white-text'>
           <p>
-            <strong>Height {row.index}&nbsp;&nbsp;&nbsp;</strong>
+            <strong class='white-text'>Height {row.index}&nbsp;&nbsp;&nbsp;</strong>
             <small>Date&nbsp;&nbsp;{moment.unix(row.time).format('DD-MM-YYYY')}&nbsp;&nbsp;</small>
             <small>Time&nbsp;&nbsp;{moment.unix(row.time).format('HH:mm:ss')}&nbsp;&nbsp;</small>
             <small class='is-pulled-right'>Number of Transactions {row.tx_count}</small>
@@ -25,12 +25,12 @@ const blockRow = row => (
 )
 
 const transactionRow = row => (
-  <a href={'/transaction/' + row.txid} class='box'>
+  <a href={'/transaction/' + row.txid} class='box content-background'>
     <article class='media'>
       <div class='media-content'>
-        <div class='content'>
+        <div class='content white-text'>
           <p>
-            <strong>{row.type}&nbsp;&nbsp;&nbsp;</strong>
+            <strong class='white-text'>{row.type}&nbsp;&nbsp;&nbsp;</strong>
             <small>Date&nbsp;&nbsp;{moment.unix(row.time).format('DD-MM-YYYY')}&nbsp;&nbsp;</small>
             <small>Time&nbsp;&nbsp;{moment.unix(row.time).format('HH:mm:ss')}&nbsp;&nbsp;</small>
           </p>

@@ -1,14 +1,14 @@
-<section class="section">
-  <div class="container">
-    <div class="tile is-12 is-ancestor box is-vertical">
-      <div class="tile is-parent box content">
-        <p class="title"> Contracts</p>
+<section class="section main-background">
+  <div class="container main-background">
+    <div class="tile is-12 is-ancestor box is-vertical main-background">
+      <div class="tile is-parent box content content-background">
+        <p class="title white-text"> Contracts</p>
       </div>
-      <div class="box content">
+      <div class="box content content-background white-text">
         <ul>
           <%= for transaction <- @contracts do %>
             <li>
-              <a href="<%=transaction_path(@conn, :index, transaction.txid )%>">
+              <a class="link" href="<%=transaction_path(@conn, :index, transaction.txid )%>">
                 <%=transaction.txid%>
               </a>
             </li>

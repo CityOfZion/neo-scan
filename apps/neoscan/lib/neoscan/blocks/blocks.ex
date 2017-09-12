@@ -37,7 +37,7 @@ defmodule Neoscan.Blocks do
   """
   def home_blocks do
     block_query = from e in Block,
-      where: e.index > 1200000,
+      where: e.index > 1300000,
       order_by: [desc: e.index],
       select: %{:index => e.index, :time => e.time, :tx_count => e.tx_count, :hash => e.hash},
       limit: 15
@@ -212,7 +212,7 @@ defmodule Neoscan.Blocks do
   def get_highest_block_in_db() do
     query = from e in Block,
       select: e.index,
-      where: e.index > 1200000,  #force postgres to use index
+      where: e.index > 1300000,  #force postgres to use index
       order_by: [desc: e.index],
       limit: 1
 

@@ -10,69 +10,36 @@
     <link rel="icon" type="image/x-icon" href="<%= static_path(@conn, "/favicon.ico") %>" >
     <title>CoZ - NeoScan</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Orbitron" />
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
 
 </head>
 
-  <body>
-    <section class="hero is-light">
+  <body class="main-background fill-all">
+    <section class="hero main-background">
       <!-- Hero header: will stick at the top -->
       <div class="hero-head">
-        <header class="nav">
-          <div class="container">
-            <div class="nav-left">
-              <h1 class="nav-item">
-              </h1>
-            </div>
-            <!-- <span class="nav-toggle">
-              <span></span>
-            </span> -->
-            <div class="nav-right nav-menu">
-              <!-- <a class="nav-item">
-                Documentation
-              </a> -->
-              <span class="nav-item">
-                <a href="<%= doc_path(@conn, :index) %>" class="button is-light">
-                  <span class="icon">
-                    <i class="fa fa-code"></i>
-                  </span>
-                  <span>API</span>
-                </a>
-                <a href="https://github.com/CityOfZion/NEOScan" class="button is-light">
-                  <span class="icon">
-                    <i class="fa fa-github"></i>
-                  </span>
-                  <span>GitHub</span>
-                </a>
-              </span>
-            </div>
+        <header class="nav main-background">
+          <div class="nav-brand">
+            <a class="nav-item white-text neoscan-title sans-coz" href="/">
+                <img class="coz-logo" src="<%= static_path(@conn, "/images/coz.png")%>"></img>
+                &nbspNeoScan
+            </a>
+          </div>
+          <!-- <span class="nav-toggle">
+            <span></span>
+          </span> -->
+          <div class="nav-right nav-tabs">
+            <!-- <a class="nav-item">
+              Documentation
+            </a> -->
+            <a  class="nav-item" href="<%= home_path(@conn, :index) %>">Explorer</a>
+            <a  class="nav-item" href="<%= assets_path(@conn, :index) %>">Assets</a>
+            <a  class="nav-item" href="<%= contracts_path(@conn, :index) %>">Contracts</a>
+            <a  class="nav-item" href="<%= doc_path(@conn, :index) %>" >API</a>
+            <a  class="nav-item" href="https://github.com/CityOfZion/NEOScan">GitHub</a>
           </div>
         </header>
-      </div>
-
-      <!-- Hero content: will be in the left -->
-      <div class="hero-body">
-        <div class="container has-text-left">
-          <h1 class="title">
-            NeoScan
-          </h1>
-          <h2 class="subtitle">
-            Entering Matrix
-          </h2>
-        </div>
-      </div>
-
-      <!-- Hero footer: will stick at the bottom -->
-      <div class="hero-foot">
-        <nav class="tabs">
-          <div class="container">
-            <ul>
-              <li><a href="<%= home_path(@conn, :index) %>">Home</a></li>
-              <li><a href="<%= assets_path(@conn, :index) %>">Assets</a></li>
-              <li><a href="<%= contracts_path(@conn, :index) %>">Contracts</a></li>
-            </ul>
-          </div>
-        </nav>
       </div>
     </section>
 
@@ -82,16 +49,19 @@
     </main>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
 
-    <footer class="footer">
+    <footer class="footer main-background">
       <div class="container">
-        <div class="content has-text-centered">
+        <div class="content has-text-centered white-text">
           <p>
-            <strong>NeoScan</strong> by <a href="http://cityofzion.io/">CityOfZion</a> community. The source code is licensed
-            <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
-            is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
+            <h1 class="white-text sans-coz">
+                <img class="coz-logo" src="<%= static_path(@conn, "/images/coz.png")%>"></img>
+                &nbspNeoScan
+            </h1> by <a class="link" href="http://cityofzion.io/">CityOfZion</a> community. The source code is licensed
+            <a class="link" href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+            is licensed <a class="link" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
           </p>
           <p>
-            <a class="icon" href="https://github.com/CityOfZion">
+            <a class="link" class="icon" href="https://github.com/CityOfZion">
               <i class="fa fa-github"></i>
             </a>
           </p>

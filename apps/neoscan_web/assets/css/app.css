@@ -1,1 +1,88 @@
 /* This file is for your main application css. */
+
+.main-background {
+  background-color: #222248;
+}
+
+.content-background {
+  background-color: #2A2B59;
+}
+
+.white-text {
+  color:white;
+}
+
+h1.white-text {
+  color:white;
+}
+
+a.nav-item:not(.button) {
+  color: #7B80A6;
+  text-decoration: none;
+}
+
+a.nav-item:not(.button):hover {
+  color: #FFFFFF;
+}
+
+a {
+  color: #7B80A6;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #FFFFFF;
+}
+
+a.link {
+  color: #00d1b2;
+}
+
+a.link:hover {
+  color: #FFFFFF;
+  text-decoration: underline;
+}
+
+.sans-font {
+  font-family: "Open Sans",Arial,sans-serif;
+}
+
+.sans-coz {
+  font-family: 'Orbitron',sans-serif;
+}
+
+.coz-logo {
+  height: 30px;
+}
+
+.neoscan-title {
+  font-size: 2rem;
+  height: -webkit-fill-available;
+}
+
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:    #FFFFFF;
+}
+
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    #FFFFFF;
+   opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    #FFFFFF;
+   opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color:    #FFFFFF;
+}
+::-ms-input-placeholder { /* Microsoft Edge */
+   color:    #FFFFFF;
+}
+
+.fill-all {
+  height: -webkit-fill-available
+}
+
+.no-padding-top {
+  padding-top: 0;
+}

@@ -1,10 +1,10 @@
-<section class="section">
+<section class="section main-background">
   <div class="container">
-    <div class="tile is-12 is-ancestor box is-vertical">
-      <div class="tile is-parent box content">
-        <p class="title">Block <%=@block.hash%></p>
+    <div class="tile is-12 is-ancestor box is-vertical main-background">
+      <div class="tile is-parent box content content-background">
+        <p class="title white-text">Block <%=@block.hash%></p>
       </div>
-      <div class="tile is-parent box content">
+      <div class="tile is-parent box content content-background white-text">
         <ul>
           <li>
             <small>Date
@@ -31,14 +31,14 @@
           </li>
           <li>
             Next Block Hash
-            <a href="<%=block_path(@conn, :index, @block.nextblockhash )%>">
+            <a class="link" href="<%=block_path(@conn, :index, @block.nextblockhash )%>">
                <%=@block.nextblockhash%>
             </a>
           </li>
           <%= if @block.index != 0 do %>
             <li>
               Previous Block Hash
-              <a href="<%=block_path(@conn, :index, @block.previousblockhash )%>">
+              <a class="link" href="<%=block_path(@conn, :index, @block.previousblockhash )%>">
                  <%=@block.previousblockhash%>
               </a>
             </li>
@@ -48,13 +48,13 @@
           </li>
         </ul>
       </div>
-      <div class="box content">
-        <p class="title">Transactions</p>
+      <div class="box content content-background white-text">
+        <p class="title  white-text">Transactions</p>
         <ul>
           <%= for transaction <- @block.transactions do %>
             <li>
               <%=transaction.type%>
-              <a href="<%=transaction_path(@conn, :index, transaction.txid )%>">
+              <a class="link" href="<%=transaction_path(@conn, :index, transaction.txid )%>">
                 <%=transaction.txid%>
               </a>
             </li>

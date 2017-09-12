@@ -1,10 +1,10 @@
-<section class="section">
+<section class="section main-background">
   <div class="container">
-    <div class="tile is-12 is-ancestor box is-vertical">
-      <div class="tile is-parent box content">
-        <p class="title">Assets</p>
+    <div class="tile is-12 is-ancestor box is-vertical main-background">
+      <div class="tile is-parent box content content-background">
+        <p class="title white-text">Assets</p>
       </div>
-      <div class="tile is-parent box content">
+      <div class="tile is-parent box content content-background white-text">
         <ul>
           <%= for asset <- @assets do %>
             <li>
