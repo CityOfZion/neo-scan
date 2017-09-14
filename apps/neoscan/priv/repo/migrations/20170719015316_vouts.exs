@@ -8,6 +8,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
       add :n, :integer
       add :value, :float
       add :txid, :string
+      add :time, :integer
 
       add :query, :string
 

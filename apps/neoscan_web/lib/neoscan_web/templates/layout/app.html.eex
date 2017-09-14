@@ -42,6 +42,7 @@
               <a  class="navbar-item" href="<%= contracts_path(@conn, :index) %>">Contracts</a>
               <a  class="navbar-item" href="<%= doc_path(@conn, :index) %>" >API</a>
               <a  class="navbar-item" href="https://github.com/CityOfZion/NEOScan">GitHub</a>
+              <a  class="navbar-item" href="https://neoscan-testnet.io">TestNet</a>
             </div>
           </div>
         </nav>
