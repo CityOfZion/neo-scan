@@ -14,6 +14,7 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Transactions.Asset
   alias Neoscan.Addresses
   alias Neoscan.Blocks
+  alias Ecto.Multi
 
   @doc """
   Returns the list of transactions.
@@ -141,17 +142,17 @@ defmodule Neoscan.Transactions do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_transaction(%{:time => time, :hash => hash, :index => index } = block, %{"vout" => vouts, "vin" => vin, "txid" => txid, "type" => type} = attrs) do
+  def create_transaction(%{:time => time, :hash => hash, :index => height } = block, %{"vout" => vouts, "vin" => vin, "txid" => txid, "type" => type} = attrs) do
 
     #get inputs from db
-    new_vin = get_vins(vin)
+    new_vin = get_vins(vin, height)
 
     #get claims from db
     new_claim = get_claims(attrs["claims"])
 
     #fetch all addresses involved in the transaction
     address_list = Task.async(fn -> Addresses.get_transaction_addresses( new_vin, vouts )
-    |> Addresses.update_all_addresses(new_vin, new_claim, vouts, String.slice(to_string(txid), -64..-1), index, time) end) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
+    |> Addresses.update_all_addresses(new_vin, new_claim, vouts, String.slice(to_string(txid), -64..-1), height, time) end) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
 
     #create asset if register Transaction
     assets(attrs["asset"], String.slice(to_string(txid), -64..-1))
@@ -166,7 +167,7 @@ defmodule Neoscan.Transactions do
           "vin" => new_vin,
           "claims" => new_claim,
           "block_hash" => hash,
-          "block_height" => index,
+          "block_height" => height,
     })
     |> Map.delete("vout")
 
@@ -191,18 +192,19 @@ defmodule Neoscan.Transactions do
   end
 
   #get vins and add to addresses
-  defp get_vins([] = vin) do
+  defp get_vins([] = vin, _height) do
     vin
   end
-  defp get_vins(vin) do
+  defp get_vins(vin, height) do
     lookups = Enum.map(vin, &"#{String.slice(to_string(&1["txid"]), -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
 
     query =  from e in Vout,
      where: e.query in ^lookups,
-     select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+     select: struct(e, [:asset, :address_hash, :n, :value, :txid, :query, :id])
 
     Repo.all(query)
     |> verify_vouts(lookups, vin)
+    |> end_vouts_and_return(height)
   end
 
   #get claimed vouts and add to addresses
@@ -215,10 +217,11 @@ defmodule Neoscan.Transactions do
 
     query =  from e in Vout,
     where: e.query in ^lookups,
-    select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+    select: struct(e, [:asset, :address_hash, :n, :value, :txid, :query, :id])
 
     Repo.all(query)
     |> verify_vouts(lookups, claims)
+    |> set_claimed_and_return()
   end
 
   #check if all vouts were found
@@ -230,6 +233,9 @@ defmodule Neoscan.Transactions do
         repair_missing(result, root)
     end
   end
+
+
+  ############## repair algorithm ##############################################
 
   #trigger repair if information is missing
   def repair_missing( [], root) do
@@ -253,22 +259,25 @@ defmodule Neoscan.Transactions do
     |> fetch_missing_vouts(root)
   end
 
+  #return the tuple list, specifying each missing entity
   def check_missing(transactions) do
     Enum.map(transactions, fn {:ok, %{"blockhash" => block_hash} = transaction } -> Blocks.check_if_block_exists(String.slice(to_string(block_hash), -64..-1), transaction) end)
   end
 
-  #fetch vouts again after repairing
+  #fetch vouts again after reparing
   def fetch_missing_vouts(_result , root) do
     lookups = Enum.map(root, &"#{String.slice(to_string(&1["txid"]), -64..-1)}#{&1["vout"]}") #sometimes "0x" is prepended to hashes
 
     query =  from e in Vout,
     where: e.query in ^lookups,
-    select: %{:asset => e.asset, :address_hash => e.address_hash, :n => e.n, :value => e.value, :txid => e.txid}
+    select: struct(e, [:asset, :address_hash, :n, :value, :txid, :query, :id])
 
     Repo.all(query)
     |> verify_vouts(lookups, root)
   end
 
+
+  #verify if the transaction exists in the DB
   def check_if_transaction_exists(block, transaction) do
     txid = String.slice(to_string(transaction["txid"]), -64..-1)
     query = from t in Transaction,
@@ -282,6 +291,7 @@ defmodule Neoscan.Transactions do
     end
   end
 
+  #Verify if vouts exists in the DB
   def check_if_vouts_exists(db_transaction, transaction) do
     query = from v in Vout,
       where: v.transaction_id == ^db_transaction.id,
@@ -313,7 +323,6 @@ defmodule Neoscan.Transactions do
       false ->
         [{:ok, "Created"}]
     end
-
   end
   def add_missing_transactions( _, _tuples) do
     raise "error fetching and adding missing blocks"
@@ -335,15 +344,37 @@ defmodule Neoscan.Transactions do
     raise "error fetching and adding missing transactions"
   end
 
-
+  #filter the content from the tuples
   def filter_tuples(tuples) do
     Enum.map(tuples, fn {_block, content} -> content end)
   end
+  #########################################################################
 
+  #set end height for vouts
+  def end_vouts_and_return(vouts, height) do
+    Enum.map(vouts, fn vout -> {vout, Vout.update_changeset(vout, %{:end_height => height})} end)
+    |> Enum.reduce(Multi.new, fn (tuple, acc) -> push_vout_into_multi(tuple, acc) end)
+    |> Repo.transaction
 
+    Enum.map(vouts, fn %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} -> %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} end)
+  end
 
+  #set claimed for vouts
+  def set_claimed_and_return(vouts) do
+    Enum.map(vouts, fn vout -> {vout, Vout.update_changeset(vout, %{:claimed => true})} end)
+    |> Enum.reduce(Multi.new, fn (tuple, acc) -> push_vout_into_multi(tuple, acc) end)
+    |> Repo.transaction
 
+    Enum.map(vouts, fn %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} -> %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} end)
+  end
 
+  #push changes into multi operation
+  def push_vout_into_multi({vout, changeset} , acc) do
+    name = String.to_atom(vout.query)
+
+    acc
+    |> Multi.update(name, changeset, [])
+  end
 
   #create new assets
   defp assets(%{"amount" => amount} = assets, txid) do

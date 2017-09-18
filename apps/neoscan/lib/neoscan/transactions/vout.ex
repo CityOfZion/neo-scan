@@ -11,6 +11,10 @@ defmodule Neoscan.Transactions.Vout do
     field :txid, :string
     field :time, :integer
 
+    field :start_height, :integer
+    field :end_height, :integer
+    field :claimed, :boolean
+
     field :query, :string  #colum for composed query indexing
 
     belongs_to :transaction, Neoscan.Transactions.Transaction
@@ -19,11 +23,13 @@ defmodule Neoscan.Transactions.Vout do
   end
 
   @doc false
-  def changeset(%{:id => transaction_id, :txid => txid, :time => time}, %{"address" => {address, _attrs}, "value" => value, "n" => n, "asset" => asset} = attrs \\ %{}) do
+  def changeset(%{:id => transaction_id, :txid => txid, :time => time, :block_height => height}, %{"address" => {address, _attrs}, "value" => value, "n" => n, "asset" => asset} = attrs \\ %{}) do
     {new_value, _} = Float.parse(value)
 
     new_attrs= attrs
     |> Map.merge( %{
+      "start_height" => height,
+      "claimed" => false,
       "time" => time,
       "asset" => String.slice(to_string(asset), -64..-1),
       "address_id" => address.id,
@@ -36,10 +42,19 @@ defmodule Neoscan.Transactions.Vout do
     |> Map.delete("address")
 
     %Vout{}
-    |> cast(new_attrs, [:asset, :address_hash, :n, :value, :address_id, :transaction_id, :txid, :query, :time])
+    |> cast(new_attrs, [:asset, :address_hash, :n, :value, :address_id, :transaction_id, :txid, :query, :time, :start_height, :end_height, :claimed])
     |> assoc_constraint(:transaction, required: true)
     |> assoc_constraint(:address, required: true)
-    |> validate_required([:asset, :address_hash, :n, :value, :txid, :query, :time])
+    |> validate_required([:asset, :address_hash, :n, :value, :txid, :query, :time, :start_height])
+  end
+
+  def update_changeset(vout, %{:end_height => _endheight} = attrs) do
+    vout
+    |> cast(attrs, [:end_height])
+  end
+  def update_changeset(vout, %{:claimed => _claimed} = attrs) do
+    vout
+    |> cast(attrs, [:claimed])
   end
 
 

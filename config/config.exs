@@ -13,8 +13,7 @@ import_config "../apps/*/config/config.exs"
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id],
-  loggers: [{Ecto.LogEntry, :log, [:info]},
-  {ScoutApm.Instruments.EctoLogger, :log, []}],
+  loggers: [{Ecto.LogEntry, :log, [:info]}],
   level: :info
 
 # Import environment specific config. This must remain at the bottom

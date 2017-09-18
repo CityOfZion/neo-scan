@@ -162,7 +162,6 @@ defmodule Neoscan.Addresses do
       acc
       |> Multi.update(name, address_changeset, [])
       |> Multi.insert(name1, history_changeset, [])
-      #|> Multi.run(name1, Neoscan.Sql, :add_tx, [address.address, attrs.tx_ids])  #adds transactions to address without prior loading
   end
 
 
