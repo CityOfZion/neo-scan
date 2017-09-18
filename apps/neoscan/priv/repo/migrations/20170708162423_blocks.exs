@@ -17,6 +17,9 @@ defmodule Neoscan.Repo.Migrations.Blocks do
       add :version, :integer
       add :tx_count, :integer
 
+      add :total_sys_fee, :float
+      add :total_net_fee, :float
+
       timestamps()
     end
 

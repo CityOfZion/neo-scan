@@ -299,4 +299,19 @@ defmodule Neoscan.Blocks do
   end
 
 
+  def compute_fees(block) do
+    sys_fee = Enum.reduce(block["tx"], 0, fn (tx, acc) ->
+       {num, _st} = Float.parse(tx["sys_fee"])
+       acc + num
+      end)
+      
+    net_fee = Enum.reduce(block["tx"], 0, fn (tx, acc) ->
+      {num, _st} = Float.parse(tx["net_fee"])
+      acc + num
+     end)
+
+    Map.merge(block, %{"total_sys_fee" => sys_fee, "total_net_fee" => net_fee})
+  end
+
+
 end

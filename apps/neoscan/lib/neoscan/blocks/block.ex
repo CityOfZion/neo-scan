@@ -18,6 +18,10 @@ defmodule Neoscan.Blocks.Block do
     field :time, :integer
     field :version, :integer
     field :tx_count, :integer
+
+    field :total_sys_fee, :float
+    field :total_net_fee, :float
+
     has_many :transactions, Neoscan.Transactions.Transaction
 
     timestamps()

@@ -23,6 +23,7 @@ defmodule NeoscanSync.Consumer do
    #add block with transactions to the db
   def add_block(%{"tx" => transactions, "index" => height} = block) do
     Map.put(block,"tx_count",Kernel.length(transactions))
+    |> Blocks.compute_fees()
     |> Map.delete("tx")
     |> Blocks.create_block()
     |> Transactions.create_transactions(transactions)
