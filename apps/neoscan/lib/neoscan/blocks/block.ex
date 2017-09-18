@@ -36,7 +36,7 @@ defmodule Neoscan.Blocks.Block do
          "merkleroot" => String.slice(to_string(attrs["merkleroot"]), -64..-1),
       })
     block
-    |> cast(new_attrs, [:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count])
-    |> validate_required([:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count])
+    |> cast(new_attrs, [:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count, :total_sys_fee, :total_net_fee])
+    |> validate_required([:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count, :total_sys_fee, :total_net_fee])
   end
 end
