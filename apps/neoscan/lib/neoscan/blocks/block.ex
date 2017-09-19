@@ -18,6 +18,10 @@ defmodule Neoscan.Blocks.Block do
     field :time, :integer
     field :version, :integer
     field :tx_count, :integer
+
+    field :total_sys_fee, :float
+    field :total_net_fee, :float
+
     has_many :transactions, Neoscan.Transactions.Transaction
 
     timestamps()
@@ -32,7 +36,7 @@ defmodule Neoscan.Blocks.Block do
          "merkleroot" => String.slice(to_string(attrs["merkleroot"]), -64..-1),
       })
     block
-    |> cast(new_attrs, [:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count])
-    |> validate_required([:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count])
+    |> cast(new_attrs, [:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count, :total_sys_fee, :total_net_fee])
+    |> validate_required([:confirmations, :hash, :size, :version, :previousblockhash, :merkleroot, :time, :index, :nonce, :nextblockhash, :script, :nextconsensus, :tx_count, :total_sys_fee, :total_net_fee])
   end
 end
