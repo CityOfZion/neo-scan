@@ -504,11 +504,13 @@ defmodule Neoscan.Transactions do
 
   """
   def create_vouts( transaction, vouts, address_list) do
-    vouts
+    updates = vouts
     |> insert_address(address_list)
     |> Enum.group_by(fn %{"address" => {address , _attrs}} -> address.address end)
     |> Map.to_list()
     |> Enum.map(fn {_address, vouts} -> Addresses.insert_vouts_in_address(transaction, vouts) end)
+
+    Enum.map(address_list, fn {address, attrs} -> Addresses.substitute_if_updated(address, attrs, updates) end)
     |> Addresses.update_multiple_addresses()
   end
 
