@@ -355,17 +355,15 @@ defmodule Neoscan.Transactions do
     Enum.map(vouts, fn vout -> {vout, Vout.update_changeset(vout, %{:end_height => height})} end)
     |> Enum.reduce(Multi.new, fn (tuple, acc) -> push_vout_into_multi(tuple, acc) end)
     |> Repo.transaction
-
-    Enum.map(vouts, fn %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} -> %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} end)
+    |> check_and_return_vouts(vouts)
   end
 
   #set claimed for vouts
   def set_claimed_and_return(vouts) do
     Enum.map(vouts, fn vout -> {vout, Vout.update_changeset(vout, %{:claimed => true})} end)
     |> Enum.reduce(Multi.new, fn (tuple, acc) -> push_vout_into_multi(tuple, acc) end)
-    |> Repo.transaction
-
-    Enum.map(vouts, fn %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} -> %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} end)
+    |> Repo.transaction()
+    |> check_and_return_vouts(vouts)
   end
 
   #push changes into multi operation
@@ -374,6 +372,13 @@ defmodule Neoscan.Transactions do
 
     acc
     |> Multi.update(name, changeset, [])
+  end
+
+  def check_and_return_vouts({:ok, _any}, vouts) do
+    Enum.map(vouts, fn %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} -> %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} end)
+  end
+  def check_and_return_vouts({:error, _any}, _vouts) do
+    raise "error updating vouts"
   end
 
   #create new assets

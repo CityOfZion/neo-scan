@@ -149,6 +149,7 @@ defmodule Neoscan.Addresses do
     |> Enum.map(fn {address, attrs} -> {address, change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)} end)
     |> create_multi
     |> Repo.transaction
+    |> check_repo_transaction_results()
   end
 
   def create_multi(changesets) do
@@ -162,6 +163,14 @@ defmodule Neoscan.Addresses do
       acc
       |> Multi.update(name, address_changeset, [])
       |> Multi.insert(name1, history_changeset, [])
+  end
+
+  def check_repo_transaction_results({:ok, _any}) do
+    {:ok, "all operations were succesfull"}
+  end
+  def check_repo_transaction_results({:error, error}) do
+    IO.inspect(error)
+    raise "error updating addresses"
   end
 
 
