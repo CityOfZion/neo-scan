@@ -1,5 +1,7 @@
 defmodule NeoscanMonitor.Api do
-  use GenServer
+  @moduledoc """
+  Interface between server and worker to communicate with external modules
+  """
 
   def get_nodes do
     GenServer.call(NeoscanMonitor.Server, :nodes, 10000)

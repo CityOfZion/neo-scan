@@ -15,6 +15,8 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Addresses
   alias Neoscan.Blocks
 
+  require Logger
+
   @doc """
   Returns the list of transactions.
 
@@ -609,7 +611,7 @@ defmodule Neoscan.Transactions do
     result = get_asset_by_hash(asset_hash)
     cond do
       result == nil ->
-        IO.puts("Error issuing asset")
+        Logger.error("Error issuing asset")
         {:error , "Non existant asset cant be issued!"}
 
       true ->

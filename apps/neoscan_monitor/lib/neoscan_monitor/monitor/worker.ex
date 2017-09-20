@@ -1,4 +1,9 @@
 defmodule NeoscanMonitor.Worker do
+  @moduledoc """
+  GenServer module responsable to store blocks, states, trasactions and assets,
+  Common interface to handle it is NeoscanMonitor.Api module(look there for more info)
+  """
+
   use GenServer
   alias NeoscanMonitor.Utils
   alias Neoscan.Blocks
@@ -83,6 +88,5 @@ defmodule NeoscanMonitor.Worker do
   defp cut_if_more(list, _count) do
     list
   end
-
 
 end

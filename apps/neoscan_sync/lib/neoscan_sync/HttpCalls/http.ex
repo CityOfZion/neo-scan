@@ -1,6 +1,8 @@
 defmodule NeoscanSync.HttpCalls do
   @moduledoc false
 
+  require Logger
+
   @doc ~S"""
    Returns seed url according with 'index'
 
@@ -37,23 +39,23 @@ defmodule NeoscanSync.HttpCalls do
     |> handle_body
   end
   defp handle_response({:ok, %HTTPoison.Response{status_code: 404}}) do
-    IO.puts "Error 404 Not found! :("
+    Logger.error "Error 404 Not found! :("
     { :error , "Error 404 Not found! :(" }
   end
   defp handle_response({:ok, %HTTPoison.Response{status_code: 405}}) do
-    IO.puts "Error 405 Method not found! :("
+    Logger.error "Error 405 Method not found! :("
     { :error , "Error 405 Method not found! :(" }
   end
   defp handle_response({:ok, %HTTPoison.Response{}}) do
-    IO.puts "Web server error! :("
+    Logger.error "Web server error! :("
     { :error , "Web server error! :(" }
   end
   defp handle_response({:error, %HTTPoison.Error{reason: :timeout}}) do
-    IO.puts "timeout, retrying....."
+    Logger.error "timeout, retrying....."
     { :error , :timeout}
   end
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}) do
-    IO.inspect reason
+    Logger.error reason
     { :error , "urlopen error, retry."}
   end
 
