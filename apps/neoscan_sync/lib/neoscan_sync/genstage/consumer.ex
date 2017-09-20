@@ -3,6 +3,8 @@ defmodule NeoscanSync.Consumer do
   alias Neoscan.Blocks
   alias Neoscan.Transactions
 
+  require Logger
+
   def start_link do
     GenStage.start_link(__MODULE__, :state_doesnt_matter, name: __MODULE__)
   end
@@ -32,9 +34,9 @@ defmodule NeoscanSync.Consumer do
   defp check(r, height) do
     cond do
       {:ok, "Created"} == r or {:ok, "Deleted"} == r ->
-        IO.puts("Block #{height} stored")
+        Logger.info("Block #{height} stored")
       true ->
-        IO.puts("Failed to create transactions")
+        Logger.info("Failed to create transactions")
         Blocks.get_block_by_height(height)
         |> Blocks.delete_block()
     end

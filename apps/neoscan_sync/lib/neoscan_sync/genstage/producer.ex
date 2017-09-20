@@ -6,6 +6,8 @@ defmodule NeoscanSync.Producer do
   alias NeoscanMonitor.Api
   alias Neoscan.Blocks
 
+  require Logger
+
   def start_link() do
     { :ok, counter } = Blocks.get_highest_block_in_db()
     GenStage.start_link(__MODULE__, counter, name: __MODULE__)
@@ -14,7 +16,7 @@ defmodule NeoscanSync.Producer do
   def init(counter), do: {:producer, {counter, 0}}
 
   def handle_info(:fetch_more, {counter, pending_demand}) do
-    IO.puts("#{pending_demand} blocks pending")
+    Logger.info("#{pending_demand} blocks pending")
     do_handle_demand(pending_demand, {counter, 0})
   end
 
@@ -35,7 +37,7 @@ defmodule NeoscanSync.Producer do
     Process.send_after(self(), :fetch_more, 15000)
   end
   def check_if_demand(events, demand) when events == demand do
-    IO.puts("demand fullfiled")
+    Logger.info("demand fullfiled, actual: #{inspect demand}, Events: #{inspect events}")
   end
 
   #evaluate number of process, current block count, and start async functions
@@ -62,7 +64,7 @@ defmodule NeoscanSync.Producer do
   end
 
   #cross check block hash between different seeds
-  def cross_check(height) do
+  defp cross_check(height) do
     nodes = check_if_nodes(2)
     cond do
       nodes != nil ->
@@ -94,10 +96,10 @@ defmodule NeoscanSync.Producer do
   end
 
   #handles error when fetching block from chain
-  def get_block_by_height(nil, height) do
+  defp get_block_by_height(nil, height) do
     get_block_by_height(check_if_nodes(1), height)
   end
-  def get_block_by_height(random, height) do
+  defp get_block_by_height(random, height) do
     case Blockchain.get_block_by_height(random, height) do
       { :ok , block } ->
         block
