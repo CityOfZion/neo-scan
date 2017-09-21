@@ -46,6 +46,7 @@ defmodule NeoscanWeb.Router do
     get "/get_all_nodes", ApiController, :get_all_nodes
     get "/get_height", ApiController, :get_height
     get "/get_nodes", ApiController, :get_nodes
+    get "/get_fees_in_range/:range", ApiController, :get_fees_in_range
   end
   # Other scopes may use custom stacks.
   # scope "/api", NeoscanWeb do

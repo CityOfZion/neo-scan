@@ -7,6 +7,7 @@ defmodule Neoscan.Api do
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Transactions.Asset
   alias Neoscan.Blocks.Block
+  alias Neoscan.Blocks
   alias Neoscan.Transactions.Vout
   alias NeoscanMonitor.Api
 
@@ -697,6 +698,30 @@ defmodule Neoscan.Api do
   def get_height() do
     {:ok, height} = NeoscanMonitor.Api.get_height
     %{:height => height}
+  end
+
+  @doc """
+  Returns the the total of spent fees in the network between a height range
+
+  ## Examples
+
+      /api/main_net/v1/get_fees_in_range/500-1000
+      {
+        "total_sys_fee": 0,
+        "total_net_fee": 0
+      }
+
+  """
+  def get_fees_in_range(height_string) do
+    range = String.split(height_string, "-")
+
+    cond do
+      Enum.count(range) != 2 ->
+        "wrong input"
+      true ->
+        [height1, height2] = range
+        Blocks.get_fees_in_range(height1, height2)
+    end
   end
 
 

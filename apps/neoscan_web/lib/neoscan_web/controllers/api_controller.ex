@@ -73,5 +73,10 @@ defmodule NeoscanWeb.ApiController do
     json(conn, height)
   end
 
+  def get_fees_in_range(conn, %{"range" => range}) do
+    fees = Api.get_fees_in_range(range)
+    json(conn, fees)
+  end
+
 
 end

@@ -8,6 +8,11 @@ defmodule Neoscan.Repo.Migrations.Vouts do
       add :n, :integer
       add :value, :float
       add :txid, :string
+      add :time, :integer
+
+      add :start_height, :integer
+      add :end_height, :integer
+      add :claimed, :boolean
 
       add :query, :string
 
@@ -20,6 +25,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
 
     create unique_index(:vouts, [:query])
     create index(:vouts, [:transaction_id])
+    create index(:vouts, [:address_id])
 
   end
 end

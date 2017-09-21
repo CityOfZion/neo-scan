@@ -24,7 +24,7 @@ defmodule NeoscanWeb.Mixfile do
   def application do
     [
       mod: {NeoscanWeb.Application, []},
-      extra_applications: [:logger, :runtime_tools, :scout_apm]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -46,7 +46,6 @@ defmodule NeoscanWeb.Mixfile do
       {:gettext, "~> 0.11"},
       {:neoscan, in_umbrella: true},
       {:cowboy, "~> 1.0"},
-      {:scout_apm, "~> 0.0"},
       {:cors_plug, "~> 1.2"},
       {:wobserver, "~> 0.1"}
     ]

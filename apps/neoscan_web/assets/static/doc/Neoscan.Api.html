@@ -8,7 +8,7 @@
     <title>Neoscan.Api – NeoScan vdev</title>
     <link rel="stylesheet" href="dist/app-268c9dc719.css" />
 
-    <script src="dist/sidebar_items-017f9ccb4d.js"></script>
+    <script src="dist/sidebar_items-e16717f9ae.js"></script>
   </head>
   <body data-type="modules">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -152,6 +152,15 @@ Information is updated each 5 minutes</p>
   </div>
 
     <div class="summary-synopsis"><p>Returns the claimed transactions for an address, from its <code class="inline">hash_string</code></p>
+</div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_fees_in_range/1">get_fees_in_range(height_string)</a>
+  </div>
+
+    <div class="summary-synopsis"><p>Returns the the total of spent fees in the network between a height range</p>
 </div>
 
 </div>
@@ -521,6 +530,33 @@ http://seed5.neo.org:10332</p>
     ...
   ],
   &quot;address&quot;: &quot;hash_string&quot;
+}</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="get_fees_in_range/1">
+
+  <div class="detail-header">
+    <a href="#get_fees_in_range/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">get_fees_in_range(height_string)</span>
+
+
+
+  </div>
+  <section class="docstring">
+    <p>Returns the the total of spent fees in the network between a height range</p>
+<h2 id="get_fees_in_range/1-examples" class="section-heading">
+  <a href="#get_fees_in_range/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="elixir">/api/main_net/v1/get_fees_in_range/500-1000
+{
+  &quot;total_sys_fee&quot;: 0,
+  &quot;total_net_fee&quot;: 0
 }</code></pre>
 
   </section>

@@ -268,6 +268,10 @@ defmodule Neoscan.Blocks do
     |> delete_blocks
   end
 
+
+
+  ###### repair algorithm ##############################
+  #check if block exist and create tuple, otherwise route forward for transaction verification
   def check_if_block_exists(hash, transaction) do
     query = from e in Block,
       where: e.hash == ^hash,
@@ -281,6 +285,7 @@ defmodule Neoscan.Blocks do
     end
   end
 
+  #get the missing blocks in the verification tuples
   def get_missing_blocks(transaction_tuples) do
     case Enum.any?(transaction_tuples, fn {key, _value} -> key == :block_missing end) do
       true ->
@@ -293,9 +298,60 @@ defmodule Neoscan.Blocks do
     end
   end
 
+  #get a missing block from the node client
   def get_missing_block(hash) do
     {:ok, block} = NeoscanSync.Blockchain.get_block_by_hash(NeoscanSync.HttpCalls.url(1), hash)
     NeoscanSync.Consumer.add_block(block)
+  end
+  #########################################################
+
+
+  #get the total of spent fees in the network between a height range
+  def get_fees_in_range(height1, height2) do
+
+    try  do
+      String.to_integer(height1)
+    rescue
+      ArgumentError ->
+        "wrong input"
+    else
+      value1 ->
+        try  do
+          String.to_integer(height2)
+        rescue
+          ArgumentError ->
+            "wrong input"
+        else
+          value2 ->
+
+            range = [value1, value2]
+
+            max = Enum.max(range)
+            min = Enum.min(range)
+
+            query = from b in Block,
+              where: b.index >= ^min and b.index <= ^max,
+              select: %{:total_sys_fee => b.total_sys_fee, :total_net_fee => b.total_net_fee}
+
+            Repo.all(query)
+            |> Enum.reduce(%{:total_sys_fee => 0, :total_net_fee => 0}, fn (%{:total_sys_fee => sys_fee, :total_net_fee => net_fee} , acc) ->
+              %{:total_sys_fee => acc.total_sys_fee + sys_fee, :total_net_fee => acc.total_net_fee + net_fee} end)
+        end
+    end
+  end
+
+  def compute_fees(block) do
+    sys_fee = Enum.reduce(block["tx"], 0, fn (tx, acc) ->
+       {num, _st} = Float.parse(tx["sys_fee"])
+       acc + num
+      end)
+      
+    net_fee = Enum.reduce(block["tx"], 0, fn (tx, acc) ->
+      {num, _st} = Float.parse(tx["net_fee"])
+      acc + num
+     end)
+
+    Map.merge(block, %{"total_sys_fee" => sys_fee, "total_net_fee" => net_fee})
   end
 
 

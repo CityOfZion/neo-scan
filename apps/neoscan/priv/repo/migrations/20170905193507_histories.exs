@@ -7,6 +7,7 @@ defmodule Neoscan.Repo.Migrations.Histories do
       add :balance, :map
       add :block_height, :integer
       add :txid, :string
+      add :time, :integer
 
       add :address_id, references(:addresses, on_delete: :delete_all)
 

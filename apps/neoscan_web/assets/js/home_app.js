@@ -8,12 +8,13 @@ const blocksContainer = document.getElementById('show-blocks')
 const transactionsContainer = document.getElementById('show-transactions')
 
 const blockRow = row => (
-  <a href={'/block/' + row.hash} class='box content-background'>
+  <a href={'/block/' + row.hash} class='box block-color content-background'>
     <article class='media'>
       <div class='media-content'>
         <div class='content white-text'>
           <p>
-            <strong class='white-text'>Height {row.index}&nbsp;&nbsp;&nbsp;</strong>
+            <i class='fa fa-signal block-color' aria-hidden='true'></i>
+            <strong class='white-text'>&nbsp;{row.index}&nbsp;&nbsp;&nbsp;</strong>
             <small>Date&nbsp;&nbsp;{moment.unix(row.time).format('DD-MM-YYYY')}&nbsp;&nbsp;</small>
             <small>Time&nbsp;&nbsp;{moment.unix(row.time).format('HH:mm:ss')}&nbsp;&nbsp;</small>
             <small class='is-pulled-right'>Number of Transactions {row.tx_count}</small>
@@ -30,7 +31,7 @@ const transactionRow = row => (
       <div class='media-content'>
         <div class='content white-text'>
           <p>
-            <strong class='white-text'>{row.type.replace("Transaction", "")}&nbsp;&nbsp;&nbsp;</strong>
+            <strong class='white-text'>{row.type.replace('Transaction', '')}&nbsp;&nbsp;&nbsp;</strong>
             <small>Date&nbsp;&nbsp;{moment.unix(row.time).format('DD-MM-YYYY')}&nbsp;&nbsp;</small>
             <small>Time&nbsp;&nbsp;{moment.unix(row.time).format('HH:mm:ss')}&nbsp;&nbsp;</small>
           </p>

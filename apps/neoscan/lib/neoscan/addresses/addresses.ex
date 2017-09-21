@@ -149,6 +149,7 @@ defmodule Neoscan.Addresses do
     |> Enum.map(fn {address, attrs} -> {address, change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)} end)
     |> create_multi
     |> Repo.transaction
+    |> check_repo_transaction_results()
   end
 
   def create_multi(changesets) do
@@ -162,7 +163,14 @@ defmodule Neoscan.Addresses do
       acc
       |> Multi.update(name, address_changeset, [])
       |> Multi.insert(name1, history_changeset, [])
-      #|> Multi.run(name1, Neoscan.Sql, :add_tx, [address.address, attrs.tx_ids])  #adds transactions to address without prior loading
+  end
+
+  def check_repo_transaction_results({:ok, _any}) do
+    {:ok, "all operations were succesfull"}
+  end
+  def check_repo_transaction_results({:error, error}) do
+    IO.inspect(error)
+    raise "error updating addresses"
   end
 
 
@@ -296,20 +304,20 @@ defmodule Neoscan.Addresses do
 
 
   #Update vins and claims into addresses
-  def update_all_addresses(address_list,[], nil, _vouts, _txid, _index) do
+  def update_all_addresses(address_list,[], nil, _vouts, _txid, _index, _time) do
     address_list
   end
-  def update_all_addresses(address_list,[], claims, vouts, _txid, _index) do
+  def update_all_addresses(address_list,[], claims, vouts, _txid, _index, _time) do
     address_list
     |> separate_txids_and_insert_claims(claims, vouts)
   end
-  def update_all_addresses(address_list, vins, nil, _vouts, txid, index) do
+  def update_all_addresses(address_list, vins, nil, _vouts, txid, index, time) do
     address_list
-    |> group_vins_by_address_and_update(vins, txid, index)
+    |> group_vins_by_address_and_update(vins, txid, index, time)
   end
-  def update_all_addresses(address_list, vins, claims, vouts, txid, index) do
+  def update_all_addresses(address_list, vins, claims, vouts, txid, index, time) do
     address_list
-    |> group_vins_by_address_and_update(vins, txid, index)
+    |> group_vins_by_address_and_update(vins, txid, index, time)
     |> separate_txids_and_insert_claims(claims, vouts)
   end
 
@@ -319,11 +327,11 @@ defmodule Neoscan.Addresses do
   end
 
   #separate vins by address hash, insert vins and update the address
-  def group_vins_by_address_and_update(address_list, vins, txid, index) do
+  def group_vins_by_address_and_update(address_list, vins, txid, index, time) do
     updates = Enum.group_by(vins, fn %{:address_hash => address} -> address end)
     |> Map.to_list()
     |> populate_groups(address_list)
-    |> Enum.map(fn {address, vins} -> insert_vins_in_address(address, vins, txid, index) end)
+    |> Enum.map(fn {address, vins} -> insert_vins_in_address(address, vins, txid, index, time) end)
 
 
     Enum.map(address_list, fn {address, attrs} -> substitute_if_updated(address, attrs, updates) end)
@@ -373,19 +381,19 @@ defmodule Neoscan.Addresses do
 
 
   #insert vouts into address balance
-  def insert_vouts_in_address(%{:txid => txid, :block_height => index} = transaction, vouts) do
+  def insert_vouts_in_address(%{:txid => txid, :block_height => index, :time => time} = transaction, vouts) do
     %{"address" => {address , attrs }} = List.first(vouts)
     new_attrs = Map.merge( attrs, %{:balance => check_if_attrs_balance_exists(attrs) || address.balance , :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids})
       |> add_vouts(vouts, transaction)
-      |> add_tx_id(txid, index)
+      |> add_tx_id(txid, index, time)
     {address, new_attrs}
   end
 
   #insert vins into address balance
-  def insert_vins_in_address({address, attrs}, vins, txid, index) do
+  def insert_vins_in_address({address, attrs}, vins, txid, index, time) do
     new_attrs = Map.merge(attrs, %{:balance => check_if_attrs_balance_exists(attrs) || address.balance, :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids})
     |> add_vins(vins)
-    |> add_tx_id(txid, index)
+    |> add_tx_id(txid, index, time)
     {address, new_attrs}
   end
 
@@ -433,8 +441,8 @@ defmodule Neoscan.Addresses do
   end
 
   #add a transaction id into address
-  def add_tx_id(address, txid, index) do
-      new_tx = %{:txid => txid, :balance => address.balance, :block_height => index}
+  def add_tx_id(address, txid, index, time) do
+      new_tx = %{:txid => txid, :balance => address.balance, :block_height => index, :time => time}
       %{address | tx_ids: new_tx}
   end
 

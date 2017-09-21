@@ -9,6 +9,7 @@ defmodule Neoscan.Addresses.History do
     field :txid, :string
     field :balance, :map
     field :block_height, :integer
+    field :time, :integer
 
     belongs_to :address, Neoscan.Addresses.Address
     timestamps()
@@ -23,9 +24,9 @@ defmodule Neoscan.Addresses.History do
       })
 
     history
-    |> cast(new_attrs, [:address_hash, :balance, :txid, :block_height, :address_id])
+    |> cast(new_attrs, [:address_hash, :balance, :txid, :block_height, :address_id, :time])
     |> assoc_constraint(:address, required: true)
-    |> validate_required([:address_hash, :balance, :txid, :block_height, :address_id])
+    |> validate_required([:address_hash, :balance, :txid, :block_height, :address_id, :time])
   end
 
 end

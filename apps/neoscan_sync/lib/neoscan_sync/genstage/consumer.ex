@@ -10,7 +10,7 @@ defmodule NeoscanSync.Consumer do
   end
 
   def init(state) do
-    {:consumer, state, subscribe_to: [{NeoscanSync.Producer, max_demand: 200, min_demand: 100}]}
+    {:consumer, state, subscribe_to: [{NeoscanSync.Producer, max_demand: 300, min_demand: 150}]}
   end
 
   def handle_events(events, _from, state) do
@@ -25,6 +25,7 @@ defmodule NeoscanSync.Consumer do
    #add block with transactions to the db
   def add_block(%{"tx" => transactions, "index" => height} = block) do
     Map.put(block,"tx_count",Kernel.length(transactions))
+    |> Blocks.compute_fees()
     |> Map.delete("tx")
     |> Blocks.create_block()
     |> Transactions.create_transactions(transactions)
