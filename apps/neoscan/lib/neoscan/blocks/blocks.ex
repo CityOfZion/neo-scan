@@ -10,7 +10,6 @@ defmodule Neoscan.Blocks do
   alias Neoscan.Blocks.Block
   alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
-  alias Neoscan.Addresses
   alias NeoscanMonitor.Api
 
   @doc """
@@ -181,8 +180,8 @@ defmodule Neoscan.Blocks do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_block(%Block{:updated_at => time} = block) do
-    Addresses.rollback_addresses(time)
+  def delete_block(%Block{:updated_at => _time} = block) do
+    #Addresses.rollback_addresses(time) TODO
     Repo.delete!(block)
   end
 
@@ -345,7 +344,7 @@ defmodule Neoscan.Blocks do
        {num, _st} = Float.parse(tx["sys_fee"])
        acc + num
       end)
-      
+
     net_fee = Enum.reduce(block["tx"], 0, fn (tx, acc) ->
       {num, _st} = Float.parse(tx["net_fee"])
       acc + num

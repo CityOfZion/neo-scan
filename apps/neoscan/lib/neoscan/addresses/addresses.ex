@@ -8,8 +8,8 @@ defmodule Neoscan.Addresses do
   alias Neoscan.Repo
   alias Neoscan.Addresses.Address
   alias Neoscan.Addresses.History
+  alias Neoscan.Addresses.Claim
   alias Neoscan.Transactions
-  alias Neoscan.Transactions.Transaction
   alias Ecto.Multi
 
   @doc """
@@ -59,9 +59,15 @@ defmodule Neoscan.Addresses do
      select: %{
        txid: h.txid
      }
+
+   claim_query = from h in Claim,
+     select: %{
+       txids: h.txids
+     }
    query = from e in Address,
      where: e.address == ^hash,
      preload: [histories: ^his_query],
+     preload: [claimed: ^claim_query],
      select: e #%{:address => e.address, :tx_ids => e.histories, :balance => e.balance, :claimed => e.claimed}
    Repo.all(query)
    |> List.first
@@ -109,24 +115,6 @@ defmodule Neoscan.Addresses do
   end
 
   @doc """
-  Creates a address history point.
-
-  ## Examples
-
-      iex> create_history(%{field: value})
-      %History{}
-
-      iex> create_history(%{field: bad_value})
-      no_return
-
-  """
-  def create_history(attrs \\ %{}, address) do
-    %History{}
-    |> History.changeset(address, attrs)
-    |> Repo.insert!()
-  end
-
-  @doc """
   Updates a address.
 
   ## Examples
@@ -146,23 +134,40 @@ defmodule Neoscan.Addresses do
 
   def update_multiple_addresses(list) do
     list
-    |> Enum.map(fn {address, attrs} -> {address, change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)} end)
+    |> Enum.map(fn {address, attrs} -> verify_if_claim(address, attrs) end)
     |> create_multi
     |> Repo.transaction
     |> check_repo_transaction_results()
+  end
+
+  def verify_if_claim(address, %{:claimed => claim} = attrs) do
+    {address, change_claim(%Claim{}, address, claim), change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)}
+  end
+  def verify_if_claim(address, attrs)do
+    {address, nil, change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)}
   end
 
   def create_multi(changesets) do
     Enum.reduce(changesets, Multi.new, fn (tuple, acc) -> insert_updates(tuple, acc) end)
   end
 
-  def insert_updates({address, history_changeset, address_changeset}, acc) do
+  def insert_updates({address,claim_changeset, history_changeset, address_changeset}, acc) do
       name = String.to_atom(address.address)
       name1 = String.to_atom("#{address.address}_history")
+      name2 = String.to_atom("#{address.address}_claim")
 
       acc
       |> Multi.update(name, address_changeset, [])
       |> Multi.insert(name1, history_changeset, [])
+      |> add_claim_if_claim(name2, claim_changeset)
+  end
+
+  def add_claim_if_claim(multi, _name, nil) do
+    multi
+  end
+  def add_claim_if_claim(multi, name, changeset) do
+    multi
+    |> Multi.insert(name, changeset, [])
   end
 
   def check_repo_transaction_results({:ok, _any}) do
@@ -217,6 +222,19 @@ defmodule Neoscan.Addresses do
   end
 
   @doc """
+  Returns an `%Ecto.Changeset{}` for tracking address claim changes.
+
+  ## Examples
+
+      iex> change_claim(claim)
+      %Ecto.Changeset{source: %History{}}
+
+  """
+  def change_claim(%Claim{} = claim, address, attrs) do
+    Claim.changeset(claim, address, attrs)
+  end
+
+  @doc """
   Check if address exist in database
 
   ## Examples
@@ -262,7 +280,7 @@ defmodule Neoscan.Addresses do
 
     query =  from e in Address,
      where: e.address in ^lookups,
-     select: struct(e, [:id, :address, :balance, :claimed])
+     select: struct(e, [:id, :address, :balance])
 
      Repo.all(query)
      |> fetch_missing(lookups)
@@ -307,9 +325,9 @@ defmodule Neoscan.Addresses do
   def update_all_addresses(address_list,[], nil, _vouts, _txid, _index, _time) do
     address_list
   end
-  def update_all_addresses(address_list,[], claims, vouts, _txid, _index, _time) do
+  def update_all_addresses(address_list,[], claims, vouts, _txid, index, time) do
     address_list
-    |> separate_txids_and_insert_claims(claims, vouts)
+    |> separate_txids_and_insert_claims(claims, vouts, index, time)
   end
   def update_all_addresses(address_list, vins, nil, _vouts, txid, index, time) do
     address_list
@@ -318,12 +336,12 @@ defmodule Neoscan.Addresses do
   def update_all_addresses(address_list, vins, claims, vouts, txid, index, time) do
     address_list
     |> group_vins_by_address_and_update(vins, txid, index, time)
-    |> separate_txids_and_insert_claims(claims, vouts)
+    |> separate_txids_and_insert_claims(claims, vouts, index, time)
   end
 
   def gen_attrs(address_list) do
     address_list
-    |> Enum.map(fn address -> {Map.merge(address, %{:tx_ids => %{}}), %{}} end)
+    |> Enum.map(fn address -> { address, %{}} end)
   end
 
   #separate vins by address hash, insert vins and update the address
@@ -338,11 +356,11 @@ defmodule Neoscan.Addresses do
   end
 
   #separate claimed transactions and insert in the claiming addresses
-  def separate_txids_and_insert_claims(address_list, claims, vouts) do
+  def separate_txids_and_insert_claims(address_list, claims, vouts, index, time) do
     updates = Stream.map(claims, fn %{:txid => txid } -> String.slice(to_string(txid), -64..-1) end)
     |> Stream.uniq()
     |> Enum.to_list
-    |> insert_claim_in_addresses(vouts, address_list)
+    |> insert_claim_in_addresses(vouts, address_list, index, time)
 
     Enum.map(address_list, fn {address, attrs} -> substitute_if_updated(address, attrs, updates) end)
   end
@@ -383,7 +401,7 @@ defmodule Neoscan.Addresses do
   #insert vouts into address balance
   def insert_vouts_in_address(%{:txid => txid, :block_height => index, :time => time} = transaction, vouts) do
     %{"address" => {address , attrs }} = List.first(vouts)
-    new_attrs = Map.merge( attrs, %{:balance => check_if_attrs_balance_exists(attrs) || address.balance , :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids})
+    new_attrs = Map.merge( attrs, %{:balance => check_if_attrs_balance_exists(attrs) || address.balance , :tx_ids => check_if_attrs_txids_exists(attrs) || %{}})
       |> add_vouts(vouts, transaction)
       |> add_tx_id(txid, index, time)
     {address, new_attrs}
@@ -391,7 +409,7 @@ defmodule Neoscan.Addresses do
 
   #insert vins into address balance
   def insert_vins_in_address({address, attrs}, vins, txid, index, time) do
-    new_attrs = Map.merge(attrs, %{:balance => check_if_attrs_balance_exists(attrs) || address.balance, :tx_ids => check_if_attrs_txids_exists(attrs) || address.tx_ids})
+    new_attrs = Map.merge(attrs, %{:balance => check_if_attrs_balance_exists(attrs) || address.balance, :tx_ids => check_if_attrs_txids_exists(attrs) || %{}})
     |> add_vins(vins)
     |> add_tx_id(txid, index, time)
     {address, new_attrs}
@@ -412,16 +430,16 @@ defmodule Neoscan.Addresses do
   end
 
   #get addresses and route for adding claims
-  def insert_claim_in_addresses(transactions, vouts, address_list) do
+  def insert_claim_in_addresses(transactions, vouts, address_list, index, time) do
     Enum.map(vouts, fn %{"address" => hash, "value" => value, "asset" => asset} ->
-      insert_claim_in_address(Enum.find(address_list, fn {%{:address => address}, _attrs} -> address == hash end) , transactions, value, String.slice(to_string(asset), -64..-1), hash)
+      insert_claim_in_address(Enum.find(address_list, fn {%{:address => address}, _attrs} -> address == hash end) , transactions, value, String.slice(to_string(asset), -64..-1), index, time)
     end)
   end
 
   #insert claimed transactions and update address balance
-  def insert_claim_in_address({address, attrs}, transactions, value, asset, _address_hash) do
-    new_attrs = Map.merge(attrs, %{:claimed => check_if_attrs_claimed_exists(attrs) || address.claimed })
-    |> add_claim(transactions, value, asset)
+  def insert_claim_in_address({address, attrs}, transactions, value, asset, index, time) do
+    new_attrs = Map.merge(attrs, %{:claimed => check_if_attrs_claimed_exists(attrs) || %{} })
+    |> add_claim(transactions, value, asset, index, time)
 
     {address, new_attrs}
   end
@@ -447,74 +465,9 @@ defmodule Neoscan.Addresses do
   end
 
   #add a single claim into address
-  def add_claim(%{:claimed => nil} = address, transactions, amount, asset) do
-    Map.put(address, :claimed, [%{ "txids" => transactions, "amount" => amount, "asset" => asset}])
-  end
-  def add_claim(address, transactions, amount, asset) do
-    case Enum.member?(address.claimed, %{ "txids" => transactions}) do
-      true ->
-        address
-      false ->
-        new = List.wrap(%{ "txids" => transactions, "amount" => amount, "asset" => asset})
-        Map.put(address, :claimed, Enum.concat(address.claimed, new))
-    end
+  def add_claim(address, transactions, amount, asset, index, time) do
+    new_claim = %{:txids => transactions, :amount => amount, :asset => asset, :block_height => index, :time => time}
+    %{address | claimed: new_claim}
   end
 
-  #rollback addresses to specific insertion time
-  def rollback_addresses(time) do
-    query = from a in Address,
-      where: a.updated_at > ^time,
-      select: a
-
-    Repo.all(query)
-    |> route_if_results(time)
-  end
-
-  def route_if_results([] = _list, _time), do: "no results"
-  def route_if_results(list, time) do
-    list
-    |> Enum.each(fn a -> rollback_address(a, time) end)
-  end
-
-  #rollback address to a previous insertion time
-  def rollback_address(address, time) do
-    transactions_time = get_address_transactions_time(address)
-
-    invalid_transactions = transactions_time
-      |> Stream.filter(fn %{ "time" => txtime} -> txtime > time end)
-      |> Stream.map(fn %{ "txid" => txid} -> txid end)
-      |> Enum.to_list
-
-    last_valid = transactions_time
-      |> Enum.filter(fn %{ "time" => txtime} -> txtime < time end)
-      |> Enum.max_by(fn %{"time" => txtime} -> txtime end)
-
-    new_tx_ids = remove_transactions(address.tx_ids, invalid_transactions)
-    new_balance = address.tx_ids[last_valid]["balance"]
-
-    update_address(address, %{"tx_ids" => new_tx_ids, "balance" => new_balance})
-  end
-
-  #get transactions time for an address
-  def get_address_transactions_time(address) do
-    lookups = Map.keys(address.tx_ids)
-
-    query =  from t in Transaction,
-     where: fragment("CAST(? AS text)", t.txid) in ^lookups,
-     select: %{"txid" => t.txid, "time" => t.inserted_at}
-
-    Repo.all(query)
-  end
-
-  #remove transactions from an address struct
-  def remove_transactions(address_tx_ids, [transaction | tail]) do
-    remove_transaction(address_tx_ids, transaction)
-    |> remove_transactions(tail)
-  end
-  def remove_transactions(address_tx_ids, []), do: address_tx_ids
-
-  #remove transaction from an address struct
-  def remove_transaction(address_tx_ids, transaction) do
-    Map.delete(address_tx_ids, transaction)
-  end
 end

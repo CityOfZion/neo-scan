@@ -15,7 +15,7 @@
                 <a class="link" href="<%=transaction_path(@conn, :index, tx.txid )%>">
                   <%=tx.txid%>
                 </a>
-                <%= if @address.claimed != nil && Enum.any?(@address.claimed, fn %{"txids" => txid} -> Enum.member?(txid, tx.txid) == true end) do %>
+                <%= if @address.claimed != nil && Enum.any?(@address.claimed, fn %{:txids => txid} -> Enum.member?(txid, tx.txid) == true end) do %>
                   Claimed
                 <%end%>
               </li>
