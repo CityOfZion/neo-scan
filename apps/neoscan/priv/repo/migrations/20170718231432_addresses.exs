@@ -4,8 +4,8 @@ defmodule Neoscan.Repo.Migrations.Addresses do
   def change do
     create table(:addresses) do
       add :address, :string
-      add :tx_ids, :map
       add :balance, :map
+      add :time, :integer
 
       timestamps()
     end

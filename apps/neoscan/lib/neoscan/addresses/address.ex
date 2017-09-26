@@ -7,6 +7,7 @@ defmodule Neoscan.Addresses.Address do
   schema "addresses" do
     field :address, :string
     field :balance, :map
+    field :time, :integer
 
     has_many :claimed, Neoscan.Addresses.Claim
     has_many :vouts, Neoscan.Vouts.Vout
@@ -18,7 +19,13 @@ defmodule Neoscan.Addresses.Address do
   @doc false
   def changeset(%Address{} = address, attrs) do
     address
-    |> cast(attrs, [:address, :balance])
-    |> validate_required([:address])
+    |> cast(attrs, [:address, :balance, :time])
+    |> validate_required([:address, :time])
+  end
+
+  def update_changeset(%Address{} = address, attrs) do
+    address
+    |> cast(attrs, [:balance])
+    |> validate_required([:balance])
   end
 end

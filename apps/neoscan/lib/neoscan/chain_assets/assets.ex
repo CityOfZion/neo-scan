@@ -142,12 +142,12 @@ defmodule Neoscan.ChainAssets do
 
 
   #create new assets
-  def create(%{"amount" => amount} = assets, txid) do
+  def create(%{"amount" => amount} = assets, txid, time) do
     {float, _} = Float.parse(amount)
-    new_asset = Map.put(assets, "amount", float)
+    new_asset = Map.merge(assets, %{"amount" => float, "time" => time})
     create_asset(txid, new_asset)
   end
-  def create( nil, _txid) do
+  def create( nil, _txid, _time) do
     nil
   end
 

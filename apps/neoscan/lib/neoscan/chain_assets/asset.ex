@@ -14,6 +14,7 @@ defmodule Neoscan.ChainAssets.Asset do
     field :type, :string
     field :issued, :float
 
+    field :time, :integer
 
     timestamps()
   end
@@ -22,13 +23,12 @@ defmodule Neoscan.ChainAssets.Asset do
   def changeset(transaction_id,  attrs \\ %{}) do
     new_attrs = Map.put(attrs, "txid", transaction_id)
     %Asset{}
-    |> cast(new_attrs, [:txid, :admin, :amount, :name, :owner, :precision, :type, :issued])
-    |> validate_required([:txid,:admin, :amount, :name, :owner, :precision, :type])
+    |> cast(new_attrs, [:txid, :admin, :amount, :name, :owner, :precision, :type, :issued, :time])
+    |> validate_required([:txid,:admin, :amount, :name, :owner, :precision, :type, :time])
   end
 
   def update_changeset(asset,  attrs \\ %{}) do
     asset
-    |> cast(attrs, [:txid, :admin, :amount, :name, :owner, :precision, :type, :issued])
-    |> validate_required([:txid,:admin, :amount, :name, :owner, :precision, :type])
+    |> cast(attrs, [:issued])
   end
 end

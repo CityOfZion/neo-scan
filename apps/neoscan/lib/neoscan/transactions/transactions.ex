@@ -152,11 +152,11 @@ defmodule Neoscan.Transactions do
     new_claim = get_claims(attrs["claims"])
 
     #fetch all addresses involved in the transaction
-    address_list = Task.async(fn -> Addresses.get_transaction_addresses( new_vin, vouts )
+    address_list = Task.async(fn -> Addresses.get_transaction_addresses( new_vin, vouts, time)
     |> Addresses.update_all_addresses(new_vin, new_claim, vouts, String.slice(to_string(txid), -64..-1), height, time) end) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
 
     #create asset if register Transaction
-    ChainAssets.create(attrs["asset"], String.slice(to_string(txid), -64..-1))
+    ChainAssets.create(attrs["asset"], String.slice(to_string(txid), -64..-1), time)
 
     #create asset if issue Transaction
     ChainAssets.issue(type, vouts)

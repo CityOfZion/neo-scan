@@ -128,7 +128,7 @@ defmodule Neoscan.Addresses do
   """
   def update_address(%Address{} = address, attrs) do
     address
-    |> Address.changeset(attrs)
+    |> Address.update_changeset(attrs)
     |> Repo.update!()
   end
 
@@ -211,7 +211,7 @@ defmodule Neoscan.Addresses do
 
   """
   def change_address(%Address{} = address, attrs) do
-    Address.changeset(address, attrs)
+    Address.update_changeset(address, attrs)
   end
 
   @doc """
@@ -280,7 +280,7 @@ defmodule Neoscan.Addresses do
   end
 
   #get all addresses involved in a transaction
-  def get_transaction_addresses(vins, vouts) do
+  def get_transaction_addresses(vins, vouts, time) do
 
     lookups = (map_vins(vins) ++ map_vouts(vouts)) |> Enum.uniq
 
@@ -289,7 +289,7 @@ defmodule Neoscan.Addresses do
      select: struct(e, [:id, :address, :balance])
 
      Repo.all(query)
-     |> fetch_missing(lookups)
+     |> fetch_missing(lookups, time)
      |> gen_attrs()
   end
 
@@ -319,9 +319,9 @@ defmodule Neoscan.Addresses do
   end
 
   #create missing addresses
-  def fetch_missing(address_list, lookups) do
+  def fetch_missing(address_list, lookups, time) do
     (lookups -- Enum.map(address_list, fn %{:address => address} -> address end))
-    |> Enum.map(fn address -> create_address(%{"address" => address}) end)
+    |> Enum.map(fn address -> create_address(%{"address" => address, "time" => time}) end)
     |> Enum.concat(address_list)
   end
 

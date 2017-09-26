@@ -141,7 +141,7 @@ defmodule Neoscan.Repair do
     |> Map.to_list
     |> Enum.map(fn {db_transaction, vouts_tuple} -> { db_transaction, filter_tuples(vouts_tuple) } end)
     |> Enum.map(fn {db_transaction, vouts} ->
-      address_list = Addresses.get_transaction_addresses([], vouts)
+      address_list = Addresses.get_transaction_addresses([], vouts, db_transaction.time)
       Vouts.create_vouts(db_transaction, vouts, address_list)
     end)
   end
