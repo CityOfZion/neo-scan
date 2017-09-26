@@ -9,7 +9,7 @@ defmodule Neoscan.Addresses.Address do
     field :balance, :map
 
     has_many :claimed, Neoscan.Addresses.Claim
-    has_many :vouts, Neoscan.Addresses.Address
+    has_many :vouts, Neoscan.Vouts.Vout
     has_many :histories, Neoscan.Addresses.History
 
     timestamps()

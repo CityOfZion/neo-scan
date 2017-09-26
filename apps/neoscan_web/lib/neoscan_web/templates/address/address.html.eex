@@ -30,7 +30,7 @@
             </p>
             <%= for {asset, %{"amount" => amount}} <- Enum.to_list(@address.balance) do %>
               <li>
-                <%=Neoscan.Transactions.get_asset_name_by_hash(asset)%>  <%=NeoscanWeb.AddressController.round_or_not(amount)%>
+                <%=Neoscan.ChainAssets.get_asset_name_by_hash(asset)%>  <%=NeoscanWeb.AddressController.round_or_not(amount)%>
               </li>
             <%end%>
         </ul>

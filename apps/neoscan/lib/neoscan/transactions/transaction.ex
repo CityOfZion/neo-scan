@@ -26,7 +26,7 @@ defmodule Neoscan.Transactions.Transaction do
     field :description, :string
     field :contract, :map
 
-    has_many :vouts, Neoscan.Transactions.Vout
+    has_many :vouts, Neoscan.Vouts.Vout
     belongs_to :block, Neoscan.Blocks.Block
 
     timestamps()

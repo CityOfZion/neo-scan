@@ -9,7 +9,7 @@ defmodule Neoscan.Addresses do
   alias Neoscan.Addresses.Address
   alias Neoscan.Addresses.History
   alias Neoscan.Addresses.Claim
-  alias Neoscan.Transactions
+  alias Neoscan.Vouts
   alias Ecto.Multi
 
   @doc """
@@ -424,7 +424,7 @@ defmodule Neoscan.Addresses do
   #add multiple vouts
   def add_vouts(attrs, vouts, transaction) do
     Enum.reduce(vouts, attrs, fn (vout, acc) ->
-      Transactions.create_vout(transaction, vout)
+      Vouts.create_vout(transaction, vout)
       |> add_vout(acc)
     end)
   end

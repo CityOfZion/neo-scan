@@ -8,7 +8,7 @@ defmodule Neoscan.Blocks do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Blocks.Block
-  alias Neoscan.Transactions
+  alias Neoscan.Repair
   alias Neoscan.Transactions.Transaction
   alias NeoscanMonitor.Api
 
@@ -279,7 +279,7 @@ defmodule Neoscan.Blocks do
       nil ->
         {:block_missing , transaction}
       block ->
-        Transactions.check_if_transaction_exists(block, transaction)
+        Repair.check_if_transaction_exists(block, transaction)
         {:transaction_missing, {block, transaction}}
     end
   end

@@ -1,7 +1,7 @@
-defmodule Neoscan.Transactions.Asset do
+defmodule Neoscan.ChainAssets.Asset do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Neoscan.Transactions.Asset
+  alias Neoscan.ChainAssets.Asset
 
 
   schema "assets" do

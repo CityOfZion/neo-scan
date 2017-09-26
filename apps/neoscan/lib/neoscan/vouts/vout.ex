@@ -1,7 +1,7 @@
-defmodule Neoscan.Transactions.Vout do
+defmodule Neoscan.Vouts.Vout do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Neoscan.Transactions.Vout
+  alias Neoscan.Vouts.Vout
 
   schema "vouts" do
     field :asset, :string
