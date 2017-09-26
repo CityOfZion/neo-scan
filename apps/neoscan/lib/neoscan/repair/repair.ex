@@ -1,10 +1,10 @@
 defmodule Neoscan.Repair do
   import Ecto.Query, warn: false
   alias Neoscan.Repo
-  alias Neoscan.Blocks
   alias Neoscan.Addresses
   alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
+  alias Neoscan.Blocks.Block
   alias Neoscan.Vouts
   alias Neoscan.Vouts.Vout
   alias NeoscanSync.Blockchain
@@ -26,7 +26,7 @@ defmodule Neoscan.Repair do
     tuples = Enum.map(missing, fn txid -> Blockchain.get_transaction( HttpCalls.url(1), txid) end)
     |> check_missing()
 
-    Blocks.get_missing_blocks(tuples)
+    get_missing_blocks(tuples)
     |> add_missing_transactions(tuples)
     |> add_missing_vouts(tuples)
     |> fetch_missing_vouts(root)
@@ -34,7 +34,7 @@ defmodule Neoscan.Repair do
 
   #return the tuple list, specifying each missing entity
   def check_missing(transactions) do
-    Enum.map(transactions, fn {:ok, %{"blockhash" => block_hash} = transaction } -> Blocks.check_if_block_exists(String.slice(to_string(block_hash), -64..-1), transaction) end)
+    Enum.map(transactions, fn {:ok, %{"blockhash" => block_hash} = transaction } -> check_if_block_exists(String.slice(to_string(block_hash), -64..-1), transaction) end)
   end
 
   #fetch vouts again after reparing
@@ -49,6 +49,19 @@ defmodule Neoscan.Repair do
     |> Vouts.verify_vouts(lookups, root)
   end
 
+  #check if block exist and create tuple, otherwise route forward for transaction verification
+  def check_if_block_exists(hash, transaction) do
+    query = from e in Block,
+      where: e.hash == ^hash,
+      select: e
+    case Repo.all(query) |> List.first() do
+      nil ->
+        {:block_missing , transaction}
+      block ->
+        check_if_transaction_exists(block, transaction)
+        {:transaction_missing, {block, transaction}}
+    end
+  end
 
   #verify if the transaction exists in the DB
   def check_if_transaction_exists(block, transaction) do
@@ -80,6 +93,25 @@ defmodule Neoscan.Repair do
     end
 
     {:vouts_missing, {db_transaction, Enum.filter(transaction["vout"], fn %{"n" => n} -> n in missing end)}}
+  end
+
+  #get the missing blocks in the verification tuples
+  def get_missing_blocks(transaction_tuples) do
+    case Enum.any?(transaction_tuples, fn {key, _value} -> key == :block_missing end) do
+      true ->
+        Enum.filter(transaction_tuples, fn { key, _transaction} -> key == :block_missing end)
+        |> Enum.group_by( fn { _key, transaction} -> transaction["blockhash"] end)
+        |> Map.keys
+        |> Enum.each(fn hash -> get_and_add_missing_block(hash) end)
+      false ->
+        :ok
+    end
+  end
+
+  #get a missing block from the node client
+  def get_and_add_missing_block(hash) do
+    {:ok, block} = NeoscanSync.Blockchain.get_block_by_hash(NeoscanSync.HttpCalls.url(1), hash)
+    NeoscanSync.Consumer.add_block(block)
   end
 
   #adds missing transactions after verifying missing blocks

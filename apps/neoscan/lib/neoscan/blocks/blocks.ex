@@ -8,7 +8,6 @@ defmodule Neoscan.Blocks do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Blocks.Block
-  alias Neoscan.Repair
   alias Neoscan.Transactions.Transaction
   alias NeoscanMonitor.Api
 
@@ -266,43 +265,6 @@ defmodule Neoscan.Blocks do
     get_higher_than(height)
     |> delete_blocks
   end
-
-
-
-  ###### repair algorithm ##############################
-  #check if block exist and create tuple, otherwise route forward for transaction verification
-  def check_if_block_exists(hash, transaction) do
-    query = from e in Block,
-      where: e.hash == ^hash,
-      select: e
-    case Repo.all(query) |> List.first() do
-      nil ->
-        {:block_missing , transaction}
-      block ->
-        Repair.check_if_transaction_exists(block, transaction)
-        {:transaction_missing, {block, transaction}}
-    end
-  end
-
-  #get the missing blocks in the verification tuples
-  def get_missing_blocks(transaction_tuples) do
-    case Enum.any?(transaction_tuples, fn {key, _value} -> key == :block_missing end) do
-      true ->
-        Enum.filter(transaction_tuples, fn { key, _transaction} -> key == :block_missing end)
-        |> Enum.group_by( fn { _key, transaction} -> transaction["blockhash"] end)
-        |> Map.keys
-        |> Enum.each(fn hash -> get_missing_block(hash) end)
-      false ->
-        :ok
-    end
-  end
-
-  #get a missing block from the node client
-  def get_missing_block(hash) do
-    {:ok, block} = NeoscanSync.Blockchain.get_block_by_hash(NeoscanSync.HttpCalls.url(1), hash)
-    NeoscanSync.Consumer.add_block(block)
-  end
-  #########################################################
 
 
   #get the total of spent fees in the network between a height range

@@ -16,13 +16,7 @@ defmodule Neoscan.Addresses.Address do
   end
 
   @doc false
-  def create_changeset(%Address{} = address, attrs) do
-    address
-    |> cast(attrs, [:address, :balance])
-    |> validate_required([:address])
-  end
-
-  def update_changeset(%Address{} = address, attrs) do
+  def changeset(%Address{} = address, attrs) do
     address
     |> cast(attrs, [:address, :balance])
     |> validate_required([:address])

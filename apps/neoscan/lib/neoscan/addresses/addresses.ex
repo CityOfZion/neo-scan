@@ -110,7 +110,7 @@ defmodule Neoscan.Addresses do
   """
   def create_address(attrs \\ %{}) do
     %Address{}
-    |> Address.create_changeset(attrs)
+    |> Address.changeset(attrs)
     |> Repo.insert!()
   end
 
@@ -128,10 +128,11 @@ defmodule Neoscan.Addresses do
   """
   def update_address(%Address{} = address, attrs) do
     address
-    |> Address.update_changeset(attrs)
+    |> Address.changeset(attrs)
     |> Repo.update!()
   end
 
+  #updates all addresses in the transactions with their respective changes/inserts
   def update_multiple_addresses(list) do
     list
     |> Enum.map(fn {address, attrs} -> verify_if_claim(address, attrs) end)
@@ -140,6 +141,7 @@ defmodule Neoscan.Addresses do
     |> check_repo_transaction_results()
   end
 
+  #verify if there was claim operations for the address
   def verify_if_claim(address, %{:claimed => claim} = attrs) do
     {address, change_claim(%Claim{}, address, claim), change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)}
   end
@@ -147,10 +149,12 @@ defmodule Neoscan.Addresses do
     {address, nil, change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)}
   end
 
+  #creates new Ecto.Multi sequence for single DB transaction
   def create_multi(changesets) do
     Enum.reduce(changesets, Multi.new, fn (tuple, acc) -> insert_updates(tuple, acc) end)
   end
 
+  #Insert address updates in the Ecto.Multi
   def insert_updates({address,claim_changeset, history_changeset, address_changeset}, acc) do
       name = String.to_atom(address.address)
       name1 = String.to_atom("#{address.address}_history")
@@ -162,6 +166,7 @@ defmodule Neoscan.Addresses do
       |> add_claim_if_claim(name2, claim_changeset)
   end
 
+  #Insert new claim if there was claim operations
   def add_claim_if_claim(multi, _name, nil) do
     multi
   end
@@ -170,6 +175,7 @@ defmodule Neoscan.Addresses do
     |> Multi.insert(name, changeset, [])
   end
 
+  #verify if DB transaction was sucessfull
   def check_repo_transaction_results({:ok, _any}) do
     {:ok, "all operations were succesfull"}
   end
@@ -205,7 +211,7 @@ defmodule Neoscan.Addresses do
 
   """
   def change_address(%Address{} = address, attrs) do
-    Address.update_changeset(address, attrs)
+    Address.changeset(address, attrs)
   end
 
   @doc """
@@ -339,6 +345,7 @@ defmodule Neoscan.Addresses do
     |> separate_txids_and_insert_claims(claims, vouts, index, time)
   end
 
+  #generate {address, address_updates} tuples for following operations
   def gen_attrs(address_list) do
     address_list
     |> Enum.map(fn address -> { address, %{}} end)
@@ -377,7 +384,7 @@ defmodule Neoscan.Addresses do
   end
 
 
-  #helpers to check if there is attrs updates already
+  #helpers to check if there are attrs updates already
   def check_if_attrs_balance_exists(%{:balance => balance}) do
     balance
   end
