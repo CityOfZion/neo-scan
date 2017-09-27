@@ -9,9 +9,9 @@ defmodule Neoscan.Addresses.Address do
     field :balance, :map
     field :time, :integer
 
-    has_many :claimed, Neoscan.Addresses.Claim
+    has_many :claimed, Neoscan.Claims.Claim
     has_many :vouts, Neoscan.Vouts.Vout
-    has_many :histories, Neoscan.Addresses.History
+    has_many :histories, Neoscan.BalanceHistories.History
 
     timestamps()
   end

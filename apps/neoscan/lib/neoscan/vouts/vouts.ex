@@ -2,8 +2,10 @@ defmodule Neoscan.Vouts do
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.Addresses
+  alias Neoscan.BalanceHistories
   alias Neoscan.Vouts.Vout
   alias Neoscan.Repair
+  alias Neoscan.Helpers
   alias Ecto.Multi
 
 
@@ -42,9 +44,9 @@ defmodule Neoscan.Vouts do
     |> insert_address(address_list)
     |> Enum.group_by(fn %{"address" => {address , _attrs}} -> address.address end)
     |> Map.to_list()
-    |> Enum.map(fn {_address, vouts} -> Addresses.insert_vouts_in_address(transaction, vouts) end)
+    |> Enum.map(fn {_address, vouts} -> insert_vouts_in_address(transaction, vouts) end)
 
-    Enum.map(address_list, fn {address, attrs} -> Addresses.substitute_if_updated(address, attrs, updates) end)
+    Enum.map(address_list, fn {address, attrs} -> Helpers.substitute_if_updated(address, attrs, updates) end)
     |> Addresses.update_multiple_addresses()
   end
 
@@ -96,6 +98,30 @@ defmodule Neoscan.Vouts do
       true ->
         Repair.repair_missing(result, root)
     end
+  end
+
+  #insert vouts into address balance
+  def insert_vouts_in_address(%{:txid => txid, :block_height => index, :time => time} = transaction, vouts) do
+    %{"address" => {address , attrs }} = List.first(vouts)
+    new_attrs = Map.merge( attrs, %{:balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance , :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}})
+      |> add_vouts(vouts, transaction)
+      |> BalanceHistories.add_tx_id(txid, index, time)
+    {address, new_attrs}
+  end
+
+  #add multiple vouts to address
+  def add_vouts(attrs, vouts, transaction) do
+    Enum.reduce(vouts, attrs, fn (vout, acc) ->
+      create_vout(transaction, vout)
+      |> add_vout(acc)
+    end)
+  end
+
+  #add a single vout to adress
+  def add_vout(%{:value => value} = vout, %{:balance => balance} = address) do
+    current_amount = balance[vout.asset]["amount"] || 0
+    new_balance = %{"asset" => vout.asset, "amount" => current_amount + value}
+    %{address | balance: Map.put(address.balance || %{}, vout.asset, new_balance)}
   end
 
 end

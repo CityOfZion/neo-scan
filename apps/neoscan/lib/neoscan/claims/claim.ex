@@ -1,7 +1,7 @@
-defmodule Neoscan.Addresses.Claim do
+defmodule Neoscan.Claims.Claim do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Neoscan.Addresses.Claim
+  alias Neoscan.Claims.Claim
 
 
   schema "claims" do

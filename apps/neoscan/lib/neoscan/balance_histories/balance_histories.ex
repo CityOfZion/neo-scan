@@ -15,7 +15,11 @@ defmodule Neoscan.BalanceHistories do
     History.changeset(history, address, attrs)
   end
 
-
+  #add a transaction history into an address
+  def add_tx_id(address, txid, index, time) do
+      new_tx = %{:txid => txid, :balance => address.balance, :block_height => index, :time => time}
+      %{address | tx_ids: new_tx}
+  end
 
 
 end
