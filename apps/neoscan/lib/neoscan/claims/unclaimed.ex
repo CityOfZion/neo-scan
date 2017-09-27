@@ -15,6 +15,7 @@ defmodule Neoscan.Claims.Unclaimed do
     |> route_if_there_is_unclaimed
   end
 
+  #proceed calculus if there are unclaimed results, otherwise return 0
   def route_if_there_is_unclaimed([]) do
     0
   end
