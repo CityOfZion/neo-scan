@@ -33,6 +33,9 @@
                 <%=Neoscan.ChainAssets.get_asset_name_by_hash(asset)%>  <%=NeoscanWeb.AddressController.round_or_not(amount)%>
               </li>
             <%end%>
+            <li>
+              Unclaimed <%=Neoscan.Claims.Unclaimed.calculate_bonus(@address.id)%> GAS
+            </li>
         </ul>
         <%end%>
 
