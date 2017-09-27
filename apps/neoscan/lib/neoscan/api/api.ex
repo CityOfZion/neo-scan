@@ -2,7 +2,7 @@ defmodule Neoscan.Api do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Addresses.Address
-  alias Neoscan.Addresses.History
+  alias Neoscan.BalanceHistories.History
   alias Neoscan.Transactions.Transaction
   alias Neoscan.ChainAssets
   alias Neoscan.ChainAssets.Asset

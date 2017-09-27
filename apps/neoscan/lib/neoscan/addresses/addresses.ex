@@ -7,7 +7,8 @@ defmodule Neoscan.Addresses do
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.Addresses.Address
-  alias Neoscan.Addresses.History
+  alias Neoscan.BalanceHistories
+  alias Neoscan.BalanceHistories.History
   alias Neoscan.Addresses.Claim
   alias Neoscan.Vouts
   alias Ecto.Multi
@@ -135,18 +136,18 @@ defmodule Neoscan.Addresses do
   #updates all addresses in the transactions with their respective changes/inserts
   def update_multiple_addresses(list) do
     list
-    |> Enum.map(fn {address, attrs} -> verify_if_claim(address, attrs) end)
+    |> Enum.map(fn {address, attrs} -> verify_if_claim_and_call_changesets(address, attrs) end)
     |> create_multi
     |> Repo.transaction
     |> check_repo_transaction_results()
   end
 
   #verify if there was claim operations for the address
-  def verify_if_claim(address, %{:claimed => claim} = attrs) do
-    {address, change_claim(%Claim{}, address, claim), change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)}
+  def verify_if_claim_and_call_changesets(address, %{:claimed => claim} = attrs) do
+    {address, change_claim(%Claim{}, address, claim), BalanceHistories.change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)}
   end
-  def verify_if_claim(address, attrs)do
-    {address, nil, change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)}
+  def verify_if_claim_and_call_changesets(address, attrs)do
+    {address, nil, BalanceHistories.change_history(%History{}, address,  attrs.tx_ids), change_address(address, attrs)}
   end
 
   #creates new Ecto.Multi sequence for single DB transaction
@@ -212,19 +213,6 @@ defmodule Neoscan.Addresses do
   """
   def change_address(%Address{} = address, attrs) do
     Address.update_changeset(address, attrs)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking address history changes.
-
-  ## Examples
-
-      iex> change_history(history)
-      %Ecto.Changeset{source: %History{}}
-
-  """
-  def change_history(%History{} = history, address, attrs) do
-    History.changeset(history, address, attrs)
   end
 
   @doc """
