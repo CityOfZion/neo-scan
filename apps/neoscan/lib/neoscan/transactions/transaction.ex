@@ -13,12 +13,9 @@ defmodule Neoscan.Transactions.Transaction do
     field :type, :string
     field :version, :integer
     field :vin, {:array, :map}
-
-
     field :time, :integer
     field :block_hash, :string
     field :block_height, :integer
-
     field :nonce, :integer
     field :claims, {:array, :map}
     field :pubkey, :string
@@ -33,18 +30,91 @@ defmodule Neoscan.Transactions.Transaction do
   end
 
   @doc false
-  def changeset(block, attrs \\ %{}) do
-    block
-    |> Ecto.build_assoc(:transactions)
-    |> cast(attrs, [:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height, :claims, :pubkey, :asset, :description, :contract])
+  def changeset(transaction, attrs \\ %{}) do
+    transaction
+    |> cast(
+         attrs,
+         [
+           :attributes,
+           :net_fee,
+           :nonce,
+           :scripts,
+           :size,
+           :sys_fee,
+           :txid,
+           :type,
+           :version,
+           :vin,
+           :time,
+           :block_hash,
+           :block_height,
+           :claims,
+           :pubkey,
+           :asset,
+           :description,
+           :contract
+         ]
+       )
     |> assoc_constraint(:block, required: true)
-    |> validate_required([:attributes, :net_fee, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height])
+    |> validate_required(
+         [
+           :attributes,
+           :net_fee,
+           :scripts,
+           :size,
+           :sys_fee,
+           :txid,
+           :type,
+           :version,
+           :vin,
+           :time,
+           :block_hash,
+           :block_height
+         ]
+       )
   end
 
   def update_changeset(transaction, attrs) do
     transaction
-    |> cast(attrs, [:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height, :claims, :pubkey, :asset, :description, :contract])
+    |> cast(
+         attrs,
+         [
+           :attributes,
+           :net_fee,
+           :nonce,
+           :scripts,
+           :size,
+           :sys_fee,
+           :txid,
+           :type,
+           :version,
+           :vin,
+           :time,
+           :block_hash,
+           :block_height,
+           :claims,
+           :pubkey,
+           :asset,
+           :description,
+           :contract
+         ]
+       )
     |> assoc_constraint(:block, required: true)
-    |> validate_required([:attributes, :net_fee, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height])
+    |> validate_required(
+         [
+           :attributes,
+           :net_fee,
+           :scripts,
+           :size,
+           :sys_fee,
+           :txid,
+           :type,
+           :version,
+           :vin,
+           :time,
+           :block_hash,
+           :block_height
+         ]
+       )
   end
 end

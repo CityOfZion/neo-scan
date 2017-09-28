@@ -43,6 +43,8 @@ defmodule Neoscan.Factory do
       asset: %{sequence("assethash") => sequence("assetinnerhash")},
       description: sequence("description"),
       contract:  %{sequence("contracthash") => sequence("contractinnerhash")},
+      block_hash: sequence("block_hash"),
+      block_height: 0
     }
   end
 
