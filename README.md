@@ -1,5 +1,7 @@
 # Neoscan Umbrella Application
 
+[![Travis](https://img.shields.io/travis/CityOfZion/neo-scan.svg?branch=master&style=flat-square)](https://travis-ci.org/CityOfZion/neo-scan)
+
 Elixir + Phoenix Blockchain explorer for NEO.
 # How to contribute
 
