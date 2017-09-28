@@ -39,6 +39,8 @@ defmodule Neoscan.Mixfile do
     [
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
+      {:ex_machina, "~> 2.0", only: [:test, :travis]},
+      {:poison, "~> 3.0"},
     ]
   end
 
