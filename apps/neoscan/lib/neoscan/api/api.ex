@@ -2,13 +2,13 @@ defmodule Neoscan.Api do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Addresses.Address
-  alias Neoscan.Addresses.History
-  alias Neoscan.Transactions
+  alias Neoscan.BalanceHistories.History
   alias Neoscan.Transactions.Transaction
-  alias Neoscan.Transactions.Asset
+  alias Neoscan.ChainAssets
+  alias Neoscan.ChainAssets.Asset
   alias Neoscan.Blocks.Block
   alias Neoscan.Blocks
-  alias Neoscan.Transactions.Vout
+  alias Neoscan.Vouts.Vout
   alias NeoscanMonitor.Api
 
 
@@ -183,7 +183,7 @@ defmodule Neoscan.Api do
   defp filter_balance(balance) do
     Map.to_list(balance)
     |> Enum.map(fn { _as, %{"asset" => asset, "amount" => amount}} ->
-      %{"asset" => Transactions.get_asset_name_by_hash(asset), "amount" => amount} end)
+      %{"asset" => ChainAssets.get_asset_name_by_hash(asset), "amount" => amount} end)
   end
 
   @doc """
@@ -524,8 +524,8 @@ defmodule Neoscan.Api do
          :contract => nil,
        }
         %{} = transaction ->
-          new_vouts = Enum.map(transaction.vouts, fn %{:asset => asset} = x -> Map.put(x, :asset, Transactions.get_asset_name_by_hash(asset)) end)
-          new_vins = Enum.map(transaction.vin, fn %{"asset" => asset} = x -> Map.put(x, "asset", Transactions.get_asset_name_by_hash(asset)) end)
+          new_vouts = Enum.map(transaction.vouts, fn %{:asset => asset} = x -> Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset)) end)
+          new_vins = Enum.map(transaction.vin, fn %{"asset" => asset} = x -> Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset)) end)
           Map.delete(transaction, :block)
           |> Map.delete(:inserted_at)
           |> Map.delete(:updated_at)
@@ -618,8 +618,8 @@ defmodule Neoscan.Api do
 
     Repo.all(query)
     |> Enum.map(fn %{:vouts => vouts, :vin => vin} = x ->
-        new_vouts = Enum.map(vouts, fn %{:asset => asset} = x -> Map.put(x, :asset, Transactions.get_asset_name_by_hash(asset)) end)
-        new_vins = Enum.map(vin, fn %{"asset" => asset} = x -> Map.put(x, "asset", Transactions.get_asset_name_by_hash(asset)) end)
+        new_vouts = Enum.map(vouts, fn %{:asset => asset} = x -> Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset)) end)
+        new_vins = Enum.map(vin, fn %{"asset" => asset} = x -> Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset)) end)
         Map.delete(x, :block)
         |> Map.delete(:inserted_at)
         |> Map.delete(:updated_at)

@@ -11,6 +11,7 @@ defmodule Neoscan.Repo.Migrations.Assets do
       add :precision, :integer
       add :type, :string
       add :issued, :float
+      add :time, :integer
 
       timestamps()
     end

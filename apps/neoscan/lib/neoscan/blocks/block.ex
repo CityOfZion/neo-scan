@@ -1,6 +1,7 @@
 defmodule Neoscan.Blocks.Block do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Neoscan.BlockGasGeneration
   alias Neoscan.Blocks.Block
 
 
@@ -21,6 +22,7 @@ defmodule Neoscan.Blocks.Block do
 
     field :total_sys_fee, :float
     field :total_net_fee, :float
+    field :gas_generated, :float
 
     has_many :transactions, Neoscan.Transactions.Transaction
 
@@ -29,13 +31,15 @@ defmodule Neoscan.Blocks.Block do
 
   @doc false
   def changeset(%Block{} = block, attrs) do
+
     new_attrs = Map.merge(
       attrs,
       %{
-        hash: String.slice(to_string(attrs[:hash]), -64..-1),
-        nextblockhash: String.slice(to_string(attrs[:nextblockhash]), -64..-1),
-        previousblockhash: String.slice(to_string(attrs[:previousblockhash]), -64..-1),
-        merkleroot: String.slice(to_string(attrs[:merkleroot]), -64..-1),
+        "hash" => String.slice(to_string(attrs["hash"]), -64..-1),
+        "nextblockhash" => String.slice(to_string(attrs["nextblockhash"]), -64..-1),
+        "previousblockhash" => String.slice(to_string(attrs["previousblockhash"]), -64..-1),
+        "merkleroot" => String.slice(to_string(attrs["merkleroot"]), -64..-1),
+        "gas_generated" => BlockGasGeneration.get_amount_generate_in_block(attrs["index"]),
       }
     )
     block
@@ -56,7 +60,8 @@ defmodule Neoscan.Blocks.Block do
            :nextconsensus,
            :tx_count,
            :total_sys_fee,
-           :total_net_fee
+           :total_net_fee,
+           :gas_generated
          ]
        )
     |> validate_required(
@@ -75,7 +80,8 @@ defmodule Neoscan.Blocks.Block do
            :nextconsensus,
            :tx_count,
            :total_sys_fee,
-           :total_net_fee
+           :total_net_fee,
+           :gas_generated
          ]
        )
   end

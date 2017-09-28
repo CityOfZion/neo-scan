@@ -15,7 +15,7 @@
                 <a class="link" href="<%=transaction_path(@conn, :index, tx.txid )%>">
                   <%=tx.txid%>
                 </a>
-                <%= if @address.claimed != nil && Enum.any?(@address.claimed, fn %{"txids" => txid} -> Enum.member?(txid, tx.txid) == true end) do %>
+                <%= if @address.claimed != nil && Enum.any?(@address.claimed, fn %{:txids => txid} -> Enum.member?(txid, tx.txid) == true end) do %>
                   Claimed
                 <%end%>
               </li>
@@ -30,9 +30,12 @@
             </p>
             <%= for {asset, %{"amount" => amount}} <- Enum.to_list(@address.balance) do %>
               <li>
-                <%=Neoscan.Transactions.get_asset_name_by_hash(asset)%>  <%=NeoscanWeb.AddressController.round_or_not(amount)%>
+                <%=Neoscan.ChainAssets.get_asset_name_by_hash(asset)%>  <%=NeoscanWeb.AddressController.round_or_not(amount)%>
               </li>
             <%end%>
+            <li>
+              Unclaimed <%=Neoscan.Claims.Unclaimed.calculate_bonus(@address.id)%> GAS
+            </li>
         </ul>
         <%end%>
 

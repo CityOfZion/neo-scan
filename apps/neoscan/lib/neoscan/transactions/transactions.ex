@@ -10,11 +10,10 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Repo
   alias NeoscanMonitor.Api
   alias Neoscan.Transactions.Transaction
-  alias Neoscan.Transactions.Vout
-  alias Neoscan.Transactions.Asset
+  alias Neoscan.Vouts.Vout
+  alias Neoscan.ChainAssets
   alias Neoscan.Addresses
-  alias Neoscan.Blocks
-  alias Ecto.Multi
+  alias Neoscan.Vouts
 
   require Logger
 
@@ -171,7 +170,7 @@ defmodule Neoscan.Transactions do
 
     #fetch all addresses involved in the transaction
     address_list = Task.async(
-      fn -> Addresses.get_transaction_addresses(new_vin, vouts)
+      fn -> Addresses.get_transaction_addresses(new_vin, vouts, time)
             |> Addresses.update_all_addresses(
                  new_vin,
                  new_claim,
@@ -184,10 +183,10 @@ defmodule Neoscan.Transactions do
     ) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
 
     #create asset if register Transaction
-    assets(attrs["asset"], String.slice(to_string(txid), -64..-1))
+    ChainAssets.create(attrs["asset"], String.slice(to_string(txid), -64..-1), time)
 
     #create asset if issue Transaction
-    issue(type, vouts)
+    ChainAssets.issue(type, vouts)
 
     #prepare and create transaction
     transaction = Map.merge(
@@ -206,7 +205,7 @@ defmodule Neoscan.Transactions do
     Transaction.changeset(block, transaction)
     |> Repo.insert!()
     |> update_transaction_state
-    |> create_vouts(vouts, Task.await(address_list, 60000))
+    |> Vouts.create_vouts(vouts, Task.await(address_list, 60000))
   end
 
   #add transaction to monitor cache
@@ -239,8 +238,8 @@ defmodule Neoscan.Transactions do
                  select: struct(e, [:asset, :address_hash, :n, :value, :txid, :query, :id])
 
     Repo.all(query)
-    |> verify_vouts(lookups, vin)
-    |> end_vouts_and_return(height)
+    |> Vouts.verify_vouts(lookups, vin)
+    |> Vouts.end_vouts_and_return(height)
   end
 
   #get claimed vouts and add to addresses
@@ -259,213 +258,9 @@ defmodule Neoscan.Transactions do
                  select: struct(e, [:asset, :address_hash, :n, :value, :txid, :query, :id])
 
     Repo.all(query)
-    |> verify_vouts(lookups, claims)
-    |> set_claimed_and_return()
+    |> Vouts.verify_vouts(lookups, claims)
+    |> Vouts.set_claimed_and_return()
   end
-
-  #check if all vouts were found
-  def verify_vouts(result, lookups, root) do
-    cond do
-      Enum.count(result) == Enum.count(lookups) ->
-        result
-      true ->
-        repair_missing(result, root)
-    end
-  end
-
-
-  ############## repair algorithm ##############################################
-
-  #trigger repair if information is missing
-  def repair_missing([], root) do
-    missing = Enum.map(root, fn %{"txid" => txid} -> String.slice(to_string(txid), -64..-1) end)
-    get_missing(missing, root)
-  end
-  #trigger repair if information is missing
-  def repair_missing(result, root) do
-    missing = Enum.map(root, fn %{"txid" => txid} -> String.slice(to_string(txid), -64..-1) end) -- Enum.map(
-      result,
-      fn %{:txid => txid} -> txid end
-              )
-    get_missing(missing, root)
-  end
-
-  #get missing information
-  def get_missing(missing, root) do
-    tuples = Enum.map(
-               missing,
-               fn txid -> NeoscanSync.Blockchain.get_transaction(NeoscanSync.HttpCalls.url(1), txid) end
-             )
-             |> check_missing()
-
-    Blocks.get_missing_blocks(tuples)
-    |> add_missing_transactions(tuples)
-    |> add_missing_vouts(tuples)
-    |> fetch_missing_vouts(root)
-  end
-
-  #return the tuple list, specifying each missing entity
-  def check_missing(transactions) do
-    Enum.map(
-      transactions,
-      fn {:ok, %{"blockhash" => block_hash} = transaction} ->
-        Blocks.check_if_block_exists(String.slice(to_string(block_hash), -64..-1), transaction)
-      end
-    )
-  end
-
-  #fetch vouts again after reparing
-  def fetch_missing_vouts(_result, root) do
-    lookups = Enum.map(
-      root,
-      &"#{String.slice(to_string(&1["txid"]), -64..-1)}#{&1["vout"]}"
-    ) #sometimes "0x" is prepended to hashes
-
-    query = from e in Vout,
-                 where: e.query in ^lookups,
-                 select: struct(e, [:asset, :address_hash, :n, :value, :txid, :query, :id])
-
-    Repo.all(query)
-    |> verify_vouts(lookups, root)
-  end
-
-
-  #verify if the transaction exists in the DB
-  def check_if_transaction_exists(block, transaction) do
-    txid = String.slice(to_string(transaction["txid"]), -64..-1)
-    query = from t in Transaction,
-                 where: t.txid == ^txid,
-                 select: t
-    case Repo.all(query)
-         |> List.first() do
-      nil ->
-        {:transaction_missing, {block, transaction}}
-      db_transaction ->
-        check_if_vouts_exists(db_transaction, transaction)
-    end
-  end
-
-  #Verify if vouts exists in the DB
-  def check_if_vouts_exists(db_transaction, transaction) do
-    query = from v in Vout,
-                 where: v.transaction_id == ^db_transaction.id,
-                 select: v
-
-    db_vouts = Repo.all(query)
-
-    missing = cond do
-      db_vouts == [] ->
-        Enum.map(transaction["vout"], fn %{"n" => n} -> n end)
-      true ->
-        Enum.map(transaction["vout"], fn %{"n" => n} -> n end) -- Enum.map(db_vouts, fn %{:n => n} -> n end)
-    end
-
-    {:vouts_missing, {db_transaction, Enum.filter(transaction["vout"], fn %{"n" => n} -> n in missing end)}}
-  end
-
-  #adds missing transactions after verifying missing blocks
-  def add_missing_transactions(:ok, tuples) do
-    case Enum.any?(tuples, fn {key, _value} -> key == :transaction_missing end) do
-      true ->
-        Enum.filter(tuples, fn {key, _tuple} -> key == :transaction_missing end)
-        |> Enum.map(fn {_key, {block, transaction}} -> {block, transaction} end)
-        |> Enum.group_by(fn {block, _transaction} -> block end)
-        |> Map.to_list
-        |> Enum.map(fn {block, transaction_tuples} -> {block, filter_tuples(transaction_tuples)} end)
-        |> Enum.map(fn {block, transaction_list} -> create_transactions(block, transaction_list) end)
-        |> Enum.uniq
-      false ->
-        [{:ok, "Created"}]
-    end
-  end
-  def add_missing_transactions(_, _tuples) do
-    raise "error fetching and adding missing blocks"
-  end
-
-  #adds missing vouts after verifying missing blocks and transactions
-  def add_missing_vouts(list, tuples) when list == [{:ok, "Created"}] do
-    Enum.filter(tuples, fn {key, _tuple} -> key == :vouts_missing end)
-    |> Enum.map(fn {_key, {db_transaction, vouts}} -> {db_transaction, vouts} end)
-    |> Enum.group_by(fn {db_transaction, _transaction} -> db_transaction end)
-    |> Map.to_list
-    |> Enum.map(fn {db_transaction, vouts_tuple} -> {db_transaction, filter_tuples(vouts_tuple)} end)
-    |> Enum.map(
-         fn {db_transaction, vouts} ->
-           address_list = Addresses.get_transaction_addresses([], vouts)
-           create_vouts(db_transaction, vouts, address_list)
-         end
-       )
-  end
-  def add_missing_vouts(_, _tuples) do
-    raise "error fetching and adding missing transactions"
-  end
-
-  #filter the content from the tuples
-  def filter_tuples(tuples) do
-    Enum.map(tuples, fn {_block, content} -> content end)
-  end
-  #########################################################################
-
-  #set end height for vouts
-  def end_vouts_and_return(vouts, height) do
-    Enum.map(vouts, fn vout -> {vout, Vout.update_changeset(vout, %{:end_height => height})} end)
-    |> Enum.reduce(Multi.new, fn (tuple, acc) -> push_vout_into_multi(tuple, acc) end)
-    |> Repo.transaction
-    |> check_and_return_vouts(vouts)
-  end
-
-  #set claimed for vouts
-  def set_claimed_and_return(vouts) do
-    Enum.map(vouts, fn vout -> {vout, Vout.update_changeset(vout, %{:claimed => true})} end)
-    |> Enum.reduce(Multi.new, fn (tuple, acc) -> push_vout_into_multi(tuple, acc) end)
-    |> Repo.transaction()
-    |> check_and_return_vouts(vouts)
-  end
-
-  #push changes into multi operation
-  def push_vout_into_multi({vout, changeset}, acc) do
-    name = String.to_atom(vout.query)
-
-    acc
-    |> Multi.update(name, changeset, [])
-  end
-
-  def check_and_return_vouts({:ok, _any}, vouts) do
-    Enum.map(
-      vouts,
-      fn %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} ->
-        %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid}
-      end
-    )
-  end
-  def check_and_return_vouts({:error, _any}, _vouts) do
-    raise "error updating vouts"
-  end
-
-  #create new assets
-  defp assets(%{"amount" => amount} = assets, txid) do
-    {float, _} = Float.parse(amount)
-    new_asset = Map.put(assets, "amount", float)
-    create_asset(txid, new_asset)
-  end
-  defp assets(nil, _txid) do
-    nil
-  end
-
-  #issue assets
-  defp issue("IssueTransaction", vouts) do
-    Enum.each(
-      vouts,
-      fn %{"asset" => asset_hash, "value" => value} ->
-        {float, _} = Float.parse(value)
-        add_issued_value(String.slice(to_string(asset_hash), -64..-1), float)
-      end
-    )
-  end
-  defp issue(_type, _vouts) do
-    nil
-  end
-
 
   @doc """
   Updates a transaction.
@@ -535,192 +330,4 @@ defmodule Neoscan.Transactions do
     end
   end
 
-
-
-  @doc """
-  Creates a vout.
-
-  ## Examples
-
-      iex> create_transaction(%{field: value})
-      {:ok, %Transaction{}}
-
-      iex> create_transaction(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_vout(transaction, attrs \\ %{}) do
-    Vout.changeset(transaction, attrs)
-    |> Repo.insert!()
-  end
-
-
-  @doc """
-  Creates many vouts.
-
-  ## Examples
-
-      iex> create_vouts([%{field: value}, ...])
-      {:ok, "Created"}
-
-      iex> create_vouts([%{field: value}, ...])
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_vouts(transaction, vouts, address_list) do
-    updates = vouts
-              |> insert_address(address_list)
-              |> Enum.group_by(fn %{"address" => {address, _attrs}} -> address.address end)
-              |> Map.to_list()
-              |> Enum.map(fn {_address, vouts} -> Addresses.insert_vouts_in_address(transaction, vouts) end)
-
-    Enum.map(address_list, fn {address, attrs} -> Addresses.substitute_if_updated(address, attrs, updates) end)
-    |> Addresses.update_multiple_addresses()
-  end
-
-
-  #insert address struct into vout
-  def insert_address(vouts, address_list) do
-    Enum.map(
-      vouts,
-      fn %{"address" => ad} = x ->
-        Map.put(x, "address", Enum.find(address_list, fn {%{:address => address}, _attrs} -> address == ad end))
-      end
-    )
-  end
-
-
-  @doc """
-  Creates an asset.
-
-  ## Examples
-
-      iex> create_asset(%{field: value})
-      {:ok, %Asset{}}
-
-      iex> create_asset(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_asset(transaction_id, attrs) do
-    Asset.changeset(transaction_id, attrs)
-    |> Repo.insert!()
-    |> update_asset_state
-  end
-  def update_asset_state(asset) do
-    Api.add_asset(asset)
-    asset
-  end
-
-
-  @doc """
-  Gets asset  by its hash value
-
-  ## Examples
-
-      iex> get_asset_by_hash(hash)
-      "NEO"
-
-      iex> get_asset_by_hash(hash)
-      "not found"
-
-  """
-  def get_asset_by_hash(hash) do
-    query = from e in Asset,
-                 where: e.txid == ^hash
-    Repo.all(query)
-    |> List.first
-  end
-
-  @doc """
-  Gets asset name by its hash value
-
-  ## Examples
-
-      iex> get_asset_name_by_hash(hash)
-      "NEO"
-
-      iex> get_asset_name_by_hash(hash)
-      "not found"
-
-  """
-  def get_asset_name_by_hash(hash) do
-    query = from e in Asset,
-                 where: e.txid == ^hash,
-                 select: e.name
-    Repo.all(query)
-    |> List.first
-    |> filter_name
-  end
-
-  def filter_name(asset) do
-    case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
-      %{"name" => name} -> cond do
-                             name == "AntShare" ->
-                               "NEO"
-                             name == "AntCoin" ->
-                               "GAS"
-                             true ->
-                               name
-                           end
-      nil ->
-        %{"name" => name} = Enum.at(asset, 0)
-        name
-    end
-  end
-
-
-  @doc """
-  Returns the list of assets.
-
-  ## Examples
-
-      iex> list_assets()
-      [%Asset{}, ...]
-
-  """
-  def list_assets do
-    query = from e in Asset,
-                 select: %{
-                   :txid => e.txid,
-                   :admin => e.admin,
-                   :amount => e.amount,
-                   :issued => e.issued,
-                   :type => e.type
-                 }
-    Repo.all(query)
-  end
-
-  @doc """
-  Updates an asset.
-
-  ## Examples
-
-      iex> update_asset(asset, %{field: new_value})
-      {:ok, %Asset{}}
-
-      iex> update_asset(asset, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_asset(%Asset{} = asset, attrs) do
-    asset
-    |> Asset.update_changeset(attrs)
-    |> Repo.update!()
-  end
-
-  #add issued value to an existing asset
-  def add_issued_value(asset_hash, value) do
-    result = get_asset_by_hash(asset_hash)
-    cond do
-      result == nil ->
-        Logger.error("Error issuing asset")
-        {:error, "Non existant asset cant be issued!"}
-
-      true ->
-        attrs = %{"issued" => value}
-
-        update_asset(result, attrs)
-    end
-  end
 end

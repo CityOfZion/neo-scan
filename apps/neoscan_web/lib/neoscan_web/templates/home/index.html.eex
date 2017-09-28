@@ -23,7 +23,9 @@
       <div class="tile is-parent">
         <div class="tile is-child box content-background white-text">
           <ul>
-            <img class="ad" src ="<%= static_path(@conn, "/images/competition.png") %>"></img>
+            <a href="http://cityofzion.io/dapps/1">
+              <img class="ad" src ="<%= static_path(@conn, "/images/competition.png") %>"></img>
+            </a>
             <li class="text-center">
               The last reports from the dev community can be found <a class="link" href="https://medium.com/@cityofzion">here</a>.
             </li>

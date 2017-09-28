@@ -8,6 +8,7 @@ defmodule NeoscanMonitor.Worker do
   alias NeoscanMonitor.Utils
   alias Neoscan.Blocks
   alias Neoscan.Transactions
+  alias Neoscan.ChainAssets
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__ )
@@ -17,7 +18,7 @@ defmodule NeoscanMonitor.Worker do
     monitor_nodes = Utils.load()
     blocks = Blocks.home_blocks
     transactions = Transactions.home_transactions
-    assets = Transactions.list_assets
+    assets = ChainAssets.list_assets
     contracts = Transactions.list_contracts
     Process.send(NeoscanMonitor.Server, {:state_update, %{:monitor => monitor_nodes, :blocks => blocks, :transactions => transactions, :assets => assets, :contracts => contracts}}, [])
     schedule_nodes()

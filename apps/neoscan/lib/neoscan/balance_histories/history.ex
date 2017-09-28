@@ -1,7 +1,7 @@
-defmodule Neoscan.Addresses.History do
+defmodule Neoscan.BalanceHistories.History do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Neoscan.Addresses.History
+  alias Neoscan.BalanceHistories.History
 
 
   schema "histories" do

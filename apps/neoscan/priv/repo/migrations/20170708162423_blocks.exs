@@ -19,6 +19,7 @@ defmodule Neoscan.Repo.Migrations.Blocks do
 
       add :total_sys_fee, :float
       add :total_net_fee, :float
+      add :gas_generated, :float
 
       timestamps()
     end
