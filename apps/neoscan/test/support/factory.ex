@@ -12,16 +12,20 @@ defmodule Neoscan.Factory do
       confirmations: 50,
       hash: sequence("blockhash"),
       index: 05,
-      merkleroot: sequence("merklehash"),
-      nextblockhash: sequence("nexthash"),
-      nextconsensus: sequence("consensushash"),
+      merkleroot: sequence("b33f6f3dfead7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6faP"),
+      nextblockhash: sequence("b33f6f3dfead7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8"),
+      nextconsensus: sequence("b33f6f3dfead7ddde999846kf5dda8a6bbbc92cb57f161b5030ae608317c6fa8"),
       nonce: sequence("nonce"),
-      previousblockhash: sequence("previoushash"),
-      script: %{sequence("scripthash") => sequence("scripthashinner")},
+      previousblockhash: sequence("b30f6f3dfead7ddde999846kf5dda8a6bbbc92cb57f161b5030ae608317c6fa8"),
+      script: %{
+        sequence("scripthash") => sequence("scripthashinner")
+      },
       size: 1526,
       time: 15154813,
       version: 2,
       tx_count: 5,
+      total_sys_fee: 0,
+      total_net_fee: 0
     }
   end
 
@@ -40,9 +44,13 @@ defmodule Neoscan.Factory do
       nonce: 15155,
       claims: [%{sequence("claimhash") => sequence("claiminnerhash")}],
       pubkey: sequence("pubkeyhash"),
-      asset: %{sequence("assethash") => sequence("assetinnerhash")},
+      asset: %{
+        sequence("assethash") => sequence("assetinnerhash")
+      },
       description: sequence("description"),
-      contract:  %{sequence("contracthash") => sequence("contractinnerhash")},
+      contract: %{
+        sequence("contracthash") => sequence("contractinnerhash")
+      },
       block_hash: sequence("block_hash"),
       block_height: 0
     }
@@ -51,22 +59,25 @@ defmodule Neoscan.Factory do
   def address_factory do
     %Address{
       address: sequence("hash"),
-      histories: %{ sequence("txhash") => %{
-        "txid" => sequence("txhash"),
-        "balance" => %{
-          sequence("assethash") => %{
-            "asset" => sequence("assethash"),
-            "amount" => 50
+      histories: %{
+        sequence("txhash") => %{
+          "txid" => sequence("txhash"),
+          "balance" => %{
+            sequence("assethash") => %{
+              "asset" => sequence("assethash"),
+              "amount" => 50
+            }
           }
         }
-        }},
+      },
       balance: %{
         sequence("assethash") => %{
           "asset" => sequence("assethash"),
           "amount" => 50
-      }},
+        }
+      },
       claimed: [%{
-        "txids" => [ sequence("txhash")],
+        "txids" => [sequence("txhash")],
         "amount" => 50,
         "asset" => sequence("assethash"),
       }],

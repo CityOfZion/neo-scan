@@ -28,7 +28,7 @@ defmodule Neoscan.TransactionsTest do
       assert length(transaction.scripts) == 1
       assert transaction.size == 5
       assert transaction.sys_fee == "0"
-      assert "txhash"<>_ = transaction.txid
+      assert "txhash" <> _ = transaction.txid
       assert transaction.type == "FactoryTransaction"
       assert transaction.version == 1
       assert length(transaction.vin) == 1

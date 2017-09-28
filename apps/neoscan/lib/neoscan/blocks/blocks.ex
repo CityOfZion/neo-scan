@@ -166,7 +166,7 @@ defmodule Neoscan.Blocks do
   def update_block(%Block{} = block, attrs) do
     block
     |> Block.changeset(attrs)
-    |> Repo.update!()
+    |> Repo.update()
   end
 
   @doc """
