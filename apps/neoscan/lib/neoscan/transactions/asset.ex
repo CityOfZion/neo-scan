@@ -19,16 +19,16 @@ defmodule Neoscan.Transactions.Asset do
   end
 
   @doc false
-  def changeset(transaction_id,  attrs \\ %{}) do
+  def changeset(transaction_id, attrs \\ %{}) do
     new_attrs = Map.put(attrs, "txid", transaction_id)
     %Asset{}
     |> cast(new_attrs, [:txid, :admin, :amount, :name, :owner, :precision, :type, :issued])
-    |> validate_required([:txid,:admin, :amount, :name, :owner, :precision, :type])
+    |> validate_required([:txid, :admin, :amount, :name, :owner, :precision, :type])
   end
 
-  def update_changeset(asset,  attrs \\ %{}) do
+  def update_changeset(asset, attrs \\ %{}) do
     asset
     |> cast(attrs, [:txid, :admin, :amount, :name, :owner, :precision, :type, :issued])
-    |> validate_required([:txid,:admin, :amount, :name, :owner, :precision, :type])
+    |> validate_required([:txid, :admin, :amount, :name, :owner, :precision, :type])
   end
 end

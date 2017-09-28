@@ -22,7 +22,8 @@ defmodule Neoscan.Addresses do
 
   """
   def list_addresses do
-    Repo.all(Address)
+    from(a in Address, preload: :histories)
+    |> Repo.all()
   end
 
   @doc """
@@ -39,8 +40,10 @@ defmodule Neoscan.Addresses do
       ** (Ecto.NoResultsError)
 
   """
-  def get_address!(id), do: Repo.get!(Address, id)
-
+  def get_address!(id) do
+    from(a in Address, where: a.id == ^id, preload: :histories)
+    |> Repo.all()
+  end
   @doc """
   Gets a single address by its hash and send it as a map
 
@@ -141,7 +144,7 @@ defmodule Neoscan.Addresses do
   def update_address(%Address{} = address, attrs) do
     address
     |> Address.update_changeset(attrs)
-    |> Repo.update!()
+    |> Repo.update()
   end
 
   def update_multiple_addresses(list) do
