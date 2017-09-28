@@ -18,7 +18,6 @@ defmodule Neoscan.BlocksTest do
 
     test "create_block/1 with valid data creates a block" do
       block = insert(:block)
-              |> IO.inspect()
       assert block.confirmations == 50
       assert String.contains?(block.hash, "hash")
       assert block.index == 5
