@@ -6,6 +6,8 @@ defmodule Neoscan.Factory do
   alias Neoscan.Blocks.Block
   alias Neoscan.Vouts.Vout
   alias Neoscan.BalanceHistories.History
+  alias Neoscan.Claims.Claim
+  alias Neoscan.ChainAssets.Asset
 
   #TODO: Sequence creating strings bigger than 64 should be sliced
   def block_factory do
@@ -95,6 +97,31 @@ defmodule Neoscan.Factory do
       balance: %{},
       block_height: 1,
       time: 1
+    }
+  end
+
+  def claim_factory do
+    %Claim{
+      address_hash: sequence("AZvTqMjOGT4AH7DZZRf4t6PRYm2k1CFdJZ"),
+      txids: [sequence("txhash")],
+      asset: sequence("assethash"),
+      amount: 0.5,
+      block_height: 5,
+      time: 154856,
+    }
+  end
+
+  def asset_factory do
+    %Asset{
+      txid: sequence("txhash"),
+      admin: sequence("AZvTqMjOGT4AH7DZZRf4t6PRYm2k1CFdJZ"),
+      amount: 100000.0,
+      name: [%{}],
+      owner: sequence("AZvTqMjOGT4AH7DZZRf4t6PRYm2k1CFdJZ"),
+      precision: 1,
+      type: sequence("typestring"),
+      issued: 500.0,
+      time:  154856,
     }
   end
 
