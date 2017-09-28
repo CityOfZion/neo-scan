@@ -35,11 +35,11 @@ defmodule Neoscan.Blocks.Block do
     new_attrs = Map.merge(
       attrs,
       %{
-        hash: String.slice(to_string(attrs[:hash]), -64..-1),
-        nextblockhash: String.slice(to_string(attrs[:nextblockhash]), -64..-1),
-        previousblockhash: String.slice(to_string(attrs[:previousblockhash]), -64..-1),
-        merkleroot: String.slice(to_string(attrs[:merkleroot]), -64..-1),
-        gas_generated: BlockGasGeneration.get_amount_generate_in_block(attrs["index"]),
+        "hash" => String.slice(to_string(attrs["hash"]), -64..-1),
+        "nextblockhash" => String.slice(to_string(attrs["nextblockhash"]), -64..-1),
+        "previousblockhash" => String.slice(to_string(attrs["previousblockhash"]), -64..-1),
+        "merkleroot" => String.slice(to_string(attrs["merkleroot"]), -64..-1),
+        "gas_generated" => BlockGasGeneration.get_amount_generate_in_block(attrs["index"]),
       }
     )
     block
