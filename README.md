@@ -10,6 +10,9 @@ Using docker you can start the project with:
 - docker exec -it neoscan_phoenix_1 sh
 - cd /data
 
+# Development
+- Please run `mix credo` after any changes and apply the suggestions
+
 To run, first install Elixir and Phoenix at:
 
 * https://elixir-lang.org/install.html
