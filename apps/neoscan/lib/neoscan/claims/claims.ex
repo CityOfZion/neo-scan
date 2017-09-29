@@ -4,8 +4,6 @@ defmodule Neoscan.Claims do
   alias Neoscan.Helpers
   alias Ecto.Multi
 
-
-
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking address claim changes.
 
@@ -21,14 +19,13 @@ defmodule Neoscan.Claims do
 
   #separate claimed transactions and insert in the claiming addresses
   def separate_txids_and_insert_claims(address_list, claims, vouts, index, time) do
-    updates = Stream.map(claims, fn %{:txid => txid } -> String.slice(to_string(txid), -64..-1) end)
+    updates = Stream.map(claims, fn %{:txid => txid} -> String.slice(to_string(txid), -64..-1) end)
     |> Stream.uniq()
     |> Enum.to_list
     |> insert_claim_in_addresses(vouts, address_list, index, time)
 
     Enum.map(address_list, fn {address, attrs} -> Helpers.substitute_if_updated(address, attrs, updates) end)
   end
-
 
   #get addresses and route for adding claims
   def insert_claim_in_addresses(transactions, vouts, address_list, index, time) do
@@ -39,7 +36,7 @@ defmodule Neoscan.Claims do
 
   #insert claimed transactions and update address balance
   def insert_claim_in_address({address, attrs}, transactions, value, asset, index, time) do
-    new_attrs = Map.merge(attrs, %{:claimed => Helpers.check_if_attrs_claimed_exists(attrs) || %{} })
+    new_attrs = Map.merge(attrs, %{:claimed => Helpers.check_if_attrs_claimed_exists(attrs) || %{}})
     |> add_claim(transactions, value, asset, index, time)
 
     {address, new_attrs}

@@ -46,14 +46,14 @@ defmodule NeoscanSync.Producer do
       {:ok, height} when (height) > count  ->
         cond do
           height - count >= n ->
-            Enum.to_list(count..(count+n-1))
+            Enum.to_list(count..(count + n - 1))
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
-            |> Enum.map(&Task.await(&1, 60*60*1000))
+            |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
             |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
           height - count < n ->
             Enum.to_list(count..(height))
             |> Enum.map(&Task.async(fn -> cross_check(&1) end))
-            |> Enum.map(&Task.await(&1, 60*60*1000))
+            |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
             |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
         end
       {:ok, height} when (height) == count  ->

@@ -5,6 +5,9 @@ defmodule Neoscan.Addresses do
   """
 
   import Ecto.Query, warn: false
+
+  require Logger
+
   alias Neoscan.Repo
   alias Neoscan.Addresses.Address
   alias Neoscan.BalanceHistories
@@ -176,7 +179,7 @@ defmodule Neoscan.Addresses do
     {:ok, "all operations were succesfull"}
   end
   def check_repo_transaction_results({:error, error}) do
-    IO.inspect(error)
+    Logger.error(inspect(error))
     raise "error updating addresses"
   end
 
