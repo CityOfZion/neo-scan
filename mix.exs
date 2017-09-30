@@ -12,7 +12,8 @@ defmodule Neoscan.Umbrella.Mixfile do
       docs: [
         main: "NeoScan", # The main page in the docs
         extras: ["README.md"]
-      ]
+      ],
+      aliases: aliases()
     ]
   end
 
@@ -36,6 +37,14 @@ defmodule Neoscan.Umbrella.Mixfile do
       {:flow, "~> 0.11"},
       {:ex_machina, "~> 2.0", only: [:test, :travis]},
       {:credo, "~> 0.8", only: [:dev]}
+    ]
+  end
+
+  defp aliases do
+    [
+      "ecto.setup": ["ecto.create", "ecto.migrate"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "test": ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end
