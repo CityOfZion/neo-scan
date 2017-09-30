@@ -29,7 +29,7 @@ defmodule Neoscan.Transactions.Transaction do
     timestamps()
   end
 
-  def changeset(block, attrs \\ %{}) do
+  def changeset_with_block(block, attrs \\ %{}) do
     block
     |> Ecto.build_assoc(:transactions)
     |> cast(attrs, [:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height, :claims, :pubkey, :asset, :description, :contract])

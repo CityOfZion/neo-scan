@@ -29,7 +29,7 @@ defmodule Neoscan.Factory do
       tx_count: 5,
       total_sys_fee: 0,
       total_net_fee: 0,
-      gas_generated: 8
+      gas_generated: 8.1
     }
   end
 

@@ -202,7 +202,7 @@ defmodule Neoscan.Transactions do
                   )
                   |> Map.delete("vout")
 
-    Transaction.changeset(block, transaction)
+    Transaction.changeset_with_block(block, transaction)
     |> Repo.insert!()
     |> update_transaction_state
     |> Vouts.create_vouts(vouts, Task.await(address_list, 60000))
@@ -276,7 +276,7 @@ defmodule Neoscan.Transactions do
   """
   def update_transaction(%Transaction{} = transaction, attrs) do
     transaction
-    |> Transaction.changeset(attrs)
+    |> Transaction.update_changeset(attrs)
     |> Repo.update()
   end
 
@@ -294,19 +294,6 @@ defmodule Neoscan.Transactions do
   """
   def delete_transaction(%Transaction{} = transaction) do
     Repo.delete(transaction)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking transaction changes.
-
-  ## Examples
-
-      iex> change_transaction(transaction)
-      %Ecto.Changeset{source: %Transaction{}}
-
-  """
-  def change_transaction(%Transaction{} = transaction) do
-    Transaction.changeset(transaction, %{})
   end
 
   @doc """
