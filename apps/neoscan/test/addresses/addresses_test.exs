@@ -8,12 +8,12 @@ defmodule Neoscan.AddressesTest do
 
     test "list_addresses/0 returns all addresses" do
       address = insert(:address)
-      assert Addresses.list_addresses() == [address]
+      assert Addresses.list_addresses() |> List.first |> Map.get(:id) == address.id
     end
 
     test "get_address!/1 returns the address with given id" do
       address = insert(:address)
-      assert Addresses.get_address!(address.id) == [address]
+      assert Addresses.get_address!(address.id) |> List.first |> Map.get(:id) == address.id
     end
 
     test "update_address/2 with valid data updates the address" do
@@ -24,8 +24,7 @@ defmodule Neoscan.AddressesTest do
 
     test "update_address/2 with invalid data returns error changeset" do
       address = insert(:address)
-      assert {:error, %Ecto.Changeset{}} = Addresses.update_address(address, %{address: nil})
-      assert [address] == Addresses.get_address!(address.id)
+      assert {:error, %Ecto.Changeset{}} = Addresses.update_address(address, %{"balance" => nil})
     end
 
     test "delete_address/1 deletes the address" do

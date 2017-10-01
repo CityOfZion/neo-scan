@@ -37,11 +37,12 @@ defmodule Neoscan.BlocksTest do
       assert {:ok, block} = Blocks.update_block(
                block,
                %{
-                 confirmations: 57,
-                 hash: "b33f6f3dfead7dddpo99846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
-                 merkleroot: "b33f6f3dfead7ddpe999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
-                 nextblockhash: "b33f6f3dfead7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
-                 previousblockhash: "b33f6f3dfpad7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8"
+                 "confirmations" => 57,
+                 "hash" => "b33f6f3dfead7dddpo99846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
+                 "merkleroot" => "b33f6f3dfead7ddpe999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
+                 "nextblockhash" => "b33f6f3dfead7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
+                 "previousblockhash" => "b33f6f3dfpad7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
+                 "index" => 1
                }
              )
       assert block.confirmations == 57
@@ -49,7 +50,7 @@ defmodule Neoscan.BlocksTest do
 
     test "update_block/2 with invalid data returns error changeset" do
       block = insert(:block)
-      assert {:error, %Ecto.Changeset{}} = Blocks.update_block(block, %{confirmations: nil})
+      assert {:error, %Ecto.Changeset{}} = Blocks.update_block(block, %{"confirmations" => nil}) |> IO.inspect()
       assert block == Blocks.get_block!(block.id)
     end
 
@@ -57,11 +58,6 @@ defmodule Neoscan.BlocksTest do
       block = insert(:block)
       assert %Block{} = Blocks.delete_block(block)
       assert_raise Ecto.NoResultsError, fn -> Blocks.get_block!(block.id) end
-    end
-
-    test "change_block/1 returns a block changeset" do
-      block = insert(:block)
-      assert %Ecto.Changeset{} = Blocks.change_block(block)
     end
   end
 end

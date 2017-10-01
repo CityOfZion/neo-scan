@@ -19,7 +19,6 @@ defmodule Neoscan.Blocks.Block do
     field :time, :integer
     field :version, :integer
     field :tx_count, :integer
-
     field :total_sys_fee, :float
     field :total_net_fee, :float
     field :gas_generated, :float
@@ -31,7 +30,6 @@ defmodule Neoscan.Blocks.Block do
 
   @doc false
   def changeset(%Block{} = block, attrs) do
-
     new_attrs = Map.merge(
       attrs,
       %{

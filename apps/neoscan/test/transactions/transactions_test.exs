@@ -36,13 +36,13 @@ defmodule Neoscan.TransactionsTest do
 
     test "update_transaction/2 with valid data updates the transaction" do
       transaction = insert(:transaction)
-      assert {:ok, transaction} = Transactions.update_transaction(transaction, %{nonce: 12})
+      assert {:ok, transaction} = Transactions.update_transaction(transaction, %{"nonce" => 12})
       assert transaction.nonce == 12
     end
 
     test "update_transaction/2 with invalid data returns error changeset" do
       transaction = insert(:transaction)
-      assert {:error, %Ecto.Changeset{}} = Transactions.update_transaction(transaction, %{block_hash: nil})
+      assert {:error, %Ecto.Changeset{}} = Transactions.update_transaction(transaction, %{"block_hash" => nil})
       assert transaction == Transactions.get_transaction!(transaction.id)
     end
 
@@ -52,9 +52,5 @@ defmodule Neoscan.TransactionsTest do
       assert_raise Ecto.NoResultsError, fn -> Transactions.get_transaction!(transaction.id) end
     end
 
-    test "change_transaction/1 returns a transaction changeset" do
-      transaction = insert(:transaction)
-      assert %Ecto.Changeset{} = Transactions.change_transaction(transaction)
-    end
   end
 end
