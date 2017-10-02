@@ -657,26 +657,27 @@ defmodule Neoscan.Api do
                         :value => v.value,
                       }
 
-    query = cond do
-      type == nil -> from t in Transaction,
-                          where: t.inserted_at > ago(1, "hour"),
-                          order_by: [
-                            desc: t.inserted_at
-                          ],
-                          preload: [
-                            vouts: ^vout_query
-                          ],
-                          limit: 20
+    query = if type == nil do
+      from t in Transaction,
+           where: t.inserted_at > ago(1, "hour"),
+           order_by: [
+             desc: t.inserted_at
+           ],
+           preload: [
+             vouts: ^vout_query
+           ],
+           limit: 20
 
-      true -> from t in Transaction,
-                   order_by: [
-                     desc: t.inserted_at
-                   ],
-                   where: t.type == ^type and t.inserted_at > ago(1, "hour"),
-                   preload: [
-                     vouts: ^vout_query
-                   ],
-                   limit: 20
+    else
+      from t in Transaction,
+           order_by: [
+             desc: t.inserted_at
+           ],
+           where: t.type == ^type and t.inserted_at > ago(1, "hour"),
+           preload: [
+             vouts: ^vout_query
+           ],
+           limit: 20
     end
 
 
@@ -720,17 +721,17 @@ defmodule Neoscan.Api do
   http://seed5.cityofzion.io:8080
   http://api.otcgo.cn:10332
   http://seed1.neo.org:10332
-  http://seed2.neo.org:10332
-  http://seed3.neo.org:10332
-  http://seed4.neo.org:10332
+    http://seed2.neo.org:10332
+    http://seed3.neo.org:10332
+    http://seed4.neo.org:10332
   http://seed5.neo.org:10332
 
   ## Examples
 
       /api/main_net/v1/get_all_nodes
-      [
-        {
-          "url": "http://seed1.cityofzion.io:8080",
+            [
+              {
+                "url": "http://seed1.cityofzion.io:8080",
           "height": 1239778
         },
         ...
@@ -747,11 +748,11 @@ defmodule Neoscan.Api do
 
   ## Examples
 
-      /api/main_net/v1/get_nodes
-      {
-        "urls": [
-          "http://seed1.cityofzion.io: 8080",
-          ....
+  /api/main_net/v1/get_nodes
+  {
+  "urls": [
+  "http://seed1.cityofzion.io: 8080",
+  ....
         ]
       }
 
@@ -790,13 +791,11 @@ defmodule Neoscan.Api do
   """
   def get_fees_in_range(height_string) do
     range = String.split(height_string, "-")
-
-    cond do
-      Enum.count(range) != 2 ->
-        "wrong input"
-      true ->
-        [height1, height2] = range
-        Blocks.get_fees_in_range(height1, height2)
+    if Enum.count(range) != 2 do
+      "wrong input"
+    else
+      [height1, height2] = range
+      Blocks.get_fees_in_range(height1, height2)
     end
   end
 end

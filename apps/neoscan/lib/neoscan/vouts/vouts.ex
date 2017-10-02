@@ -99,10 +99,9 @@ defmodule Neoscan.Vouts do
 
   #check if all vouts were found
   def verify_vouts(result, lookups, root) do
-    cond do
-      Enum.count(result) == Enum.count(lookups) ->
+    if Enum.count(result) == Enum.count(lookups) do
         result
-      true ->
+    else
         Repair.repair_missing(result, root)
     end
   end

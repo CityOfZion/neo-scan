@@ -128,15 +128,12 @@ defmodule Neoscan.ChainAssets do
   #add issued value to an existing asset
   def add_issued_value(asset_hash, value) do
     result = get_asset_by_hash(asset_hash)
-    cond do
-      result == nil ->
-        Logger.error("Error issuing asset")
-        {:error, "Non existant asset cant be issued!"}
-
-      true ->
-        attrs = %{"issued" => value}
-
-        update_asset(result, attrs)
+    if result == nil do
+      Logger.error("Error issuing asset")
+      {:error, "Non existant asset cant be issued!"}
+    else
+      attrs = %{"issued" => value}
+      update_asset(result, attrs)
     end
   end
 

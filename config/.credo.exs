@@ -24,7 +24,7 @@
         # To deactivate a check:
         # Put `false` as second element:
         # {Credo.Check.Design.TagFIXLATER, false},
-        # {Credo.Check.Refactor.FunctionArity, max_arity: 8},
+        {Credo.Check.Refactor.FunctionArity, max_arity: 8},
 
         # {Credo.Check.Design.TagFIXLATER, false},
         # {Credo.Check.Design.TagTODO, false},

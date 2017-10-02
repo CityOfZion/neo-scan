@@ -18,11 +18,10 @@ defmodule NeoscanSync.HttpCalls do
   end
 
   defp test_if_nodes(list, n) do
-    cond do
-      Enum.count(list) > n ->
-        Enum.take_random(list, n)
-      true ->
-        list
+    if Enum.count(list) > n do
+      Enum.take_random(list, n)
+    else
+      list
     end
   end
 

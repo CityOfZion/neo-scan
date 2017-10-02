@@ -18,7 +18,7 @@ defmodule NeoscanWeb.TransactionController do
   end
 
   def round_or_not(value) do
-    float = case  Kernel.is_float(value) do
+    float = case Kernel.is_float(value) do
       true ->
         value
       false ->
@@ -30,13 +30,10 @@ defmodule NeoscanWeb.TransactionController do
             num
         end
     end
-
-    cond do
-      Kernel.round(float) == float ->
-        Kernel.round(float)
-      Kernel.round(float) != float ->
-        value
+    if Kernel.round(float) == float do
+      Kernel.round(float)
+    else
+      value
     end
   end
-
 end

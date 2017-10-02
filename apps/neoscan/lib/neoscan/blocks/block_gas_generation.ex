@@ -13,12 +13,11 @@ defmodule Neoscan.BlockGasGeneration do
     interval = decrement_interval()
     lenght = generation_length()
     amount = generation_amount()
-    cond do
-      Integer.floor_div(index, interval) > lenght ->
-        0
-      true ->
-        position = Integer.floor_div(index, interval)
-        Enum.at(amount, position)
+    if Integer.floor_div(index, interval) > lenght do
+      0
+    else
+      position = Integer.floor_div(index, interval)
+      Enum.at(amount, position)
     end
   end
 end

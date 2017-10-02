@@ -40,7 +40,8 @@ defmodule Neoscan.Repair do
     Enum.map(
       transactions,
       fn {:ok, %{"blockhash" => block_hash} = transaction} ->
-        check_if_block_exists(String.slice(to_string(block_hash), -64..-1), transaction) end
+        check_if_block_exists(String.slice(to_string(block_hash), -64..-1), transaction)
+      end
     )
   end
 
@@ -97,11 +98,10 @@ defmodule Neoscan.Repair do
 
     db_vouts = Repo.all(query)
 
-    missing = cond do
-      db_vouts == [] ->
-        Enum.map(transaction["vout"], fn %{"n" => n} -> n end)
-      true ->
-        Enum.map(transaction["vout"], fn %{"n" => n} -> n end) -- Enum.map(db_vouts, fn %{:n => n} -> n end)
+    missing = if db_vouts == [] do
+      Enum.map(transaction["vout"], fn %{"n" => n} -> n end)
+    else
+      Enum.map(transaction["vout"], fn %{"n" => n} -> n end) -- Enum.map(db_vouts, fn %{:n => n} -> n end)
     end
 
     {:vouts_missing, {db_transaction, Enum.filter(transaction["vout"], fn %{"n" => n} -> n in missing end)}}

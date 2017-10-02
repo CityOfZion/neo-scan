@@ -44,17 +44,16 @@ defmodule NeoscanSync.Producer do
   defp evaluate(result, n, count) do
     case result do
       {:ok, height} when (height) > count ->
-        cond do
-          height - count >= n ->
-            Enum.to_list(count..(count + n - 1))
-            |> Enum.map(&Task.async(fn -> cross_check(&1) end))
-            |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
-            |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
-          height - count < n ->
-            Enum.to_list(count..(height))
-            |> Enum.map(&Task.async(fn -> cross_check(&1) end))
-            |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
-            |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
+        if height - count >= n do
+          Enum.to_list(count..(count + n - 1))
+          |> Enum.map(&Task.async(fn -> cross_check(&1) end))
+          |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
+          |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
+        else
+          Enum.to_list(count..(height))
+          |> Enum.map(&Task.async(fn -> cross_check(&1) end))
+          |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
+          |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
         end
       {:ok, height} when (height) == count ->
         []
@@ -66,32 +65,29 @@ defmodule NeoscanSync.Producer do
   #cross check block hash between different seeds
   defp cross_check(height) do
     nodes = check_if_nodes(2)
-    cond do
-      nodes != nil ->
-        [random1, random2] = nodes
-        blockA = get_block_by_height(random1, height)
-        blockB = get_block_by_height(random2, height)
-        cond do
-          blockA == blockB ->
-            blockA
-          true ->
-            cross_check(height)
-        end
-      true ->
+    if  nodes != nil do
+      [random1, random2] = nodes
+      blockA = get_block_by_height(random1, height)
+      blockB = get_block_by_height(random2, height)
+      if blockA == blockB do
+        blockA
+      else
         cross_check(height)
+      end
+    else
+      cross_check(height)
     end
   end
 
   defp check_if_nodes(n) do
     nodes = HttpCalls.url(n)
-    cond do
-      Enum.count(nodes) == n ->
-        nodes
-      true ->
-        Supervisor.terminate_child(NeoscanMonitor.Supervisor, NeoscanMonitor.Worker)
-        Supervisor.restart_child(NeoscanMonitor.Supervisor, NeoscanMonitor.Worker)
-        Process.sleep(5000)
-        nil
+    if Enum.count(nodes) == n do
+      nodes
+    else
+      Supervisor.terminate_child(NeoscanMonitor.Supervisor, NeoscanMonitor.Worker)
+      Supervisor.restart_child(NeoscanMonitor.Supervisor, NeoscanMonitor.Worker)
+      Process.sleep(5000)
+      nil
     end
   end
 
