@@ -24,6 +24,8 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add :description, :string
       add :contract, :map
 
+      add :asset_moved, :string
+
       add :block_id, references(:blocks, on_delete: :delete_all)
 
       timestamps()
@@ -34,6 +36,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
     create index(:transactions, ["block_height DESC NULLS LAST"])
     create index(:transactions, [:type])
     create index(:transactions, [:block_id])
+    create index(:transactions, [:asset])
 
   end
 end

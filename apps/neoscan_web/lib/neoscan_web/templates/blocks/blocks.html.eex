@@ -1,0 +1,46 @@
+<h1 class="content-title">Blocks</h1>
+
+<!-- All blocks content -->
+<section id="all-blocks-wrapper">
+
+  <div class="detail-bar">
+    <p class="detail-type detail-type-first-4-col">Block height index</p>
+    <p class="detail-type col-3-width">Size</p>
+    <p class="detail-type col-3-width">Transactions</p>
+    <p class="detail-type col-2-width">Created on</p>
+  </div>
+
+  <!-- Blocks -->
+  <section id="blocks-wrapper">
+
+    <div class="blocks-list">
+
+      <%= for block <- @blocks do %>
+        <!-- Block -->
+        <div class="full-width-bar block-number">
+          <div class="information-wrapper">
+            <p class="fa fa-signal medium-detail-text"></p>
+            <a href="<%= block_path @conn, :index, block.hash %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%=block.index%></a>
+            <p class="medium-detail-text col-3-width"><%=block.size%> bytes</p>
+            <p class="medium-detail-text col-3-width"><%=block.tx_count%></p>
+            <p class="medium-detail-text col-2-width">
+              <%=
+                {:ok, date_time} = DateTime.from_unix(block.time, :second)
+                DateTime.to_date(date_time)
+              %> |
+              <%=
+                {:ok, date_time} = DateTime.from_unix(block.time, :second)
+                DateTime.to_time(date_time)
+              %>
+            </p>
+          </div>
+        </div>
+      <%end%>
+
+    </div>
+
+  </section>
+
+  <p class="number-counter">Showing 12 out of 120000 blocks</p>
+  <a href="#" alt="Load more transactions" title="Load more transactions" class="btn-primary btn-transactions-primary">Load more blocks</a>
+</section>

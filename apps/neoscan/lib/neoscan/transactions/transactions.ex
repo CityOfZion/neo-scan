@@ -162,6 +162,7 @@ defmodule Neoscan.Transactions do
         %{"vout" => vouts, "vin" => vin, "txid" => txid, "type" => type} = attrs
       ) do
 
+
     #get inputs from db
     new_vin = get_vins(vin, height)
 
@@ -200,6 +201,7 @@ defmodule Neoscan.Transactions do
                       "block_height" => height,
                     }
                   )
+                  |> set_transaction_asset(vouts)
                   |> Map.delete("vout")
 
     Transaction.changeset_with_block(block, transaction)
@@ -207,6 +209,16 @@ defmodule Neoscan.Transactions do
     |> update_transaction_state
     |> Vouts.create_vouts(vouts, Task.await(address_list, 60000))
   end
+
+  #set transaction asset if it has vouts
+  def set_transaction_asset(attrs, []) do
+    attrs
+  end
+  def set_transaction_asset(attrs, vouts) do
+    vout = List.first(vouts)
+    Map.put(attrs, "asset_moved", vout["asset"])
+  end
+
 
   #add transaction to monitor cache
   def update_transaction_state(%{:type => type} = transaction) when type != "MinerTransaction" do

@@ -1,0 +1,824 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+	font-family: 'Source Sans Pro', sans-serif;
+	color: #ffffff;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+img {
+	display: block;
+}
+
+
+/******************************************
+
+** General Global Text Styles
+
+******************************************/
+
+h1, h2, h3, h4, h5, h6, p {
+	color: #ffffff;
+}
+
+h1 {
+	font-size: 40px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	margin: 70px 0 15px;
+}
+
+a {
+	font-size: 14px;
+	text-decoration: underline;
+	font-weight: 400;
+	color: #4598FF;
+}
+
+a:hover {
+	color: #89BEFF;
+}
+
+/* Small detail text */
+.small-detail-text {
+	font-size: 12px;
+	line-height: 15px;
+	color: #E6ECF2;
+	margin-bottom: 5px;
+}
+
+/* Medium detail text */
+.medium-detail-text {
+	font-size: 14px;
+}
+
+/* Large detail text */
+.large-detail-text {
+	font-size: 18px;
+}
+
+/* Bold text */
+.bold-text {
+	font-weight: 600;
+}
+
+/* Light text */
+.eggshell-blue-text {
+	color: #E6ECF2;
+}
+
+
+/******************************************
+
+** Global Page Element Styles
+
+******************************************/
+
+/*** Wrappers ***/
+#main-wrapper {
+	border: 20px solid #2B2B5E;
+	background: url(/images/background-texture.png) 0 0 no-repeat;
+	background-size: cover;
+}
+
+#main-content-wrapper {
+	max-width: 977px;
+	margin: 0 auto;
+	padding: 0 40px;
+}
+
+/*** Column widths for detail text and inner bar text ***/
+.col-1-width {
+	min-width: 60px;
+}
+
+.col-2-width {
+	min-width: 135px;
+}
+
+.col-3-width {
+	min-width: 227px;
+}
+
+.col-4-width {
+	min-width: 275px;
+}
+
+.col-5-width {
+	min-width: 393px;
+}
+
+/*** Detail bar styles ***/
+.detail-bar {
+	width: 100%;
+	background-image: linear-gradient(90deg,#3A55DF,#4598FF);
+	overflow: hidden;
+	border-radius: 2px;
+}
+
+.detail-type {
+	font-size: 12px;
+	font-weight: 600;
+	float: left;
+	padding: 6px 0 8px;
+}
+
+.detail-type-first-2-col {
+	min-width: 135px;
+	margin-left: 17px;
+}
+
+.detail-type-first-3-col {
+	min-width: 227px;
+	margin-left: 17px;
+}
+
+.detail-type-first-4-col {
+	min-width: 302px;
+	margin-left: 17px;
+}
+
+/*** Remove margin left off various items ***/
+.remove-margin-left {
+	margin-left: 0% !important;
+	margin-left: 0px !important;
+}
+
+/*** Remove margin bottom off various items ***/
+.remove-margin-bottom {
+	margin-bottom: 0% !important;
+	margin-bottom: 0px !important;
+}
+
+/*** Primary button ***/
+.btn-primary {
+	background: #313164;
+	border: 1px solid #4598FF;
+	border-radius: 2px;
+	padding: 11px 12px 12px;
+	color: #ffffff;
+	font-size: 16px;
+	font-weight: 400;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.btn-primary:hover {
+	color: #ffffff;
+	border-color: #89BEFF;
+	background: #37376F;
+}
+
+/*** General styles for information bars ***/
+.full-width-bar {
+	margin: 0 auto 10px;
+	background: rgba(49, 49, 100, 0.62);
+	overflow: hidden;
+	box-shadow: 0 6px 12px #181835;
+	border-radius: 2px;
+}
+
+/* Text inside wallet, transaction and block bars */
+.information-wrapper {
+	overflow: hidden;
+	padding: 21px 0 0;
+	float: left;
+	margin-left: 13px;
+}
+
+.information-wrapper .medium-detail-text,
+.information-wrapper .large-blue-link {
+	float: left;
+}
+
+/* Showing [shown number] out of [max number] text */
+.number-counter {
+	font-size: 12px;
+	text-align: center;
+	color: #E6ECF2;
+	margin: 30px auto;
+}
+
+
+/******************************************
+
+** Fontawesome icons
+
+******************************************/
+
+/* FA: Gas claim cube */
+.fa-cube {
+    font-size: 14px;
+    color: #00A62C !important; /* Overrides white colour of standard fa items */
+    margin-right: 10px;
+}
+
+/* FA: NEO contract cube */
+.fa-cubes {
+    font-size: 14px;
+    color: #BEEB00 !important; /* Overrides white colour of standard fa items */
+    margin-right: 10px;
+}
+
+/* FA: Wallet key */
+.fa-key {
+    font-size: 14px;
+    color: #FFB068 !important; /* Overrides white colour of standard fa items */
+    margin-right: 10px;
+}
+
+/* FA: Blocks graph */
+.fa-signal {
+    font-size: 14px;
+    color: #2CE3B5 !important; /* Overrides white colour of standard fa items */
+    margin-right: 10px;
+}
+
+
+/******************************************
+
+** Global Navigation Styles
+
+******************************************/
+
+#navigation {
+	width: 100%;
+	overflow: hidden;
+	border-bottom: 1px solid #2B2B5E;
+}
+
+#navigation .logo-wrapper {
+	width: 14%;
+	height: 78px;
+	border-right: 1px solid #2B2B5E;
+	float: left;
+}
+
+#navigation .logo-wrapper .neoscan-logo {
+	width: 75%;
+	margin: 23px auto 0;
+}
+
+#navigation input[type=search] {
+  	width: 35%;
+	border: none;
+	height: 78px;
+	float: left;
+	background: none;
+	padding-left: 27px;
+	border-right: 1px solid #2B2B5E;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 14px;
+	color: #ffffff;
+}
+
+#navigation input[type=search]:focus {
+	color: #ffffff;
+}
+
+/*** Search bar input text colour change and fallbacks ***/
+/* WebKit, Blink, Edge */
+::-webkit-input-placeholder {
+    color: #B1B6C9;
+    font-weight: 400;
+}
+
+/* Mozilla Firefox 4 to 18 */
+:-moz-placeholder {
+   color: #B1B6C9;
+   opacity: 1;
+   font-weight: 400;
+}
+
+/* Mozilla Firefox 19+ */
+::-moz-placeholder {
+   color: #B1B6C9;
+   opacity: 1;
+   font-weight: 400;
+}
+
+/* Internet Explorer 10-11 */
+:-ms-input-placeholder {
+   color: #B1B6C9;
+   font-weight: 400;
+}
+
+/* Microsoft Edge */
+::-ms-input-placeholder {
+   color: #B1B6C9;
+   font-weight: 400;
+}
+
+#navigation .nav-wrapper {
+	width: 50%;
+	float: right;
+}
+
+#navigation .nav-links-list {
+	margin: 0 auto;
+	overflow: hidden;
+	max-width: 498px;
+	margin-top: 30px;
+}
+
+#navigation .nav-links-list li {
+	float: left;
+	margin-left: 33px;
+	height: 48px;
+}
+
+#navigation .nav-links-list li a {
+	color: #B1B6C9;
+	text-decoration: none;
+	height: 44px;
+	display: block;
+}
+
+#navigation .nav-links-list li a:hover {
+	color: #ffffff;
+}
+
+#navigation .nav-links-list .active {
+	border-bottom: 3px solid #4598FF;
+	color: #ffffff;
+}
+
+/******************************************
+
+** Explorer
+
+******************************************/
+
+
+/******************************************
+
+** Transactions
+
+******************************************/
+
+#transactions-wrapper {
+	max-width: 977px;
+}
+
+#transactions-wrapper .transactions-list {
+	margin-top: 10px;
+}
+
+/* Gas claim transaction left bar */
+#transactions-wrapper .full-width-bar.gas-transaction {
+	border-left: 4px solid #00A62C;
+}
+
+/* NEO claim transaction left bar */
+#transactions-wrapper .full-width-bar.neo-transaction {
+	border-left: 4px solid #BEEB00;
+}
+
+/*** Accordion panel + button ***/
+#transactions-wrapper .transaction-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0s ease-out;
+    background: url('../images/ICON_Sent-arrow.svg') center center no-repeat rgba(49, 49, 100, 1.0);
+    float: left;
+    width: 100%;
+}
+
+#transactions-wrapper .sent-from-wrapper,
+#transactions-wrapper .sent-to-wrapper,
+#transaction-address-information .sent-from-wrapper,
+#transaction-address-information .sent-to-wrapper {
+	width: 50%;
+	float: left;
+	border-top: 1px solid #3F3F7C;
+	padding: 43px 0 13px;
+	text-align: center;
+}
+
+#transactions-wrapper .individual-transaction {
+	margin-bottom: 30px;
+}
+
+#transactions-wrapper .sent-from-wrapper .large-detail-text,
+#transactions-wrapper .sent-to-wrapper .large-detail-text {
+	margin-bottom: 15px;
+}
+
+#transactions-wrapper .sent-from-wrapper .wallet-address,
+#transactions-wrapper .sent-to-wrapper .wallet-address {
+	margin-bottom: 6px;
+	display: inline-block;
+}
+
+/* Data underneath transactions */
+#transactions-wrapper .other-transaction-information {
+	width: 100%;
+	float: left;
+	border-top: 1px solid #3F3F7C;
+}
+
+#transactions-wrapper .other-transaction-information p {
+	font-size: 11px;
+	color: #ffffff;
+	text-align: center;
+	padding: 6px 0;
+}
+
+#transactions-wrapper .btn-accordion {
+	padding: 24px 20px;
+	border: none;
+	background: none;
+	border-left: 1px solid #3F3F7C;
+	float: right;
+	display: block;
+}
+
+#transactions-wrapper .btn-accordion:hover {
+	background: #3A3A72;
+	cursor: pointer;
+}
+
+#main-content-wrapper .btn-transactions-primary {
+	display: block;
+	margin: 0 auto;
+}
+
+
+/******************************************
+
+** All Wallet Addresses
+
+******************************************/
+
+#wallet-address-wrapper {
+	max-width: 977px;
+}
+
+#wallet-address-wrapper .wallet-address-list {
+	margin-top: 10px;
+}
+
+#wallet-address-wrapper .information-wrapper {
+	padding: 21px 0 23px;
+}
+
+/* Wallet address left bar */
+#wallet-address-wrapper .full-width-bar.wallet-address {
+	border-left: 4px solid #FFB068;
+}
+
+/* Token amount wrapper */
+#wallet-address-wrapper .token-amount-wrapper {
+	float: left;
+	margin-top: 14px;
+}
+
+#wallet-address-wrapper .token-amount-wrapper .add-margin-bottom {
+	margin-bottom: 3px;
+}
+
+#wallet-address-wrapper .token-amount-wrapper .fa-cube-small,
+#wallet-address-wrapper .token-amount-wrapper .fa-cubes-small {
+	font-size: 11px;
+	width: 11px;
+}
+
+#wallet-address-wrapper .token-amount-wrapper .divisible-amount {
+	font-size: 10px;
+}
+
+
+/******************************************
+
+** All Wallet Addresses -> Specific Wallet Address
+
+******************************************/
+
+/* Subline text styles */
+#main-content-wrapper .green-bar {
+	color: #00A62C;
+}
+
+/* Back button */
+#main-content-wrapper .back-link {
+	margin: 38px 0 15px;
+	display: inline-block;
+}
+
+/* Main transaction information */
+#transaction-address-information .transaction-panel {
+    overflow: hidden;
+    background: url('../images/ICON_Sent-arrow.svg') center center no-repeat rgba(49, 49, 100, 0.85);
+    border-left: 4px solid #00A62C;
+    border-bottom: 1px solid #3F3F7C;
+    box-shadow: 0 6px 12px #181835;
+    border-radius: 2px 0 0;
+}
+
+#transaction-address-information .transaction-panel::after {
+	content: "";
+	width: 0;
+	height: 0;
+	margin-left: -20px;
+	position: absolute;
+	top: 0;
+	left: 100%;
+	border: 10px solid #333372;
+	border-right: 10px solid transparent;
+	border-top: 10px solid transparent;
+}
+
+#transaction-address-information .individual-transaction {
+	margin-bottom: 30px;
+}
+
+#transaction-address-information .sent-from-wrapper,
+#transaction-address-information .sent-to-wrapper {
+	border-top: 0;
+}
+
+#transaction-address-information .sent-from-wrapper .large-detail-text,
+#transaction-address-information .sent-to-wrapper .large-detail-text {
+	margin-bottom: 15px;
+}
+
+#transaction-address-information .sent-from-wrapper .wallet-address,
+#transaction-address-information .sent-to-wrapper .wallet-address {
+	margin-bottom: 6px;
+	display: inline-block;
+}
+
+/* Extra transaction information */
+#extra-transaction-information {
+	max-width: 100%;
+	background: rgba(49, 49, 100, 0.85);
+	overflow: hidden;
+	border-left: 4px solid #00A62C;
+	border-radius: 0 0 2px 2px;
+}
+
+#extra-transaction-information .border-right {
+	border-right: 1px solid #3F3F7C;
+}
+
+#extra-transaction-information .border-bottom {
+	border-bottom: 1px solid #3F3F7C;
+}
+
+#extra-transaction-information li {
+	width: 33.33333%;
+	float: left;
+	box-sizing: border-box;
+	padding: 25px;
+}
+
+/* Bytecode + upcode information */
+#bytecode-invocation-list,
+#upcode-invocation-list {
+	width: 100%;
+	overflow: hidden;
+	margin-top: 70px;
+}
+
+#bytecode-invocation-list li,
+#upcode-invocation-list li {
+	width: 48.5%;
+	float: left;
+	margin-left: 3%;
+	word-wrap: wrap;
+	min-height: 100px;
+}
+
+#bytecode-invocation-list li h2,
+#upcode-invocation-list li h2 {
+	font-size: 26px;
+	font-weight: 600;
+	margin-bottom: 16px;
+}
+
+#bytecode-invocation-list li p,
+#upcode-invocation-list li p {
+	width: 90%;
+	word-wrap: break-word;
+	background: rgba(49, 49, 100, 1.0);
+	padding: 5%;
+	border-left: 4px solid #00A62C;
+	border-radius: 2px;
+	min-height: 36px;
+	box-shadow: 0 6px 12px #181835;
+}
+
+
+/******************************************
+
+** Blocks
+
+******************************************/
+
+#blocks-wrapper {
+	max-width: 977px;
+}
+
+#blocks-wrapper .blocks-list {
+	margin-top: 10px;
+}
+
+#blocks-wrapper .information-wrapper {
+	padding: 21px 0 23px;
+}
+
+/* Wallet address left bar */
+#blocks-wrapper .full-width-bar.block-number {
+	border-left: 4px solid #2CE3B5;
+}
+
+
+/******************************************
+
+** Assets
+
+******************************************/
+
+#assets-list {
+	width: 100%;
+	overflow: hidden;
+}
+
+#assets-list li {
+	width: 31.5%;
+	margin-left: 2.75%;
+	margin-bottom: 2.75%;
+	float: left;
+	background: rgba(49, 49, 100, 1.0);
+	box-shadow: 0 6px 12px #181835;
+	border-left: 4px solid #4598FF;
+	box-sizing: border-box;
+}
+
+#assets-list .asset-type {
+	font-size: 40px;
+	font-weight: 600;
+}
+
+#assets-list li .main-asset-type-wrapper {
+	padding: 30px 0 20px 30px;
+}
+
+#assets-list .asset-details-wrapper {
+	width: 100%;
+	overflow: hidden;
+	border-bottom: 1px solid #3F3F7C;
+}
+
+#assets-list .left-column {
+	float: left;
+	width: 50%;
+}
+
+#assets-list .right-column {
+	float: left;
+	width: 50%;
+}
+
+#assets-list .asset-details-wrapper .left-asset-detail {
+	width: 100%;
+	border-right: 1px solid #3F3F7C;
+	border-top: 1px solid #3F3F7C;
+	box-sizing: border-box;
+	padding: 18px 0 18px 30px;
+}
+
+#assets-list .asset-details-wrapper .right-asset-detail {
+	width: 100%;
+	border-top: 1px solid #3F3F7C;
+	box-sizing: border-box;
+	padding: 18px 0 18px 30px;
+}
+
+#assets-list .button-wrapper {
+	width: 100%;
+	padding: 20px 0;
+}
+
+/* More details button */
+#assets-list .button-wrapper .btn-primary {
+	padding: 11px 0 12px;
+	width: 80%;
+	margin-left: 10%;
+}
+
+/******************************************
+
+** About
+
+******************************************/
+
+
+/******************************************
+
+** Global Footer Styles
+
+******************************************/
+
+#footer {
+	width: 100%;
+	margin-top: 70px;
+	border-top: 1px solid #2B2B5E;
+}
+
+#footer .footer-content-wrapper {
+	max-width: 977px;
+	margin: auto;
+	overflow: hidden;
+	padding: 0 40px;
+}
+
+#footer .left-footer-information {
+	width: 50%;
+	float: left;
+	margin-top: 56px;
+}
+
+#footer .left-footer-information .neoscan-logo-footer {
+	margin-bottom: 16px;
+}
+
+#footer .left-footer-information .medium-detail-text {
+	margin-bottom: 10px;
+}
+
+#footer .right-footer-information {
+	min-width: 100px;
+	float: right;
+	overflow: hidden;
+	padding: 70px 0 51px;
+}
+
+/* General right link styles */
+#footer .footer-link-wrapper a {
+	float: right;
+	margin-bottom: 14px;
+}
+
+#footer .footer-link-wrapper a::after {
+	display: block;
+	content: "";
+	width: 26px;
+	height: 26px;
+	margin-top: -19px;
+}
+
+/* Individual link styles */
+#footer .footer-link-wrapper .coz-slack::after {
+	background: url('../images/ICON_Slack.svg') 0 0 no-repeat;
+	margin-left: 111px;
+}
+
+#footer .footer-link-wrapper .coz-github::after {
+	background: url('../images/ICON_Github.svg') 0 0 no-repeat;
+	margin-left: 119px;
+}
+
+#footer .footer-link-wrapper .coz-api::after {
+	background: url('../images/ICON_API.svg') 0 0 no-repeat;
+	margin-left: 90px;
+}

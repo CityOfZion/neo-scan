@@ -44,7 +44,7 @@ defmodule NeoscanMonitor.Worker do
 
   def handle_cast({:add_block, block}, state) do
       count = Enum.count(state.blocks)
-      new_blocks = [%{:index => block.index, :time => block.time, :tx_count => block.tx_count, :hash => block.hash} | state.blocks]
+      new_blocks = [%{:index => block.index, :time => block.time, :tx_count => block.tx_count, :hash => block.hash, :size => block.size} | state.blocks]
         |> cut_if_more(count)
 
       new_state = Map.put(state, :blocks, new_blocks)

@@ -23,6 +23,8 @@ defmodule Neoscan.Transactions.Transaction do
     field :description, :string
     field :contract, :map
 
+    field :asset_moved, :string
+
     has_many :vouts, Neoscan.Vouts.Vout
     belongs_to :block, Neoscan.Blocks.Block
 
@@ -32,14 +34,14 @@ defmodule Neoscan.Transactions.Transaction do
   def changeset_with_block(block, attrs \\ %{}) do
     block
     |> Ecto.build_assoc(:transactions)
-    |> cast(attrs, [:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height, :claims, :pubkey, :asset, :description, :contract])
+    |> cast(attrs, [:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height, :claims, :pubkey, :asset, :description, :contract, :asset_moved])
     |> assoc_constraint(:block, required: true)
     |> validate_required([:attributes, :net_fee, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height])
   end
 
   def update_changeset(transaction, attrs) do
     transaction
-    |> cast(attrs, [:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height, :claims, :pubkey, :asset, :description, :contract])
+    |> cast(attrs, [:attributes, :net_fee, :nonce, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height, :claims, :pubkey, :asset, :description, :contract, :asset_moved])
     |> assoc_constraint(:block, required: true)
     |> validate_required([:attributes, :net_fee, :scripts, :size, :sys_fee, :txid, :type, :version, :vin, :time, :block_hash, :block_height])
   end
