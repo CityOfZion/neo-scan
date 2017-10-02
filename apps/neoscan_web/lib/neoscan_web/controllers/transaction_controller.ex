@@ -11,7 +11,7 @@ defmodule NeoscanWeb.TransactionController do
   def route(nil, conn) do
     conn
     |> put_flash(:info, "Not Found in DB!")
-    |> redirect( to: home_path(conn, :index))
+    |> redirect(to: home_path(conn, :index))
   end
   def route(transaction, conn) do
     render(conn, "transaction.html", transaction: transaction)
@@ -26,8 +26,8 @@ defmodule NeoscanWeb.TransactionController do
           true ->
             value
           false ->
-          {num, _} = Float.parse(value)
-          num
+            {num, _} = Float.parse(value)
+            num
         end
     end
 

@@ -42,10 +42,10 @@ defmodule Neoscan.ChainAssets do
 
   """
   def get_asset_by_hash(hash) do
-   query = from e in Asset,
-     where: e.txid == ^hash
-   Repo.all(query)
-   |> List.first
+    query = from e in Asset,
+                 where: e.txid == ^hash
+    Repo.all(query)
+    |> List.first
   end
 
   @doc """
@@ -61,24 +61,24 @@ defmodule Neoscan.ChainAssets do
 
   """
   def get_asset_name_by_hash(hash) do
-   query = from e in Asset,
-     where: e.txid == ^hash,
-     select: e.name
-   Repo.all(query)
-   |> List.first
-   |>filter_name
+    query = from e in Asset,
+                 where: e.txid == ^hash,
+                 select: e.name
+    Repo.all(query)
+    |> List.first
+    |> filter_name
   end
 
   def filter_name(asset) do
     case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
       %{"name" => name} -> cond do
-          name == "AntShare" ->
-            "NEO"
-          name == "AntCoin" ->
-            "GAS"
-          true ->
-            name
-        end
+                             name == "AntShare" ->
+                               "NEO"
+                             name == "AntCoin" ->
+                               "GAS"
+                             true ->
+                               name
+                           end
       nil ->
         %{"name" => name} = Enum.at(asset, 0)
         name
@@ -97,13 +97,13 @@ defmodule Neoscan.ChainAssets do
   """
   def list_assets do
     query = from e in Asset,
-    select: %{
-      :txid => e.txid,
-      :admin => e.admin,
-      :amount => e.amount,
-      :issued => e.issued,
-      :type => e.type
-    }
+                 select: %{
+                   :txid => e.txid,
+                   :admin => e.admin,
+                   :amount => e.amount,
+                   :issued => e.issued,
+                   :type => e.type
+                 }
     Repo.all(query)
   end
 
@@ -131,7 +131,7 @@ defmodule Neoscan.ChainAssets do
     cond do
       result == nil ->
         Logger.error("Error issuing asset")
-        {:error , "Non existant asset cant be issued!"}
+        {:error, "Non existant asset cant be issued!"}
 
       true ->
         attrs = %{"issued" => value}
@@ -147,16 +147,19 @@ defmodule Neoscan.ChainAssets do
     new_asset = Map.merge(assets, %{"amount" => float, "time" => time})
     create_asset(txid, new_asset)
   end
-  def create( nil, _txid, _time) do
+  def create(nil, _txid, _time) do
     nil
   end
 
   #issue assets
   def issue("IssueTransaction", vouts) do
-    Enum.each(vouts, fn %{"asset" => asset_hash, "value" => value} ->
-      {float, _} = Float.parse(value)
-      add_issued_value(String.slice(to_string(asset_hash), -64..-1), float)
-    end)
+    Enum.each(
+      vouts,
+      fn %{"asset" => asset_hash, "value" => value} ->
+        {float, _} = Float.parse(value)
+        add_issued_value(String.slice(to_string(asset_hash), -64..-1), float)
+      end
+    )
   end
   def issue(_type, _vouts) do
     nil

@@ -9,7 +9,7 @@ defmodule NeoscanSync.Producer do
   require Logger
 
   def start_link() do
-    { :ok, counter } = Blocks.get_highest_block_in_db()
+    {:ok, counter} = Blocks.get_highest_block_in_db()
     GenStage.start_link(__MODULE__, counter, name: __MODULE__)
   end
 
@@ -26,10 +26,10 @@ defmodule NeoscanSync.Producer do
 
   def do_handle_demand(demand, {counter, _pending_demand}) do
     events = get_current_height()
-    |> evaluate(demand, counter+1)
+             |> evaluate(demand, counter + 1)
 
     events_count = Enum.count(events)
-    check_if_demand(  events_count, demand)
+    check_if_demand(events_count, demand)
     {:noreply, events, {(counter + events_count), demand - events_count}}
   end
 
@@ -43,7 +43,7 @@ defmodule NeoscanSync.Producer do
   #evaluate number of process, current block count, and start async functions
   defp evaluate(result, n, count) do
     case result do
-      {:ok, height} when (height) > count  ->
+      {:ok, height} when (height) > count ->
         cond do
           height - count >= n ->
             Enum.to_list(count..(count + n - 1))
@@ -56,9 +56,9 @@ defmodule NeoscanSync.Producer do
             |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
             |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
         end
-      {:ok, height} when (height) == count  ->
+      {:ok, height} when (height) == count ->
         []
-      {:ok, height} when (height) < count  ->
+      {:ok, height} when (height) < count ->
         []
     end
   end
@@ -101,9 +101,9 @@ defmodule NeoscanSync.Producer do
   end
   defp get_block_by_height(random, height) do
     case Blockchain.get_block_by_height(random, height) do
-      { :ok , block } ->
+      {:ok, block} ->
         block
-      { :error, _reason} ->
+      {:error, _reason} ->
         get_block_by_height(check_if_nodes(1), height)
     end
   end

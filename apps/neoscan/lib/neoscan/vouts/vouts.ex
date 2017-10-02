@@ -21,9 +21,9 @@ defmodule Neoscan.Vouts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_vout( transaction, attrs \\ %{}) do
-      Vout.changeset(transaction, attrs)
-      |> Repo.insert!()
+  def create_vout(transaction, attrs \\ %{}) do
+    Vout.changeset(transaction, attrs)
+    |> Repo.insert!()
   end
 
 
@@ -39,12 +39,12 @@ defmodule Neoscan.Vouts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_vouts( transaction, vouts, address_list) do
+  def create_vouts(transaction, vouts, address_list) do
     updates = vouts
-    |> insert_address(address_list)
-    |> Enum.group_by(fn %{"address" => {address , _attrs}} -> address.address end)
-    |> Map.to_list()
-    |> Enum.map(fn {_address, vouts} -> insert_vouts_in_address(transaction, vouts) end)
+              |> insert_address(address_list)
+              |> Enum.group_by(fn %{"address" => {address, _attrs}} -> address.address end)
+              |> Map.to_list()
+              |> Enum.map(fn {_address, vouts} -> insert_vouts_in_address(transaction, vouts) end)
 
     Enum.map(address_list, fn {address, attrs} -> Helpers.substitute_if_updated(address, attrs, updates) end)
     |> Addresses.update_multiple_addresses()
@@ -53,9 +53,12 @@ defmodule Neoscan.Vouts do
 
   #insert address struct into vout
   def insert_address(vouts, address_list) do
-    Enum.map(vouts, fn %{"address" => ad } = x ->
-      Map.put(x, "address", Enum.find(address_list, fn {%{ :address => address }, _attrs} -> address == ad end))
-    end)
+    Enum.map(
+      vouts,
+      fn %{"address" => ad} = x ->
+        Map.put(x, "address", Enum.find(address_list, fn {%{:address => address}, _attrs} -> address == ad end))
+      end
+    )
   end
 
   #set end height for vouts
@@ -75,7 +78,7 @@ defmodule Neoscan.Vouts do
   end
 
   #push changes into multi operation
-  def push_vout_into_multi({vout, changeset} , acc) do
+  def push_vout_into_multi({vout, changeset}, acc) do
     name = String.to_atom(vout.query)
 
     acc
@@ -83,7 +86,11 @@ defmodule Neoscan.Vouts do
   end
 
   def check_and_return_vouts({:ok, _any}, vouts) do
-    Enum.map(vouts, fn %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} -> %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} end)
+    Enum.map(
+      vouts,
+      fn %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} ->
+        %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} end
+    )
   end
   def check_and_return_vouts({:error, _any}, _vouts) do
     raise "error updating vouts"
@@ -102,19 +109,29 @@ defmodule Neoscan.Vouts do
 
   #insert vouts into address balance
   def insert_vouts_in_address(%{:txid => txid, :block_height => index, :time => time} = transaction, vouts) do
-    %{"address" => {address , attrs }} = List.first(vouts)
-    new_attrs = Map.merge( attrs, %{:balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance , :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}})
-      |> add_vouts(vouts, transaction)
-      |> BalanceHistories.add_tx_id(txid, index, time)
+    %{"address" => {address, attrs}} = List.first(vouts)
+    new_attrs = Map.merge(
+                  attrs,
+                  %{
+                    :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
+                    :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
+                  }
+                )
+                |> add_vouts(vouts, transaction)
+                |> BalanceHistories.add_tx_id(txid, index, time)
     {address, new_attrs}
   end
 
   #add multiple vouts to address
   def add_vouts(attrs, vouts, transaction) do
-    Enum.reduce(vouts, attrs, fn (vout, acc) ->
-      create_vout(transaction, vout)
-      |> add_vout(acc)
-    end)
+    Enum.reduce(
+      vouts,
+      attrs,
+      fn (vout, acc) ->
+        create_vout(transaction, vout)
+        |> add_vout(acc)
+      end
+    )
   end
 
   #add a single vout to adress

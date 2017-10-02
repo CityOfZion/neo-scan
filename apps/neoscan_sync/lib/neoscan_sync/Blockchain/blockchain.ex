@@ -11,46 +11,54 @@ defmodule NeoscanSync.Blockchain do
   @doc """
    Get the current block by height through seed 'index'
   """
-  def get_block_by_height(url , height ) do
-    data = Poison.encode!(%{
-      "jsonrpc" => "2.0",
-       "method" => "getblock",
-       "params" => [ height, 1 ],
-       "id" => 5
-    })
+  def get_block_by_height(url, height) do
+    data = Poison.encode!(
+      %{
+        "jsonrpc" => "2.0",
+        "method" => "getblock",
+        "params" => [height, 1],
+        "id" => 5
+      }
+    )
     headers = [{"Content-Type", "application/json"}]
     HttpCalls.request(headers, data, url)
   end
 
-  def get_block_by_hash(url , hash ) do
-    data = Poison.encode!(%{
-      "jsonrpc" => "2.0",
-       "method" => "getblock",
-       "params" => [ hash, 1 ],
-       "id" => 5
-    })
+  def get_block_by_hash(url, hash) do
+    data = Poison.encode!(
+      %{
+        "jsonrpc" => "2.0",
+        "method" => "getblock",
+        "params" => [hash, 1],
+        "id" => 5
+      }
+    )
     headers = [{"Content-Type", "application/json"}]
     HttpCalls.request(headers, data, url)
   end
 
   def get_current_height(url) do
-    data = Poison.encode!(%{
-      "jsonrpc": "2.0",
-       "method": "getblockcount",
-       "params": [],
-       "id": 5
-    })
-  	headers = [{"Content-Type", "application/json"}]
+    data = Poison.encode!(
+      %{
+        "jsonrpc": "2.0",
+        "method": "getblockcount",
+        "params": [],
+        "id": 5
+      }
+    )
+    headers = [{"Content-Type", "application/json"}]
     HttpCalls.request(headers, data, url)
   end
 
   def get_transaction(url, txid) do
-    data = Poison.encode!(%{
-      "jsonrpc": "2.0",
-       "method": "getrawtransaction",
-       "params": [ txid, 1],
-       "id": 5
-    })
+    data = Poison.encode!(
+      %{
+        "jsonrpc": "2.0",
+        "method": "getrawtransaction",
+        "params": [txid, 1],
+        "id": 5
+      }
+    )
     headers = [{"Content-Type", "application/json"}]
     HttpCalls.request(headers, data, url)
   end
