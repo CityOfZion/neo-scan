@@ -11,7 +11,6 @@ defmodule Neoscan.Api do
   alias Neoscan.Vouts.Vout
   alias NeoscanMonitor.Api
 
-
   @moduledoc """
     Main API for accessing data from the explorer.
     All data is provided through GET requests in `/api/main_net/v1`.
@@ -31,7 +30,6 @@ defmodule Neoscan.Api do
       Map.drop(map, [:__meta__, :__struct__])
     end
   end
-
 
   @doc """
   Returns the balance for an address from its `hash_string`
@@ -234,7 +232,7 @@ defmodule Neoscan.Api do
       ]
 
   """
-  def get_assets() do
+  def get_assets do
     Api.get_assets
     |> Enum.map(
          fn x ->
@@ -407,7 +405,7 @@ defmodule Neoscan.Api do
       ]
 
   """
-  def get_last_blocks() do
+  def get_last_blocks do
     tran_query = from t in Transaction,
                       select: t.txid
 
@@ -461,7 +459,7 @@ defmodule Neoscan.Api do
       }
 
   """
-  def get_highest_block() do
+  def get_highest_block do
     tran_query = from t in Transaction,
                       select: t.txid
 
@@ -680,7 +678,6 @@ defmodule Neoscan.Api do
            limit: 20
     end
 
-
     Repo.all(query)
     |> Enum.map(
          fn %{:vouts => vouts, :vin => vin} = x ->
@@ -706,7 +703,6 @@ defmodule Neoscan.Api do
          end
        )
   end
-
 
   @doc """
   Returns all working nodes and their respective heights.
@@ -738,7 +734,7 @@ defmodule Neoscan.Api do
       ]
 
   """
-  def get_all_nodes() do
+  def get_all_nodes do
     Api.get_data
     |> Enum.map(fn {url, height} -> %{url: url, height: height} end)
   end
@@ -757,7 +753,7 @@ defmodule Neoscan.Api do
       }
 
   """
-  def get_nodes() do
+  def get_nodes do
     %{urls: Api.get_nodes}
   end
 
@@ -772,7 +768,7 @@ defmodule Neoscan.Api do
       }
 
   """
-  def get_height() do
+  def get_height do
     {:ok, height} = Api.get_height
     %{:height => height}
   end

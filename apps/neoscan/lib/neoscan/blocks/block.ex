@@ -4,7 +4,6 @@ defmodule Neoscan.Blocks.Block do
   alias Neoscan.BlockGasGeneration
   alias Neoscan.Blocks.Block
 
-
   schema "blocks" do
     field :confirmations, :integer
     field :hash, :string

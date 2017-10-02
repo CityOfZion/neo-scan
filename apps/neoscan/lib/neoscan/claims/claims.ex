@@ -57,5 +57,4 @@ defmodule Neoscan.Claims do
     |> Multi.insert(name, changeset, [])
   end
 
-
 end

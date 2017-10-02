@@ -1,8 +1,7 @@
 defmodule NeoscanMonitor.Utils do
   alias NeoscanSync.Blockchain
 
-
-  def seeds() do
+  def seeds do
     [
       "http://seed1.cityofzion.io:8080",
       "http://seed2.cityofzion.io:8080",
@@ -18,7 +17,7 @@ defmodule NeoscanMonitor.Utils do
     ]
   end
 
-  def load() do
+  def load do
     data = seeds()
            |> Enum.map(fn url -> {url, Blockchain.get_current_height(url)} end)
            |> Enum.filter(fn {url, result} -> evaluate_result(url, result)  end)

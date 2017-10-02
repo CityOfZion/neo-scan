@@ -21,5 +21,4 @@ defmodule Neoscan.BalanceHistories do
       %{address | tx_ids: new_tx}
   end
 
-
 end

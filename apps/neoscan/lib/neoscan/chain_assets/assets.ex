@@ -28,7 +28,6 @@ defmodule Neoscan.ChainAssets do
     asset
   end
 
-
   @doc """
   Gets asset  by its hash value
 
@@ -85,7 +84,6 @@ defmodule Neoscan.ChainAssets do
     end
   end
 
-
   @doc """
   Returns the list of assets.
 
@@ -137,7 +135,6 @@ defmodule Neoscan.ChainAssets do
     end
   end
 
-
   #create new assets
   def create(%{"amount" => amount} = assets, txid, time) do
     {float, _} = Float.parse(amount)
@@ -161,6 +158,5 @@ defmodule Neoscan.ChainAssets do
   def issue(_type, _vouts) do
     nil
   end
-
 
 end

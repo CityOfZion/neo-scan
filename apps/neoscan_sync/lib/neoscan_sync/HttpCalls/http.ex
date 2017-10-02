@@ -70,5 +70,4 @@ defmodule NeoscanSync.HttpCalls do
     {:error, "server error"}
   end
 
-
 end

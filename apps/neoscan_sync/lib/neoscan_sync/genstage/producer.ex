@@ -8,7 +8,7 @@ defmodule NeoscanSync.Producer do
 
   require Logger
 
-  def start_link() do
+  def start_link do
     {:ok, counter} = Blocks.get_highest_block_in_db()
     GenStage.start_link(__MODULE__, counter, name: __MODULE__)
   end
@@ -105,7 +105,7 @@ defmodule NeoscanSync.Producer do
   end
 
   #get current height from monitor
-  def get_current_height() do
+  def get_current_height do
     Api.get_height
   end
 end

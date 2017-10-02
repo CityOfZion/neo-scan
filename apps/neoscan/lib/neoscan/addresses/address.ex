@@ -3,7 +3,6 @@ defmodule Neoscan.Addresses.Address do
   import Ecto.Changeset
   alias Neoscan.Addresses.Address
 
-
   schema "addresses" do
     field :address, :string
     field :balance, :map

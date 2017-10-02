@@ -22,7 +22,6 @@ defmodule Neoscan.Repo.Migrations.Vouts do
       timestamps()
     end
 
-
     create unique_index(:vouts, [:query])
     create index(:vouts, [:transaction_id])
     create index(:vouts, [:address_id])

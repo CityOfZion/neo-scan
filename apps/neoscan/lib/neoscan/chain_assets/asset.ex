@@ -3,7 +3,6 @@ defmodule Neoscan.ChainAssets.Asset do
   import Ecto.Changeset
   alias Neoscan.ChainAssets.Asset
 
-
   schema "assets" do
     field :txid, :string  #assets are referenced by their register transaction txid
     field :admin, :string

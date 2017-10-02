@@ -2,7 +2,6 @@ defmodule Neoscan.Transactions.Transaction do
   use Ecto.Schema
   import Ecto.Changeset
 
-
   schema "transactions" do
     field :attributes, {:array, :map}
     field :net_fee, :string

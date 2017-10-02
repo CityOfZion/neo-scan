@@ -17,5 +17,4 @@ defmodule NeoscanWeb.BlockController do
     render(conn, "block.html", block: block)
   end
 
-
 end

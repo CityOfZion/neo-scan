@@ -8,7 +8,6 @@ defmodule Neoscan.Vouts do
   alias Neoscan.Helpers
   alias Ecto.Multi
 
-
   @doc """
   Creates a vout.
 
@@ -25,7 +24,6 @@ defmodule Neoscan.Vouts do
     Vout.changeset(transaction, attrs)
     |> Repo.insert!()
   end
-
 
   @doc """
   Creates many vouts.
@@ -49,7 +47,6 @@ defmodule Neoscan.Vouts do
     Enum.map(address_list, fn {address, attrs} -> Helpers.substitute_if_updated(address, attrs, updates) end)
     |> Addresses.update_multiple_addresses()
   end
-
 
   #insert address struct into vout
   def insert_address(vouts, address_list) do
@@ -95,7 +92,6 @@ defmodule Neoscan.Vouts do
   def check_and_return_vouts({:error, _any}, _vouts) do
     raise "error updating vouts"
   end
-
 
   #check if all vouts were found
   def verify_vouts(result, lookups, root) do

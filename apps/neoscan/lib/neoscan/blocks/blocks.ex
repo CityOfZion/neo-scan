@@ -86,7 +86,6 @@ defmodule Neoscan.Blocks do
     |> List.first
   end
 
-
   @doc """
   Gets a single block by its hash value for blocks page
 
@@ -206,7 +205,6 @@ defmodule Neoscan.Blocks do
     Block.changeset(block, %{})
   end
 
-
   @doc """
   Returns the heighest block in the database
 
@@ -216,7 +214,7 @@ defmodule Neoscan.Blocks do
       {:ok, %Block{}}
 
   """
-  def get_highest_block_in_db() do
+  def get_highest_block_in_db do
     query = from e in Block,
                  select: e.index,
                  where: e.index > 1300000,
@@ -225,7 +223,6 @@ defmodule Neoscan.Blocks do
                    desc: e.index
                  ],
                  limit: 1
-
 
     case Repo.all(query) do
       [index] ->
@@ -250,7 +247,6 @@ defmodule Neoscan.Blocks do
                  select: e
     Repo.all(query)
   end
-
 
   @doc """
   delete all blocks in list
@@ -277,7 +273,6 @@ defmodule Neoscan.Blocks do
     get_higher_than(height)
     |> delete_blocks
   end
-
 
   #get the total of spent fees in the network between a height range
   def get_fees_in_range(height1, height2) do
@@ -341,6 +336,5 @@ defmodule Neoscan.Blocks do
 
     Map.merge(block, %{"total_sys_fee" => sys_fee, "total_net_fee" => net_fee})
   end
-
 
 end

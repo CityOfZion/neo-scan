@@ -37,7 +37,6 @@ defmodule Neoscan.Claims.Unclaimed do
     total_gas * value / total_neo()
   end
 
-
   #get all unclaimed transaction vouts
   def get_unclaimed_vouts(address_id) do
     query = from v in Vout,
@@ -88,6 +87,5 @@ defmodule Neoscan.Claims.Unclaimed do
          end
        )
   end
-
 
 end

@@ -78,5 +78,4 @@ defmodule Neoscan.Vouts.Vout do
     |> cast(attrs, [:claimed])
   end
 
-
 end

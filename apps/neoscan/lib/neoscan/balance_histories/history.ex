@@ -2,8 +2,7 @@ defmodule Neoscan.BalanceHistories.History do
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.BalanceHistories.History
-
-
+  
   schema "histories" do
     field :address_hash, :string
     field :txid, :string

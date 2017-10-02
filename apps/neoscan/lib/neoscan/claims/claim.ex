@@ -3,7 +3,6 @@ defmodule Neoscan.Claims.Claim do
   import Ecto.Changeset
   alias Neoscan.Claims.Claim
 
-
   schema "claims" do
     field :address_hash, :string
     field :txids, {:array, :string}

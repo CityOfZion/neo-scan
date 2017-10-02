@@ -1,6 +1,5 @@
 defmodule Neoscan.Helpers do
 
-
   @doc """
   Populates tuples {address_hash, vins} with {%Adddress{}, vins}
 
@@ -8,7 +7,6 @@ defmodule Neoscan.Helpers do
 
       iex> populate_groups(groups})
       [{%Address{}, _},...]
-
 
   """
   def populate_groups(groups, address_list) do

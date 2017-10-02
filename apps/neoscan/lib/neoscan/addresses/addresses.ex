@@ -81,7 +81,6 @@ defmodule Neoscan.Addresses do
    |> List.first
   end
 
-
   @doc """
   Gets a single address by its hash and send it as a map
 
@@ -183,7 +182,6 @@ defmodule Neoscan.Addresses do
     raise "error updating addresses"
   end
 
-
   @doc """
   Deletes a Address.
 
@@ -259,8 +257,6 @@ defmodule Neoscan.Addresses do
     |> Enum.concat(address_list)
   end
 
-
-
   #Update vins and claims into addresses
   def update_all_addresses(address_list,[], nil, _vouts, _txid, _index, _time) do
     address_list
@@ -286,7 +282,6 @@ defmodule Neoscan.Addresses do
     |> Helpers.populate_groups(address_list)
     |> Enum.map(fn {address, vins} -> insert_vins_in_address(address, vins, txid, index, time) end)
 
-
     Enum.map(address_list, fn {address, attrs} -> Helpers.substitute_if_updated(address, attrs, updates) end)
   end
 
@@ -309,6 +304,5 @@ defmodule Neoscan.Addresses do
     new_balance = %{"asset" => vin.asset, "amount" => current_amount - vin.value}
     %{attrs | balance: Map.put(attrs.balance || %{}, vin.asset, new_balance)}
   end
-
 
 end

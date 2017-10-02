@@ -20,5 +20,4 @@ defmodule NeoscanWeb.RoomChannel do
     push socket, event, payload
     {:noreply, socket}
   end
-
 end

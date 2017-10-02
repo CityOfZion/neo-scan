@@ -125,5 +125,4 @@ defmodule Neoscan.Factory do
     }
   end
 
-
 end
