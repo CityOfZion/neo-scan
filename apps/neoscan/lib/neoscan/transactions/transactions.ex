@@ -230,6 +230,7 @@ defmodule Neoscan.Transactions do
   end
 
 
+
   #add transaction to monitor cache
   def update_transaction_state(%{:type => type} = transaction)
       when type != "MinerTransaction" do
