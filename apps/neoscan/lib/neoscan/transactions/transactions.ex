@@ -166,7 +166,6 @@ defmodule Neoscan.Transactions do
         %{"vout" => vouts, "vin" => vin, "txid" => txid, "type" => type} = attrs
       ) do
 
-
     #get inputs from db
     new_vin = get_vins(vin, height)
 
@@ -228,8 +227,6 @@ defmodule Neoscan.Transactions do
     vout = List.first(vouts)
     Map.put(attrs, "asset_moved", vout["asset"])
   end
-
-
 
   #add transaction to monitor cache
   def update_transaction_state(%{:type => type} = transaction)
