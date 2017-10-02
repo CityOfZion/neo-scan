@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "babel-plugin-syntax-jsx": "^6.18.0",
-    "bulma": "^0.4.3",
     "inferno": "^3.7.1",
     "inferno-component": "^3.7.1",
     "inferno-virtual-list": "^0.2.0",

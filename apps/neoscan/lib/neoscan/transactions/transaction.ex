@@ -23,6 +23,8 @@ defmodule Neoscan.Transactions.Transaction do
     field :description, :string
     field :contract, :map
 
+    field :asset_moved, :string
+
     has_many :vouts, Neoscan.Vouts.Vout
     belongs_to :block, Neoscan.Blocks.Block
 
@@ -52,7 +54,8 @@ defmodule Neoscan.Transactions.Transaction do
            :pubkey,
            :asset,
            :description,
-           :contract
+           :contract,
+           :asset_moved
          ]
        )
     |> assoc_constraint(:block, required: true)
@@ -96,7 +99,8 @@ defmodule Neoscan.Transactions.Transaction do
            :pubkey,
            :asset,
            :description,
-           :contract
+           :contract,
+           :asset_moved
          ]
        )
     |> assoc_constraint(:block, required: true)

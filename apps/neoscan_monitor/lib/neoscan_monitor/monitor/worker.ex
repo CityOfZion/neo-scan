@@ -71,7 +71,8 @@ defmodule NeoscanMonitor.Worker do
                      :index => block.index,
                      :time => block.time,
                      :tx_count => block.tx_count,
-                     :hash => block.hash
+                     :hash => block.hash,
+                     :size => block.size
                    } | state.blocks
                  ]
                  |> cut_if_more(count)
