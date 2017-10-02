@@ -9,7 +9,7 @@ defmodule Neoscan.Repair do
   alias Neoscan.Vouts.Vout
   alias NeoscanSync.Blockchain
   alias NeoscanSync.HttpCalls
-
+  alias NeoscanSync.Consumer
 
   #trigger repair if information is missing
   def repair_missing([], root) do
@@ -122,8 +122,8 @@ defmodule Neoscan.Repair do
 
   #get a missing block from the node client
   def get_and_add_missing_block(hash) do
-    {:ok, block} = NeoscanSync.Blockchain.get_block_by_hash(NeoscanSync.HttpCalls.url(1), hash)
-    NeoscanSync.Consumer.add_block(block)
+    {:ok, block} = Blockchain.get_block_by_hash(HttpCalls.url(1), hash)
+    Consumer.add_block(block)
   end
 
   #adds missing transactions after verifying missing blocks

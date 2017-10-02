@@ -2,6 +2,7 @@ defmodule NeoscanSync.HttpCalls do
   @moduledoc false
 
   require Logger
+  alias NeoscanMonitor.Api
 
   @doc ~S"""
    Returns seed url according with 'index'
@@ -13,7 +14,7 @@ defmodule NeoscanSync.HttpCalls do
 
   """
   def url(n) do
-    NeoscanMonitor.Api.get_nodes
+    Api.get_nodes
     |> test_if_nodes(n)
   end
 

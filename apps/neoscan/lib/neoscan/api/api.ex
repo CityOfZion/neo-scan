@@ -739,7 +739,7 @@ defmodule Neoscan.Api do
 
   """
   def get_all_nodes() do
-    NeoscanMonitor.Api.get_data
+    Api.get_data
     |> Enum.map(fn {url, height} -> %{url: url, height: height} end)
   end
 
@@ -758,7 +758,7 @@ defmodule Neoscan.Api do
 
   """
   def get_nodes() do
-    %{urls: NeoscanMonitor.Api.get_nodes}
+    %{urls: Api.get_nodes}
   end
 
   @doc """
@@ -773,7 +773,7 @@ defmodule Neoscan.Api do
 
   """
   def get_height() do
-    {:ok, height} = NeoscanMonitor.Api.get_height
+    {:ok, height} = Api.get_height
     %{:height => height}
   end
 

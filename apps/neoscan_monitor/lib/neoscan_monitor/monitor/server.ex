@@ -6,6 +6,7 @@ defmodule NeoscanMonitor.Server do
   """
 
   use GenServer
+  alias NeoscanWeb.RoomChannel
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -22,7 +23,7 @@ defmodule NeoscanMonitor.Server do
 
   def handle_info(:broadcast, state) do
     schedule_work() # Reschedule once more
-    NeoscanWeb.RoomChannel.broadcast_change(state)
+    RoomChannel.broadcast_change(state)
     {:noreply, state}
   end
 
