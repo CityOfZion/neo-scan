@@ -9,25 +9,21 @@ defmodule NeoscanWeb.AssetsController do
   end
 
   def round_or_not(value) do
-    cond do
-      Kernel.round(value) == value ->
-        Kernel.round(value)
-        |> check()
-      Kernel.round(value) != value ->
-        value
-        |> check()
+    if round_or_not?(value) do
+      Kernel.round(value)
+    else
+      value
     end
+    |> check()
   end
 
   def check(value) do
-    cond do
-      value < 0 ->
-        "Unlimited"
-
-      true ->
-        value
+    if value < 0 do
+      "Unlimited"
+    else
+      value
     end
   end
 
-
+  defp round_or_not?(value), do: Kernel.round(value) == value
 end

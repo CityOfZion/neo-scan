@@ -1,9 +1,15 @@
 defmodule NeoscanWeb.RoomChannel do
+  @moduledoc false
   use Phoenix.Channel
   alias NeoscanMonitor.Api
+  alias NeoscanWeb.Endpoint
 
   def join("room:home", _payload, socket) do
-    {:ok, %{:blocks => Api.get_blocks, :transactions => Api.get_transactions}, socket}
+    {
+      :ok,
+      %{:blocks => Api.get_blocks, :transactions => Api.get_transactions},
+      socket
+    }
   end
 
   def broadcast_change(state) do
@@ -12,12 +18,11 @@ defmodule NeoscanWeb.RoomChannel do
       "transactions" => state.transactions,
     }
 
-    NeoscanWeb.Endpoint.broadcast("room:home", "change", payload)
+    Endpoint.broadcast("room:home", "change", payload)
   end
 
   def handle_out(event, payload, socket) do
     push socket, event, payload
     {:noreply, socket}
   end
-
 end

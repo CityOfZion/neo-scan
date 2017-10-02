@@ -11,14 +11,14 @@ defmodule NeoscanWeb.TransactionController do
   def route(nil, conn) do
     conn
     |> put_flash(:info, "Not Found in DB!")
-    |> redirect( to: home_path(conn, :index))
+    |> redirect(to: home_path(conn, :index))
   end
   def route(transaction, conn) do
     render(conn, "transaction.html", transaction: transaction)
   end
 
   def round_or_not(value) do
-    float = case  Kernel.is_float(value) do
+    float = case Kernel.is_float(value) do
       true ->
         value
       false ->
@@ -26,17 +26,14 @@ defmodule NeoscanWeb.TransactionController do
           true ->
             value
           false ->
-          {num, _} = Float.parse(value)
-          num
+            {num, _} = Float.parse(value)
+            num
         end
     end
-
-    cond do
-      Kernel.round(float) == float ->
-        Kernel.round(float)
-      Kernel.round(float) != float ->
-        value
+    if Kernel.round(float) == float do
+      Kernel.round(float)
+    else
+      value
     end
   end
-
 end

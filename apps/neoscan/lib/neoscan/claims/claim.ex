@@ -1,8 +1,8 @@
 defmodule Neoscan.Claims.Claim do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.Claims.Claim
-
 
   schema "claims" do
     field :address_hash, :string
@@ -20,15 +20,39 @@ defmodule Neoscan.Claims.Claim do
   @doc false
   def changeset(%Claim{} = claim, address, attrs) do
 
-    new_attrs = Map.merge(attrs, %{
-      :address_id => address.id,
-      :address_hash => address.address,
-      })
+    new_attrs = Map.merge(
+      attrs,
+      %{
+        :address_id => address.id,
+        :address_hash => address.address,
+      }
+    )
 
     claim
-    |> cast(new_attrs, [:address_hash, :txids, :asset, :amount, :block_height, :address_id, :time])
+    |> cast(
+         new_attrs,
+         [
+           :address_hash,
+           :txids,
+           :asset,
+           :amount,
+           :block_height,
+           :address_id,
+           :time
+         ]
+       )
     |> assoc_constraint(:address, required: true)
-    |> validate_required([:address_hash, :txids, :asset, :amount, :block_height, :address_id, :time])
+    |> validate_required(
+         [
+           :address_hash,
+           :txids,
+           :asset,
+           :amount,
+           :block_height,
+           :address_id,
+           :time
+         ]
+       )
   end
 
 end

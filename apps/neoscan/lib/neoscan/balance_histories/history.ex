@@ -1,8 +1,8 @@
 defmodule Neoscan.BalanceHistories.History do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.BalanceHistories.History
-
 
   schema "histories" do
     field :address_hash, :string
@@ -27,9 +27,14 @@ defmodule Neoscan.BalanceHistories.History do
     )
 
     history
-    |> cast(new_attrs, [:address_hash, :balance, :txid, :block_height, :address_id, :time])
+    |> cast(
+         new_attrs,
+         [:address_hash, :balance, :txid, :block_height, :address_id, :time]
+       )
     |> assoc_constraint(:address, required: true)
-    |> validate_required([:address_hash, :balance, :txid, :block_height, :address_id, :time])
+    |> validate_required(
+         [:address_hash, :balance, :txid, :block_height, :address_id, :time]
+       )
   end
 
 end

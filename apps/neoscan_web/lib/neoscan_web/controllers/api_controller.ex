@@ -78,5 +78,4 @@ defmodule NeoscanWeb.ApiController do
     json(conn, fees)
   end
 
-
 end

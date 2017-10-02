@@ -1,6 +1,5 @@
 defmodule Neoscan.Helpers do
-
-
+  @moduledoc false
   @doc """
   Populates tuples {address_hash, vins} with {%Adddress{}, vins}
 
@@ -9,10 +8,19 @@ defmodule Neoscan.Helpers do
       iex> populate_groups(groups})
       [{%Address{}, _},...]
 
-
   """
   def populate_groups(groups, address_list) do
-    Enum.map(groups, fn {address, vins} -> {Enum.find(address_list, fn {%{:address => ad}, _attrs} -> ad == address end), vins} end)
+    Enum.map(
+      groups,
+      fn {address, vins} ->
+        {
+          Enum.find(
+            address_list,
+            fn {%{:address => ad}, _attrs} -> ad == address end
+          ),
+          vins
+        } end
+    )
   end
 
   #helper to filter nil cases
@@ -35,7 +43,7 @@ defmodule Neoscan.Helpers do
   #generate {address, address_updates} tuples for following operations
   def gen_attrs(address_list) do
     address_list
-    |> Enum.map(fn address -> { address, %{}} end)
+    |> Enum.map(fn address -> {address, %{}} end)
   end
 
   #helpers to check if there are attrs updates already
@@ -59,8 +67,15 @@ defmodule Neoscan.Helpers do
   end
 
   #helper to substitute main address list with updated addresses tuples
-  def substitute_if_updated(%{:address => address_hash} = address, attrs, updates) do
-    index = Enum.find_index(updates, fn {%{:address => ad} , _attrs} -> ad == address_hash end)
+  def substitute_if_updated(
+        %{:address => address_hash} = address,
+        attrs,
+        updates
+      ) do
+    index = Enum.find_index(
+      updates,
+      fn {%{:address => ad}, _attrs} -> ad == address_hash end
+    )
     case index do
       nil ->
         {address, attrs}

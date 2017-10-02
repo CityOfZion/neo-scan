@@ -1,17 +1,19 @@
 defmodule NeoscanMonitor.Server do
   @moduledoc """
-  GenServer module responsable to retrive blocks, states, trasactions and assets,
-  Common interface to handle it is NeoscanMonitor.Api module(look there for more info)
+  GenServer module responsable to retrive blocks, states, transactions
+  and assets. Common interface to handle it is NeoscanMonitor.
+  Api module(look there for more info)
   The state is updated using handle_info(:state_update,state)
   """
 
   use GenServer
+  alias NeoscanWeb.RoomChannel
 
   def start_link do
-    GenServer.start_link(__MODULE__, :ok, name: __MODULE__ )
+    GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
-  def init( :ok ) do
+  def init(:ok) do
     {:ok, []}
   end
 
@@ -22,7 +24,7 @@ defmodule NeoscanMonitor.Server do
 
   def handle_info(:broadcast, state) do
     schedule_work() # Reschedule once more
-    NeoscanWeb.RoomChannel.broadcast_change(state)
+    RoomChannel.broadcast_change(state)
     {:noreply, state}
   end
 
@@ -54,7 +56,7 @@ defmodule NeoscanMonitor.Server do
     {:reply, state.monitor.data, state}
   end
 
-  defp schedule_work() do
-    Process.send_after(self(), :broadcast, 10000) # In 10 seconds
+  defp schedule_work do
+    Process.send_after(self(), :broadcast, 10_000) # In 10 seconds
   end
 end

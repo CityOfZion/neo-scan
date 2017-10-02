@@ -1,9 +1,9 @@
 defmodule Neoscan.Blocks.Block do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.BlockGasGeneration
   alias Neoscan.Blocks.Block
-
 
   schema "blocks" do
     field :confirmations, :integer

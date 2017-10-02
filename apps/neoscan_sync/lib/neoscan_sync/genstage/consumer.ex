@@ -1,4 +1,5 @@
 defmodule NeoscanSync.Consumer do
+  @moduledoc false
   use GenStage
   alias Neoscan.Blocks
   alias Neoscan.Transactions
@@ -10,7 +11,11 @@ defmodule NeoscanSync.Consumer do
   end
 
   def init(state) do
-    {:consumer, state, subscribe_to: [{NeoscanSync.Producer, max_demand: 100, min_demand: 50}]}
+    {
+      :consumer,
+      state,
+      subscribe_to: [{NeoscanSync.Producer, max_demand: 100, min_demand: 50}]
+    }
   end
 
   def handle_events(events, _from, state) do
@@ -22,9 +27,9 @@ defmodule NeoscanSync.Consumer do
     {:noreply, [], state}
   end
 
-   #add block with transactions to the db
+  #add block with transactions to the db
   def add_block(%{"tx" => transactions, "index" => height} = block) do
-    Map.put(block,"tx_count",Kernel.length(transactions))
+    Map.put(block, "tx_count", Kernel.length(transactions))
     |> Blocks.compute_fees()
     |> Map.delete("tx")
     |> Blocks.create_block()
@@ -33,13 +38,12 @@ defmodule NeoscanSync.Consumer do
   end
 
   defp check(r, height) do
-    cond do
-      {:ok, "Created"} == r or {:ok, "Deleted"} == r ->
-        Logger.info("Block #{height} stored")
-      true ->
-        Logger.info("Failed to create transactions")
-        Blocks.get_block_by_height(height)
-        |> Blocks.delete_block()
+    if {:ok, "Created"} == r or {:ok, "Deleted"} == r do
+      Logger.info("Block #{height} stored")
+    else
+      Logger.info("Failed to create transactions")
+      Blocks.get_block_by_height(height)
+      |> Blocks.delete_block()
     end
   end
 

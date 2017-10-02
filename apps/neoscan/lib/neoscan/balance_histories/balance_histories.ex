@@ -1,4 +1,5 @@
 defmodule Neoscan.BalanceHistories do
+  @moduledoc false
   import Ecto.Query, warn: false
   alias Neoscan.BalanceHistories.History
 
@@ -17,9 +18,13 @@ defmodule Neoscan.BalanceHistories do
 
   #add a transaction history into an address
   def add_tx_id(address, txid, index, time) do
-      new_tx = %{:txid => txid, :balance => address.balance, :block_height => index, :time => time}
-      %{address | tx_ids: new_tx}
+    new_tx = %{
+      :txid => txid,
+      :balance => address.balance,
+      :block_height => index,
+      :time => time
+    }
+    %{address | tx_ids: new_tx}
   end
-
 
 end

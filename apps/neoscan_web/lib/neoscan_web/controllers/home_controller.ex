@@ -1,4 +1,5 @@
 defmodule NeoscanWeb.HomeController do
+  @moduledoc false
   use NeoscanWeb, :controller
 
   alias Neoscan.Blocks
@@ -11,12 +12,21 @@ defmodule NeoscanWeb.HomeController do
   end
 
   #searches the database for the input value
-  def search(conn, %{"search" => %{"for" => value}}) do
+  def search(
+        conn,
+        %{
+          "search" => %{
+            "for" => value
+          }
+        }
+      ) do
     result = try  do
       String.to_integer(value)
     rescue
       ArgumentError ->
-        Blocks.get_block_by_hash(value) || Transactions.get_transaction_by_hash(value) || Addresses.get_address_by_hash(value)
+        Blocks.get_block_by_hash(value) || Transactions.get_transaction_by_hash(
+          value
+        ) || Addresses.get_address_by_hash(value)
     else
       value ->
         Blocks.get_block_by_height(value)

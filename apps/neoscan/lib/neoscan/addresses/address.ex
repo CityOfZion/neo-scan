@@ -1,8 +1,8 @@
 defmodule Neoscan.Addresses.Address do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.Addresses.Address
-
 
   schema "addresses" do
     field :address, :string
