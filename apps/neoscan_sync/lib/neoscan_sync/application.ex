@@ -10,10 +10,12 @@ defmodule NeoscanSync.Application do
 
     # Define workers and child supervisors to be supervised
     children = [
-      #worker(NeoscanSync.FastSync,[], [restart: :permanent, max_restarts: 30, max_seconds: 10]),
+      #worker(NeoscanSync.FastSync,[], [restart: :permanent,
+      #                                 max_restarts: 30, max_seconds: 10]),
       worker(NeoscanSync.Producer, []),
       worker(NeoscanSync.Consumer, []),
-      # Starts a worker by calling: NEOScanSync.Worker.start_link(arg1, arg2, arg3)
+      # Starts a worker by calling:
+      # NEOScanSync.Worker.start_link(arg1, arg2, arg3)
       # worker(NEOScanSync.Worker, [arg1, arg2, arg3]),
     ]
 

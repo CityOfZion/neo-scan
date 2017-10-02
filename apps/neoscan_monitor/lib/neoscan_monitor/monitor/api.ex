@@ -4,27 +4,27 @@ defmodule NeoscanMonitor.Api do
   """
 
   def get_nodes do
-    GenServer.call(NeoscanMonitor.Server, :nodes, 10000)
+    GenServer.call(NeoscanMonitor.Server, :nodes, 10_000)
   end
 
   def get_height do
-    GenServer.call(NeoscanMonitor.Server, :height, 10000)
+    GenServer.call(NeoscanMonitor.Server, :height, 10_000)
   end
 
   def get_blocks do
-    GenServer.call(NeoscanMonitor.Server, :blocks, 10000)
+    GenServer.call(NeoscanMonitor.Server, :blocks, 10_000)
   end
 
   def get_transactions do
-    GenServer.call(NeoscanMonitor.Server, :transactions, 10000)
+    GenServer.call(NeoscanMonitor.Server, :transactions, 10_000)
   end
 
   def get_assets do
-    GenServer.call(NeoscanMonitor.Server, :assets, 10000)
+    GenServer.call(NeoscanMonitor.Server, :assets, 10_000)
   end
 
   def get_contracts do
-    GenServer.call(NeoscanMonitor.Server, :contracts, 10000)
+    GenServer.call(NeoscanMonitor.Server, :contracts, 10_000)
   end
 
   def error do

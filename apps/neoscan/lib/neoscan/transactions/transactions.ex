@@ -44,7 +44,10 @@ defmodule Neoscan.Transactions do
                              order_by: [
                                desc: e.inserted_at
                              ],
-                             where: e.inserted_at > ago(1, "hour") and e.type != "MinerTransaction",
+                             where: e.inserted_at > ago(
+                               1,
+                               "hour"
+                             ) and e.type != "MinerTransaction",
                              select: %{
                                :type => e.type,
                                :time => e.time,
@@ -69,7 +72,8 @@ defmodule Neoscan.Transactions do
                              order_by: [
                                desc: e.inserted_at
                              ],
-                             where: e.type == "PublishTransaction" or e.type == "InvocationTransaction",
+                             where: e.type == "PublishTransaction"
+                                    or e.type == "InvocationTransaction",
                              select: %{
                                :type => e.type,
                                :time => e.time,
@@ -180,10 +184,16 @@ defmodule Neoscan.Transactions do
                  time
                )
       end
-    ) #updates addresses with vin and claims, vouts are just for record in claims, the balance is updated in the insert vout function called in create_vout
+    ) #updates addresses with vin and claims,
+      # vouts are just for record in claims,
+      # the balance is updated in the insert vout function called in create_vout
 
     #create asset if register Transaction
-    ChainAssets.create(attrs["asset"], String.slice(to_string(txid), -64..-1), time)
+    ChainAssets.create(
+      attrs["asset"],
+      String.slice(to_string(txid), -64..-1),
+      time
+    )
 
     #create asset if issue Transaction
     ChainAssets.issue(type, vouts)
@@ -205,11 +215,12 @@ defmodule Neoscan.Transactions do
     Transaction.changeset_with_block(block, transaction)
     |> Repo.insert!()
     |> update_transaction_state
-    |> Vouts.create_vouts(vouts, Task.await(address_list, 60000))
+    |> Vouts.create_vouts(vouts, Task.await(address_list, 60_000))
   end
 
   #add transaction to monitor cache
-  def update_transaction_state(%{:type => type} = transaction) when type != "MinerTransaction" do
+  def update_transaction_state(%{:type => type} = transaction)
+      when type != "MinerTransaction" do
     Api.add_transaction(transaction)
     transaction
   end
@@ -235,7 +246,10 @@ defmodule Neoscan.Transactions do
 
     query = from e in Vout,
                  where: e.query in ^lookups,
-                 select: struct(e, [:asset, :address_hash, :n, :value, :txid, :query, :id])
+                 select: struct(
+                   e,
+                   [:asset, :address_hash, :n, :value, :txid, :query, :id]
+                 )
 
     Repo.all(query)
     |> Vouts.verify_vouts(lookups, vin)
@@ -255,7 +269,10 @@ defmodule Neoscan.Transactions do
 
     query = from e in Vout,
                  where: e.query in ^lookups,
-                 select: struct(e, [:asset, :address_hash, :n, :value, :txid, :query, :id])
+                 select: struct(
+                   e,
+                   [:asset, :address_hash, :n, :value, :txid, :query, :id]
+                 )
 
     Repo.all(query)
     |> Vouts.verify_vouts(lookups, claims)
@@ -309,7 +326,10 @@ defmodule Neoscan.Transactions do
 
   """
   def create_transactions(block, transactions) do
-    case Enum.each(transactions, fn transaction -> create_transaction(block, transaction) end) do
+    case Enum.each(
+           transactions,
+           fn transaction -> create_transaction(block, transaction) end
+         ) do
       :ok ->
         {:ok, "Created"}
       _ ->

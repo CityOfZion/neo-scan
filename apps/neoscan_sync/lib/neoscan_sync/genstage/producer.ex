@@ -1,4 +1,5 @@
 defmodule NeoscanSync.Producer do
+  @moduledoc false
   use GenStage
 
   alias NeoscanSync.Blockchain
@@ -34,10 +35,12 @@ defmodule NeoscanSync.Producer do
   end
 
   def check_if_demand(events, demand) when events < demand do
-    Process.send_after(self(), :fetch_more, 15000)
+    Process.send_after(self(), :fetch_more, 15_000)
   end
   def check_if_demand(events, demand) when events == demand do
-    Logger.info("demand fullfiled, actual: #{inspect demand}, Events: #{inspect events}")
+    Logger.info(
+      "demand fullfiled, actual: #{inspect demand}, Events: #{inspect events}"
+    )
   end
 
   #evaluate number of process, current block count, and start async functions
@@ -67,10 +70,10 @@ defmodule NeoscanSync.Producer do
     nodes = check_if_nodes(2)
     if  nodes != nil do
       [random1, random2] = nodes
-      blockA = get_block_by_height(random1, height)
-      blockB = get_block_by_height(random2, height)
-      if blockA == blockB do
-        blockA
+      block_a = get_block_by_height(random1, height)
+      block_b = get_block_by_height(random2, height)
+      if block_a == block_b do
+        block_a
       else
         cross_check(height)
       end
@@ -84,7 +87,10 @@ defmodule NeoscanSync.Producer do
     if Enum.count(nodes) == n do
       nodes
     else
-      Supervisor.terminate_child(NeoscanMonitor.Supervisor, NeoscanMonitor.Worker)
+      Supervisor.terminate_child(
+        NeoscanMonitor.Supervisor,
+        NeoscanMonitor.Worker
+      )
       Supervisor.restart_child(NeoscanMonitor.Supervisor, NeoscanMonitor.Worker)
       Process.sleep(5000)
       nil

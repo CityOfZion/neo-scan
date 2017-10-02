@@ -10,7 +10,8 @@ defmodule NeoscanMonitor.Application do
 
     # Define workers and child supervisors to be supervised
     children = [
-      # Starts a worker by calling: NeoscanMonitor.Worker.start_link(arg1, arg2, arg3)
+      # Starts a worker by calling:
+      # NeoscanMonitor.Worker.start_link(arg1, arg2, arg3)
       worker(NeoscanMonitor.Server, []),
       worker(NeoscanMonitor.Worker, []),
     ]

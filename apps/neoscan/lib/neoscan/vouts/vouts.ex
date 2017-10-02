@@ -1,4 +1,5 @@
 defmodule Neoscan.Vouts do
+  @moduledoc false
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.Addresses
@@ -40,11 +41,22 @@ defmodule Neoscan.Vouts do
   def create_vouts(transaction, vouts, address_list) do
     updates = vouts
               |> insert_address(address_list)
-              |> Enum.group_by(fn %{"address" => {address, _attrs}} -> address.address end)
+              |> Enum.group_by(
+                   fn %{"address" => {address, _attrs}} -> address.address end
+                 )
               |> Map.to_list()
-              |> Enum.map(fn {_address, vouts} -> insert_vouts_in_address(transaction, vouts) end)
+              |> Enum.map(
+                   fn {_address, vouts} ->
+                     insert_vouts_in_address(transaction, vouts)
+                   end
+                 )
 
-    Enum.map(address_list, fn {address, attrs} -> Helpers.substitute_if_updated(address, attrs, updates) end)
+    Enum.map(
+      address_list,
+      fn {address, attrs} ->
+        Helpers.substitute_if_updated(address, attrs, updates)
+      end
+    )
     |> Addresses.update_multiple_addresses()
   end
 
@@ -53,23 +65,43 @@ defmodule Neoscan.Vouts do
     Enum.map(
       vouts,
       fn %{"address" => ad} = x ->
-        Map.put(x, "address", Enum.find(address_list, fn {%{:address => address}, _attrs} -> address == ad end))
+        Map.put(
+          x,
+          "address",
+          Enum.find(
+            address_list,
+            fn {%{:address => address}, _attrs} -> address == ad end
+          )
+        )
       end
     )
   end
 
   #set end height for vouts
   def end_vouts_and_return(vouts, height) do
-    Enum.map(vouts, fn vout -> {vout, Vout.update_changeset(vout, %{:end_height => height})} end)
-    |> Enum.reduce(Multi.new, fn (tuple, acc) -> push_vout_into_multi(tuple, acc) end)
+    Enum.map(
+      vouts,
+      fn vout -> {vout, Vout.update_changeset(vout, %{:end_height => height})}
+      end
+    )
+    |> Enum.reduce(
+         Multi.new,
+         fn (tuple, acc) -> push_vout_into_multi(tuple, acc) end
+       )
     |> Repo.transaction
     |> check_and_return_vouts(vouts)
   end
 
   #set claimed for vouts
   def set_claimed_and_return(vouts) do
-    Enum.map(vouts, fn vout -> {vout, Vout.update_changeset(vout, %{:claimed => true})} end)
-    |> Enum.reduce(Multi.new, fn (tuple, acc) -> push_vout_into_multi(tuple, acc) end)
+    Enum.map(
+      vouts,
+      fn vout -> {vout, Vout.update_changeset(vout, %{:claimed => true})} end
+    )
+    |> Enum.reduce(
+         Multi.new,
+         fn (tuple, acc) -> push_vout_into_multi(tuple, acc) end
+       )
     |> Repo.transaction()
     |> check_and_return_vouts(vouts)
   end
@@ -85,8 +117,21 @@ defmodule Neoscan.Vouts do
   def check_and_return_vouts({:ok, _any}, vouts) do
     Enum.map(
       vouts,
-      fn %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} ->
-        %{:asset => asset, :address_hash => address_hash, :n => n, :value => value, :txid => txid} end
+      fn %{
+           :asset => asset,
+           :address_hash => address_hash,
+           :n => n,
+           :value => value,
+           :txid => txid
+         } ->
+        %{
+          :asset => asset,
+          :address_hash => address_hash,
+          :n => n,
+          :value => value,
+          :txid => txid
+        }
+      end
     )
   end
   def check_and_return_vouts({:error, _any}, _vouts) do
@@ -96,19 +141,24 @@ defmodule Neoscan.Vouts do
   #check if all vouts were found
   def verify_vouts(result, lookups, root) do
     if Enum.count(result) == Enum.count(lookups) do
-        result
+      result
     else
-        Repair.repair_missing(result, root)
+      Repair.repair_missing(result, root)
     end
   end
 
   #insert vouts into address balance
-  def insert_vouts_in_address(%{:txid => txid, :block_height => index, :time => time} = transaction, vouts) do
+  def insert_vouts_in_address(
+        %{:txid => txid, :block_height => index, :time => time} = transaction,
+        vouts
+      ) do
     %{"address" => {address, attrs}} = List.first(vouts)
     new_attrs = Map.merge(
                   attrs,
                   %{
-                    :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
+                    :balance => Helpers.check_if_attrs_balance_exists(
+                      attrs
+                    ) || address.balance,
                     :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
                   }
                 )
@@ -133,7 +183,10 @@ defmodule Neoscan.Vouts do
   def add_vout(%{:value => value} = vout, %{:balance => balance} = address) do
     current_amount = balance[vout.asset]["amount"] || 0
     new_balance = %{"asset" => vout.asset, "amount" => current_amount + value}
-    %{address | balance: Map.put(address.balance || %{}, vout.asset, new_balance)}
+    %{
+      address |
+      balance: Map.put(address.balance || %{}, vout.asset, new_balance)
+    }
   end
 
 end

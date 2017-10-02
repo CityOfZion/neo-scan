@@ -1,10 +1,12 @@
 defmodule Neoscan.ChainAssets.Asset do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.ChainAssets.Asset
 
   schema "assets" do
-    field :txid, :string  #assets are referenced by their register transaction txid
+    #assets are referenced by their register transaction txid
+    field :txid, :string
     field :admin, :string
     field :amount, :float
     field :name, {:array, :map}
@@ -22,8 +24,10 @@ defmodule Neoscan.ChainAssets.Asset do
   def changeset(transaction_id, attrs \\ %{}) do
     new_attrs = Map.put(attrs, "txid", transaction_id)
     %Asset{}
-    |> cast(new_attrs, [:txid, :admin, :amount, :name, :owner, :precision, :type, :issued, :time])
-    |> validate_required([:txid,:admin, :amount, :name, :owner, :precision, :type, :time])
+    |> cast(new_attrs, [:txid, :admin, :amount, :name, :owner,
+                        :precision, :type, :issued, :time])
+    |> validate_required([:txid, :admin, :amount, :name,
+                          :owner, :precision, :type, :time])
   end
 
   def update_changeset(asset, attrs \\ %{}) do

@@ -115,7 +115,7 @@ defmodule Neoscan.Factory do
     %Asset{
       txid: sequence("txhash"),
       admin: sequence("AZvTqMjOGT4AH7DZZRf4t6PRYm2k1CFdJZ"),
-      amount: 100000.0,
+      amount: 100_000.0,
       name: [%{}],
       owner: sequence("AZvTqMjOGT4AH7DZZRf4t6PRYm2k1CFdJZ"),
       precision: 1,

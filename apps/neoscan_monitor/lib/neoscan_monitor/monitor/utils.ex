@@ -1,4 +1,5 @@
 defmodule NeoscanMonitor.Utils do
+  @moduledoc false
   alias NeoscanSync.Blockchain
 
   def seeds do
@@ -31,7 +32,7 @@ defmodule NeoscanMonitor.Utils do
   end
   defp set_state(data) do
     height = filter_height(data)
-    %{:nodes => filter_nodes(data, height), :height => {:ok, height}, :data => data}
+    %{nodes: filter_nodes(data, height), height: {:ok, height}, data: data}
   end
 
   defp filter_nodes(data, height) do
@@ -43,7 +44,11 @@ defmodule NeoscanMonitor.Utils do
   defp filter_height(data) do
     {height, _count} = data
                        |> Enum.map(fn {_url, height} -> height end)
-                       |> Enum.reduce(%{}, fn (height, acc) -> Map.update(acc, height, 1, &(&1 + 1)) end)
+                       |> Enum.reduce(%{},
+                            fn (height, acc) ->
+                              Map.update(acc, height, 1, &(&1 + 1))
+                            end
+                          )
                        |> Enum.max_by(fn {_height, count} -> count end)
     height
   end

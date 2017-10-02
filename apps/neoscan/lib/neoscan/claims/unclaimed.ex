@@ -1,4 +1,5 @@
 defmodule Neoscan.Claims.Unclaimed do
+  @moduledoc false
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.Vouts.Vout
@@ -6,7 +7,7 @@ defmodule Neoscan.Claims.Unclaimed do
   alias Neoscan.Blocks.Block
 
   #total amount of available NEO
-  def total_neo, do: 100000000
+  def total_neo, do: 100_000_000
 
   #calculate unclaimed gas bonus
   def calculate_bonus(address_id) do
@@ -23,15 +24,27 @@ defmodule Neoscan.Claims.Unclaimed do
     blocks_with_gas = get_unclaimed_block_range(unclaimed)
                       |> get_blocks_gas
 
-    Enum.reduce(unclaimed, 0, fn (vout, acc) -> acc + compute_vout_bonus(vout, blocks_with_gas) end)
+    Enum.reduce(
+      unclaimed,
+      0,
+      fn (vout, acc) -> acc + compute_vout_bonus(vout, blocks_with_gas) end
+    )
   end
 
   #compute bonus for a singel vout
   def compute_vout_bonus(
-        %{:value => value, :start_height => start_height, :end_height => end_height},
+        %{
+          :value => value,
+          :start_height => start_height,
+          :end_height => end_height
+        },
         blocks_with_gas
       ) do
-    total_gas = Enum.filter(blocks_with_gas, fn %{:index => index} -> index >= start_height && index <= end_height end)
+    total_gas = Enum.filter(
+                  blocks_with_gas,
+                  fn %{:index => index} ->
+                    index >= start_height && index <= end_height end
+                )
                 |> Enum.reduce(0, fn (%{:gas => gas}, acc) -> acc + gas end)
 
     total_gas * value / total_neo()
@@ -40,7 +53,9 @@ defmodule Neoscan.Claims.Unclaimed do
   #get all unclaimed transaction vouts
   def get_unclaimed_vouts(address_id) do
     query = from v in Vout,
-                 where: v.address_id == ^address_id and v.claimed == false and v.asset == "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+                 where: v.address_id == ^address_id
+                        and v.claimed == false
+                        and v.asset == "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
                  select: map(v, [:value, :start_height, :end_height])
 
     Repo.all(query)
@@ -49,18 +64,25 @@ defmodule Neoscan.Claims.Unclaimed do
   def add_end_height(unclaimed_vouts) do
     Enum.map(
       unclaimed_vouts,
-      fn %{:end_height => height} = vout -> Map.put(vout, :end_height, check_end_height(height)) end
+      fn %{:end_height => height} = vout ->
+        Map.put(vout, :end_height, check_end_height(height)) end
     )
   end
 
   #get block range of unclaimed transaction vouts
   def get_unclaimed_block_range(unclaimed_vouts) do
-    end_height_list = Enum.map(unclaimed_vouts, fn %{:end_height => end_height} -> check_end_height(end_height) end)
+    end_height_list = Enum.map(
+      unclaimed_vouts,
+      fn %{:end_height => end_height} -> check_end_height(end_height) end
+    )
 
     max = end_height_list
           |> Enum.max
 
-    min = Enum.map(unclaimed_vouts, fn %{:start_height => start_height} -> start_height end)
+    min = Enum.map(
+            unclaimed_vouts,
+            fn %{:start_height => start_height} -> start_height end
+          )
           |> Enum.min
 
     {min, max}
@@ -83,7 +105,8 @@ defmodule Neoscan.Claims.Unclaimed do
 
     Repo.all(query)
     |> Enum.map(
-         fn %{:index => index, :total_sys_fee => sys, :gas_generated => gen} -> %{:index => index, :gas => sys + gen}
+         fn %{:index => index, :total_sys_fee => sys, :gas_generated => gen} ->
+           %{:index => index, :gas => sys + gen}
          end
        )
   end

@@ -1,7 +1,7 @@
 defmodule NeoscanWeb.Application do
+  @moduledoc false
   use Application
   alias NeoscanWeb.Endpoint
-  alias NeoscanWeb.Supervisor
 
   def start(_type, _args) do
     import Supervisor.Spec
@@ -9,14 +9,15 @@ defmodule NeoscanWeb.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(NeoscanWeb.Endpoint, []),
-      # Start your own worker by calling: NeoscanWeb.Worker.start_link(arg1, arg2, arg3)
+      supervisor(Endpoint, []),
+      # Start your own worker by calling:
+      # NeoscanWeb.Worker.start_link(arg1, arg2, arg3)
       # worker(NeoscanWeb.Worker, [arg1, arg2, arg3]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Supervisor]
+    opts = [strategy: :one_for_one, name: NeoscanWeb.Supervisor]
     Supervisor.start_link(children, opts)
   end
 

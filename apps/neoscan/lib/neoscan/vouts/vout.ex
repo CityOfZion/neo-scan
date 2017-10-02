@@ -1,4 +1,5 @@
 defmodule Neoscan.Vouts.Vout do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.Vouts.Vout
@@ -24,8 +25,18 @@ defmodule Neoscan.Vouts.Vout do
 
   @doc false
   def changeset(
-        %{:id => transaction_id, :txid => txid, :time => time, :block_height => height},
-        %{"address" => {address, _attrs}, "value" => value, "n" => n, "asset" => asset} = attrs \\ %{}
+        %{
+          :id => transaction_id,
+          :txid => txid,
+          :time => time,
+          :block_height => height
+        },
+        %{
+          "address" => {address, _attrs},
+          "value" => value,
+          "n" => n,
+          "asset" => asset
+        } = attrs \\ %{}
       ) do
     {new_value, _} = Float.parse(value)
 
@@ -66,7 +77,18 @@ defmodule Neoscan.Vouts.Vout do
        )
     |> assoc_constraint(:transaction, required: true)
     |> assoc_constraint(:address, required: true)
-    |> validate_required([:asset, :address_hash, :n, :value, :txid, :query, :time, :start_height])
+    |> validate_required(
+         [
+           :asset,
+           :address_hash,
+           :n,
+           :value,
+           :txid,
+           :query,
+           :time,
+           :start_height
+         ]
+       )
   end
 
   def update_changeset(vout, %{:end_height => _endheight} = attrs) do

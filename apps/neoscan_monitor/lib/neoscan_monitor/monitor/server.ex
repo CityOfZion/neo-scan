@@ -1,7 +1,8 @@
 defmodule NeoscanMonitor.Server do
   @moduledoc """
-  GenServer module responsable to retrive blocks, states, trasactions and assets,
-  Common interface to handle it is NeoscanMonitor.Api module(look there for more info)
+  GenServer module responsable to retrive blocks, states, transactions
+  and assets. Common interface to handle it is NeoscanMonitor.
+  Api module(look there for more info)
   The state is updated using handle_info(:state_update,state)
   """
 
@@ -55,7 +56,7 @@ defmodule NeoscanMonitor.Server do
     {:reply, state.monitor.data, state}
   end
 
-  defp schedule_work() do
-    Process.send_after(self(), :broadcast, 10000) # In 10 seconds
+  defp schedule_work do
+    Process.send_after(self(), :broadcast, 10_000) # In 10 seconds
   end
 end

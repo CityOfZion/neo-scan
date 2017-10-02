@@ -109,12 +109,12 @@ defmodule NeoscanMonitor.Worker do
     {:noreply, new_state}
   end
 
-  defp schedule_nodes() do
-    Process.send_after(self(), :update_nodes, 30000) # In 10s
+  defp schedule_nodes do
+    Process.send_after(self(), :update_nodes, 30_000) # In 10s
   end
 
-  defp schedule_update() do
-    Process.send_after(self(), :update, 10000) # In 10s
+  defp schedule_update do
+    Process.send_after(self(), :update, 10_000) # In 10s
   end
 
   defp cut_if_more(list, count) when count == 15 do
@@ -124,5 +124,4 @@ defmodule NeoscanMonitor.Worker do
   defp cut_if_more(list, _count) do
     list
   end
-
 end

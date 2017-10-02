@@ -36,7 +36,8 @@ config :neoscan_web,
 #
 # The `http:` config above can be replaced with:
 #
-#     https: [port: 4000, keyfile: "priv/server.key", certfile: "priv/server.pem"],
+#     https: [port: 4000, keyfile: "priv/server.key",
+#             certfile: "priv/server.pem"],
 #
 # If desired, both `http:` and `https:` keys can be
 # configured to run both http and https servers on

@@ -167,15 +167,29 @@ defmodule Neoscan.Api do
 
     result = case Repo.all(query)
                   |> List.first do
-      nil -> %{:address => "not found", :balance => nil, :txids => nil, :claimed => nil}
+      nil ->
+        %{
+          :address => "not found",
+          :balance => nil,
+          :txids => nil,
+          :claimed => nil
+        }
 
       %{} = address ->
         new_balance = filter_balance(address.balance)
 
         new_tx = Enum.map(
           address.histories,
-          fn %{:txid => txid, :balance => balance, :block_height => block_height} ->
-            %{:txid => txid, :balance => filter_balance(balance), :block_height => block_height}
+          fn %{
+               :txid => txid,
+               :balance => balance,
+               :block_height => block_height
+             } ->
+            %{
+              :txid => txid,
+              :balance => filter_balance(balance),
+              :block_height => block_height
+            }
           end
         )
 
@@ -200,7 +214,10 @@ defmodule Neoscan.Api do
     Map.to_list(balance)
     |> Enum.map(
          fn {_as, %{"asset" => asset, "amount" => amount}} ->
-           %{"asset" => ChainAssets.get_asset_name_by_hash(asset), "amount" => amount}
+           %{
+             "asset" => ChainAssets.get_asset_name_by_hash(asset),
+             "amount" => amount
+           }
          end
        )
   end
@@ -410,7 +427,7 @@ defmodule Neoscan.Api do
                       select: t.txid
 
     query = from e in Block,
-                 where: e.index > 1200000,
+                 where: e.index > 1_200_000,
                  order_by: [
                    desc: e.index
                  ],
@@ -464,7 +481,7 @@ defmodule Neoscan.Api do
                       select: t.txid
 
     query = from e in Block,
-                 where: e.index > 1200000,
+                 where: e.index > 1_200_000,
                  order_by: [
                    desc: e.index
                  ],
@@ -573,11 +590,13 @@ defmodule Neoscan.Api do
       %{} = transaction ->
         new_vouts = Enum.map(
           transaction.vouts,
-          fn %{:asset => asset} = x -> Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset)) end
+          fn %{:asset => asset} = x ->
+            Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset)) end
         )
         new_vins = Enum.map(
           transaction.vin,
-          fn %{"asset" => asset} = x -> Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset)) end
+          fn %{"asset" => asset} = x ->
+            Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset)) end
         )
         Map.delete(transaction, :block)
         |> Map.delete(:inserted_at)
@@ -758,7 +777,8 @@ defmodule Neoscan.Api do
   end
 
   @doc """
-  Returns the blockchain current height, as determined by the majority of working nodes.
+  Returns the blockchain current height, as determined by the majority of
+  # working nodes.
 
   ## Examples
 

@@ -1,4 +1,5 @@
 defmodule Neoscan.Blocks.Block do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.BlockGasGeneration

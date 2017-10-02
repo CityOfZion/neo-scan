@@ -1,4 +1,5 @@
 defmodule Neoscan.ChainAssets do
+  @moduledoc false
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.ChainAssets.Asset

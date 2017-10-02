@@ -1,4 +1,5 @@
 defmodule Neoscan.Repair do
+  @moduledoc false
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.Addresses
@@ -13,20 +14,30 @@ defmodule Neoscan.Repair do
 
   #trigger repair if information is missing
   def repair_missing([], root) do
-    missing = Enum.map(root, fn %{"txid" => txid} -> String.slice(to_string(txid), -64..-1) end)
+    missing = Enum.map(
+      root,
+      fn %{"txid" => txid} -> String.slice(to_string(txid), -64..-1) end
+    )
     get_missing(missing, root)
   end
   def repair_missing(result, root) do
-    missing = Enum.map(root, fn %{"txid" => txid} -> String.slice(to_string(txid), -64..-1) end) -- Enum.map(
-      result,
-      fn %{:txid => txid} -> txid end
+    missing = Enum.map(
+                root,
+                fn %{"txid" => txid} -> String.slice(to_string(txid), -64..-1)
+                end
+              ) -- Enum.map(
+                result,
+                fn %{:txid => txid} -> txid end
               )
     get_missing(missing, root)
   end
 
   #get missing information
   def get_missing(missing, root) do
-    tuples = Enum.map(missing, fn txid -> Blockchain.get_transaction(HttpCalls.url(1), txid) end)
+    tuples = Enum.map(
+               missing,
+               fn txid -> Blockchain.get_transaction(HttpCalls.url(1), txid) end
+             )
              |> check_missing()
 
     get_missing_blocks(tuples)
@@ -40,7 +51,10 @@ defmodule Neoscan.Repair do
     Enum.map(
       transactions,
       fn {:ok, %{"blockhash" => block_hash} = transaction} ->
-        check_if_block_exists(String.slice(to_string(block_hash), -64..-1), transaction)
+        check_if_block_exists(
+          String.slice(to_string(block_hash), -64..-1),
+          transaction
+        )
       end
     )
   end
@@ -54,13 +68,17 @@ defmodule Neoscan.Repair do
 
     query = from e in Vout,
                  where: e.query in ^lookups,
-                 select: struct(e, [:asset, :address_hash, :n, :value, :txid, :query, :id])
+                 select: struct(
+                   e,
+                   [:asset, :address_hash, :n, :value, :txid, :query, :id]
+                 )
 
     Repo.all(query)
     |> Vouts.verify_vouts(lookups, root)
   end
 
-  #check if block exist and create tuple, otherwise route forward for transaction verification
+  #check if block exist and create tuple,
+  # otherwise route forward for transaction verification
   def check_if_block_exists(hash, transaction) do
     query = from e in Block,
                  where: e.hash == ^hash,
@@ -101,17 +119,32 @@ defmodule Neoscan.Repair do
     missing = if db_vouts == [] do
       Enum.map(transaction["vout"], fn %{"n" => n} -> n end)
     else
-      Enum.map(transaction["vout"], fn %{"n" => n} -> n end) -- Enum.map(db_vouts, fn %{:n => n} -> n end)
+      Enum.map(transaction["vout"], fn %{"n" => n} -> n end) -- Enum.map(
+        db_vouts,
+        fn %{:n => n} -> n end
+      )
     end
 
-    {:vouts_missing, {db_transaction, Enum.filter(transaction["vout"], fn %{"n" => n} -> n in missing end)}}
+    {
+      :vouts_missing,
+      {
+        db_transaction,
+        Enum.filter(transaction["vout"], fn %{"n" => n} -> n in missing end)
+      }
+    }
   end
 
   #get the missing blocks in the verification tuples
   def get_missing_blocks(transaction_tuples) do
-    case Enum.any?(transaction_tuples, fn {key, _value} -> key == :block_missing end) do
+    case Enum.any?(
+           transaction_tuples,
+           fn {key, _value} -> key == :block_missing end
+         ) do
       true ->
-        Enum.filter(transaction_tuples, fn {key, _transaction} -> key == :block_missing end)
+        Enum.filter(
+          transaction_tuples,
+          fn {key, _transaction} -> key == :block_missing end
+        )
         |> Enum.group_by(fn {_key, transaction} -> transaction["blockhash"] end)
         |> Map.keys
         |> Enum.each(fn hash -> get_and_add_missing_block(hash) end)
@@ -128,14 +161,23 @@ defmodule Neoscan.Repair do
 
   #adds missing transactions after verifying missing blocks
   def add_missing_transactions(:ok, tuples) do
-    case Enum.any?(tuples, fn {key, _value} -> key == :transaction_missing end) do
+    case Enum.any?(
+           tuples,
+           fn {key, _value} -> key == :transaction_missing end
+         ) do
       true ->
         Enum.filter(tuples, fn {key, _tuple} -> key == :transaction_missing end)
         |> Enum.map(fn {_key, {block, transaction}} -> {block, transaction} end)
         |> Enum.group_by(fn {block, _transaction} -> block end)
         |> Map.to_list
-        |> Enum.map(fn {block, transaction_tuples} -> {block, filter_tuples(transaction_tuples)} end)
-        |> Enum.map(fn {block, transaction_list} -> Transactions.create_transactions(block, transaction_list) end)
+        |> Enum.map(
+             fn {block, transaction_tuples} ->
+               {block, filter_tuples(transaction_tuples)} end
+           )
+        |> Enum.map(
+             fn {block, transaction_list} ->
+               Transactions.create_transactions(block, transaction_list) end
+           )
         |> Enum.uniq
       false ->
         [{:ok, "Created"}]
@@ -148,13 +190,22 @@ defmodule Neoscan.Repair do
   #adds missing vouts after verifying missing blocks and transactions
   def add_missing_vouts(list, tuples) when list == [{:ok, "Created"}] do
     Enum.filter(tuples, fn {key, _tuple} -> key == :vouts_missing end)
-    |> Enum.map(fn {_key, {db_transaction, vouts}} -> {db_transaction, vouts} end)
+    |> Enum.map(
+         fn {_key, {db_transaction, vouts}} -> {db_transaction, vouts} end
+       )
     |> Enum.group_by(fn {db_transaction, _transaction} -> db_transaction end)
     |> Map.to_list
-    |> Enum.map(fn {db_transaction, vouts_tuple} -> {db_transaction, filter_tuples(vouts_tuple)} end)
+    |> Enum.map(
+         fn {db_transaction, vouts_tuple} ->
+           {db_transaction, filter_tuples(vouts_tuple)} end
+       )
     |> Enum.map(
          fn {db_transaction, vouts} ->
-           address_list = Addresses.get_transaction_addresses([], vouts, db_transaction.time)
+           address_list = Addresses.get_transaction_addresses(
+             [],
+             vouts,
+             db_transaction.time
+           )
            Vouts.create_vouts(db_transaction, vouts, address_list)
          end
        )
