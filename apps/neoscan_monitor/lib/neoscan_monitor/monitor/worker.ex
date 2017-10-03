@@ -19,6 +19,7 @@ defmodule NeoscanMonitor.Worker do
     monitor_nodes = Utils.load()
     blocks = Blocks.home_blocks
     transactions = Transactions.home_transactions
+                    |> Utils.add_vouts
     assets = ChainAssets.list_assets
               |> Utils.get_stats
     contracts = Transactions.list_contracts
@@ -98,8 +99,13 @@ defmodule NeoscanMonitor.Worker do
     {:noreply, new_state}
   end
 
-  def handle_cast({:add_transaction, transaction}, state) do
+  def handle_cast({:add_transaction, transaction, vouts}, state) do
     count = Enum.count(state.transactions)
+    clean_vouts = Enum.map(vouts, fn vout ->
+                    {:ok, result} = Morphix.atomorphiform(vout)
+                    Map.put(result, :address_hash, result.address)
+                    |> Map.delete(:address)
+                  end)
     new_transactions = [
                          %{
                            :id => transaction.id,
@@ -112,6 +118,7 @@ defmodule NeoscanMonitor.Worker do
                            :sys_fee => transaction.sys_fee,
                            :net_fee => transaction.net_fee,
                            :size => transaction.size,
+                           :vouts => clean_vouts,
                          } | state.transactions
                        ]
                        |> Utils.cut_if_more(count)
@@ -127,10 +134,15 @@ defmodule NeoscanMonitor.Worker do
     {:noreply, new_state}
   end
 
-  def handle_cast({:add_contract, contract}, state) do
-    new_contracts = [contract | state.contracts]
+  def handle_cast({:add_contract, contract, vouts}, state) do
+    clean_vouts = Enum.map(vouts, fn vout ->
+                    {:ok, result} = Morphix.atomorphiform(vout)
+                    Map.put(result, :address_hash, result.address)
+                    |> Map.delete(:address)
+                  end)
+    new_contracts = [Map.put(contract, :vouts, clean_vouts) | state.contracts]
 
-    new_state = Map.put(state, :assets, new_contracts)
+    new_state = Map.put(state, :contracts, new_contracts)
     {:noreply, new_state}
   end
 

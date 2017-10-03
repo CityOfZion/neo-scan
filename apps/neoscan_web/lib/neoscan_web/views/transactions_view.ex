@@ -18,7 +18,4 @@ defmodule NeoscanWeb.TransactionsView do
     end
   end
 
-  def get_transaction_vouts(id, vouts) do
-    Enum.filter(vouts, fn vout -> vout.transaction_id == id end)
-  end
 end

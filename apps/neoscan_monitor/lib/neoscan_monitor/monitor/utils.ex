@@ -108,4 +108,17 @@ defmodule NeoscanMonitor.Utils do
     end)
   end
 
+  def add_vouts(transactions) do
+    ids = Enum.map(transactions, fn tx -> tx.id end)
+    vouts = Transactions.get_transactions_vouts(ids)
+
+    transactions
+    |> Enum.map(fn tx ->
+      Map.put(tx, :vouts, Enum.filter(vouts, fn vout ->
+        vout.transaction_id == tx.id
+      end))
+     end)
+
+  end
+
 end

@@ -11,10 +11,7 @@ defmodule NeoscanWeb.TransactionsController do
                       result
                      end)
 
-    vouts = Enum.map(transactions, fn tx -> tx.id end)
-            |> Transactions.get_transactions_vouts
-
-    render(conn, "transactions.html", transactions: transactions, vouts: vouts)
+    render(conn, "transactions.html", transactions: transactions)
   end
 
   def go_to_page(conn, %{"page" => page}) do
@@ -24,10 +21,7 @@ defmodule NeoscanWeb.TransactionsController do
                       result
                      end)
 
-    vouts = Enum.map(transactions, fn tx -> tx.id end)
-             |> Transactions.get_transactions_vouts
-
-    render(conn, "transactions.html", transactions: transactions, vouts: vouts)
+    render(conn, "transactions.html", transactions: transactions)
   end
 
 end

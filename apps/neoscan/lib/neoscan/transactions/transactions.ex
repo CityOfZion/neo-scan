@@ -112,7 +112,8 @@ defmodule Neoscan.Transactions do
                           1,
                           "hour"
                         ) and e.type != "MinerTransaction",
-                       select: %{
+                        join: v in assoc(e, :vouts),
+                        select: %{
                          :id => e.id,
                          :type => e.type,
                          :time => e.time,
@@ -123,10 +124,20 @@ defmodule Neoscan.Transactions do
                          :sys_fee => e.sys_fee,
                          :net_fee => e.net_fee,
                          :size => e.size,
-                       },
-                       limit: 15
+                         :vouts => v
+                        },
+                        limit: 15
 
-    Repo.paginate(transaction_query, page: pag, page_size: 15)
+    transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
+    vouts = Enum.map(transactions, fn tx -> tx.id end)
+              |> get_transactions_vouts
+
+    transactions
+    |> Enum.map(fn tx ->
+         Map.put(tx, :vouts, Enum.filter(vouts, fn vout ->
+           vout.transaction_id == tx.id
+         end))
+       end)
   end
 
   @doc """
@@ -335,7 +346,7 @@ defmodule Neoscan.Transactions do
 
     Transaction.changeset_with_block(block, transaction)
     |> Repo.insert!()
-    |> update_transaction_state
+    |> update_transaction_state(vouts)
     |> Vouts.create_vouts(vouts, Task.await(address_list, 60_000))
   end
 
@@ -349,18 +360,18 @@ defmodule Neoscan.Transactions do
   end
 
   #add transaction to monitor cache
-  def update_transaction_state(%{:type => type} = transaction)
+  def update_transaction_state(%{:type => type} = transaction, vouts)
       when type != "MinerTransaction" do
-    Api.add_transaction(transaction)
+    Api.add_transaction(transaction, vouts)
     transaction
   end
-  def update_transaction_state(%{:type => type} = transaction)
+  def update_transaction_state(%{:type => type} = transaction, vouts)
       when type == "PublishTransaction" or type == "InvocationTransaction" do
-    Api.add_transaction(transaction)
-    Api.add_contract(transaction)
+    Api.add_transaction(transaction, vouts)
+    Api.add_contract(transaction, vouts)
     transaction
   end
-  def update_transaction_state(transaction) do
+  def update_transaction_state(transaction, _vouts) do
     transaction
   end
 

@@ -43,16 +43,16 @@ defmodule NeoscanMonitor.Api do
     GenServer.cast(NeoscanMonitor.Worker, {:add_block, block})
   end
 
-  def add_transaction(transaction) do
-    GenServer.cast(NeoscanMonitor.Worker, {:add_transaction, transaction})
+  def add_transaction(transaction, vouts) do
+    GenServer.cast(NeoscanMonitor.Worker, {:add_transaction, transaction, vouts})
   end
 
   def add_asset(asset) do
     GenServer.cast(NeoscanMonitor.Worker, {:add_asset, asset})
   end
 
-  def add_contract(contract) do
-    GenServer.cast(NeoscanMonitor.Worker, {:add_contract, contract})
+  def add_contract(contract, vouts) do
+    GenServer.cast(NeoscanMonitor.Worker, {:add_contract, contract, vouts})
   end
 
 end
