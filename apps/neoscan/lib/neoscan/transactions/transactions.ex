@@ -49,13 +49,79 @@ defmodule Neoscan.Transactions do
                                "hour"
                              ) and e.type != "MinerTransaction",
                              select: %{
+                               :id => e.id,
                                :type => e.type,
                                :time => e.time,
-                               :txid => e.txid
+                               :txid => e.txid,
+                               :block_height => e.block_height,
+                               :vin => e.vin,
+                               :claims => e.claims,
+                               :sys_fee => e.sys_fee,
+                               :net_fee => e.net_fee,
+                               :size => e.size,
                              },
                              limit: 15
 
     Repo.all(transaction_query)
+  end
+
+  @doc """
+  Returns the list of paginated transactions.
+
+  ## Examples
+
+      iex> paginate_transactions(page)
+      [%Transaction{}, ...]
+
+  """
+  def paginate_transactions(pag) do
+    transaction_query = from e in Transaction,
+                        order_by: [
+                          desc: e.inserted_at
+                        ],
+                        where: e.inserted_at > ago(
+                          1,
+                          "hour"
+                        ) and e.type != "MinerTransaction",
+                       select: %{
+                         :id => e.id,
+                         :type => e.type,
+                         :time => e.time,
+                         :txid => e.txid,
+                         :block_height => e.block_height,
+                         :vin => e.vin,
+                         :claims => e.claims,
+                         :sys_fee => e.sys_fee,
+                         :net_fee => e.net_fee,
+                         :size => e.size,
+                       },
+                       limit: 15
+
+    Repo.paginate(transaction_query, page: pag, page_size: 15)
+  end
+
+  @doc """
+  Returns the list of vouts for a transaction.
+
+  ## Examples
+
+      iex> get_transaction_vouts(id)
+      [%Vout{}, ...]
+
+  """
+  def get_transaction_vouts(id) do
+    vout_query = from e in Vout,
+                             order_by: [
+                               asc: e.n
+                             ],
+                             where: e.transaction_id == ^id,
+                             select: %{
+                               :asset => e.asset,
+                               :address_hash => e.address_hash,
+                               :value => e.value,
+                             }
+
+    Repo.all(vout_query)
   end
 
   @doc """
@@ -225,7 +291,7 @@ defmodule Neoscan.Transactions do
   end
   def set_transaction_asset(attrs, vouts) do
     vout = List.first(vouts)
-    Map.put(attrs, "asset_moved", vout["asset"])
+    Map.put(attrs, "asset_moved", String.slice(to_string(vout["asset"]), -64..-1))
   end
 
   #add transaction to monitor cache

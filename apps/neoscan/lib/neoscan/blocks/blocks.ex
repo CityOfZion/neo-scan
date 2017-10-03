@@ -52,6 +52,33 @@ defmodule Neoscan.Blocks do
   end
 
   @doc """
+  Returns the list of paginated blocks.
+
+  ## Examples
+
+      iex> paginate_blocks(page)
+      [%Block{}, ...]
+
+  """
+  def paginate_blocks(pag) do
+    block_query = from e in Block,
+                       where: e.index > -1,
+                       order_by: [
+                         desc: e.index
+                       ],
+                       select: %{
+                         :index => e.index,
+                         :time => e.time,
+                         :tx_count => e.tx_count,
+                         :hash => e.hash,
+                         :size => e.size
+                       },
+                       limit: 15
+
+    Repo.paginate(block_query, page: pag, page_size: 15)
+  end
+
+  @doc """
   Gets a single block.
 
   Raises `Ecto.NoResultsError` if the Block does not exist.

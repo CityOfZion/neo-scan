@@ -42,5 +42,5 @@
   </section>
 
   <p class="number-counter">Showing 12 out of 120000 blocks</p>
-  <a href="#" alt="Load more transactions" title="Load more transactions" class="btn-primary btn-transactions-primary">Load more blocks</a>
+  <a href="<%= blocks_path(@conn, :go_to_page, 2) %>" alt="Load more transactions" title="Load more transactions" class="btn-primary btn-transactions-primary">Load more blocks</a>
 </section>

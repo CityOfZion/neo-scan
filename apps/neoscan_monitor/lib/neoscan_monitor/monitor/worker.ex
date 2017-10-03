@@ -85,9 +85,16 @@ defmodule NeoscanMonitor.Worker do
     count = Enum.count(state.transactions)
     new_transactions = [
                          %{
+                           :id => transaction.id,
                            :type => transaction.type,
                            :time => transaction.time,
-                           :txid => transaction.txid
+                           :txid => transaction.txid,
+                           :block_height => transaction.block_height,
+                           :vin => transaction.vin,
+                           :claims => transaction.claims,
+                           :sys_fee => transaction.sys_fee,
+                           :net_fee => transaction.net_fee,
+                           :size => transaction.size,
                          } | state.transactions
                        ]
                        |> cut_if_more(count)
