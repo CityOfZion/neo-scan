@@ -11,10 +11,12 @@ defmodule NeoscanMonitor.Worker do
   alias Neoscan.Addresses
   alias Neoscan.ChainAssets
 
+  #starts the genserver
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
+  #run initial queries and fill state with all info needed in the app, then sends message with new state to server module
   def init(:ok) do
     monitor_nodes = Utils.load()
     blocks = Blocks.home_blocks
@@ -58,6 +60,7 @@ defmodule NeoscanMonitor.Worker do
     }
   end
 
+  #update nodes and stats information
   def handle_info(:update_nodes, state) do
     schedule_nodes() # Reschedule once more
     new_state = Map.merge(state, %{
@@ -72,16 +75,19 @@ defmodule NeoscanMonitor.Worker do
     {:noreply, new_state}
   end
 
+  #updates the state in the server module
   def handle_info(:update, state) do
     schedule_update() # Reschedule once more
     Process.send(NeoscanMonitor.Server, {:state_update, state}, [])
     {:noreply, state}
   end
 
+  #handles misterious messages received by unknown caller
   def handle_info({_ref, {:ok, _port, _pid}}, state) do
     {:noreply, state}
   end
 
+  #adds a block to the state
   def handle_cast({:add_block, block}, state) do
     count = Enum.count(state.blocks)
     new_blocks = [
@@ -99,6 +105,7 @@ defmodule NeoscanMonitor.Worker do
     {:noreply, new_state}
   end
 
+  #adds a transaction to the state
   def handle_cast({:add_transaction, transaction, vouts}, state) do
     count = Enum.count(state.transactions)
     clean_vouts = Enum.map(vouts, fn vout ->
@@ -127,6 +134,7 @@ defmodule NeoscanMonitor.Worker do
     {:noreply, new_state}
   end
 
+  #adds an asset to the state
   def handle_cast({:add_asset, asset}, state) do
     new_assets = [asset | state.assets]
 
@@ -134,6 +142,7 @@ defmodule NeoscanMonitor.Worker do
     {:noreply, new_state}
   end
 
+  #adds a contract to the state
   def handle_cast({:add_contract, contract, vouts}, state) do
     clean_vouts = Enum.map(vouts, fn vout ->
                     {:ok, result} = Morphix.atomorphiform(vout)
@@ -146,10 +155,12 @@ defmodule NeoscanMonitor.Worker do
     {:noreply, new_state}
   end
 
+  #schedule msgs to perform updates
   defp schedule_nodes do
-    Process.send_after(self(), :update_nodes, 30_000) # In 10s
+    Process.send_after(self(), :update_nodes, 30_000) # In 30s
   end
 
+  #schedule msgs to perform updates
   defp schedule_update do
     Process.send_after(self(), :update, 10_000) # In 10s
   end

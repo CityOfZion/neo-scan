@@ -37,7 +37,7 @@ defmodule Neoscan.BalanceHistories do
       50
 
   """
-  def count_histories_for_address(address_hash) do
+  def count_hist_for_address(address_hash) do
     query = from h in History,
              where: h.address_hash == ^address_hash
     Repo.aggregate(query, :count, :id)

@@ -6,6 +6,7 @@ defmodule NeoscanMonitor.Utils do
   alias Neoscan.Addresses
   alias Neoscan.BalanceHistories
 
+  #blockchain api nodes
   def seeds do
     [
       "http://seed1.cityofzion.io:8080",
@@ -22,6 +23,7 @@ defmodule NeoscanMonitor.Utils do
     ]
   end
 
+  #function to load nodes state
   def load do
     data = seeds()
            |> Enum.map(fn url -> {url, Blockchain.get_current_height(url)} end)
@@ -31,20 +33,24 @@ defmodule NeoscanMonitor.Utils do
     set_state(data)
   end
 
+  #handler for nil data
   defp set_state([] = data) do
     %{:nodes => [], :height => {:ok, nil}, :data => data}
   end
+  #call filters on results and set state
   defp set_state(data) do
     height = filter_height(data)
     %{nodes: filter_nodes(data, height), height: {:ok, height}, data: data}
   end
 
+  #filter working nodes
   defp filter_nodes(data, height) do
     data
     |> Enum.filter(fn {_url, hgt} -> hgt == height end)
     |> Enum.map(fn {url, _height} -> url end)
   end
 
+  #filter current height
   defp filter_height(data) do
     {height, _count} = data
                        |> Enum.map(fn {_url, height} -> height end)
@@ -57,6 +63,7 @@ defmodule NeoscanMonitor.Utils do
     height
   end
 
+  #handler to filter errors
   defp evaluate_result(url, {:ok, height}) do
     test_get_block(url, height)
   end
@@ -64,11 +71,13 @@ defmodule NeoscanMonitor.Utils do
     false
   end
 
+  #test node api
   defp test_get_block(url, height) do
     Blockchain.get_block_by_height(url, height - 1)
     |> test()
   end
 
+  #handler to test response
   defp test({:ok, _block}) do
     true
   end
@@ -76,7 +85,7 @@ defmodule NeoscanMonitor.Utils do
     false
   end
 
-
+  #function to cut extra elements
   def cut_if_more(list, count) when count == 15 do
     list
     |> Enum.drop(-1)
@@ -85,6 +94,7 @@ defmodule NeoscanMonitor.Utils do
     list
   end
 
+  #function to get DB asset stats
   def get_stats(assets) do
     Enum.map(assets, fn asset -> Map.put(asset, :stats,
      %{
@@ -94,6 +104,7 @@ defmodule NeoscanMonitor.Utils do
     end)
   end
 
+  #function to get general db stats
   def get_general_stats do
     %{
       :total_blocks => Blocks.count_blocks,
@@ -102,12 +113,19 @@ defmodule NeoscanMonitor.Utils do
     }
   end
 
+  #function to count total transactions for an address
   def count_txs(address_list) do
     Enum.map(address_list, fn address ->
-      Map.put(address, :tx_count, BalanceHistories.count_histories_for_address(address.address))
+      insert_tx_count(address)
     end)
   end
 
+  #function to insert tx count in address
+  def insert_tx_count(add) do
+    Map.put(add, :tx_count, BalanceHistories.count_hist_for_address(add.address))
+  end
+
+  #function to add vouts to transactions
   def add_vouts(transactions) do
     ids = Enum.map(transactions, fn tx -> tx.id end)
     vouts = Transactions.get_transactions_vouts(ids)

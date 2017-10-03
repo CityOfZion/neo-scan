@@ -44,7 +44,10 @@ defmodule NeoscanMonitor.Api do
   end
 
   def add_transaction(transaction, vouts) do
-    GenServer.cast(NeoscanMonitor.Worker, {:add_transaction, transaction, vouts})
+    GenServer.cast(
+      NeoscanMonitor.Worker,
+      {:add_transaction, transaction, vouts}
+    )
   end
 
   def add_asset(asset) do
