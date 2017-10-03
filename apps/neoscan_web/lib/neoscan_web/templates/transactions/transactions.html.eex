@@ -74,7 +74,7 @@
           <div class="sent-to-wrapper">
             <%= if transaction.type == "ContractTransaction" or transaction.type == "ClaimTransaction" or transaction.type == "IssueTransaction" do %>
               <p class="large-detail-text">Sent to</p>
-              <%= for vout <- get_transaction_vouts(transaction.id) do %>
+              <%= for vout <- get_transaction_vouts(transaction.id, @vouts) do %>
                 <div class="individual-transaction">
                   <a href='<%= address_path(@conn, :index, vout.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vout.address_hash %></a>
                   <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= vout.value %> <%= Neoscan.ChainAssets.get_asset_name_by_hash(vout.asset) %></p>

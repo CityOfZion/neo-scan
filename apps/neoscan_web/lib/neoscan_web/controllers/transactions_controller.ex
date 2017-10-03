@@ -11,7 +11,10 @@ defmodule NeoscanWeb.TransactionsController do
                       result
                      end)
 
-    render(conn, "transactions.html", transactions: transactions)
+    vouts = Enum.map(transactions, fn tx -> tx.id end)
+            |> Transactions.get_transactions_vouts
+
+    render(conn, "transactions.html", transactions: transactions, vouts: vouts)
   end
 
   def go_to_page(conn, %{"page" => page}) do
@@ -20,7 +23,11 @@ defmodule NeoscanWeb.TransactionsController do
                       {:ok, result} = Morphix.atomorphiform(transaction)
                       result
                      end)
-    render(conn, "transactions.html", transactions: transactions)
+
+    vouts = Enum.map(transactions, fn tx -> tx.id end)
+             |> Transactions.get_transactions_vouts
+
+    render(conn, "transactions.html", transactions: transactions, vouts: vouts)
   end
 
 end

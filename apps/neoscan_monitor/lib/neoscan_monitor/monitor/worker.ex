@@ -8,6 +8,7 @@ defmodule NeoscanMonitor.Worker do
   alias NeoscanMonitor.Utils
   alias Neoscan.Blocks
   alias Neoscan.Transactions
+  alias Neoscan.Addresses
   alias Neoscan.ChainAssets
 
   def start_link do
@@ -19,7 +20,9 @@ defmodule NeoscanMonitor.Worker do
     blocks = Blocks.home_blocks
     transactions = Transactions.home_transactions
     assets = ChainAssets.list_assets
+              |> get_stats
     contracts = Transactions.list_contracts
+    stats = get_general_stats()
     Process.send(
       NeoscanMonitor.Server,
       {
@@ -29,7 +32,8 @@ defmodule NeoscanMonitor.Worker do
           :blocks => blocks,
           :transactions => transactions,
           :assets => assets,
-          :contracts => contracts
+          :contracts => contracts,
+          :stats => stats,
         }
       },
       []
@@ -43,14 +47,21 @@ defmodule NeoscanMonitor.Worker do
         :blocks => blocks,
         :transactions => transactions,
         :assets => assets,
-        :contracts => contracts
+        :contracts => contracts,
+        :stats => stats,
       }
     }
   end
 
   def handle_info(:update_nodes, state) do
     schedule_nodes() # Reschedule once more
-    new_state = Map.put(state, :monitor, Utils.load())
+    new_state = Map.merge(state, %{
+        :monitor => Utils.load(),
+        :assets => state.assets
+                    |> get_stats,
+        :stats => get_general_stats(),
+      })
+
     {:noreply, new_state}
   end
 
@@ -132,4 +143,22 @@ defmodule NeoscanMonitor.Worker do
   defp cut_if_more(list, _count) do
     list
   end
+
+  defp get_stats(assets) do
+    Enum.map(assets, fn asset -> Map.put(asset, :stats,
+     %{
+       :addresses => Addresses.count_addresses_for_asset(asset.txid),
+       :transactions => Transactions.count_transactions_for_asset(asset.txid),
+     })
+    end)
+  end
+
+  defp get_general_stats do
+    %{
+      :total_blocks => Blocks.count_blocks,
+      :total_transactions => Transactions.count_transactions,
+      :total_addresses => Addresses.count_addresses,
+    }
+  end
+
 end

@@ -32,6 +32,35 @@ defmodule Neoscan.Addresses do
   end
 
   @doc """
+  Count total addresses in DB.
+
+  ## Examples
+
+      iex> count_addresses()
+      50
+
+  """
+  def count_addresses do
+    Repo.aggregate(Address, :count, :id)
+  end
+
+  @doc """
+  Count total addresses in DB that have an especific asset.
+
+  ## Examples
+
+      iex> count_addresses_for_asset()
+      20
+
+  """
+  def count_addresses_for_asset(asset_hash) do
+    query = from a in Address,
+            where: fragment("? \\? ?", a.balance, ^asset_hash)
+
+    Repo.aggregate(query, :count, :id)
+  end
+
+  @doc """
   Gets a single address.
 
   Raises `Ecto.NoResultsError` if the Address does not exist.

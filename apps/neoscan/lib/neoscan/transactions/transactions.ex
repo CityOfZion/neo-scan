@@ -31,6 +31,35 @@ defmodule Neoscan.Transactions do
   end
 
   @doc """
+  Count total transactions in DB.
+
+  ## Examples
+
+      iex> count_transactions()
+      50
+
+  """
+  def count_transactions do
+    Repo.aggregate(Transaction, :count, :id)
+  end
+
+  @doc """
+  Count total transactions in DB for an especific asset.
+
+  ## Examples
+
+      iex> count_transactions_for_asset(asset_hash)
+      20
+
+  """
+  def count_transactions_for_asset(asset_hash) do
+    query = from t in Transaction,
+            where: t.asset_moved == ^asset_hash
+
+    Repo.aggregate(query, :count, :id)
+  end
+
+  @doc """
   Returns the list of transactions in the home page.
 
   ## Examples
@@ -116,6 +145,31 @@ defmodule Neoscan.Transactions do
                              ],
                              where: e.transaction_id == ^id,
                              select: %{
+                               :asset => e.asset,
+                               :address_hash => e.address_hash,
+                               :value => e.value,
+                             }
+
+    Repo.all(vout_query)
+  end
+
+  @doc """
+  Returns the list of vouts for many transaction.
+
+  ## Examples
+
+      iex> get_transaction_vouts(id)
+      [%Vout{}, ...]
+
+  """
+  def get_transactions_vouts(id_list) do
+    vout_query = from e in Vout,
+                             order_by: [
+                               asc: e.n
+                             ],
+                             where: e.transaction_id in ^id_list,
+                             select: %{
+                               :transaction_id => e.transaction_id,
                                :asset => e.asset,
                                :address_hash => e.address_hash,
                                :value => e.value,

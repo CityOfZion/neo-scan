@@ -31,7 +31,7 @@
         <div class="right-column">
           <div class="right-asset-detail">
             <p class="small-detail-text">Addresses</p>
-            <p class="large-detail-text">missing</p>
+            <p class="large-detail-text"><%=asset.stats.addresses%></p>
           </div>
           <div class="right-asset-detail">
             <p class="small-detail-text">Issued</p>
@@ -39,7 +39,7 @@
           </div>
           <div class="right-asset-detail">
             <p class="small-detail-text">Transactions</p>
-            <p class="large-detail-text">missing</p>
+            <p class="large-detail-text"><%=asset.stats.transactions%></p>
           </div>
         </div>
       </div>

@@ -25,6 +25,19 @@ defmodule Neoscan.Blocks do
   end
 
   @doc """
+  Count total blocks in DB.
+
+  ## Examples
+
+      iex> count_blocks()
+      50
+
+  """
+  def count_blocks do
+    Repo.aggregate(Block, :count, :id)
+  end
+
+  @doc """
   Returns the list of blocks in the home page.
 
   ## Examples
