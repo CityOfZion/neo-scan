@@ -122,7 +122,11 @@ defmodule NeoscanMonitor.Utils do
 
   #function to insert tx count in address
   def insert_tx_count(add) do
-    Map.put(add, :tx_count, BalanceHistories.count_hist_for_address(add.address))
+    Map.put(
+      add,
+      :tx_count,
+      BalanceHistories.count_hist_for_address(add.address)
+    )
   end
 
   #function to add vouts to transactions

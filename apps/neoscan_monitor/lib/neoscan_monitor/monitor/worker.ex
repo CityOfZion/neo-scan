@@ -16,7 +16,8 @@ defmodule NeoscanMonitor.Worker do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
-  #run initial queries and fill state with all info needed in the app, then sends message with new state to server module
+  #run initial queries and fill state with all info needed in the app,
+  #then sends message with new state to server module
   def init(:ok) do
     monitor_nodes = Utils.load()
     blocks = Blocks.home_blocks
