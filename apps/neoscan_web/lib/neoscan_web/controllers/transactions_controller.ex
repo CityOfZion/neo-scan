@@ -7,7 +7,7 @@ defmodule NeoscanWeb.TransactionsController do
   def index(conn, _params) do
     transactions = Api.get_transactions
                     |> Enum.map(fn transaction ->
-                      { :ok, result } = Morphix.atomorphiform(transaction)
+                      {:ok, result} = Morphix.atomorphiform(transaction)
                       result
                      end)
 
@@ -17,7 +17,7 @@ defmodule NeoscanWeb.TransactionsController do
   def go_to_page(conn, %{"page" => page}) do
     transactions = Transactions.paginate_transactions(page)
                     |> Enum.map(fn transaction ->
-                      { :ok, result } = Morphix.atomorphiform(transaction)
+                      {:ok, result} = Morphix.atomorphiform(transaction)
                       result
                      end)
     render(conn, "transactions.html", transactions: transactions)
