@@ -1,6 +1,10 @@
 defmodule NeoscanMonitor.Utils do
   @moduledoc false
   alias NeoscanSync.Blockchain
+  alias Neoscan.Blocks
+  alias Neoscan.Transactions
+  alias Neoscan.Addresses
+  alias Neoscan.BalanceHistories
 
   def seeds do
     [
@@ -70,6 +74,38 @@ defmodule NeoscanMonitor.Utils do
   end
   defp test({:error, _reason}) do
     false
+  end
+
+
+  def cut_if_more(list, count) when count == 15 do
+    list
+    |> Enum.drop(-1)
+  end
+  def cut_if_more(list, _count) do
+    list
+  end
+
+  def get_stats(assets) do
+    Enum.map(assets, fn asset -> Map.put(asset, :stats,
+     %{
+       :addresses => Addresses.count_addresses_for_asset(asset.txid),
+       :transactions => Transactions.count_transactions_for_asset(asset.txid),
+     })
+    end)
+  end
+
+  def get_general_stats do
+    %{
+      :total_blocks => Blocks.count_blocks,
+      :total_transactions => Transactions.count_transactions,
+      :total_addresses => Addresses.count_addresses,
+    }
+  end
+
+  def count_txs(address_list) do
+    Enum.map(address_list, fn address ->
+      Map.put(address, :tx_count, BalanceHistories.count_histories_for_address(address.address))
+    end)
   end
 
 end

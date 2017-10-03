@@ -1,6 +1,5 @@
 defmodule NeoscanWeb.TransactionsView do
   use NeoscanWeb, :view
-  alias Neoscan.Transactions
 
   def get_class(type) do
     cond do

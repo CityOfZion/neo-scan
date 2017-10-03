@@ -32,6 +32,34 @@ defmodule Neoscan.Addresses do
   end
 
   @doc """
+  Returns a list of the latest updated addresses.
+
+  ## Examples
+
+      iex> list_latest()
+      [%Address{}, ...]
+
+  """
+  def list_latest do
+    query = from a in Address,
+              order_by: [
+                desc: a.updated_at
+              ],
+              where: a.updated_at > ago(
+                1,
+                "hour"
+              ),
+              select: %{
+                :address => a.address,
+                :balance => a.balance,
+                :time => a.time,
+              },
+              limit: 15
+
+    Repo.all(query)
+  end
+
+  @doc """
   Count total addresses in DB.
 
   ## Examples
@@ -42,6 +70,37 @@ defmodule Neoscan.Addresses do
   """
   def count_addresses do
     Repo.aggregate(Address, :count, :id)
+  end
+
+  @doc """
+  Returns the list of paginated addresses.
+
+  ## Examples
+
+      iex> paginate_addresses(page)
+      [%Address{}, ...]
+
+  """
+  def paginate_addresses(pag) do
+    addresses_query = from e in Address,
+                        order_by: [
+                          desc: e.updated_at
+                        ],
+                        where: e.updated_at > ago(
+                          1,
+                          "hour"
+                        ),
+                       select: %{
+                         :address => e.address,
+                         :balance => e.balance,
+                         :time => e.time,
+                       },
+                       limit: 15
+
+    Repo.paginate(addresses_query, page: pag, page_size: 15)
+      |> Enum.map(fn address ->
+           Map.put(address, :tx_count, BalanceHistories.count_histories_for_address(address.address))
+         end)
   end
 
   @doc """

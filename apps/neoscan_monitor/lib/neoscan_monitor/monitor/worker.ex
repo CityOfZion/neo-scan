@@ -20,9 +20,11 @@ defmodule NeoscanMonitor.Worker do
     blocks = Blocks.home_blocks
     transactions = Transactions.home_transactions
     assets = ChainAssets.list_assets
-              |> get_stats
+              |> Utils.get_stats
     contracts = Transactions.list_contracts
-    stats = get_general_stats()
+    stats = Utils.get_general_stats()
+    addresses = Addresses.list_latest()
+                 |> Utils.count_txs
     Process.send(
       NeoscanMonitor.Server,
       {
@@ -34,6 +36,7 @@ defmodule NeoscanMonitor.Worker do
           :assets => assets,
           :contracts => contracts,
           :stats => stats,
+          :addresses => addresses
         }
       },
       []
@@ -49,6 +52,7 @@ defmodule NeoscanMonitor.Worker do
         :assets => assets,
         :contracts => contracts,
         :stats => stats,
+        :addresses => addresses
       }
     }
   end
@@ -58,8 +62,10 @@ defmodule NeoscanMonitor.Worker do
     new_state = Map.merge(state, %{
         :monitor => Utils.load(),
         :assets => state.assets
-                    |> get_stats,
-        :stats => get_general_stats(),
+                    |> Utils.get_stats,
+        :stats => Utils.get_general_stats(),
+        :addresses => Addresses.list_latest()
+                       |> Utils.count_txs
       })
 
     {:noreply, new_state}
@@ -86,7 +92,7 @@ defmodule NeoscanMonitor.Worker do
                      :size => block.size
                    } | state.blocks
                  ]
-                 |> cut_if_more(count)
+                 |> Utils.cut_if_more(count)
 
     new_state = Map.put(state, :blocks, new_blocks)
     {:noreply, new_state}
@@ -108,7 +114,7 @@ defmodule NeoscanMonitor.Worker do
                            :size => transaction.size,
                          } | state.transactions
                        ]
-                       |> cut_if_more(count)
+                       |> Utils.cut_if_more(count)
 
     new_state = Map.put(state, :transactions, new_transactions)
     {:noreply, new_state}
@@ -134,31 +140,6 @@ defmodule NeoscanMonitor.Worker do
 
   defp schedule_update do
     Process.send_after(self(), :update, 10_000) # In 10s
-  end
-
-  defp cut_if_more(list, count) when count == 15 do
-    list
-    |> Enum.drop(-1)
-  end
-  defp cut_if_more(list, _count) do
-    list
-  end
-
-  defp get_stats(assets) do
-    Enum.map(assets, fn asset -> Map.put(asset, :stats,
-     %{
-       :addresses => Addresses.count_addresses_for_asset(asset.txid),
-       :transactions => Transactions.count_transactions_for_asset(asset.txid),
-     })
-    end)
-  end
-
-  defp get_general_stats do
-    %{
-      :total_blocks => Blocks.count_blocks,
-      :total_transactions => Transactions.count_transactions,
-      :total_addresses => Addresses.count_addresses,
-    }
   end
 
 end

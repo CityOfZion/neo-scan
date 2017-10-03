@@ -23,6 +23,10 @@ defmodule NeoscanMonitor.Api do
     GenServer.call(NeoscanMonitor.Server, :assets, 10_000)
   end
 
+  def get_addresses do
+    GenServer.call(NeoscanMonitor.Server, :addresses, 10_000)
+  end
+
   def get_contracts do
     GenServer.call(NeoscanMonitor.Server, :contracts, 10_000)
   end

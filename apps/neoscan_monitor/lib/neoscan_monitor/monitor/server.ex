@@ -48,6 +48,10 @@ defmodule NeoscanMonitor.Server do
     {:reply, state.assets, state}
   end
 
+  def handle_call(:addresses, _from, state) do
+    {:reply, state.addresses, state}
+  end
+
   def handle_call(:contracts, _from, state) do
     {:reply, state.contracts, state}
   end

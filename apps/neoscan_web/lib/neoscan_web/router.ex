@@ -21,7 +21,8 @@ defmodule NeoscanWeb.Router do
     get "/doc", DocController, :index
     get "/assets", AssetsController, :index
     get "/contracts", ContractsController, :index
-    get "/addresses", AddressesController, :index
+    get "/addresses/1", AddressesController, :index
+    get "/addresses/:page", AddressesController, :go_to_page
     get "/address/:address", AddressController, :index
     get "/transactions/1", TransactionsController, :index
     get "/transactions/:page", TransactionsController, :go_to_page
