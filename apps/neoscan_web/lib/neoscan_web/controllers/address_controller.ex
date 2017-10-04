@@ -24,6 +24,5 @@ defmodule NeoscanWeb.AddressController do
       value
     end
   end
-
   defp round_or_not?(value), do: Kernel.round(value) == value
 end

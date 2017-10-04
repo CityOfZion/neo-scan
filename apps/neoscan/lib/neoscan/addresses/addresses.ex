@@ -471,22 +471,23 @@ defmodule Neoscan.Addresses do
                     :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
                   }
                 )
-                |> add_vins(vins)
+                |> add_vins(vins, time)
                 |> BalanceHistories.add_tx_id(txid, index, time)
     {address, new_attrs}
   end
 
   #add multiple vins
-  def add_vins(attrs, vins) do
-    Enum.reduce(vins, attrs, fn (vin, acc) -> add_vin(acc, vin) end)
+  def add_vins(attrs, vins, time) do
+    Enum.reduce(vins, attrs, fn (vin, acc) -> add_vin(acc, vin, time) end)
   end
 
   #add a single vin into adress
-  def add_vin(%{:balance => balance} = attrs, vin) do
+  def add_vin(%{:balance => balance} = attrs, vin, time) do
     current_amount = balance[vin.asset]["amount"]
     new_balance = %{
       "asset" => vin.asset,
-      "amount" => current_amount - vin.value
+      "amount" => current_amount - vin.value,
+      "time" => time,
     }
     %{attrs | balance: Map.put(attrs.balance || %{}, vin.asset, new_balance)}
   end

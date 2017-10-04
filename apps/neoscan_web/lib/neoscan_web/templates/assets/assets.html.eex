@@ -3,7 +3,7 @@
 <ul id="assets-list">
 
   <%= for asset <- @assets do %>
-    <li class="remove-margin-left">
+    <li>
       <div class="main-asset-type-wrapper">
         <p class="small-detail-text">Asset</p>
         <h2 class="asset-type"><%=Neoscan.ChainAssets.get_asset_name_by_hash(asset.txid)%></h2>

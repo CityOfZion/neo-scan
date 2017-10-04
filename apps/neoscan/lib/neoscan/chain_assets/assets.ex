@@ -69,6 +69,9 @@ defmodule Neoscan.ChainAssets do
     |> filter_name
   end
 
+  def filter_name(nil) do
+    "Asset not Found"
+  end
   def filter_name(asset) do
     case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
       %{"name" => name} -> cond do

@@ -33,11 +33,11 @@
               %>
             </p>
             <p class="medium-detail-text col-2-width"><%= address.tx_count %> </p>
-            <p class="medium-detail-text col-2-width">1 minute ago</p>
+            <p class="medium-detail-text col-2-width"><%= compare_time_and_get_minutes(address.balance)%> minute ago</p>
           </div>
           <div class="token-amount-wrapper col-2-width">
-            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span>NEO: 12</p>
-            <p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span>GAS: 100,000,000.<span class="divisible-amount">02948292</span></p>
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span>NEO: <%= get_NEO_balance(address.balance) %></p>
+            <%= get_GAS_balance(address.balance) %>
           </div>
         </div>
       <% end %>
