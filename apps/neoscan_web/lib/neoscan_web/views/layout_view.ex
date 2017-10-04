@@ -26,4 +26,11 @@ defmodule NeoscanWeb.LayoutView do
     Controller.controller_module(conn) == NeoscanWeb.AssetsController
   end
 
+  def get_page(conn) do
+    Controller.controller_module(conn)
+    |> to_string
+    |> String.replace("Elixir.NeoscanWeb.", "")
+    |> String.replace("Controller", "")
+  end
+
 end
