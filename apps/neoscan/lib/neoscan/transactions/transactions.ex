@@ -106,13 +106,9 @@ defmodule Neoscan.Transactions do
   def paginate_transactions(pag) do
     transaction_query = from e in Transaction,
                         order_by: [
-                          desc: e.inserted_at
+                          desc: e.block_height
                         ],
-                        where: e.inserted_at > ago(
-                          1,
-                          "hour"
-                        ) and e.type != "MinerTransaction",
-                        join: v in assoc(e, :vouts),
+                        where: e.type != "MinerTransaction",
                         select: %{
                          :id => e.id,
                          :type => e.type,
@@ -124,7 +120,6 @@ defmodule Neoscan.Transactions do
                          :sys_fee => e.sys_fee,
                          :net_fee => e.net_fee,
                          :size => e.size,
-                         :vouts => v
                         },
                         limit: 15
 
