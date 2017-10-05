@@ -1,13 +1,13 @@
 defmodule NeoscanWeb.AddressesView do
   use NeoscanWeb, :view
-  alias Neoscan.ChainAssets
+  alias NeoscanMonitor.Api
 
+  def compare_time_and_get_minutes(balance) do
 
-
-  def compare_time_and_get_minutes( balance) do
-
-    unix_time= Map.to_list(balance)
-    |> Enum.reduce([], fn ({_asset, %{"time" => time}}, acc) -> [ time | acc] end)
+    unix_time = Map.to_list(balance)
+    |> Enum.reduce([], fn ({_asset, %{"time" => time}}, acc) ->
+         [time | acc] 
+       end)
     |> Enum.max
 
     ecto_time = Ecto.DateTime.from_unix!(unix_time, :second)
@@ -18,7 +18,7 @@ defmodule NeoscanWeb.AddressesView do
                    |> Enum.map(&DateTime.from_naive!(&1, "Etc/UTC"))
                    |> Enum.map(&DateTime.to_unix(&1))
 
-    {int, str} = (dt2 - dt1) / 60
+    {int, _str} = (dt2 - dt1) / 60
                   |> Float.floor(0)
                   |> Float.to_string
                   |> Integer.parse
@@ -29,7 +29,9 @@ defmodule NeoscanWeb.AddressesView do
   def get_NEO_balance(balance) do
     balance
     |> Map.to_list
-    |> Enum.filter(fn {_asset, %{"asset" => asset}} -> ChainAssets.get_asset_name_by_hash(asset) == "NEO" end)
+    |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
+         Api.get_asset_name(asset) == "NEO"
+       end)
     |> Enum.reduce(0, fn ({_asset, %{"amount" => amount}}, _acc) -> amount end)
     |> round_or_not
   end
@@ -37,8 +39,10 @@ defmodule NeoscanWeb.AddressesView do
   def get_GAS_balance(balance) do
     {int, div} = balance
                   |> Map.to_list
-                  |> Enum.filter(fn {_asset, %{"asset" => asset}} -> ChainAssets.get_asset_name_by_hash(asset) == "GAS" end)
-                  |> Enum.reduce(0.0, fn ({_asset, %{"amount" => amount}}, acc) -> amount+acc end)
+                  |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
+                       Api.get_asset_name(asset) == "GAS"
+                     end)
+                  |> Enum.reduce(0.0, fn ({_asset, %{"amount" => amount}}, acc) -> amount + acc end)
                   |> Float.to_string
                   |> Integer.parse
 

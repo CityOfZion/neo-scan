@@ -1,5 +1,6 @@
 defmodule NeoscanWeb.TransactionView do
   use NeoscanWeb, :view
+  alias NeoscanMonitor.Api
 
   def get_type(type) do
     cond do
@@ -17,7 +18,6 @@ defmodule NeoscanWeb.TransactionView do
         'Contract Publish'
     end
   end
-
 
   def compare_time_and_get_minutes(time) do
 

@@ -57,7 +57,7 @@
               <%= for vin <- transaction.vin do %>
                 <div class="individual-transaction">
                   <a href='<%= address_path(@conn, :index, vin.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vin.address_hash %></a>
-                  <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= vin.value %> <%= Neoscan.ChainAssets.get_asset_name_by_hash(vin.asset) %></p>
+                  <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= vin.value %> <%= Api.get_asset_name(vin.asset) %></p>
                 </div>
               <% end %>
             <% end %>
@@ -66,7 +66,7 @@
               <%= for claim <- transaction.claims do %>
                 <div class="individual-transaction">
                   <a href='<%= address_path(@conn, :index, claim.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= claim.address_hash %></a>
-                  <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= claim.value %> <%= Neoscan.ChainAssets.get_asset_name_by_hash(claim.asset) %></p>
+                  <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= claim.value %> <%= Api.get_asset_name(claim.asset) %></p>
                 </div>
               <% end %>
             <% end %>
@@ -77,7 +77,7 @@
               <%= for vout <- transaction.vouts do %>
                 <div class="individual-transaction">
                   <a href='<%= address_path(@conn, :index, vout.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vout.address_hash %></a>
-                  <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= vout.value %> <%= Neoscan.ChainAssets.get_asset_name_by_hash(vout.asset) %></p>
+                  <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= vout.value %> <%= Api.get_asset_name(vout.asset) %></p>
                 </div>
               <% end %>
             <% end %>

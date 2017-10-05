@@ -137,7 +137,17 @@ defmodule NeoscanMonitor.Worker do
 
   #adds an asset to the state
   def handle_cast({:add_asset, asset}, state) do
-    new_assets = [asset | state.assets]
+    new_asset = %{
+      :txid => asset.txid,
+      :admin => asset.admin,
+      :amount => asset.amount,
+      :issued => asset.issued,
+      :type => asset.type,
+      :time => asset.time,
+      :name => asset.name,
+    }
+
+    new_assets = [new_asset | state.assets]
 
     new_state = Map.put(state, :assets, new_assets)
     {:noreply, new_state}

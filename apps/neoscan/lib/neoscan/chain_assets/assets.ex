@@ -105,7 +105,8 @@ defmodule Neoscan.ChainAssets do
                    :amount => e.amount,
                    :issued => e.issued,
                    :type => e.type,
-                   :time => e.time
+                   :time => e.time,
+                   :name => e.name,
                  }
     Repo.all(query)
   end
