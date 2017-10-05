@@ -6,7 +6,7 @@ defmodule NeoscanWeb.AddressesView do
 
     unix_time = Map.to_list(balance)
     |> Enum.reduce([], fn ({_asset, %{"time" => time}}, acc) ->
-         [time | acc] 
+         [time | acc]
        end)
     |> Enum.max
 
@@ -42,7 +42,9 @@ defmodule NeoscanWeb.AddressesView do
                   |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
                        Api.get_asset_name(asset) == "GAS"
                      end)
-                  |> Enum.reduce(0.0, fn ({_asset, %{"amount" => amount}}, acc) -> amount + acc end)
+                  |> Enum.reduce(0.0, fn ({_asset, %{"amount" => amount}}, acc) ->
+                       amount + acc
+                     end)
                   |> Float.to_string
                   |> Integer.parse
 
