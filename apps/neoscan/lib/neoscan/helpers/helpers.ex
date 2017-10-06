@@ -84,4 +84,28 @@ defmodule Neoscan.Helpers do
     end
   end
 
+  def round_or_not(value) do
+    case Kernel.is_float(value) do
+      true ->
+        value
+      false ->
+        case Kernel.is_integer(value) do
+          true ->
+            value
+          false ->
+            {num, _} = Float.parse(value)
+            num
+        end
+    end
+    |> round_or_not!
+  end
+
+  defp round_or_not!(value) do
+    if Kernel.round(value) == value do
+      Kernel.round(value)
+    else
+      value
+    end
+  end
+
 end

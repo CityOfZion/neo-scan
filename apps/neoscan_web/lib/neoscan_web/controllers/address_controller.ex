@@ -17,12 +17,4 @@ defmodule NeoscanWeb.AddressController do
     render(conn, "address.html", address: address)
   end
 
-  def round_or_not(value) do
-    if round_or_not?(value) do
-      Kernel.round(value)
-    else
-      value
-    end
-  end
-  defp round_or_not?(value), do: Kernel.round(value) == value
 end
