@@ -1,5 +1,8 @@
 defmodule Neoscan.Blocks.Block do
-  @moduledoc false
+  @moduledoc"""
+  Represent a Block in Database
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.BlockGasGeneration
