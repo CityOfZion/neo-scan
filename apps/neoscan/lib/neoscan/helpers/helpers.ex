@@ -1,5 +1,6 @@
 defmodule Neoscan.Helpers do
   @moduledoc false
+
   @doc """
   Populates tuples {address_hash, vins} with {%Adddress{}, vins}
 
