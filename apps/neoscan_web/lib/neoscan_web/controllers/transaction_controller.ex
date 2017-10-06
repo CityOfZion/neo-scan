@@ -47,23 +47,4 @@ defmodule NeoscanWeb.TransactionController do
     new_map
   end
 
-  def round_or_not(value) do
-    float = case Kernel.is_float(value) do
-      true ->
-        value
-      false ->
-        case Kernel.is_integer(value) do
-          true ->
-            value
-          false ->
-            {num, _} = Float.parse(value)
-            num
-        end
-    end
-    if Kernel.round(float) == float do
-      Kernel.round(float)
-    else
-      value
-    end
-  end
 end
