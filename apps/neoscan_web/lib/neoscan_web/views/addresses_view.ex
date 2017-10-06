@@ -1,6 +1,7 @@
 defmodule NeoscanWeb.AddressesView do
   use NeoscanWeb, :view
   alias NeoscanMonitor.Api
+  alias Neoscan.Helpers
 
   def compare_time_and_get_minutes(balance) do
 
@@ -33,7 +34,7 @@ defmodule NeoscanWeb.AddressesView do
          Api.get_asset_name(asset) == "NEO"
        end)
     |> Enum.reduce(0, fn ({_asset, %{"amount" => amount}}, _acc) -> amount end)
-    |> round_or_not
+    |> Helpers.round_or_not
   end
 
   def get_GAS_balance(balance) do
@@ -50,14 +51,5 @@ defmodule NeoscanWeb.AddressesView do
 
     raw('<p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span>GAS: #{int}<span class="divisible-amount">#{div}</span></p>')
   end
-
-  def round_or_not(value) do
-    if round_or_not?(value) do
-      Kernel.round(value)
-    else
-      value
-    end
-  end
-  defp round_or_not?(value), do: Kernel.round(value) == value
 
 end
