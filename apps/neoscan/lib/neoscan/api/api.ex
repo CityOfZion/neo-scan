@@ -1,5 +1,12 @@
 defmodule Neoscan.Api do
+  @moduledoc """
+    Main API for accessing data from the explorer.
+    All data is provided through GET requests in `/api/main_net/v1`.
+    Testnet isn't currently available.
+  """
+
   import Ecto.Query, warn: true
+
   alias Neoscan.Repo
   alias Neoscan.Addresses.Address
   alias Neoscan.BalanceHistories.History
@@ -10,12 +17,6 @@ defmodule Neoscan.Api do
   alias Neoscan.Blocks
   alias Neoscan.Vouts.Vout
   alias NeoscanMonitor.Api
-
-  @moduledoc """
-    Main API for accessing data from the explorer.
-    All data is provided through GET requests in `/api/main_net/v1`.
-    Testnet isn't currently available.
-  """
 
   #sanitize struct
   defimpl Poison.Encoder, for: Any do

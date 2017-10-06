@@ -1,6 +1,8 @@
 defmodule Neoscan.BalanceHistories do
   @moduledoc false
+
   import Ecto.Query, warn: false
+
   alias Neoscan.BalanceHistories.History
 
   @doc """
