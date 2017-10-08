@@ -17,9 +17,12 @@ defmodule Neoprice.Cryptocompare do
     :lists.seq(to, from, -3600 * @limit)
     |> Enum.reverse()
     |> Enum.map(fn(time) ->
-       Api.get_pricehistorical_price(:hour, from_symbol,
-                                     to_symbol, @limit, time)
+       Task.async(fn ->
+         Api.get_pricehistorical_price(:hour, from_symbol,
+                                       to_symbol, @limit, time)
+       end)
     end)
+    |> Enum.map(&Task.await(&1, 30_000))
     |> List.flatten()
     |> Enum.filter(fn({k,_}) -> k > from and k < to end)
   end
@@ -28,9 +31,12 @@ defmodule Neoprice.Cryptocompare do
     :lists.seq(to, from, -60 * @limit)
     |> Enum.reverse()
     |> Enum.map(fn(time) ->
-      Api.get_pricehistorical_price(:minute, from_symbol,
-                                    to_symbol, @limit, time)
+      Task.async(fn ->
+        Api.get_pricehistorical_price(:minute, from_symbol,
+                                      to_symbol, @limit, time)
+      end)
     end)
+    |> Enum.map(&Task.await(&1, 30_000))
     |> List.flatten()
     |> Enum.filter(fn({k,_}) -> k > from and k < to end)
   end
