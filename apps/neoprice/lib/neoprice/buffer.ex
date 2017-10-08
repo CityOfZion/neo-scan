@@ -36,16 +36,16 @@ defmodule Neoprice.Buffer do
       state.name,
       [:public, :set, :named_table, {:read_concurrency, true}]
     )
-    Process.send_after(self(), :sync, 0)
+    Process.send_after(self(), :seed, 0)
     {:ok, state}
   end
 
-  def handle_info(:sync, state) do
-    sync(state)
+  def handle_info(:seed, state) do
+    seed(state)
     {:noreply, state}
   end
 
-  def sync(state) do
+  def seed(state) do
     now = DateTime.utc_now()
           |> DateTime.to_unix()
     elements = Cryptocompare.past_two_week(
