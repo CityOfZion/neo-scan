@@ -20,10 +20,10 @@ defmodule NeoPrice.CryptoCompareTest do
     assert_in_delta List.last(prices) |> elem(0), now, 3600
   end
 
-  test "last two weeks" do
+  test "past two weeks" do
     now = DateTime.utc_now |> DateTime.to_unix()
     from = now - 2 * @seconds_in_a_week
-    prices = Cryptocompare.last_two_week("NEO", "BTC")
+    prices = Cryptocompare.past_two_week(now, "NEO", "BTC")
     assert_in_delta length(prices), 10248, 11
     assert_in_delta List.last(prices) |> elem(0), now, 60
     assert_in_delta List.first(prices) |> elem(0), from, 3600
