@@ -7,6 +7,7 @@ defmodule Neoscan.Transactions.Transaction do
     field :attributes, {:array, :map}
     field :net_fee, :string
     field :scripts, {:array, :map}
+    field :script, :string
     field :size, :integer
     field :sys_fee, :string
     field :txid, :string
@@ -55,7 +56,8 @@ defmodule Neoscan.Transactions.Transaction do
            :asset,
            :description,
            :contract,
-           :asset_moved
+           :asset_moved,
+           :script,
          ]
        )
     |> assoc_constraint(:block, required: true)
@@ -100,7 +102,8 @@ defmodule Neoscan.Transactions.Transaction do
            :asset,
            :description,
            :contract,
-           :asset_moved
+           :asset_moved,
+           :script
          ]
        )
     |> assoc_constraint(:block, required: true)

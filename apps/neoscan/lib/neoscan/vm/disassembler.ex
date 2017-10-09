@@ -1,4 +1,4 @@
-defmodule Disassembler do
+defmodule Neoscan.Vm.Disassembler do
   @opcodes_list %{
       "00" => "PUSH0", # An empty array of bytes is pushed onto the stack.
       "PUSH0" => "PUSHF",

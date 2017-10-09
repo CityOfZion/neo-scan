@@ -78,28 +78,76 @@
 	<li class="corner-box remove-margin-left">
 		<h2>Bytecode Invocation Script</h2>
 		<div class="corner-box">
-			<p class="small-detail-text">0: PUSHBYTES64<br />0xcd1344a6d46ddf13f17b1a3113238fda774c69f4213224335fed83b819542ec6ae9403e7aa6422a2c4eb5d3c340ea41f92034cfe218d6457153cf79581067b4d</p>
+			<p class="small-detail-text"><%= get_inv(@transaction.scripts) %></p>
 		</div>
 	</li>
 	<li class="corner-box">
 		<h2>Bytecode Verification Script</h2>
 		<div class="corner-box">
-			<p class="small-detail-text">0: PUSHBYTES33<br />0x03dcac7d7fcd15579e03e5649a0dd0c867751ebfd3a2b499e1f0b1979ea2e1cb59<br />1: CHECKSIG</p>
+			<p class="small-detail-text"><%= get_ver(@transaction.scripts) %></p>
 		</div>
 	</li>
 </ul>
+
+<%= if @transaction.attributes != [] do %>
+	<ul id="bytecode-invocation-list"> Bytecode Attributes
+		<%= for att <- @transaction.attributes do %>
+			<li class="corner-box remove-margin-left">
+				<h2>Usage <%=att["usage"]%></h2>
+				<div class="corner-box">
+					<p class="small-detail-text"><%= att["script"] %></p>
+				</div>
+			</li>
+		<% end %>
+	</ul>
+<% end %>
+
+<%= if @transaction.script != nil do %>
+	<ul id="bytecode-invocation-list">
+		<li class="corner-box remove-margin-left">
+			<h2>Bytecode Script</h2>
+			<div class="corner-box">
+				<p class="small-detail-text"><%= @transaction.script %></p>
+			</div>
+		</li>
+	</ul>
+<% end %>
 
 <ul id="bytecode-invocation-list">
 	<li class="corner-box remove-margin-left">
 		<h2>Opcode Invocation Script</h2>
 		<div class="corner-box">
-			<p class="small-detail-text">404842ffe9cfdc932fe96557ea1c359b9cb99965e66028731381173a3a3d0ead8b5034b465296ce33925a1baadc8bd5bafe438949ae3f14e36a61ea7693a3017bd</p>
+			<p class="small-detail-text"><%= parse_invocation(@transaction.scripts) %></p>
 		</div>
 	</li>
 	<li class="corner-box">
 		<h2>Opcode Verification Script</h2>
 		<div class="corner-box">
-			<p class="small-detail-text">210222b02730b05a9f262db2440577d44bcfa199854260ee4cf5468105c40849f99cac</p>
+			<p class="small-detail-text"><%= parse_verification(@transaction.scripts) %></p>
 		</div>
 	</li>
 </ul>
+
+<%= if @transaction.attributes != [] do %>
+	<ul id="bytecode-invocation-list"> Opcode Attributes
+		<%= for att <- @transaction.attributes do %>
+			<li class="corner-box remove-margin-left">
+				<h2>Usage <%=att["usage"]%></h2>
+				<div class="corner-box">
+					<p class="small-detail-text"><%= Disassembler.parse_script(att["script"]) %></p>
+				</div>
+			</li>
+		<% end %>
+	</ul>
+<% end %>
+
+<%= if @transaction.script != nil do %>
+	<ul id="bytecode-invocation-list">
+		<li class="corner-box remove-margin-left">
+			<h2>Opcode Script</h2>
+			<div class="corner-box">
+				<p class="small-detail-text"><%= Disassembler.parse_script(@transaction.script) %></p>
+			</div>
+		</li>
+	</ul>
+<% end %>

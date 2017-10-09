@@ -1,6 +1,7 @@
 defmodule NeoscanWeb.TransactionView do
   use NeoscanWeb, :view
   alias NeoscanMonitor.Api
+  alias Neoscan.Vm.Disassembler
 
   def get_type(type) do
     cond do
@@ -36,4 +37,46 @@ defmodule NeoscanWeb.TransactionView do
 
     int
   end
+
+
+  def parse_invocation([] = scripts) do
+    "No Invocation Script"
+  end
+  def parse_invocation(scripts) do
+    %{"invocation" => inv} = scripts
+                            |> List.first
+
+    Disassembler.parse_script(inv)
+  end
+
+  def parse_verification([] = scripts) do
+    "No Verification Script"
+  end
+  def parse_verification(scripts) do
+    %{"verification" => ver} = scripts
+                            |> List.first
+
+    Disassembler.parse_script(ver)
+  end
+
+
+  def get_inv([] = scripts) do
+    "No Invocation Script"
+  end
+  def get_inv(scripts) do
+    %{"invocation" => inv} = scripts
+                            |> List.first
+    inv
+  end
+
+  def get_ver([] = scripts) do
+    "No Verification Script"
+  end
+  def get_ver(scripts) do
+    %{"verification" => ver} = scripts
+                            |> List.first
+
+    ver
+  end
+
 end

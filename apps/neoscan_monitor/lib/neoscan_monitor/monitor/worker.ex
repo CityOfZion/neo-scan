@@ -111,7 +111,10 @@ defmodule NeoscanMonitor.Worker do
     count = Enum.count(state.transactions)
     clean_vouts = Enum.map(vouts, fn vout ->
                     {:ok, result} = Morphix.atomorphiform(vout)
-                    Map.put(result, :address_hash, result.address)
+                    Map.merge(result, %{
+                      :address_hash => result.address,
+                      :asset => String.slice(to_string(result.asset), -64..-1),
+                    })
                     |> Map.delete(:address)
                   end)
     new_transactions = [
