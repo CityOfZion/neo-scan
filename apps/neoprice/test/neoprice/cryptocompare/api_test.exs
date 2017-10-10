@@ -1,7 +1,7 @@
-defmodule NeoPrice.CryptoCompare.ApiTest do
+defmodule Neoprice.Cryptocompare.ApiTest do
   @moduledoc "tests on the API"
   use ExUnit.Case
-  alias NeoPrice.CryptoCompare.Api
+  alias Neoprice.Cryptocompare.Api
 
   test "minute report" do
     now = DateTime.utc_now |> DateTime.to_unix()
@@ -13,5 +13,9 @@ defmodule NeoPrice.CryptoCompare.ApiTest do
     now = DateTime.utc_now |> DateTime.to_unix()
     prices = Api.get_pricehistorical_price(:hour, "NEO", "BTC", 1000, now)
     assert_in_delta List.last(prices) |> elem(0), now, 3600
+  end
+
+  test "last" do
+    assert Api.last_price("NEO", "BTC") != nil
   end
 end
