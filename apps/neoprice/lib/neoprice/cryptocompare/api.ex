@@ -6,6 +6,16 @@ defmodule Neoprice.Cryptocompare.Api do
 
   @app_name Application.get_env(:neo_price, :app_name, "neoscan")
 
+  def last_price(from_symbol, to_symbol) do
+    params = "fsym=#{from_symbol}&tsyms=#{to_symbol}"
+    url = "https://" <> @url <> "/data/price?#{params}"
+    {:ok, %{status_code: 200, body: body}} = HTTPoison.get(url)
+    case Poison.decode(body) do
+      {:ok, map} -> map[to_symbol]
+      _ -> nil
+    end
+  end
+
   def get_pricehistorical_price(:minute, from_symbol, to_symbol, limit, to) do
     params = "fsym=#{from_symbol}&tsym=#{to_symbol}&limit=#{limit}&toTs=#{to}"
     params = params <> "&extraParams=#{@app_name}"

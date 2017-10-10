@@ -4,6 +4,10 @@ defmodule Neoprice.Cryptocompare do
   @seconds_in_a_week 604800
   @limit 1000
 
+  def last_price(from_symbol, to_symbol) do
+    Api.last_price(from_symbol, to_symbol)
+  end
+
   def past_two_week(now, from_symbol, to_symbol) do
     a_week_ago = now - @seconds_in_a_week
     two_weeks_ago = now - 2 * @seconds_in_a_week

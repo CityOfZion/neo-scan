@@ -56,6 +56,10 @@ defmodule Neoprice.Buffer do
     :ets.insert(state.name, elements)
   end
 
+  def sync() do
+    
+  end
+
   def get(name) do
     :ets.tab2list(name)
   end
