@@ -1,4 +1,4 @@
-defmodule NeoPrice.CryptoCompare.Api do
+defmodule Neoprice.Cryptocompare.Api do
   @moduledoc false
   require Logger
 

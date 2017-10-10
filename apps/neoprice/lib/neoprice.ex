@@ -4,6 +4,7 @@ defmodule Neoprice do
   use Application
   alias Neoprice.NeoBtc
   alias Neoprice.NeoUsd
+  alias Neoprice.Cryptocompare.Socket
 
   def start(_type, _args) do
 
@@ -11,6 +12,7 @@ defmodule Neoprice do
 
     # Define workers and child supervisors to be supervised
     children = [
+      worker(Socket, []),
       NeoBtc.worker,
       NeoUsd.worker
     ]
