@@ -7,7 +7,8 @@ defmodule NeoscanWeb.UserSocket do
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket,
-    # This ensures that any idle connections are closed by Phoenix before they reach Heroku’s 55-second timeout window.
+    # This ensures that any idle connections are closed by Phoenix before they
+    # reach Heroku’s 55-second timeout window.
     # https://hexdocs.pm/phoenix/heroku.html
     timeout: 45_000
 
