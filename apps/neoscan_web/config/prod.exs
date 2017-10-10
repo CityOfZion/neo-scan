@@ -21,7 +21,7 @@ config :neoscan_web, NeoscanWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,
   secret_key_base: System.get_env("SECRET_KEY_BASE"),
-  check_origin: [ "https://#{ System.get_env("URL_HOST") }", "https://www.#{ System.get_env("URL_HOST") }" ]
+  check_origin: ["https://#{ System.get_env("URL_HOST") }", "https://www.#{ System.get_env("URL_HOST") }"]
 
 # ## SSL Support
 #
