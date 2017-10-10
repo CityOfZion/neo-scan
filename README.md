@@ -10,24 +10,42 @@ Using docker you can start the project with:
 - `docker exec -it neoscan_phoenix_1 sh`
 - `cd /data`
 
+# Prerequisites
+
+You should have the following:
+
+* Ruby - installing via [`rvm`](https://rvm.io/) (or [`rbenv`](https://github.com/rbenv/rbenv)) is the way to go here
+* Node.js - as with Ruby we suggest using a Node.js version manager (ex: `nvm`)
+* [Elixir](https://elixir-lang.org/install.html)
+* [Phoenix](https://github.com/phoenixframework/phoenix)
+* [Foreman](https://ddollar.github.io/foreman/)
+    * `$ gem install foreman`
+
+
 # Development
-- Please run `mix credo` after any changes and apply the suggestions
 
-To run, first install Elixir and Phoenix at:
+To start your Phoenix server:
 
-* https://elixir-lang.org/install.html
-* https://github.com/phoenixframework/phoenix
+```sh
+# Copy and then fill your DB ENV variables (`DATABASE_USERNAME` & `DATABASE_PASSWORD` required)
+$ cp .env.example .env
 
-Then, to start your Phoenix server:
+# Install dependencies with
+$ mix deps.get
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
-  * Install Node.js dependencies with `cd apps`, `cd neoscan_web`, then `cd assets && npm install`
-  * Start Phoenix endpoint with `mix phx.server`
+# Create and migrate your database with
+$ mix ecto.create && mix ecto.migrate
+
+# Install Node.js dependencies
+$ cd apps/neoscan_web/assets && npm install
+
+# Start Phoenix endpoint with
+$ mix phx.server
+```
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Make sure the username and password for your postgresSQL match the contents of "apps/neoscan/config/dev.exs"
+**Note:** Please run `mix credo` after any changes and apply the suggestions before submitting PR's.
 
 ## Learn more
 

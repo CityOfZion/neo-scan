@@ -6,7 +6,12 @@ defmodule NeoscanWeb.UserSocket do
   channel "room:*", NeoscanWeb.RoomChannel
 
   ## Transports
-  transport :websocket, Phoenix.Transports.WebSocket
+  transport :websocket, Phoenix.Transports.WebSocket,
+    # This ensures that any idle connections are closed by Phoenix before they
+    # reach Heroku’s 55-second timeout window.
+    # https://hexdocs.pm/phoenix/heroku.html
+    timeout: 45_000
+
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can

@@ -10,9 +10,9 @@ config :neoscan_web,
        NeoscanWeb.Endpoint,
        http: [
          port: 4000
-       ],
+      ],
        debug_errors: true,
-       secret_key_base: "J8EWtXVVWp+AmNn4fmdodz17pug1X8v8QbjiPnNf0IkeFYhY140Dhei7UGUACHXs",
+       secret_key_base: System.get_env("SECRET_KEY_BASE") || "J8EWtXVVWp+AmNn4fmdodz17pug1X8v8QbjiPnNf0IkeFYhY140Dhei7UGUACHXs",
        code_reloader: true,
        check_origin: false,
        watchers: [

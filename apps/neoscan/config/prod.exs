@@ -2,10 +2,6 @@ use Mix.Config
 
 config :neoscan, Neoscan.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
-  database: "neoscan_prodv",
-  hostname: "localhost",
-  pool_size: 30
-
-#import_config "prod.secret.exs"
+  url: System.get_env("DATABASE_URL"),
+  pool_size: System.get_env("DATABASE_POOL_SIZE") || 30,
+  ssl: true
