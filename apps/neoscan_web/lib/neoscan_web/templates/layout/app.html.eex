@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
+    <meta name="description" content="Neoscan.io blockchain explorer for NEO by CityOfZion. Explore blocks, transactions, addresses, contracts...">
+
     <meta name="author" content="">
 
     <link rel="icon" type="image/x-icon" href="<%= static_path(@conn, "/favicon.ico") %>" >
