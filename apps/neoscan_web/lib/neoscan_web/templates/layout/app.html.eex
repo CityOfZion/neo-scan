@@ -43,7 +43,6 @@
         <%= text_input f, :for,placeholder: "Block Height, Hash, Address or Transaction id",class: "input", type: "search" %>
         <%= error_tag f, :for %>
       <% end %>
-			<!-- <input type="search" placeholder="Search for a transaction, block, hash or address..."> -->
 
 			<!-- Navigation links -->
 			<div class="nav-wrapper">
@@ -63,9 +62,9 @@
 					<li>
 						<a href="<%= assets_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_assets_path(@conn), do: " active" %>">Assets</a>
 					</li>
-					<li>
+					<!-- <li>
 						<a href="<%= about_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_about_path(@conn), do: " active" %>">About</a>
-					</li>
+					</li> -->
 				</ul>
 			</div>
 		</nav>

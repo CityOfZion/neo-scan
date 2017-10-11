@@ -1,0 +1,337 @@
+
+  <h1 class="content-title">Asset Information</h1>
+  <p class="large-detail-text"><span class="fa fa-id-card"></span><span class="bold-text">Asset Hash</span> <span class="blue-bar">|</span> <span class="eggshell-blue-text"><%= @asset.txid %></span></p>
+  <a href="<%= assets_path(@conn, :index) %>" alt="Back to all transactions" title="Back to all transactions" class="back-link">Back to all assets</a>
+
+  <!-- Asset information -->
+  <section id="asset-information" class="corner-box">
+
+    <!-- Extra information list -->
+    <ul id="extra-information" class="asset-left-information-bar">
+      <li class="border-right border-bottom">
+        <p class="small-detail-text">Name</p>
+        <p class="large-detail-text"><%=Api.get_asset_name(@asset.txid) %></p>
+      </li>
+      <li class="border-right border-bottom">
+        <p class="small-detail-text">Type</p>
+        <p class="large-detail-text"><%= @asset.type %></p>
+      </li>
+      <li class="border-bottom">
+        <p class="small-detail-text">Owner</p>
+        <%= if @asset.owner == "00" do %>
+          System
+        <% else %>
+          <a href="<%= address_path(@conn, :index, @asset.owner)%>" alt="View owner address" title="View owner address" class="large-blue-link wallet-address"><%= @asset.owner %></a>
+        <% end %>
+      </li>
+      <li class="border-right border-bottom">
+        <p class="small-detail-text">Issued</p>
+        <p class="large-detail-text"><%= @asset.issued %></p>
+      </li>
+      <li class="border-right border-bottom">
+        <p class="small-detail-text">Supply</p>
+        <p class="large-detail-text"><%= @asset.amount %></p>
+      </li>
+      <li class="border-bottom">
+        <p class="small-detail-text">Precision</p>
+        <p class="large-detail-text"><%= @asset.precision %></p>
+      </li>
+      <li class="border-right">
+        <p class="small-detail-text">Transactions</p>
+        <p class="large-detail-text"><%=@asset.stats.transactions%></p>
+      </li>
+      <li class="border-right">
+        <p class="small-detail-text">Addresses</p>
+        <p class="large-detail-text"><%=@asset.stats.addresses%></p>
+      </li>
+      <li>
+        <p class="small-detail-text">Created</p>
+        <a href="<%=transaction_path(@conn, :index, @asset.txid )%>" alt="View asset creation" title="View asset creation" class="large-blue-link">
+          <%=
+            {:ok, date_time} = DateTime.from_unix(@asset.time, :second)
+            DateTime.to_date(date_time)
+          %> |
+          <%=
+            {:ok, date_time} = DateTime.from_unix(@asset.time, :second)
+            DateTime.to_time(date_time)
+          %>
+        </a>
+      </li>
+    </ul>
+
+  </section>
+
+  <!-- All wallet addresses -->
+  <h1 class="content-title">Wallet Addresses</h1>
+  <!-- All wallet addresses content -->
+  <section id="all-wallet-address-wrapper">
+    <div class="detail-bar">
+      <p class="detail-type detail-type-first-4-col">Address ID</p>
+      <p class="detail-type col-2-width">Created</p>
+      <p class="detail-type col-2-width">Transactions</p>
+      <p class="detail-type col-2-width">Last transaction</p>
+      <p class="detail-type col-1-width">Tokens</p>
+    </div>
+    <section id="wallet-address-wrapper">
+
+      <div class="wallet-address-list">
+
+        <!-- Wallet address -->
+        <div class="full-width-bar wallet-address">
+          <div class="information-wrapper">
+            <p class="fa fa-key medium-detail-text"></p>
+            <a href="Address.html" alt="View transaction" title="View transaction" class="large-blue-link col-4-width">AY9kM8RBG6btyuXABHv9FEx69H3Hr9Ev5G</a>
+            <p class="medium-detail-text col-2-width">10-06-17 | 16:45:34</p>
+            <p class="medium-detail-text col-2-width">10829</p>
+            <p class="medium-detail-text col-2-width">1 minute ago</p>
+          </div>
+          <div class="token-amount-wrapper col-2-width">
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span>NEO: 12</p>
+            <p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span>GAS: 100,000,000.<span class="divisible-amount">02948292</span></p>
+          </div>
+        </div>
+
+        <!-- Wallet address -->
+        <div class="full-width-bar wallet-address">
+          <div class="information-wrapper">
+            <p class="fa fa-key medium-detail-text"></p>
+            <a href="Address.html" alt="View transaction" title="View transaction" class="large-blue-link col-4-width">AY9kM8RBG6btyuXABHv9FEx69H3Hr9Ev5G</a>
+            <p class="medium-detail-text col-2-width">10-06-17 | 16:45:34</p>
+            <p class="medium-detail-text col-2-width">10829</p>
+            <p class="medium-detail-text col-2-width">1 minute ago</p>
+          </div>
+          <div class="token-amount-wrapper col-2-width">
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span>NEO: 12</p>
+            <p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span>GAS: 100,000,000.<span class="divisible-amount">02948292</span></p>
+          </div>
+        </div>
+
+        <!-- Wallet address -->
+        <div class="full-width-bar wallet-address">
+          <div class="information-wrapper">
+            <p class="fa fa-key medium-detail-text"></p>
+            <a href="Address.html" alt="View transaction" title="View transaction" class="large-blue-link col-4-width">AY9kM8RBG6btyuXABHv9FEx69H3Hr9Ev5G</a>
+            <p class="medium-detail-text col-2-width">10-06-17 | 16:45:34</p>
+            <p class="medium-detail-text col-2-width">10829</p>
+            <p class="medium-detail-text col-2-width">1 minute ago</p>
+          </div>
+          <div class="token-amount-wrapper col-2-width">
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span>NEO: 12</p>
+            <p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span>GAS: 100,000,000.<span class="divisible-amount">02948292</span></p>
+          </div>
+        </div>
+
+        <!-- Wallet address -->
+        <div class="full-width-bar wallet-address">
+          <div class="information-wrapper">
+            <p class="fa fa-key medium-detail-text"></p>
+            <a href="Address.html" alt="View transaction" title="View transaction" class="large-blue-link col-4-width">AY9kM8RBG6btyuXABHv9FEx69H3Hr9Ev5G</a>
+            <p class="medium-detail-text col-2-width">10-06-17 | 16:45:34</p>
+            <p class="medium-detail-text col-2-width">10829</p>
+            <p class="medium-detail-text col-2-width">1 minute ago</p>
+          </div>
+          <div class="token-amount-wrapper col-2-width">
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span>NEO: 12</p>
+            <p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span>GAS: 100,000,000.<span class="divisible-amount">02948292</span></p>
+          </div>
+        </div>
+
+        <!-- Wallet address -->
+        <div class="full-width-bar wallet-address">
+          <div class="information-wrapper">
+            <p class="fa fa-key medium-detail-text"></p>
+            <a href="Address.html" alt="View transaction" title="View transaction" class="large-blue-link col-4-width">AY9kM8RBG6btyuXABHv9FEx69H3Hr9Ev5G</a>
+            <p class="medium-detail-text col-2-width">10-06-17 | 16:45:34</p>
+            <p class="medium-detail-text col-2-width">10829</p>
+            <p class="medium-detail-text col-2-width">1 minute ago</p>
+          </div>
+          <div class="token-amount-wrapper col-2-width">
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span>NEO: 12</p>
+            <p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span>GAS: 100,000,000.<span class="divisible-amount">02948292</span></p>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+  </section>
+
+  <!-- All transactions -->
+  <h1 class="content-title">Transactions</h1>
+  <section id="all-transactions-wrapper">
+
+    <div class="detail-bar">
+      <p class="detail-type detail-type-first-2-col">Type</p>
+      <p class="detail-type col-5-width">Transaction ID</p>
+      <p class="detail-type col-2-width">Block</p>
+      <p class="detail-type col-2-width">Completed on</p>
+    </div>
+
+    <!-- Transactions -->
+    <section id="transactions-wrapper">
+
+      <div class="transactions-list">
+
+        <!-- NEO CONTRACT -->
+        <div class="full-width-bar neo-transaction">
+          <div class="information-wrapper">
+            <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span>Contract</p>
+            <a href="#" alt="View transaction" title="View transaction" class="large-blue-link col-5-width">51869144b332b1236273a3bd25e3ea62d7095d&#8230;</a>
+            <p class="medium-detail-text col-2-width">1339999</p>
+            <p class="medium-detail-text col-2-width">10-06-17 | 16:45:34</p>
+          </div>
+          <button class="btn-accordion"><img src="images/ICON_DownArrow.svg" alt="Accordion down arrow" title="Accordion down arrow" class="accordion-down-arrow" width="13px" height="8px" /></button>
+          <div class="transaction-panel">
+            <div class="sent-from-wrapper">
+              <p class="large-detail-text">Sent from</p>
+              <div class="individual-transaction">
+                <a href="#" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span>AJMR4BHhMj74eRBPNKJM9LUWLyk8tou38Y</a>
+                <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span>938483 NEO</p>
+              </div>
+            </div>
+            <div class="sent-to-wrapper">
+              <p class="large-detail-text">Sent to</p>
+              <div class="individual-transaction">
+                <a href="#" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span>AJMR4BHhMj74eRBPNKJM9LUWLyk8tou38Y</a>
+                <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span>938483.029481 Gas</p>
+              </div>
+
+            </div>
+            <div class="other-transaction-information">
+              <p>Network fee: 0 &middot; Gas System Fee: 0 GAS &middot; Data Size: 1304 bytes</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEO CONTRACT -->
+        <div class="full-width-bar neo-transaction">
+          <div class="information-wrapper">
+            <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span>Contract</p>
+            <a href="#" alt="View transaction" title="View transaction" class="large-blue-link col-5-width">51869144b332b1236273a3bd25e3ea62d7095d&#8230;</a>
+            <p class="medium-detail-text col-2-width">1339998</p>
+            <p class="medium-detail-text col-2-width">10-06-17 | 16:45:34</p>
+          </div>
+          <button class="btn-accordion"><img src="images/ICON_DownArrow.svg" alt="Accordion down arrow" title="Accordion down arrow" class="accordion-down-arrow" width="13px" height="8px" /></button>
+          <div class="transaction-panel">
+            <div class="sent-from-wrapper">
+              <p class="large-detail-text">Sent from</p>
+              <div class="individual-transaction">
+                <a href="#" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span>AJMR4BHhMj74eRBPNKJM9LUWLyk8tou38Y</a>
+                <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span>938483 NEO</p>
+              </div>
+            </div>
+            <div class="sent-to-wrapper">
+              <p class="large-detail-text">Sent to</p>
+              <div class="individual-transaction">
+                <a href="#" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span>AJMR4BHhMj74eRBPNKJM9LUWLyk8tou38Y</a>
+                <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span>938483.029481 Gas</p>
+              </div>
+
+            </div>
+            <div class="other-transaction-information">
+              <p>Network fee: 0 &middot; Gas System Fee: 0 GAS &middot; Data Size: 1304 bytes</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEO CONTRACT -->
+        <div class="full-width-bar neo-transaction">
+          <div class="information-wrapper">
+            <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span>Contract</p>
+            <a href="#" alt="View transaction" title="View transaction" class="large-blue-link col-5-width">51869144b332b1236273a3bd25e3ea62d7095d&#8230;</a>
+            <p class="medium-detail-text col-2-width">1339997</p>
+            <p class="medium-detail-text col-2-width">10-06-17 | 16:45:34</p>
+          </div>
+          <button class="btn-accordion"><img src="images/ICON_DownArrow.svg" alt="Accordion down arrow" title="Accordion down arrow" class="accordion-down-arrow" width="13px" height="8px" /></button>
+          <div class="transaction-panel">
+            <div class="sent-from-wrapper">
+              <p class="large-detail-text">Sent from</p>
+              <div class="individual-transaction">
+                <a href="#" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span>AJMR4BHhMj74eRBPNKJM9LUWLyk8tou38Y</a>
+                <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span>938483 NEO</p>
+              </div>
+            </div>
+            <div class="sent-to-wrapper">
+              <p class="large-detail-text">Sent to</p>
+              <div class="individual-transaction">
+                <a href="#" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span>AJMR4BHhMj74eRBPNKJM9LUWLyk8tou38Y</a>
+                <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span>938483.029481 Gas</p>
+              </div>
+
+            </div>
+            <div class="other-transaction-information">
+              <p>Network fee: 0 &middot; Gas System Fee: 0 GAS &middot; Data Size: 1304 bytes</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEO CONTRACT -->
+        <div class="full-width-bar neo-transaction">
+          <div class="information-wrapper">
+            <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span>Contract</p>
+            <a href="#" alt="View transaction" title="View transaction" class="large-blue-link col-5-width">51869144b332b1236273a3bd25e3ea62d7095d&#8230;</a>
+            <p class="medium-detail-text col-2-width">1339994</p>
+            <p class="medium-detail-text col-2-width">10-06-17 | 16:45:34</p>
+          </div>
+          <button class="btn-accordion"><img src="images/ICON_DownArrow.svg" alt="Accordion down arrow" title="Accordion down arrow" class="accordion-down-arrow" width="13px" height="8px" /></button>
+          <div class="transaction-panel">
+            <div class="sent-from-wrapper">
+              <p class="large-detail-text">Sent from</p>
+              <div class="individual-transaction">
+                <a href="#" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span>AJMR4BHhMj74eRBPNKJM9LUWLyk8tou38Y</a>
+                <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span>938483 NEO</p>
+              </div>
+            </div>
+            <div class="sent-to-wrapper">
+              <p class="large-detail-text">Sent to</p>
+              <div class="individual-transaction">
+                <a href="#" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span>AJMR4BHhMj74eRBPNKJM9LUWLyk8tou38Y</a>
+                <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span>938483.029481 Gas</p>
+              </div>
+
+            </div>
+            <div class="other-transaction-information">
+              <p>Network fee: 0 &middot; Gas System Fee: 0 GAS &middot; Data Size: 1304 bytes</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEO CONTRACT -->
+        <div class="full-width-bar neo-transaction">
+          <div class="information-wrapper">
+            <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span>Contract</p>
+            <a href="#" alt="View transaction" title="View transaction" class="large-blue-link col-5-width">51869144b332b1236273a3bd25e3ea62d7095d&#8230;</a>
+            <p class="medium-detail-text col-2-width">1339997</p>
+            <p class="medium-detail-text col-2-width">10-06-17 | 16:45:34</p>
+          </div>
+          <button class="btn-accordion"><img src="images/ICON_DownArrow.svg" alt="Accordion down arrow" title="Accordion down arrow" class="accordion-down-arrow" width="13px" height="8px" /></button>
+          <div class="transaction-panel">
+            <div class="sent-from-wrapper">
+              <p class="large-detail-text">Sent from</p>
+              <div class="individual-transaction">
+                <a href="#" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span>AJMR4BHhMj74eRBPNKJM9LUWLyk8tou38Y</a>
+                <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span>938483 NEO</p>
+              </div>
+            </div>
+            <div class="sent-to-wrapper">
+              <p class="large-detail-text">Sent to</p>
+              <div class="individual-transaction">
+                <a href="#" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span>AJMR4BHhMj74eRBPNKJM9LUWLyk8tou38Y</a>
+                <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span>938483.029481 Gas</p>
+              </div>
+
+            </div>
+            <div class="other-transaction-information">
+              <p>Network fee: 0 &middot; Gas System Fee: 0 GAS &middot; Data Size: 1304 bytes</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!--
+<p class="number-counter">Showing 12 out of 120000 transactions</p>
+    <a href="#" alt="Load more transactions" title="Load more transactions" class="btn-primary btn-transactions-primary">Load more transactions</a>
+-->

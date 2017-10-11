@@ -23,6 +23,10 @@ defmodule NeoscanMonitor.Api do
     GenServer.call(NeoscanMonitor.Server, :assets, 10_000)
   end
 
+  def get_asset(hash) do
+    GenServer.call(NeoscanMonitor.Server, {:asset, hash}, 10_000)
+  end
+
   def get_asset_name(hash) do
     GenServer.call(NeoscanMonitor.Server, {:asset_name, hash}, 10_000)
   end

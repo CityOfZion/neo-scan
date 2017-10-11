@@ -5,6 +5,8 @@ defmodule NeoscanWeb.TransactionView do
 
   def get_type(type) do
     cond do
+      type == "MinerTransaction" ->
+        'Miner'
       type == "ContractTransaction" ->
         'Contract'
       type == "ClaimTransaction" ->

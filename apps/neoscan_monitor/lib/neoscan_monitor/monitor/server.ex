@@ -49,6 +49,12 @@ defmodule NeoscanMonitor.Server do
     {:reply, state.assets, state}
   end
 
+  def handle_call({:asset, hash}, _from, state) do
+    asset = Enum.find(state.assets, fn %{:txid => txid} -> txid == hash end)
+
+    {:reply, asset, state}
+  end
+
   def handle_call({:asset_name, hash}, _from, state) do
     name = Enum.find(state.assets, fn %{:txid => txid} -> txid == hash end)
             |> Map.get(:name)

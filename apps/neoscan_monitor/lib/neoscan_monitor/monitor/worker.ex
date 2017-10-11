@@ -149,6 +149,8 @@ defmodule NeoscanMonitor.Worker do
       :type => asset.type,
       :time => asset.time,
       :name => asset.name,
+      :owner => asset.owner,
+      :precision => asset.precision,
     }
 
     new_assets = [new_asset | state.assets]

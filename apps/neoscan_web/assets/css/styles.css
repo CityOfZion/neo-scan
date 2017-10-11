@@ -273,6 +273,13 @@ a:hover {
     margin-right: 10px;
 }
 
+/* FA: Assets ID Card */
+.fa-id-card {
+    font-size: 14px;
+    color: #4598FF !important; /* Overrides white colour of standard fa items */
+    margin-right: 10px;
+}
+
 
 /******************************************
 
@@ -356,7 +363,7 @@ a:hover {
 #navigation .nav-links-list {
 	margin: 0 auto;
 	overflow: hidden;
-	max-width: 498px;
+	max-width: 430px;
 	margin-top: 30px;
 }
 
@@ -592,7 +599,6 @@ a:hover {
 	max-width: 100%;
 	background: rgba(49, 49, 100, 0.85);
 	overflow: hidden;
-	border-left: 4px solid #00A62C;
 	border-radius: 0 0 2px 2px;
 }
 
@@ -668,6 +674,11 @@ a:hover {
 
 /* Wallet address left bar */
 #blocks-wrapper .full-width-bar.block-number {
+	border-left: 4px solid #2CE3B5;
+}
+
+/* Block information left bar */
+#block-information .block-left-information-bar {
 	border-left: 4px solid #2CE3B5;
 }
 
@@ -764,9 +775,29 @@ a:hover {
 
 /******************************************
 
-** About
+** Targeted Asset
 
 ******************************************/
+
+/* Asset information left bar */
+#asset-information .asset-left-information-bar {
+	border-left: 4px solid #4598FF;
+}
+
+/* Block information table */
+#asset-information #extra-information li {
+	width: 33.33333%;
+	float: left;
+	box-sizing: border-box;
+	padding: 25px;
+	word-wrap: break-word;
+	min-height: 105px;
+}
+
+/* Subline text styles */
+#main-content-wrapper .blue-bar {
+	color: #4598FF;
+}
 
 
 /******************************************

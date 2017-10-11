@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="button-wrapper">
-        <a href="#" alt="Find out more" title="Find out more" class="btn-primary">More details Missing</a>
+        <a href="<%= asset_path(@conn, :index, asset.txid)%>" alt="Find out more" title="Find out more" class="btn-primary">More details</a>
       </div>
     </li>
   <%end%>
