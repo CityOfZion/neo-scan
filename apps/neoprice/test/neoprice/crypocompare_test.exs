@@ -2,30 +2,27 @@ defmodule NeoPrice.CryptoCompareTest do
   @moduledoc "tests on the API"
   use ExUnit.Case
   alias Neoprice.Cryptocompare
-  @seconds_in_a_week 604800
 
   test "minute prices" do
     now = DateTime.utc_now |> DateTime.to_unix()
-    from = now - @seconds_in_a_week
-    prices = Cryptocompare.minute_prices(from, now, "NEO", "BTC")
-    assert_in_delta length(prices), 10080, 11 # seems like for a reason their are more than 1080 results
+    from = now - 3600 * 24
+    prices = Cryptocompare.minute_prices(from, now, "NEO", "BTC", 1)
+    IO.inspect(length(prices))
+    assert_in_delta length(prices), 1440, 2
     assert_in_delta List.last(prices) |> elem(0), now, 60
   end
 
   test "hour prices" do
     now = DateTime.utc_now |> DateTime.to_unix()
-    from = now - @seconds_in_a_week
-    prices = Cryptocompare.hour_prices(from, now, "NEO", "BTC")
-    assert_in_delta length(prices), 168, 1
+    from = now - 3600 * 24
+    prices = Cryptocompare.hour_prices(from, now, "NEO", "BTC", 1)
+    assert length(prices) == 24
     assert_in_delta List.last(prices) |> elem(0), now, 3600
   end
 
-  test "past two weeks" do
-    now = DateTime.utc_now |> DateTime.to_unix()
-    from = now - 2 * @seconds_in_a_week
-    prices = Cryptocompare.past_two_week(now, "NEO", "BTC")
-    assert_in_delta length(prices), 10248, 11
-    assert_in_delta List.last(prices) |> elem(0), now, 60
-    assert_in_delta List.first(prices) |> elem(0), from, 3600
+  test "limit" do
+    assert Cryptocompare.limit(140000000, 150000000, 60, 1) == 2000
+    assert Cryptocompare.limit(150000000, 150000300, 60, 1) == 5
+    assert Cryptocompare.limit(150000000, 150000030, 60, 1) == 1
   end
 end
