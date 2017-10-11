@@ -35,8 +35,8 @@ defmodule Neoprice.Cryptocompare do
     |> Enum.reverse()
     |> Enum.map(fn(time) ->
       limit = limit(from, time, @day, aggregate)
-      Api.get_historical_price(:hour, from_symbol, aggregate,
-                               to_symbol, limit, time)
+      Api.get_historical_price(:day, from_symbol, to_symbol,
+                                limit, aggregate, time)
     end)
     |> List.flatten()
     |> Enum.filter(fn({k,_}) -> k > from and k < to end)
