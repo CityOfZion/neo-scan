@@ -83,6 +83,7 @@ defmodule Neoscan.Transactions do
                                :time => e.time,
                                :txid => e.txid,
                                :block_height => e.block_height,
+                               :block_hash => e.block_hash,
                                :vin => e.vin,
                                :claims => e.claims,
                                :sys_fee => e.sys_fee,
@@ -115,6 +116,49 @@ defmodule Neoscan.Transactions do
                          :time => e.time,
                          :txid => e.txid,
                          :block_height => e.block_height,
+                         :block_hash => e.block_hash,
+                         :vin => e.vin,
+                         :claims => e.claims,
+                         :sys_fee => e.sys_fee,
+                         :net_fee => e.net_fee,
+                         :size => e.size,
+                        },
+                        limit: 15
+
+    transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
+    vouts = Enum.map(transactions, fn tx -> tx.id end)
+              |> get_transactions_vouts
+
+    transactions
+    |> Enum.map(fn tx ->
+         Map.put(tx, :vouts, Enum.filter(vouts, fn vout ->
+           vout.transaction_id == tx.id
+         end))
+       end)
+  end
+
+  @doc """
+  Returns the list of paginated transactions.
+
+  ## Examples
+
+      iex> paginate_transactions(page)
+      [%Transaction{}, ...]
+
+  """
+  def paginate_transactions_for_block(hash, pag) do
+    transaction_query = from e in Transaction,
+                        order_by: [
+                          desc: e.block_height
+                        ],
+                        where: e.block_hash == ^hash,
+                        select: %{
+                         :id => e.id,
+                         :type => e.type,
+                         :time => e.time,
+                         :txid => e.txid,
+                         :block_height => e.block_height,
+                         :block_hash => e.block_hash,
                          :vin => e.vin,
                          :claims => e.claims,
                          :sys_fee => e.sys_fee,

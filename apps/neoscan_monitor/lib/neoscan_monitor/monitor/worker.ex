@@ -124,6 +124,7 @@ defmodule NeoscanMonitor.Worker do
                            :time => transaction.time,
                            :txid => transaction.txid,
                            :block_height => transaction.block_height,
+                           :block_hash => transaction.block_hash,
                            :vin => transaction.vin,
                            :claims => transaction.claims,
                            :sys_fee => transaction.sys_fee,

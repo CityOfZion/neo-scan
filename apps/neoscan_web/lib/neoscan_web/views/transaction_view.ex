@@ -39,7 +39,7 @@ defmodule NeoscanWeb.TransactionView do
   end
 
 
-  def parse_invocation([] = scripts) do
+  def parse_invocation([]) do
     "No Invocation Script"
   end
   def parse_invocation(scripts) do
@@ -49,7 +49,7 @@ defmodule NeoscanWeb.TransactionView do
     Disassembler.parse_script(inv)
   end
 
-  def parse_verification([] = scripts) do
+  def parse_verification([]) do
     "No Verification Script"
   end
   def parse_verification(scripts) do
@@ -60,7 +60,7 @@ defmodule NeoscanWeb.TransactionView do
   end
 
 
-  def get_inv([] = scripts) do
+  def get_inv([]) do
     "No Invocation Script"
   end
   def get_inv(scripts) do
@@ -69,7 +69,7 @@ defmodule NeoscanWeb.TransactionView do
     inv
   end
 
-  def get_ver([] = scripts) do
+  def get_ver([]) do
     "No Verification Script"
   end
   def get_ver(scripts) do

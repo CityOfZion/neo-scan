@@ -19,10 +19,10 @@
       <div class="full-width-bar <%= get_class(transaction.type)%>">
         <div class="information-wrapper">
           <%= if transaction.type == "ContractTransaction" do %>
-            <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span>Contract</p>
+            <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Contract</p>
           <% end %>
           <%= if transaction.type == "ClaimTransaction" do %>
-            <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Gas Claim</p>
+            <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span>Gas Claim</p>
           <% end %>
           <%= if transaction.type == "InvocationTransaction" do %>
             <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Invocation</p>
@@ -37,7 +37,7 @@
             <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Contract Publish</p>
           <% end %>
           <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-5-width"><%=transaction.txid%>&#8230;</a>
-          <p class="medium-detail-text col-2-width"><%=transaction.block_height%></p>
+          <p class="medium-detail-text col-2-width">&nbsp;&nbsp;&nbsp;<a href="<%= block_path( @conn, :index, transaction.block_hash, 1) %>" alt="View block" title="View block" class="blue-link"><%= transaction.block_height %></a></p>
           <p class="medium-detail-text col-2-width">
             <%=
               {:ok, date_time} = DateTime.from_unix(transaction.time, :second)

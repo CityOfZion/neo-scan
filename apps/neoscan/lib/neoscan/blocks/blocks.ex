@@ -8,6 +8,7 @@ defmodule Neoscan.Blocks do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Blocks.Block
+  alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
   alias NeoscanMonitor.Api
 
@@ -153,6 +154,31 @@ defmodule Neoscan.Blocks do
                  select: e
     Repo.all(query)
     |> List.first
+  end
+
+
+  @doc """
+  Gets a single block by its hash value for blocks page, with paginated transactions
+
+  ## Examples
+
+      iex> paginate_transactions(hash, page)
+      %Block{}
+
+      iex> paginate_transactions(hash, page)
+      nil
+
+  """
+  def paginate_transactions(hash, page) do
+    transactions = Transactions.paginate_transactions_for_block(hash, page)
+
+    query = from e in Block,
+                 where: e.hash == ^hash,
+                 select: e
+    block = Repo.all(query)
+            |> List.first
+
+    {block, transactions}
   end
 
   @doc """

@@ -64,7 +64,7 @@
 		</li>
 		<li class="border-right">
 			<p class="small-detail-text">Included in Block</p>
-			<p class="large-detail-text"><%= @transaction.block_height %></p>
+			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash, 1) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%= @transaction.block_height %></a></p>
 		</li>
 		<li>
 			<p class="small-detail-text">Size</p>

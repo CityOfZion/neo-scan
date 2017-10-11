@@ -29,7 +29,7 @@ defmodule NeoscanWeb.Router do
     get "/transaction/:txid", TransactionController, :index
     get "/blocks/1", BlocksController, :index
     get "/blocks/:page", BlocksController, :go_to_page
-    get "/block/:hash", BlockController, :index
+    get "/block/:hash/:page", BlockController, :index
     get "/about", AboutController, :index
 
     get "/", HomeController, :index
