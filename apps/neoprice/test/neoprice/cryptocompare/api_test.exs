@@ -5,14 +5,20 @@ defmodule Neoprice.Cryptocompare.ApiTest do
 
   test "minute report" do
     now = DateTime.utc_now |> DateTime.to_unix()
-    prices = Api.get_pricehistorical_price(:minute,  "NEO", "BTC", 1000, now)
+    prices = Api.get_historical_price(:minute,  "NEO", "BTC", 100, 1, now)
     assert_in_delta List.last(prices) |> elem(0), now, 60
   end
 
   test "hour report" do
     now = DateTime.utc_now |> DateTime.to_unix()
-    prices = Api.get_pricehistorical_price(:hour, "NEO", "BTC", 1000, now)
+    prices = Api.get_historical_price(:hour, "NEO", "BTC", 100, 1, now)
     assert_in_delta List.last(prices) |> elem(0), now, 3600
+  end
+
+  test "day report" do
+    now = DateTime.utc_now |> DateTime.to_unix()
+    prices = Api.get_historical_price(:hour, "NEO", "BTC", 100, 1, now)
+    assert_in_delta List.last(prices) |> elem(0), now, 24*3600
   end
 
   test "last" do

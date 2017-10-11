@@ -16,17 +16,27 @@ defmodule Neoprice.Cryptocompare.Api do
     end
   end
 
-  def get_pricehistorical_price(:minute, from_symbol, to_symbol, limit, to) do
+  def get_historical_price(:day, from_symbol, to_symbol, limit,
+        aggregate, to) do
     params = "fsym=#{from_symbol}&tsym=#{to_symbol}&limit=#{limit}&toTs=#{to}"
-    params = params <> "&extraParams=#{@app_name}"
-    HTTPoison.get("https://" <> @url <> "/data/histominute?" <> params)
+    params = params <> "&aggregate=#{aggregate}&e=CCCAGG&extraParams=#{@app_name}"
+    HTTPoison.get("https://" <> @url <> "/data/histoday?" <> params)
     |> extract_data()
   end
 
-  def get_pricehistorical_price(:hour, from_symbol, to_symbol, limit, to) do
+  def get_historical_price(:hour, from_symbol, to_symbol, limit,
+        aggregate, to) do
     params = "fsym=#{from_symbol}&tsym=#{to_symbol}&limit=#{limit}&toTs=#{to}"
-    params = params <> "&aggregate=1&e=CCCAGG&extraParams=#{@app_name}"
+    params = params <> "&aggregate=#{aggregate}&e=CCCAGG&extraParams=#{@app_name}"
     HTTPoison.get("https://" <> @url <> "/data/histohour?" <> params)
+    |> extract_data()
+  end
+
+  def get_historical_price(:minute, from_symbol, to_symbol, limit,
+                                aggregate, to) do
+    params = "fsym=#{from_symbol}&tsym=#{to_symbol}&limit=#{limit}&toTs=#{to}"
+    params = params <> "&aggregate=#{aggregate}&extraParams=#{@app_name}"
+    HTTPoison.get("https://" <> @url <> "/data/histominute?" <> params)
     |> extract_data()
   end
 

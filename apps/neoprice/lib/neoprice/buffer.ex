@@ -32,6 +32,7 @@ defmodule Neoprice.Buffer do
   end
 
   def init(state) do
+    IO.inspect(state.name)
     :ets.new(
       state.name,
       [:public, :set, :named_table, {:read_concurrency, true}]
@@ -46,18 +47,19 @@ defmodule Neoprice.Buffer do
   end
 
   def seed(state) do
-    now = DateTime.utc_now()
-          |> DateTime.to_unix()
-    elements = Cryptocompare.past_two_week(
-      now,
-      state.name.from_symbol(),
-      state.name.to_symbol()
-    )
-    :ets.insert(state.name, elements)
+    #now = DateTime.utc_now()
+     #     |> DateTime.to_unix()
+#    elements = Cryptocompare.past_two_week(
+#      now,
+#      state.name.from_symbol(),
+#      state.name.to_symbol()
+#    )
+    #:ets.insert(state.name, elements)
+    state
   end
 
   def sync() do
-    
+
   end
 
   def get(name) do
