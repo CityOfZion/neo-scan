@@ -28,6 +28,7 @@ defmodule Neoprice.Cryptocompare.Api do
         aggregate, to) do
     params = "fsym=#{from_symbol}&tsym=#{to_symbol}&limit=#{limit}&toTs=#{to}"
     params = params <> "&aggregate=#{aggregate}&e=CCCAGG&extraParams=#{@app_name}"
+    |> IO.inspect()
     HTTPoison.get("https://" <> @url <> "/data/histohour?" <> params)
     |> extract_data()
   end
@@ -43,6 +44,7 @@ defmodule Neoprice.Cryptocompare.Api do
   defp extract_data({:ok, %{status_code: 200, body: body}}) do
     case Poison.decode(body) do
       {:ok, %{"Data" => data}} ->
+        IO.inspect(length(data))
         Enum.map(data, fn(%{"open" => value, "time" => time}) ->
           {time, value}
         end)
@@ -53,8 +55,8 @@ defmodule Neoprice.Cryptocompare.Api do
     end
   end
 
-  defp extract_data(_) do
-    Logger.warn("Http error")
+  defp extract_data(error) do
+    Logger.warn("Http error #{inspect(error)}")
     []
   end
 end
