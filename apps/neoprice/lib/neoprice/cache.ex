@@ -26,6 +26,9 @@ defmodule Neoprice.Cache do
       )
       def get_day(), do: unquote(__MODULE__).get_day(__MODULE__)
       def get_3_m(), do: unquote(__MODULE__).get_3_m(__MODULE__)
+      def get_1_m(), do: unquote(__MODULE__).get_1_m(__MODULE__)
+      def get_1_w(), do: unquote(__MODULE__).get_1_d(__MODULE__)
+      def get_1_d(), do: unquote(__MODULE__).get_1_d(__MODULE__)
     end
   end
 
@@ -66,6 +69,9 @@ defmodule Neoprice.Cache do
   def seed(state) do
     seed_day(state.name)
     seed_3_m(state.name)
+    seed_1_m(state.name)
+    seed_1_w(state.name)
+    seed_1_d(state.name)
   end
 
   defp seed_day(name) do
@@ -92,6 +98,45 @@ defmodule Neoprice.Cache do
     :ets.insert(:"#{name}_3_m", elements)
   end
 
+  defp seed_1_m(name) do
+    to = now()
+    from = to - 24 * 3600 * 31
+    elements = Cryptocompare.hour_prices(
+      from,
+      to,
+      name.from_symbol(),
+      name.to_symbol(),
+      1
+    )
+    :ets.insert(:"#{name}_1_m", elements)
+  end
+
+  defp seed_1_w(name) do
+    to = now()
+    from = to - 24 * 3600 * 7
+    elements = Cryptocompare.minute_prices(
+      from,
+      to,
+      name.from_symbol(),
+      name.to_symbol(),
+      15
+    )
+    :ets.insert(:"#{name}_1_w", elements)
+  end
+
+  defp seed_1_d(name) do
+    to = now()
+    from = to - 24 * 3600
+    elements = Cryptocompare.minute_prices(
+      from,
+      to,
+      name.from_symbol(),
+      name.to_symbol(),
+      1
+    )
+    :ets.insert(:"#{name}_1_d", elements)
+  end
+
   def sync() do
 
   end
@@ -101,4 +146,7 @@ defmodule Neoprice.Cache do
 
   def get_day(name), do: :ets.tab2list(:"#{name}_day")
   def get_3_m(name), do: :ets.tab2list(:"#{name}_3_m")
+  def get_1_m(name), do: :ets.tab2list(:"#{name}_3_m")
+  def get_1_w(name), do: :ets.tab2list(:"#{name}_1_w")
+  def get_1_d(name), do: :ets.tab2list(:"#{name}_1_d")
 end

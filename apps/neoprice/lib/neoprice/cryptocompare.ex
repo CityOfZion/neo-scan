@@ -43,7 +43,7 @@ defmodule Neoprice.Cryptocompare do
   end
 
   def hour_prices(from, to, from_symbol, to_symbol, aggregate) do
-    :lists.seq(to, from, -@hour * @limit * aggregate)
+    test = :lists.seq(to, from, -@hour * @limit * aggregate)
     |> Enum.reverse()
     |> Enum.map(fn(time) ->
       limit = limit(from, time, @hour, aggregate)
@@ -52,6 +52,7 @@ defmodule Neoprice.Cryptocompare do
     end)
     |> List.flatten()
     |> Enum.filter(fn({k,_}) -> k > from and k < to end)
+    test
   end
 
   def minute_prices(from, to, from_symbol, to_symbol, aggregate) do
