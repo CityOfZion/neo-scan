@@ -66,7 +66,7 @@ defmodule NeoscanMonitor.Worker do
     schedule_nodes() # Reschedule once more
     new_state = Map.merge(state, %{
         :monitor => Utils.load(),
-        :assets => state.assets
+        :assets => ChainAssets.list_assets
                     |> Utils.get_stats,
         :stats => Utils.get_general_stats(),
         :addresses => Addresses.list_latest()

@@ -12,7 +12,7 @@
         <%= for input <- @transaction.claims do %>
           <div class="individual-transaction">
             <a href="<%= address_path(@conn, :index, input.address_hash)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= input.address_hash %></a>
-            <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= input.value %> <%= Api.get_asset_name(input.asset) %></p>
+            <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(input.value) %> <%= Api.get_asset_name(input.asset) %></p>
           </div>
         <% end %>
       <% end %>
@@ -21,7 +21,7 @@
         <%= for input <- @transaction.vin do %>
     			<div class="individual-transaction">
     				<a href="<%= address_path(@conn, :index, input.address_hash)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= input.address_hash %></a>
-    				<p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= input.value %> <%= Api.get_asset_name(input.asset) %></p>
+    				<p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(input.value) %> <%= Api.get_asset_name(input.asset) %></p>
     			</div>
         <% end %>
       <% end %>
@@ -32,7 +32,7 @@
         <%= for vout <- @transaction.vouts do %>
     			<div class="individual-transaction">
     				<a href="<%= address_path(@conn, :index, vout.address_hash)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vout.address_hash %></a>
-    				<p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= vout.value %> <%= Api.get_asset_name(vout.asset) %></p>
+    				<p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vout.value) %> <%= Api.get_asset_name(vout.asset) %></p>
     			</div>
         <% end %>
     	</div>
@@ -41,8 +41,8 @@
       <div class="sent-to-wrapper">
         <p class="large-detail-text">Registered</p>
         <div class="individual-transaction">
-          <a href="<%= address_path(@conn, :index, @transaction.asset.owner)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= @transaction.asset.admin %></a>
-          <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= @transaction.asset.amount %> <%= Api.get_asset_name(@transaction.txid) %></p>
+          <a href="<%= address_path(@conn, :index, @transaction.asset.admin)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= @transaction.asset.admin %></a>
+          <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(@transaction.asset.amount) %> <%= Api.get_asset_name(@transaction.txid) %></p>
         </div>
       </div>
     <% end %>

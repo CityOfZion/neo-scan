@@ -2,6 +2,7 @@ defmodule NeoscanWeb.BlockView do
   use NeoscanWeb, :view
   alias Neoscan.Vm.Disassembler
   alias NeoscanMonitor.Api
+  alias Neoscan.Helpers
 
   def compare_time_and_get_minutes(unix_time) do
 

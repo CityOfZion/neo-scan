@@ -96,6 +96,49 @@ defmodule Neoscan.Transactions do
   end
 
   @doc """
+  Returns the list of the last transactions for an asset.
+
+  ## Examples
+
+      iex> home_transactions()
+      [%Transaction{}, ...]
+
+  """
+  def get_last_transactions_for_asset(hash) do
+    transaction_query = from e in Transaction,
+                             order_by: [
+                               desc: e.inserted_at
+                             ],
+                             where: e.asset_moved == ^hash and e.type != "MinerTransaction",
+                             select: %{
+                               :id => e.id,
+                               :type => e.type,
+                               :time => e.time,
+                               :txid => e.txid,
+                               :block_height => e.block_height,
+                               :block_hash => e.block_hash,
+                               :vin => e.vin,
+                               :claims => e.claims,
+                               :sys_fee => e.sys_fee,
+                               :net_fee => e.net_fee,
+                               :size => e.size,
+                             },
+                             limit: 5
+
+    transactions = Repo.all(transaction_query)
+
+    vouts = Enum.map(transactions, fn tx -> tx.id end)
+              |> get_transactions_vouts
+
+    transactions
+    |> Enum.map(fn tx ->
+         Map.put(tx, :vouts, Enum.filter(vouts, fn vout ->
+           vout.transaction_id == tx.id
+         end))
+       end)
+  end
+
+  @doc """
   Returns the list of paginated transactions.
 
   ## Examples

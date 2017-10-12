@@ -86,10 +86,6 @@ defmodule Neoscan.Addresses do
                         order_by: [
                           desc: e.updated_at
                         ],
-                        where: e.updated_at > ago(
-                          1,
-                          "hour"
-                        ),
                        select: %{
                          :address => e.address,
                          :balance => e.balance,
@@ -375,6 +371,23 @@ defmodule Neoscan.Addresses do
     Repo.all(query)
     |> fetch_missing(lookups, time)
     |> Helpers.gen_attrs()
+  end
+
+  #get all addresses involved in a list of previous transactions
+  def get_transactions_addresses(transactions) do
+
+    lookups = Enum.reduce(transactions, [], fn (%{:vin => vin, :vouts => vouts}, acc) -> acc ++ Helpers.map_vins(vin) ++ Helpers.map_vouts(vouts) end)
+              |> Enum.uniq
+
+    query = from e in Address,
+                 where: e.address in ^lookups,
+                 order_by: [
+                   desc: e.updated_at
+                 ],
+                 select: map(e, [:id, :address, :balance, :time]),
+                 limit: 5
+
+    Repo.all(query)
   end
 
   #create missing addresses

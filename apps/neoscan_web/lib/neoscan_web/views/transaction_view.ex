@@ -2,6 +2,7 @@ defmodule NeoscanWeb.TransactionView do
   use NeoscanWeb, :view
   alias NeoscanMonitor.Api
   alias Neoscan.Vm.Disassembler
+  alias Neoscan.Helpers
 
   def get_type(type) do
     cond do

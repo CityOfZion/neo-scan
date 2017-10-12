@@ -3,6 +3,9 @@ defmodule NeoscanWeb.AddressesView do
   alias NeoscanMonitor.Api
   alias Neoscan.Helpers
 
+  def compare_time_and_get_minutes(nil) do
+    nil
+  end
   def compare_time_and_get_minutes(balance) do
 
     unix_time = Map.to_list(balance)
@@ -27,6 +30,9 @@ defmodule NeoscanWeb.AddressesView do
     int
   end
 
+  def get_NEO_balance(nil) do
+   0
+  end
   def get_NEO_balance(balance) do
     balance
     |> Map.to_list
@@ -37,6 +43,9 @@ defmodule NeoscanWeb.AddressesView do
     |> Helpers.round_or_not
   end
 
+  def get_GAS_balance(nil) do
+   raw('<p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span>GAS: 0.<span class="divisible-amount">#{0}</span></p>')
+  end
   def get_GAS_balance(balance) do
     {int, div} = balance
                   |> Map.to_list
