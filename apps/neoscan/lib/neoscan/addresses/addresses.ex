@@ -1,5 +1,4 @@
 defmodule Neoscan.Addresses do
-  @moduledoc false
   @moduledoc """
   The boundary for the Addresses system.
   """

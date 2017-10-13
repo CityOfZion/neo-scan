@@ -132,7 +132,9 @@ defmodule Neoscan.ChainAssets do
     |> Repo.update!()
   end
 
-  #add issued value to an existing asset
+  @doc """
+  Add issued value to an existing asset
+  """
   def add_issued_value(asset_hash, value) do
     result = get_asset_by_hash(asset_hash)
     if result == nil do
@@ -143,7 +145,10 @@ defmodule Neoscan.ChainAssets do
       update_asset(result, attrs)
     end
   end
-
+  
+  @doc """
+  Create new assets
+  """
   #create new assets
   def create(%{"amount" => amount, "admin" => admin} = assets, txid, time) do
     {float, _} = Float.parse(amount)
@@ -155,7 +160,9 @@ defmodule Neoscan.ChainAssets do
     nil
   end
 
-  #issue assets
+  @doc """
+  Issue assets
+  """
   def issue("IssueTransaction", vouts) do
     Enum.each(
       vouts,

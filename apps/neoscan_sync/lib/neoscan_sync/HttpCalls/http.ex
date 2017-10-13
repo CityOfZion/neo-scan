@@ -4,7 +4,7 @@ defmodule NeoscanSync.HttpCalls do
   require Logger
   alias NeoscanMonitor.Api
 
-  @doc ~S"""
+  @doc """
    Returns seed url according with 'index'
 
   ## Examples

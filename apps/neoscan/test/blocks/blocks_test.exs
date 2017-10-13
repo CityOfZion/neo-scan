@@ -50,7 +50,7 @@ defmodule Neoscan.BlocksTest do
 
     test "update_block/2 with invalid data returns error changeset" do
       block = insert(:block)
-      assert {:error, %Ecto.Changeset{}} = Blocks.update_block(block, %{"confirmations" => nil}) |> IO.inspect()
+      assert {:error, %Ecto.Changeset{}} = Blocks.update_block(block, %{"confirmations" => nil})
       assert block == Blocks.get_block!(block.id)
     end
 

@@ -1,5 +1,8 @@
 defmodule Neoscan.BalanceHistories.History do
-  @moduledoc false
+  @moduledoc"""
+  Represent a History of a transaction in Database.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.BalanceHistories.History

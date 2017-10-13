@@ -1,5 +1,7 @@
 defmodule Neoscan.Addresses.Address do
-  @moduledoc false
+  @moduledoc """
+  Represent a Address in Database.
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.Addresses.Address
