@@ -6,7 +6,6 @@ defmodule Neoprice.Cache do
   @minute 60
   @hour 3600
   @day 86400
-  @month 2678400
 
   defmodule Config do
     defstruct [:cache_name, :definition, :aggregation, :duration]
@@ -19,7 +18,7 @@ defmodule Neoprice.Cache do
         import Supervisor.Spec
 
         state = %{
-          name: __MODULE__
+          module: __MODULE__
         }
         worker(unquote(__MODULE__), [state], id: __MODULE__)
       end
@@ -30,42 +29,28 @@ defmodule Neoprice.Cache do
       def to_symbol, do: unquote(
         if is_nil(opts[:to_symbol]), do: "BTC", else: opts[:to_symbol]
       )
+      def config, do: unquote(
+        if is_nil(opts[:config]), do: [], else: opts[:config]
+      )
       def start_day, do: unquote(
         if is_nil(opts[:start_day]), do: 1_500_000_000, else: opts[:start_day]
       )
-      def get_day(), do: unquote(__MODULE__).get_day(__MODULE__)
-      def get_3_m(), do: unquote(__MODULE__).get_3_m(__MODULE__)
-      def get_1_m(), do: unquote(__MODULE__).get_1_m(__MODULE__)
-      def get_1_w(), do: unquote(__MODULE__).get_1_d(__MODULE__)
-      def get_1_d(), do: unquote(__MODULE__).get_1_d(__MODULE__)
     end
   end
 
   def start_link(state) do
-    GenServer.start_link(__MODULE__, state, [name: state.name])
+    GenServer.start_link(__MODULE__, state, [module: state.module])
   end
 
   def init(state) do
-    caches = [
-      %Config{cache_name: :"#{state.name}_day", definition: :day,
-        duration: :start, aggregation: 1},
-      %Config{cache_name: :"#{state.name}_3_m", definition: :hour,
-        duration: @month * 3, aggregation: 3},
-      %Config{cache_name: :"#{state.name}_1_m", definition: :hour,
-        duration: @month, aggregation: 1},
-      %Config{cache_name: :"#{state.name}_1_w", definition: :minute,
-        duration: 7 * @day, aggregation: 15},
-      %Config{cache_name: :"#{state.name}_1_d", definition: :minute,
-        duration: @day, aggregation: 1}
-    ]
-    Enum.each(caches, fn(cache) ->
+    Enum.each(state.module.config, fn(cache) ->
          :ets.new(
            cache.cache_name,
            [:public, :ordered_set, :named_table, {:read_concurrency, true}]
          )
        end)
     Process.send_after(self(), :seed, 0)
-    {:ok, Map.put(state, :caches, caches)}
+    {:ok, state}
   end
 
   def handle_info(:seed, state) do
@@ -82,31 +67,31 @@ defmodule Neoprice.Cache do
 
 
   def seed(state) do
-    Enum.each(state.caches, fn(cache) ->
-      seed(state.name, cache)
+    Enum.each(state.module.config, fn(cache) ->
+      seed(state.module, cache)
     end)
   end
 
-  defp seed(name, cache) do
-    {from, to} = time_frame(name, cache)
+  defp seed(module, cache) do
+    {from, to} = time_frame(module, cache)
     elements = Cryptocompare.get_price(cache.definition,
       from,
       to,
-      name.from_symbol(),
-      name.to_symbol(),
+      module.from_symbol(),
+      module.to_symbol(),
       cache.aggregation
     )
     :ets.insert(cache.cache_name, elements)
   end
 
   def sync(state) do
-    Enum.each(state.caches, fn(cache) ->
-      sync_cache(cache, state.name)
+    Enum.each(state.module.config, fn(cache) ->
+      sync_cache(cache, state.module)
     end)
   end
 
   defp sync_cache(config = %{cache_name: cache_name, definition: definition,
-                    aggregation: aggregation}, name) do
+                    aggregation: aggregation}, module) do
     cache = :ets.tab2list(cache_name)
     {last_time , _} = List.last(cache)
     if next_value(definition, last_time, aggregation) < now() do
@@ -116,23 +101,23 @@ defmodule Neoprice.Cache do
       elements = Cryptocompare.get_price(definition,
         last_time + 1,
         now(),
-        name.from_symbol,
-        name.to_symbol,
+        module.from_symbol,
+        module.to_symbol,
         aggregation
       )
       :ets.insert(cache_name, elements)
-      delete_old_values(config, name, cache)
+      delete_old_values(config, module, cache)
     end
   end
 
-  def time_frame(name, %{duration: :start}), do: {name.start_day, now()}
+  def time_frame(module, %{duration: :start}), do: {module.start_day, now()}
   def time_frame(_, %{duration: duration}) do
     now = now()
     {now - duration, now}
   end
 
-  defp delete_old_values(config, name, cache) do
-    {from, _} = time_frame(name, config)
+  defp delete_old_values(config, module, cache) do
+    {from, _} = time_frame(module, config)
     Enum.reduce_while(cache, nil, fn({k, _}, _) ->
       if k < from do
         :ets.delete(config.cache_name, k)
@@ -151,10 +136,4 @@ defmodule Neoprice.Cache do
   defp next_value(:minute, time, aggregation), do: time + @minute * aggregation
 
   defp now(), do: DateTime.utc_now() |> DateTime.to_unix()
-
-  def get_day(name), do: :ets.tab2list(:"#{name}_day")
-  def get_3_m(name), do: :ets.tab2list(:"#{name}_3_m")
-  def get_1_m(name), do: :ets.tab2list(:"#{name}_3_m")
-  def get_1_w(name), do: :ets.tab2list(:"#{name}_1_w")
-  def get_1_d(name), do: :ets.tab2list(:"#{name}_1_d")
 end
