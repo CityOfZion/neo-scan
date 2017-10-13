@@ -8,6 +8,7 @@ defmodule NeoscanMonitor.Server do
 
   use GenServer
   alias NeoscanWeb.RoomChannel
+  alias Neoscan.ChainAssets
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -46,6 +47,23 @@ defmodule NeoscanMonitor.Server do
 
   def handle_call(:assets, _from, state) do
     {:reply, state.assets, state}
+  end
+
+  def handle_call({:asset, hash}, _from, state) do
+    asset = Enum.find(state.assets, fn %{:txid => txid} -> txid == hash end)
+
+    {:reply, asset, state}
+  end
+
+  def handle_call({:asset_name, hash}, _from, state) do
+    name = Enum.find(state.assets, fn %{:txid => txid} -> txid == hash end)
+            |> Map.get(:name)
+            |> ChainAssets.filter_name
+    {:reply, name, state}
+  end
+
+  def handle_call(:addresses, _from, state) do
+    {:reply, state.addresses, state}
   end
 
   def handle_call(:contracts, _from, state) do

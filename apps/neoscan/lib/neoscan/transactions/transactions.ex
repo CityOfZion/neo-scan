@@ -31,6 +31,35 @@ defmodule Neoscan.Transactions do
   end
 
   @doc """
+  Count total transactions in DB.
+
+  ## Examples
+
+      iex> count_transactions()
+      50
+
+  """
+  def count_transactions do
+    Repo.aggregate(Transaction, :count, :id)
+  end
+
+  @doc """
+  Count total transactions in DB for an especific asset.
+
+  ## Examples
+
+      iex> count_transactions_for_asset(asset_hash)
+      20
+
+  """
+  def count_transactions_for_asset(asset_hash) do
+    query = from t in Transaction,
+            where: t.asset_moved == ^asset_hash
+
+    Repo.aggregate(query, :count, :id)
+  end
+
+  @doc """
   Returns the list of transactions in the home page.
 
   ## Examples
@@ -49,13 +78,197 @@ defmodule Neoscan.Transactions do
                                "hour"
                              ) and e.type != "MinerTransaction",
                              select: %{
+                               :id => e.id,
                                :type => e.type,
                                :time => e.time,
-                               :txid => e.txid
+                               :txid => e.txid,
+                               :block_height => e.block_height,
+                               :block_hash => e.block_hash,
+                               :vin => e.vin,
+                               :claims => e.claims,
+                               :sys_fee => e.sys_fee,
+                               :net_fee => e.net_fee,
+                               :size => e.size,
                              },
                              limit: 15
 
     Repo.all(transaction_query)
+  end
+
+  @doc """
+  Returns the list of the last transactions for an asset.
+
+  ## Examples
+
+      iex> home_transactions()
+      [%Transaction{}, ...]
+
+  """
+  def get_last_transactions_for_asset(hash) do
+    transaction_query = from e in Transaction,
+                             order_by: [
+                               desc: e.inserted_at
+                             ],
+                             where: e.asset_moved == ^hash and e.type != "MinerTransaction",
+                             select: %{
+                               :id => e.id,
+                               :type => e.type,
+                               :time => e.time,
+                               :txid => e.txid,
+                               :block_height => e.block_height,
+                               :block_hash => e.block_hash,
+                               :vin => e.vin,
+                               :claims => e.claims,
+                               :sys_fee => e.sys_fee,
+                               :net_fee => e.net_fee,
+                               :size => e.size,
+                             },
+                             limit: 5
+
+    transactions = Repo.all(transaction_query)
+
+    vouts = Enum.map(transactions, fn tx -> tx.id end)
+              |> get_transactions_vouts
+
+    transactions
+    |> Enum.map(fn tx ->
+         Map.put(tx, :vouts, Enum.filter(vouts, fn vout ->
+           vout.transaction_id == tx.id
+         end))
+       end)
+  end
+
+  @doc """
+  Returns the list of paginated transactions.
+
+  ## Examples
+
+      iex> paginate_transactions(page)
+      [%Transaction{}, ...]
+
+  """
+  def paginate_transactions(pag) do
+    transaction_query = from e in Transaction,
+                        order_by: [
+                          desc: e.block_height
+                        ],
+                        where: e.type != "MinerTransaction",
+                        select: %{
+                         :id => e.id,
+                         :type => e.type,
+                         :time => e.time,
+                         :txid => e.txid,
+                         :block_height => e.block_height,
+                         :block_hash => e.block_hash,
+                         :vin => e.vin,
+                         :claims => e.claims,
+                         :sys_fee => e.sys_fee,
+                         :net_fee => e.net_fee,
+                         :size => e.size,
+                        },
+                        limit: 15
+
+    transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
+    vouts = Enum.map(transactions, fn tx -> tx.id end)
+              |> get_transactions_vouts
+
+    transactions
+    |> Enum.map(fn tx ->
+         Map.put(tx, :vouts, Enum.filter(vouts, fn vout ->
+           vout.transaction_id == tx.id
+         end))
+       end)
+  end
+
+  @doc """
+  Returns the list of paginated transactions.
+
+  ## Examples
+
+      iex> paginate_transactions(page)
+      [%Transaction{}, ...]
+
+  """
+  def paginate_transactions_for_block(hash, pag) do
+    transaction_query = from e in Transaction,
+                        order_by: [
+                          desc: e.block_height
+                        ],
+                        where: e.block_hash == ^hash,
+                        select: %{
+                         :id => e.id,
+                         :type => e.type,
+                         :time => e.time,
+                         :txid => e.txid,
+                         :block_height => e.block_height,
+                         :block_hash => e.block_hash,
+                         :vin => e.vin,
+                         :claims => e.claims,
+                         :sys_fee => e.sys_fee,
+                         :net_fee => e.net_fee,
+                         :size => e.size,
+                        },
+                        limit: 15
+
+    transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
+    vouts = Enum.map(transactions, fn tx -> tx.id end)
+              |> get_transactions_vouts
+
+    transactions
+    |> Enum.map(fn tx ->
+         Map.put(tx, :vouts, Enum.filter(vouts, fn vout ->
+           vout.transaction_id == tx.id
+         end))
+       end)
+  end
+
+  @doc """
+  Returns the list of vouts for a transaction.
+
+  ## Examples
+
+      iex> get_transaction_vouts(id)
+      [%Vout{}, ...]
+
+  """
+  def get_transaction_vouts(id) do
+    vout_query = from e in Vout,
+                             order_by: [
+                               asc: e.n
+                             ],
+                             where: e.transaction_id == ^id,
+                             select: %{
+                               :asset => e.asset,
+                               :address_hash => e.address_hash,
+                               :value => e.value,
+                             }
+
+    Repo.all(vout_query)
+  end
+
+  @doc """
+  Returns the list of vouts for many transaction.
+
+  ## Examples
+
+      iex> get_transaction_vouts(id)
+      [%Vout{}, ...]
+
+  """
+  def get_transactions_vouts(id_list) do
+    vout_query = from e in Vout,
+                             order_by: [
+                               asc: e.n
+                             ],
+                             where: e.transaction_id in ^id_list,
+                             select: %{
+                               :transaction_id => e.transaction_id,
+                               :asset => e.asset,
+                               :address_hash => e.address_hash,
+                               :value => e.value,
+                             }
+
+    Repo.all(vout_query)
   end
 
   @doc """
@@ -210,27 +423,37 @@ defmodule Neoscan.Transactions do
                       "block_height" => height,
                     }
                   )
+                  |> set_transaction_asset(vouts)
                   |> Map.delete("vout")
 
     Transaction.changeset_with_block(block, transaction)
     |> Repo.insert!()
-    |> update_transaction_state
+    |> update_transaction_state(vouts)
     |> Vouts.create_vouts(vouts, Task.await(address_list, 60_000))
   end
 
+  #set transaction asset if it has vouts
+  def set_transaction_asset(attrs, []) do
+    attrs
+  end
+  def set_transaction_asset(attrs, vouts) do
+    vout = List.first(vouts)
+    Map.put(attrs, "asset_moved", String.slice(to_string(vout["asset"]), -64..-1))
+  end
+
   #add transaction to monitor cache
-  def update_transaction_state(%{:type => type} = transaction)
+  def update_transaction_state(%{:type => type} = transaction, vouts)
       when type != "MinerTransaction" do
-    Api.add_transaction(transaction)
+    Api.add_transaction(transaction, vouts)
     transaction
   end
-  def update_transaction_state(%{:type => type} = transaction)
+  def update_transaction_state(%{:type => type} = transaction, vouts)
       when type == "PublishTransaction" or type == "InvocationTransaction" do
-    Api.add_transaction(transaction)
-    Api.add_contract(transaction)
+    Api.add_transaction(transaction, vouts)
+    Api.add_contract(transaction, vouts)
     transaction
   end
-  def update_transaction_state(transaction) do
+  def update_transaction_state(transaction, _vouts) do
     transaction
   end
 

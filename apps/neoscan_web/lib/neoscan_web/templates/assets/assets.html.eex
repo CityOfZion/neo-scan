@@ -1,26 +1,52 @@
-<section class="section transparent">
-  <div class="container">
-    <div class="tile is-12 is-ancestor box is-vertical transparent">
-      <div class="tile is-parent box content content-background">
-        <p class="title white-text">Assets</p>
+<h1 class="content-title">Assets</h1>
+
+<ul id="assets-list">
+
+  <%= for asset <- @assets do %>
+    <li>
+      <div class="main-asset-type-wrapper">
+        <p class="small-detail-text">Asset</p>
+        <h2 class="asset-type"><%=Api.get_asset_name(asset.txid)%></h2>
       </div>
-      <div class="tile is-parent box content content-background white-text">
-        <ul>
-          <%= for asset <- @assets do %>
-            <li>
-              <%=Neoscan.ChainAssets.get_asset_name_by_hash(asset.txid)%>  Registered <%=NeoscanWeb.AssetsController.round_or_not(asset.amount)%>
-              <%= if asset.issued != nil do %>
-                Issued <%=NeoscanWeb.AssetsController.round_or_not(asset.issued)%>
-              <%end%>
-              <br />
-              <!-- Admin
-              <a href="<%=address_path(@conn, :index, asset.admin )%>">
-                <%=asset.admin%>
-              </a> -->
-            </li>
-          <%end%>
-        </ul>
+      <div class="asset-details-wrapper">
+        <div class="left-column">
+          <div class="left-asset-detail">
+            <p class="small-detail-text">Type</p>
+            <p class="large-detail-text"><%=asset.type%></p>
+          </div>
+          <div class="left-asset-detail">
+            <p class="small-detail-text">Supply</p>
+            <p class="large-detail-text"><%=asset.amount%></p>
+          </div>
+          <div class="left-asset-detail">
+            <p class="small-detail-text">Registered on</p>
+            <p class="small-detail-text bold-text remove-margin-bottom">
+              <%=
+                {:ok, date_time} = DateTime.from_unix(asset.time, :second)
+                DateTime.to_date(date_time)
+              %>
+            </p>
+          </div>
+        </div>
+        <div class="right-column">
+          <div class="right-asset-detail">
+            <p class="small-detail-text">Addresses</p>
+            <p class="large-detail-text"><%=asset.stats.addresses%></p>
+          </div>
+          <div class="right-asset-detail">
+            <p class="small-detail-text">Issued</p>
+            <p class="large-detail-text"><%=asset.issued%></p>
+          </div>
+          <div class="right-asset-detail">
+            <p class="small-detail-text">Transactions</p>
+            <p class="large-detail-text"><%=asset.stats.transactions%></p>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
+      <div class="button-wrapper">
+        <a href="<%= asset_path(@conn, :index, asset.txid)%>" alt="Find out more" title="Find out more" class="btn-primary">More details</a>
+      </div>
+    </li>
+  <%end%>
+
+</ul>

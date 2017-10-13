@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="162px" height="32px" viewBox="0 0 162 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>NEOSCAN_Logo</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="03_Wallet-addresses" transform="translate(-41.000000, -44.000000)">
+            <g id="HEADER" transform="translate(20.000000, 20.000000)">
+                <g id="NEOSCAN_Logo" transform="translate(21.000000, 24.000000)">
+                    <text id="NEOSCAN" font-family="Orbitron-Medium, Orbitron" font-size="20" font-weight="400" letter-spacing="0.0204545427">
+                        <tspan x="48" y="23" fill="#BEEB00">NEO</tspan>
+                        <tspan x="96.5213636" y="23" font-family="Orbitron-Light, Orbitron" font-weight="300" fill="#FFFFFF">SCAN</tspan>
+                    </text>
+                    <g id="ICON_Logo-icon" fill="#FFFFFF">
+                        <polygon id="Fill-22" points="37 22 32.3334835 27 23 27 32.3334835 17"></polygon>
+                        <polygon id="Fill-24" points="28 12.8072765 23.8633972 8.61455307 28 4.42142483 23.5002172 0.228701367 19 4.42142483 14.7452334 0 10 4.42142483 23.5002172 17"></polygon>
+                        <polygon id="Fill-26" points="4.74988536 10 19 23.199915 9.49977071 32 0 32 9.49977071 23.199915 0 14.3998301"></polygon>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -6,6 +6,7 @@ defmodule Neoscan.Blocks do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Blocks.Block
+  alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
   alias NeoscanMonitor.Api
 
@@ -23,6 +24,19 @@ defmodule Neoscan.Blocks do
   end
 
   @doc """
+  Count total blocks in DB.
+
+  ## Examples
+
+      iex> count_blocks()
+      50
+
+  """
+  def count_blocks do
+    Repo.aggregate(Block, :count, :id)
+  end
+
+  @doc """
   Returns the list of blocks in the home page.
 
   ## Examples
@@ -33,7 +47,7 @@ defmodule Neoscan.Blocks do
   """
   def home_blocks do
     block_query = from e in Block,
-                       where: e.index > 1_300_000,
+                       where: e.index > -1,
                        order_by: [
                          desc: e.index
                        ],
@@ -41,11 +55,39 @@ defmodule Neoscan.Blocks do
                          :index => e.index,
                          :time => e.time,
                          :tx_count => e.tx_count,
-                         :hash => e.hash
+                         :hash => e.hash,
+                         :size => e.size
                        },
                        limit: 15
 
     Repo.all(block_query)
+  end
+
+  @doc """
+  Returns the list of paginated blocks.
+
+  ## Examples
+
+      iex> paginate_blocks(page)
+      [%Block{}, ...]
+
+  """
+  def paginate_blocks(pag) do
+    block_query = from e in Block,
+                       where: e.index > -1,
+                       order_by: [
+                         desc: e.index
+                       ],
+                       select: %{
+                         :index => e.index,
+                         :time => e.time,
+                         :tx_count => e.tx_count,
+                         :hash => e.hash,
+                         :size => e.size
+                       },
+                       limit: 15
+
+    Repo.paginate(block_query, page: pag, page_size: 15)
   end
 
   @doc """
@@ -110,6 +152,31 @@ defmodule Neoscan.Blocks do
                  select: e
     Repo.all(query)
     |> List.first
+  end
+
+
+  @doc """
+  Gets a single block by its hash value for blocks page, with paginated transactions
+
+  ## Examples
+
+      iex> paginate_transactions(hash, page)
+      %Block{}
+
+      iex> paginate_transactions(hash, page)
+      nil
+
+  """
+  def paginate_transactions(hash, page) do
+    transactions = Transactions.paginate_transactions_for_block(hash, page)
+
+    query = from e in Block,
+                 where: e.hash == ^hash,
+                 select: e
+    block = Repo.all(query)
+            |> List.first
+
+    {block, transactions}
   end
 
   @doc """
@@ -215,7 +282,7 @@ defmodule Neoscan.Blocks do
   def get_highest_block_in_db do
     query = from e in Block,
                  select: e.index,
-                 where: e.index > 1_300_000,
+                 where: e.index > -1,
                    #force postgres to use index
                  order_by: [
                    desc: e.index

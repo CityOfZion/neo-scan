@@ -31,6 +31,94 @@ defmodule Neoscan.Addresses do
   end
 
   @doc """
+  Returns a list of the latest updated addresses.
+
+  ## Examples
+
+      iex> list_latest()
+      [%Address{}, ...]
+
+  """
+  def list_latest do
+    query = from a in Address,
+              order_by: [
+                desc: a.updated_at
+              ],
+              where: a.updated_at > ago(
+                1,
+                "hour"
+              ),
+              select: %{
+                :address => a.address,
+                :balance => a.balance,
+                :time => a.time,
+              },
+              limit: 15
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Count total addresses in DB.
+
+  ## Examples
+
+      iex> count_addresses()
+      50
+
+  """
+  def count_addresses do
+    Repo.aggregate(Address, :count, :id)
+  end
+
+  @doc """
+  Returns the list of paginated addresses.
+
+  ## Examples
+
+      iex> paginate_addresses(page)
+      [%Address{}, ...]
+
+  """
+  def paginate_addresses(pag) do
+    addresses_query = from e in Address,
+                        order_by: [
+                          desc: e.updated_at
+                        ],
+                       select: %{
+                         :address => e.address,
+                         :balance => e.balance,
+                         :time => e.time,
+                       },
+                       limit: 15
+
+    Repo.paginate(addresses_query, page: pag, page_size: 15)
+      |> Enum.map(fn ad ->
+           Map.put(
+            ad,
+            :tx_count,
+            BalanceHistories.count_hist_for_address(ad.address)
+           )
+         end)
+  end
+
+  @doc """
+  Count total addresses in DB that have an especific asset.
+
+  ## Examples
+
+      iex> count_addresses_for_asset()
+      20
+
+  """
+  def count_addresses_for_asset(asset_hash) do
+    query = from a in Address,
+            where: fragment("? \\? ?", a.balance, ^asset_hash)
+
+    Repo.aggregate(query, :count, :id)
+  end
+
+  @doc """
   Gets a single address.
 
   Raises `Ecto.NoResultsError` if the Address does not exist.
@@ -284,6 +372,23 @@ defmodule Neoscan.Addresses do
     |> Helpers.gen_attrs()
   end
 
+  #get all addresses involved in a list of previous transactions
+  def get_transactions_addresses(transactions) do
+
+    lookups = Enum.reduce(transactions, [], fn (%{:vin => vin, :vouts => vouts}, acc) -> acc ++ Helpers.map_vins(vin) ++ Helpers.map_vouts(vouts) end)
+              |> Enum.uniq
+
+    query = from e in Address,
+                 where: e.address in ^lookups,
+                 order_by: [
+                   desc: e.updated_at
+                 ],
+                 select: map(e, [:id, :address, :balance, :time]),
+                 limit: 5
+
+    Repo.all(query)
+  end
+
   #create missing addresses
   def fetch_missing(address_list, lookups, time) do
     (
@@ -378,22 +483,23 @@ defmodule Neoscan.Addresses do
                     :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
                   }
                 )
-                |> add_vins(vins)
+                |> add_vins(vins, time)
                 |> BalanceHistories.add_tx_id(txid, index, time)
     {address, new_attrs}
   end
 
   #add multiple vins
-  def add_vins(attrs, vins) do
-    Enum.reduce(vins, attrs, fn (vin, acc) -> add_vin(acc, vin) end)
+  def add_vins(attrs, vins, time) do
+    Enum.reduce(vins, attrs, fn (vin, acc) -> add_vin(acc, vin, time) end)
   end
 
   #add a single vin into adress
-  def add_vin(%{:balance => balance} = attrs, vin) do
+  def add_vin(%{:balance => balance} = attrs, vin, time) do
     current_amount = balance[vin.asset]["amount"]
     new_balance = %{
       "asset" => vin.asset,
-      "amount" => current_amount - vin.value
+      "amount" => current_amount - vin.value,
+      "time" => time,
     }
     %{attrs | balance: Map.put(attrs.balance || %{}, vin.asset, new_balance)}
   end

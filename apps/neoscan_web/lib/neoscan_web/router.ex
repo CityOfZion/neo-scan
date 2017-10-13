@@ -20,10 +20,18 @@ defmodule NeoscanWeb.Router do
 
     get "/doc", DocController, :index
     get "/assets", AssetsController, :index
+    get "/asset/:hash", AssetController, :index
     get "/contracts", ContractsController, :index
+    get "/addresses/1", AddressesController, :index
+    get "/addresses/:page", AddressesController, :go_to_page
     get "/address/:address", AddressController, :index
+    get "/transactions/1", TransactionsController, :index
+    get "/transactions/:page", TransactionsController, :go_to_page
     get "/transaction/:txid", TransactionController, :index
-    get "/block/:hash", BlockController, :index
+    get "/blocks/1", BlocksController, :index
+    get "/blocks/:page", BlocksController, :go_to_page
+    get "/block/:hash/:page", BlockController, :index
+    get "/about", AboutController, :index
 
     get "/", HomeController, :index
     post "/", HomeController, :search

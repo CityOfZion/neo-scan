@@ -162,27 +162,31 @@ defmodule Neoscan.Vouts do
                     :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
                   }
                 )
-                |> add_vouts(vouts, transaction)
+                |> add_vouts(vouts, transaction, time)
                 |> BalanceHistories.add_tx_id(txid, index, time)
     {address, new_attrs}
   end
 
   #add multiple vouts to address
-  def add_vouts(attrs, vouts, transaction) do
+  def add_vouts(attrs, vouts, transaction, time) do
     Enum.reduce(
       vouts,
       attrs,
       fn (vout, acc) ->
         create_vout(transaction, vout)
-        |> add_vout(acc)
+        |> add_vout(acc, time)
       end
     )
   end
 
   #add a single vout to adress
-  def add_vout(%{:value => value} = vout, %{:balance => balance} = address) do
+  def add_vout(%{:value => value} = vout, %{:balance => balance} = address, time) do
     current_amount = balance[vout.asset]["amount"] || 0
-    new_balance = %{"asset" => vout.asset, "amount" => current_amount + value}
+    new_balance = %{
+      "asset" => vout.asset,
+      "amount" => current_amount + value,
+      "time" => time
+    }
     %{
       address |
       balance: Map.put(address.balance || %{}, vout.asset, new_balance)

@@ -4,6 +4,7 @@ defmodule Neoscan.ChainAssets do
   alias Neoscan.Repo
   alias Neoscan.ChainAssets.Asset
   alias NeoscanMonitor.Api
+  alias Neoscan.Addresses
 
   require Logger
 
@@ -69,6 +70,9 @@ defmodule Neoscan.ChainAssets do
     |> filter_name
   end
 
+  def filter_name(nil) do
+    "Asset not Found"
+  end
   def filter_name(asset) do
     case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
       %{"name" => name} -> cond do
@@ -101,7 +105,11 @@ defmodule Neoscan.ChainAssets do
                    :admin => e.admin,
                    :amount => e.amount,
                    :issued => e.issued,
-                   :type => e.type
+                   :type => e.type,
+                   :time => e.time,
+                   :name => e.name,
+                   :owner => e.owner,
+                   :precision => e.precision
                  }
     Repo.all(query)
   end
@@ -137,14 +145,16 @@ defmodule Neoscan.ChainAssets do
       update_asset(result, attrs)
     end
   end
-
+  
   @doc """
   Create new assets
   """
-  def create(%{"amount" => amount} = assets, txid, time) do
+  #create new assets
+  def create(%{"amount" => amount, "admin" => admin} = assets, txid, time) do
     {float, _} = Float.parse(amount)
     new_asset = Map.merge(assets, %{"amount" => float, "time" => time})
     create_asset(txid, new_asset)
+    Addresses.create_address(%{"address" => admin, "time" => time})
   end
   def create(nil, _txid, _time) do
     nil

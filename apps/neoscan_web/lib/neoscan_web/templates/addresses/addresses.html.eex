@@ -1,0 +1,50 @@
+<h1 class="content-title">Wallet Addresses</h1>
+
+<!-- All wallet addresses content -->
+<section id="all-wallet-address-wrapper">
+
+  <div class="detail-bar">
+    <p class="detail-type detail-type-first-4-col">Address ID</p>
+    <p class="detail-type col-2-width">Created</p>
+    <p class="detail-type col-2-width">Transactions</p>
+    <p class="detail-type col-2-width">Last transaction</p>
+    <p class="detail-type col-1-width">Tokens</p>
+  </div>
+
+  <!-- Transactions -->
+  <section id="wallet-address-wrapper">
+
+    <div class="wallet-address-list">
+
+      <!-- Wallet address -->
+      <%= for address <- @addresses do %>
+        <div class="full-width-bar wallet-address">
+          <div class="information-wrapper">
+            <p class="fa fa-key medium-detail-text"></p>
+            <a href="<%= address_path(@conn, :index, address.address)%>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%= address.address %></a></a>
+            <p class="medium-detail-text col-2-width">
+              <%=
+                {:ok, date_time} = DateTime.from_unix(address.time, :second)
+                DateTime.to_date(date_time)
+              %> |
+              <%=
+                {:ok, date_time} = DateTime.from_unix(address.time, :second)
+                DateTime.to_time(date_time)
+              %>
+            </p>
+            <p class="medium-detail-text col-2-width"><%= address.tx_count %> </p>
+            <p class="medium-detail-text col-2-width"><%= compare_time_and_get_minutes(address.balance)%> minutes ago</p>
+          </div>
+          <div class="token-amount-wrapper col-2-width">
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span>NEO: <%= get_NEO_balance(address.balance) %></p>
+            <%= get_GAS_balance(address.balance) %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+  </section>
+
+  <p class="number-counter">Showing 12 out of 120000 wallet addresses</p>
+  <a href="<%= addresses_path(@conn, :go_to_page, 2) %>" alt="Load more transactions" title="Load more transactions" class="btn-primary btn-transactions-primary">Load more wallets</a>
+</section>

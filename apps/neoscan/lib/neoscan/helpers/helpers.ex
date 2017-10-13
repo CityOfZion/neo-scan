@@ -28,7 +28,13 @@ defmodule Neoscan.Helpers do
   def map_vins(nil) do
     []
   end
-  def map_vins(vins) do
+  def map_vins([]) do
+    []
+  end
+  def map_vins([%{"address_hash" => _address } | _tail] = vins) do
+    Enum.map(vins, fn %{"address_hash" => address} -> address end)
+  end
+  def map_vins([%{:address_hash => _address } | _tail] = vins) do
     Enum.map(vins, fn %{:address_hash => address} -> address end)
   end
 
@@ -36,9 +42,16 @@ defmodule Neoscan.Helpers do
   def map_vouts(nil) do
     []
   end
-  def map_vouts(vouts) do
+  def map_vouts([]) do
+    []
+  end
+  def map_vouts([%{"address" => _address } | _tail] = vouts) do
     #not in db, so still uses string keys
     Enum.map(vouts, fn %{"address" => address} -> address end)
+  end
+  def map_vouts([%{:address_hash => _address } | _tail] = vouts) do
+    #not in db, so still uses string keys
+    Enum.map(vouts, fn %{:address_hash => address} -> address end)
   end
 
   #generate {address, address_updates} tuples for following operations
@@ -82,6 +95,30 @@ defmodule Neoscan.Helpers do
         {address, attrs}
       _ ->
         Enum.at(updates, index)
+    end
+  end
+
+  def round_or_not(value) do
+    case Kernel.is_float(value) do
+      true ->
+        value
+      false ->
+        case Kernel.is_integer(value) do
+          true ->
+            value
+          false ->
+            {num, _} = Float.parse(value)
+            num
+        end
+    end
+    |> round_or_not!
+  end
+
+  defp round_or_not!(value) do
+    if Kernel.round(value) == value do
+      Kernel.round(value)
+    else
+      value
     end
   end
 
