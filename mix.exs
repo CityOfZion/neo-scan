@@ -33,7 +33,7 @@ defmodule Neoscan.Umbrella.Mixfile do
     [
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
       {:poison, "~> 3.1"},
-      {:httpoison, "~> 0.12"},
+      {:httpoison, "~> 0.13"},
       {:flow, "~> 0.11"},
       {:ex_machina, "~> 2.0", only: [:test, :travis]},
       {:credo, "~> 0.8", only: [:dev]},

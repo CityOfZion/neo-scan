@@ -1,4 +1,4 @@
-defmodule Neoscan.Helpers do
+defmodule Neoscan.Explanations do
   @moduledoc false
   @explanations %{
     # blocks
