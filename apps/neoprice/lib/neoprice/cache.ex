@@ -2,6 +2,15 @@ defmodule Neoprice.Cache do
   @moduledoc "macro to define a buffer"
   use GenServer
   alias Neoprice.Cryptocompare
+  require Logger
+  @minute 60
+  @hour 3600
+  @day 86400
+  @month 2678400
+
+  defmodule Config do
+    defstruct [:cache_name, :definition, :aggregation, :duration]
+  end
 
   defmacro __using__(opts \\ []) do
     quote do
@@ -37,112 +46,111 @@ defmodule Neoprice.Cache do
   end
 
   def init(state) do
-    :ets.new(
-      :"#{state.name}_day",
-      [:public, :set, :named_table, {:read_concurrency, true}]
-    )
-    :ets.new(
-      :"#{state.name}_3_m",
-      [:public, :set, :named_table, {:read_concurrency, true}]
-    )
-    :ets.new(
-      :"#{state.name}_1_m",
-      [:public, :set, :named_table, {:read_concurrency, true}]
-    )
-    :ets.new(
-      :"#{state.name}_1_w",
-      [:public, :set, :named_table, {:read_concurrency, true}]
-    )
-    :ets.new(
-      :"#{state.name}_1_d",
-      [:public, :set, :named_table, {:read_concurrency, true}]
-    )
+    caches = [
+      %Config{cache_name: :"#{state.name}_day", definition: :day,
+        duration: :start, aggregation: 1},
+      %Config{cache_name: :"#{state.name}_3_m", definition: :hour,
+        duration: @month * 3, aggregation: 3},
+      %Config{cache_name: :"#{state.name}_1_m", definition: :hour,
+        duration: @month, aggregation: 1},
+      %Config{cache_name: :"#{state.name}_1_w", definition: :minute,
+        duration: 7 * @day, aggregation: 15},
+      %Config{cache_name: :"#{state.name}_1_d", definition: :minute,
+        duration: @day, aggregation: 1}
+    ]
+    Enum.each(caches, fn(cache) ->
+         :ets.new(
+           cache.cache_name,
+           [:public, :ordered_set, :named_table, {:read_concurrency, true}]
+         )
+       end)
     Process.send_after(self(), :seed, 0)
-    {:ok, state}
+    {:ok, Map.put(state, :caches, caches)}
   end
 
   def handle_info(:seed, state) do
+    Process.send_after(self(), :sync, 10_000)
     seed(state)
     {:noreply, state}
   end
 
+  def handle_info(:sync, state) do
+    Process.send_after(self(), :sync, 10_000)
+    sync(state)
+    {:noreply, state}
+  end
+
+
   def seed(state) do
-    seed_day(state.name)
-    seed_3_m(state.name)
-    seed_1_m(state.name)
-    seed_1_w(state.name)
-    seed_1_d(state.name)
+    Enum.each(state.caches, fn(cache) ->
+      seed(state.name, cache)
+    end)
   end
 
-  defp seed_day(name) do
-    elements = Cryptocompare.day_prices(
-      name.start_day,
-      now(),
-      name.from_symbol(),
-      name.to_symbol(),
-      1
-    )
-    :ets.insert(:"#{name}_day", elements)
-  end
-
-  defp seed_3_m(name) do
-    to = now()
-    from = to - 24 * 3600 * 31 * 3
-    elements = Cryptocompare.hour_prices(
+  defp seed(name, cache) do
+    {from, to} = time_frame(name, cache)
+    elements = Cryptocompare.get_price(cache.definition,
       from,
       to,
       name.from_symbol(),
       name.to_symbol(),
-      3
+      cache.aggregation
     )
-    :ets.insert(:"#{name}_3_m", elements)
+    :ets.insert(cache.cache_name, elements)
   end
 
-  defp seed_1_m(name) do
-    to = now()
-    from = to - 24 * 3600 * 31
-    elements = Cryptocompare.hour_prices(
-      from,
-      to,
-      name.from_symbol(),
-      name.to_symbol(),
-      1
-    )
-    :ets.insert(:"#{name}_1_m", elements)
+  def sync(state) do
+    Enum.each(state.caches, fn(cache) ->
+      sync_cache(cache, state.name)
+    end)
   end
 
-  defp seed_1_w(name) do
-    to = now()
-    from = to - 24 * 3600 * 7
-    elements = Cryptocompare.minute_prices(
-      from,
-      to,
-      name.from_symbol(),
-      name.to_symbol(),
-      15
-    )
-    :ets.insert(:"#{name}_1_w", elements)
+  defp sync_cache(config = %{cache_name: cache_name, definition: definition,
+                    aggregation: aggregation}, name) do
+    cache = :ets.tab2list(cache_name)
+    {last_time , _} = List.last(cache)
+    if next_value(definition, last_time, aggregation) < now() do
+      Logger.debug fn ->
+        "Syncing #{cache_name}"
+      end
+      elements = Cryptocompare.get_price(definition,
+        last_time + 1,
+        now(),
+        name.from_symbol,
+        name.to_symbol,
+        aggregation
+      )
+      :ets.insert(cache_name, elements)
+      delete_old_values(config, name, cache)
+    end
   end
 
-  defp seed_1_d(name) do
-    to = now()
-    from = to - 24 * 3600
-    elements = Cryptocompare.minute_prices(
-      from,
-      to,
-      name.from_symbol(),
-      name.to_symbol(),
-      1
-    )
-    :ets.insert(:"#{name}_1_d", elements)
+  def time_frame(name, %{duration: :start}), do: {name.start_day, now()}
+  def time_frame(_, %{duration: duration}) do
+    now = now()
+    {now - duration, now}
   end
 
-  def sync() do
-
+  defp delete_old_values(config, name, cache) do
+    {from, _} = time_frame(name, config)
+    Enum.reduce_while(cache, nil, fn({k, _}, _) ->
+      if k < from do
+        :ets.delete(config.cache_name, k)
+        Logger.debug fn ->
+          "Deleteting #{k}"
+        end
+        {:cont, nil}
+      else
+        {:halt, nil}
+      end
+    end)
   end
+
+  defp next_value(:day, time, aggregation), do: time + @day * aggregation
+  defp next_value(:hour, time, aggregation), do: time + @hour * aggregation
+  defp next_value(:minute, time, aggregation), do: time + @minute * aggregation
 
   defp now(), do: DateTime.utc_now() |> DateTime.to_unix()
-
 
   def get_day(name), do: :ets.tab2list(:"#{name}_day")
   def get_3_m(name), do: :ets.tab2list(:"#{name}_3_m")

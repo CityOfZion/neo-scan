@@ -6,7 +6,7 @@ defmodule NeoPrice.CryptoCompareTest do
   test "minute prices" do
     now = DateTime.utc_now |> DateTime.to_unix()
     from = now - 3600 * 24
-    prices = Cryptocompare.minute_prices(from, now, "NEO", "BTC", 1)
+    prices = Cryptocompare.get_price(:minute, from, now, "NEO", "BTC", 1)
     assert_in_delta length(prices), 1440, 2
     assert_in_delta List.last(prices) |> elem(0), now, 60
   end
@@ -14,7 +14,7 @@ defmodule NeoPrice.CryptoCompareTest do
   test "hour prices" do
     now = DateTime.utc_now |> DateTime.to_unix()
     from = now - 3600 * 24
-    prices = Cryptocompare.hour_prices(from, now, "NEO", "BTC", 1)
+    prices = Cryptocompare.get_price(:hour, from, now, "NEO", "BTC", 1)
     assert length(prices) == 24
     assert_in_delta List.last(prices) |> elem(0), now, 3600
   end
