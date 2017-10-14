@@ -35,6 +35,7 @@ defmodule Neoprice.Cache do
       def start_day, do: unquote(
         if is_nil(opts[:start_day]), do: 1_500_000_000, else: opts[:start_day]
       )
+      def price(), do: unquote(__MODULE__).price(__MODULE__)
     end
   end
 
@@ -65,8 +66,11 @@ defmodule Neoprice.Cache do
     {:noreply, state}
   end
 
+  def price(module) do
+    Cryptocompare.last_price(module.from_symbol(), module.to_symbol())
+  end
 
-  def seed(state) do
+  defp seed(state) do
     Enum.each(state.module.config, fn(cache) ->
       seed(state.module, cache)
     end)
@@ -110,8 +114,8 @@ defmodule Neoprice.Cache do
     end
   end
 
-  def time_frame(module, %{duration: :start}), do: {module.start_day, now()}
-  def time_frame(_, %{duration: duration}) do
+  defp time_frame(module, %{duration: :start}), do: {module.start_day, now()}
+  defp time_frame(_, %{duration: duration}) do
     now = now()
     {now - duration, now}
   end
