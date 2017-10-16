@@ -16,6 +16,7 @@ defmodule NeoscanWeb.RoomChannel do
     payload = %{
       "blocks" => state.blocks,
       "transactions" => state.transactions,
+      "price" => state.price
     }
 
     Endpoint.broadcast("room:home", "change", payload)

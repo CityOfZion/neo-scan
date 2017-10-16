@@ -3,7 +3,7 @@ defmodule NeoscanMonitor.Server do
   GenServer module responsable to retrive blocks, states, transactions
   and assets. Common interface to handle it is NeoscanMonitor.
   Api module(look there for more info)
-  The state is updated using handle_info(:state_update,state)
+  The state is updated using handle_info(:state_update, state)
   """
 
   use GenServer
