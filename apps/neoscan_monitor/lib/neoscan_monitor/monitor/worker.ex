@@ -43,7 +43,7 @@ defmodule NeoscanMonitor.Worker do
           :contracts => contracts,
           :stats => stats,
           :addresses => addresses,
-          price: price,
+          :price =>: price,
         }
       },
       []
@@ -60,6 +60,7 @@ defmodule NeoscanMonitor.Worker do
         :contracts => contracts,
         :stats => stats,
         :addresses => addresses
+        :price =>: price,
       }
     }
   end
@@ -73,7 +74,8 @@ defmodule NeoscanMonitor.Worker do
                     |> Utils.get_stats,
         :stats => Utils.get_general_stats(),
         :addresses => Addresses.list_latest()
-                       |> Utils.count_txs
+                       |> Utils.count_txs,
+        :price => %{btc: Neoprice.NeoBtc.price(), usd: Neoprice.NeoUsd.price()},
       })
 
     {:noreply, new_state}
