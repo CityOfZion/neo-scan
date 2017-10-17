@@ -4,6 +4,8 @@ defmodule Neoprice do
   use Application
   alias Neoprice.NeoBtc
   alias Neoprice.NeoUsd
+  alias Neoprice.GasBtc
+  alias Neoprice.GasUsd
 
   def start(_type, _args) do
 
@@ -12,7 +14,9 @@ defmodule Neoprice do
     # Define workers and child supervisors to be supervised
     children = [
       NeoBtc.worker,
-      NeoUsd.worker
+      NeoUsd.worker,
+      GasBtc.worker,
+      GasUsd.worker
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
