@@ -29,7 +29,7 @@ defmodule NeoscanMonitor.Worker do
     stats = Utils.get_general_stats()
     addresses = Addresses.list_latest()
                  |> Utils.count_txs
-    price = %{btc: Neoprice.NeoBtc.price(), usd: Neoprice.NeoUsd.price()}
+    price = %{neo: %{btc: Neoprice.NeoBtc.price(), usd: Neoprice.NeoUsd.price()}, gas: %{btc: Neoprice.GasBtc.price(), usd: Neoprice.GasUsd.price()}}
 
     Process.send(
       NeoscanMonitor.Server,
@@ -43,7 +43,7 @@ defmodule NeoscanMonitor.Worker do
           :contracts => contracts,
           :stats => stats,
           :addresses => addresses,
-          :price =>: price,
+          :price => price,
         }
       },
       []
@@ -59,8 +59,8 @@ defmodule NeoscanMonitor.Worker do
         :assets => assets,
         :contracts => contracts,
         :stats => stats,
-        :addresses => addresses
-        :price =>: price,
+        :addresses => addresses,
+        :price => price,
       }
     }
   end
@@ -75,7 +75,7 @@ defmodule NeoscanMonitor.Worker do
         :stats => Utils.get_general_stats(),
         :addresses => Addresses.list_latest()
                        |> Utils.count_txs,
-        :price => %{btc: Neoprice.NeoBtc.price(), usd: Neoprice.NeoUsd.price()},
+        :price => %{neo: %{btc: Neoprice.NeoBtc.price(), usd: Neoprice.NeoUsd.price()}, gas: %{btc: Neoprice.GasBtc.price(), usd: Neoprice.GasUsd.price()}},
       })
 
     {:noreply, new_state}
