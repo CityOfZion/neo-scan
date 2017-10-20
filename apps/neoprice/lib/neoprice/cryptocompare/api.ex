@@ -16,6 +16,17 @@ defmodule Neoprice.Cryptocompare.Api do
     end
   end
 
+  def last_price_full(from_symbol, to_symbol) do
+    params = "fsyms=#{from_symbol}&tsyms=#{to_symbol}"
+    url = "https://" <> @url <> "/data/pricemultifull?#{params}"
+    {:ok, %{status_code: 200, body: body}} = HTTPoison.get(url)
+    case Poison.decode(body) do
+      {:ok, map} ->
+        map["RAW"][from_symbol][to_symbol]
+      _ -> nil
+    end
+  end
+
   def get_historical_price(:day, from_symbol, to_symbol, limit,
         aggregate, to) do
     params = "fsym=#{from_symbol}&tsym=#{to_symbol}&limit=#{limit}&toTs=#{to}"
