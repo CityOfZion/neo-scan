@@ -9,39 +9,39 @@
     <!-- Extra information list -->
     <ul id="extra-information" class="asset-left-information-bar">
       <li class="border-right border-bottom">
-        <p class="small-detail-text">Name</p>
+        <p class="small-detail-text"><%= gettext "Name" %></p>
         <p class="large-detail-text"><%=Api.get_asset_name(@asset.txid) %></p>
       </li>
       <li class="border-right border-bottom">
-        <p class="small-detail-text">Type</p>
+        <p class="small-detail-text"><%= gettext "Type" %></p>
         <p class="large-detail-text"><%= @asset.type %></p>
       </li>
       <li class="border-bottom">
-        <p class="small-detail-text">Owner</p>
+        <p class="small-detail-text"><%= gettext "Owner" %></p>
         <%= if @asset.owner == "00" do %>
-          System
+          <%= gettext "System" %>
         <% else %>
           <a href="<%= address_path(@conn, :index, @asset.owner)%>" alt="View owner address" title="View owner address" class="large-blue-link wallet-address"><%= @asset.owner %></a>
         <% end %>
       </li>
       <li class="border-right border-bottom">
-        <p class="small-detail-text">Issued</p>
+        <p class="small-detail-text"><%= gettext "Issued" %></p>
         <p class="large-detail-text"><%= @asset.issued %></p>
       </li>
       <li class="border-right border-bottom">
-        <p class="small-detail-text">Supply</p>
+        <p class="small-detail-text"><%= gettext "Supply" %></p>
         <p class="large-detail-text"><%= check(Helpers.round_or_not(@asset.amount)) %></p>
       </li>
       <li class="border-bottom">
-        <p class="small-detail-text">Precision</p>
+        <p class="small-detail-text"><%= gettext "Precision" %></p>
         <p class="large-detail-text"><%= @asset.precision %></p>
       </li>
       <li class="border-right">
-        <p class="small-detail-text">Transactions</p>
+        <p class="small-detail-text"><%= gettext "Transactions" %></p>
         <p class="large-detail-text"><%=@asset.stats.transactions%></p>
       </li>
       <li class="border-right">
-        <p class="small-detail-text">Addresses</p>
+        <p class="small-detail-text"><%= gettext "Addresses" %></p>
         <p class="large-detail-text"><%=@asset.stats.addresses%></p>
       </li>
       <li>
@@ -62,15 +62,15 @@
   </section>
 
   <!-- All wallet addresses -->
-  <h1 class="content-title">Wallet Addresses</h1>
+  <h1 class="content-title"><%= gettext "Wallet Addresses" %></h1>
   <!-- All wallet addresses content -->
   <section id="all-wallet-address-wrapper">
     <div class="detail-bar">
-      <p class="detail-type detail-type-first-4-col">Address ID</p>
-      <p class="detail-type col-2-width">Created</p>
-      <p class="detail-type col-2-width">Transactions</p>
-      <p class="detail-type col-2-width">Last transaction</p>
-      <p class="detail-type col-1-width">Tokens</p>
+      <p class="detail-type detail-type-first-4-col"><%= gettext "Address ID" %></p>
+      <p class="detail-type col-2-width"><%= gettext "Created" %></p>
+      <p class="detail-type col-2-width"><%= gettext "Transactions" %></p>
+      <p class="detail-type col-2-width"><%= gettext "Last transaction" %></p>
+      <p class="detail-type col-1-width"><%= gettext "Tokens" %></p>
     </div>
     <section id="wallet-address-wrapper">
 
@@ -93,7 +93,7 @@
               %>
             </p>
             <p class="medium-detail-text col-2-width"><%= address.tx_count %> </p>
-            <p class="medium-detail-text col-2-width"><%= compare_time_and_get_minutes(address.balance)%> minutes ago</p>
+            <p class="medium-detail-text col-2-width"><%= compare_time_and_get_minutes(address.balance)%> <%= gettext "minutes ago" %></p>
           </div>
           <div class="token-amount-wrapper col-2-width">
             <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span>NEO: <%= get_NEO_balance(address.balance) %></p>
@@ -108,14 +108,14 @@
   </section>
 
   <!-- All transactions -->
-  <h1 class="content-title">Transactions</h1>
+  <h1 class="content-title"><%= gettext "Transactions" %></h1>
   <section id="all-transactions-wrapper">
 
     <div class="detail-bar">
-      <p class="detail-type detail-type-first-2-col">Type</p>
-      <p class="detail-type col-5-width">Transaction ID</p>
-      <p class="detail-type col-2-width">Block</p>
-      <p class="detail-type col-2-width">Completed on</p>
+      <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
+      <p class="detail-type col-5-width"><%= gettext "Transaction ID" %></p>
+      <p class="detail-type col-2-width"><%= gettext "Block" %></p>
+      <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
     </div>
 
     <!-- Transactions -->
@@ -127,22 +127,22 @@
           <div class="full-width-bar <%= get_class(transaction.type)%>">
             <div class="information-wrapper">
               <%= if transaction.type == "ContractTransaction" do %>
-                <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Contract</p>
+                <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract" %></p>
               <% end %>
               <%= if transaction.type == "ClaimTransaction" do %>
-                <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span>Gas Claim</p>
+                <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span><%= gettext "Gas Claim" %></p>
               <% end %>
               <%= if transaction.type == "InvocationTransaction" do %>
-                <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Invocation</p>
+                <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Invocation" %></p>
               <% end %>
               <%= if transaction.type == "IssueTransaction" do %>
-                <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Asset Issue</p>
+                <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Asset Issue" %></p>
               <% end %>
               <%= if transaction.type == "RegisterTransaction" do %>
-                <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Asset Register</p>
+                <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Asset Register" %></p>
               <% end %>
               <%= if transaction.type == "PublishTransaction" do %>
-                <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Contract Publish</p>
+                <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract Publish" %></p>
               <% end %>
               <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-5-width"><%=transaction.txid%>&#8230;</a>
               <p class="medium-detail-text col-2-width">&nbsp;&nbsp;&nbsp;<a href="<%= block_path( @conn, :index, transaction.block_hash, 1) %>" alt="View block" title="View block" class="blue-link"><%= transaction.block_height %></a></p>
@@ -161,7 +161,7 @@
             <div class="transaction-panel">
               <div class="sent-from-wrapper">
                 <%= if transaction.type == "ContractTransaction" do %>
-                  <p class="large-detail-text">Sent from</p>
+                  <p class="large-detail-text"><%= gettext "Sent from" %></p>
                   <%= for vin <- transaction.vin do %>
                     <div class="individual-transaction">
                       <a href='<%= address_path(@conn, :index, vin.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vin.address_hash %></a>
@@ -170,7 +170,7 @@
                   <% end %>
                 <% end %>
                 <%= if transaction.type == "ClaimTransaction" do %>
-                  <p class="large-detail-text">Claimed from</p>
+                  <p class="large-detail-text"><%= gettext "Claimed from" %></p>
                   <%= for claim <- transaction.claims do %>
                     <div class="individual-transaction">
                       <a href='<%= address_path(@conn, :index, claim.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= claim.address_hash %></a>
@@ -181,7 +181,7 @@
               </div>
               <div class="sent-to-wrapper">
                 <%= if transaction.type == "ContractTransaction" or transaction.type == "ClaimTransaction" or transaction.type == "IssueTransaction" do %>
-                  <p class="large-detail-text">Sent to</p>
+                  <p class="large-detail-text"><%= gettext "Sent to" %></p>
                   <%= for vout <- transaction.vouts do %>
                     <div class="individual-transaction">
                       <a href='<%= address_path(@conn, :index, vout.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vout.address_hash %></a>
@@ -191,7 +191,7 @@
                 <% end %>
               </div>
               <div class="other-transaction-information">
-                <p>Network fee: <%=transaction.net_fee%> &middot; Gas System Fee: <%=transaction.sys_fee%> GAS &middot; Data Size: <%=transaction.size%> bytes</p>
+                <p>Network fee: <%=transaction.net_fee%> &middot; <%= gettext "Gas System Fee" %>: <%=transaction.sys_fee%> <%= gettext "GAS" %> &middot; <%= gettext "Data Size" %>: <%=transaction.size%> bytes</p>
               </div>
             </div>
           </div>
