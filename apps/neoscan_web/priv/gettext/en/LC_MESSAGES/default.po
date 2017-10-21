@@ -273,3 +273,6 @@ msgstr ""
 
 msgid "See all blocks"
 msgstr ""
+
+msgid "Current market cap"
+msgstr ""
