@@ -3,7 +3,7 @@
   <div class="hero-body">
     <div class="container has-text-left">
       <h2 class="title white-text sans-coz">
-        NeoScan ALPHA
+        <%= gettext "NeoScan ALPHA" %>
       </h2>
       <!-- <p class="subtitle white-text sans-font">
         Your home for all blockchain related information for NEO, GAS and NEP-5 compliant tokens
@@ -27,7 +27,7 @@
               <img class="ad" src ="<%= static_path(@conn, "/images/competition.png") %>"></img>
             </a>
             <li class="text-center">
-              The last reports from the dev community can be found <a class="link" href="https://medium.com/@cityofzion">here</a>.
+              <%= gettext "The last reports from the dev community can be found" %> <a class="link" href="https://medium.com/@cityofzion"><%= gettext "here" %></a>.
             </li>
           </ul>
         </div>
@@ -61,13 +61,13 @@
     <div class="tile is-ancestor">
       <div class="tile is-6 is-parent">
         <div class="tile is-child box flex transparent">
-          <p class="title white-text">Last Blocks</p>
+          <p class="title white-text"><%= gettext "Last Blocks" %></p>
           <ul class="collection" id="show-blocks"></ul>
         </div>
       </div>
       <div class="tile is-6 is-parent">
         <div class="tile is-child box flex transparent">
-          <p class="title white-text">Last Transactions</p>
+          <p class="title white-text"><%= gettext "Last Transactions" %></p>
           <ul class="collection" id="show-transactions"></ul>
         </div>
       </div>
