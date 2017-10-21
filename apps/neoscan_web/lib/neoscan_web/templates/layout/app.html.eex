@@ -37,6 +37,10 @@
           <img src="<%= static_path(@conn, "/images/NEOSCAN_Logo.svg") %>" alt="NEOSCAN Home" title="NEOSCAN Home" width="163px" height="32px" class="neoscan-logo" />
         </a>
 			</div>
+		    <div class="locale-wrapper">
+		       <a href="?locale=en" alt="English" title="English">🇬🇧</a>
+               <a href="?locale=fr" alt="Francais" title="Francais">🇫🇷</a>
+		    </div>
 
 			<!-- Search -->
       <%= form_for @conn, home_path(@conn, :index), [as: :search], fn f -> %>
@@ -68,6 +72,7 @@
 				</ul>
 			</div>
 		</nav>
+
 
 
 		<!-- Main content area -->
