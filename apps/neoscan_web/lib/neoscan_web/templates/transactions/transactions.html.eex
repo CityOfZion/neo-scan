@@ -4,10 +4,10 @@
 <section id="all-transactions-wrapper">
 
   <div class="detail-bar">
-    <p class="detail-type detail-type-first-2-col">Type</p>
-    <p class="detail-type col-5-width">Transaction ID</p>
-    <p class="detail-type col-2-width">Block</p>
-    <p class="detail-type col-2-width">Completed on</p>
+    <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
+    <p class="detail-type col-5-width"><%= gettext "Transaction ID" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Block" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
   </div>
 
   <!-- Transactions -->
@@ -19,22 +19,22 @@
         <div class="full-width-bar <%= get_class(transaction.type)%>">
           <div class="information-wrapper">
             <%= if transaction.type == "ContractTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Contract</p>
+              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract" %></p>
             <% end %>
             <%= if transaction.type == "ClaimTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span>Gas Claim</p>
+              <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span><%= gettext "Gas Claim" %></p>
             <% end %>
             <%= if transaction.type == "InvocationTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Invocation</p>
+              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Invocation" %></p>
             <% end %>
             <%= if transaction.type == "IssueTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Asset Issue</p>
+              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Asset Issue" %></p>
             <% end %>
             <%= if transaction.type == "RegisterTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Asset Register</p>
+              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Asset Register" %></p>
             <% end %>
             <%= if transaction.type == "PublishTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span>Contract Publish</p>
+              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract Publish" %></p>
             <% end %>
             <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-5-width"><%=transaction.txid%>&#8230;</a>
             <p class="medium-detail-text col-2-width">&nbsp;&nbsp;&nbsp;<a href="<%= block_path( @conn, :index, transaction.block_hash, 1) %>" alt="View block" title="View block" class="blue-link"><%= transaction.block_height %></a></p>
@@ -53,7 +53,7 @@
           <div class="transaction-panel">
             <div class="sent-from-wrapper">
               <%= if transaction.type == "ContractTransaction" do %>
-                <p class="large-detail-text">Sent from</p>
+                <p class="large-detail-text"><%= gettext "Sent from" %></p>
                 <%= for vin <- transaction.vin do %>
                   <div class="individual-transaction">
                     <a href='<%= address_path(@conn, :index, vin.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vin.address_hash %></a>
@@ -62,7 +62,7 @@
                 <% end %>
               <% end %>
               <%= if transaction.type == "ClaimTransaction" do %>
-                <p class="large-detail-text">Claimed from</p>
+                <p class="large-detail-text"><%= gettext "Claimed from" %></p>
                 <%= for claim <- transaction.claims do %>
                   <div class="individual-transaction">
                     <a href='<%= address_path(@conn, :index, claim.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= claim.address_hash %></a>
@@ -73,7 +73,7 @@
             </div>
             <div class="sent-to-wrapper">
               <%= if transaction.type == "ContractTransaction" or transaction.type == "ClaimTransaction" or transaction.type == "IssueTransaction" do %>
-                <p class="large-detail-text">Sent to</p>
+                <p class="large-detail-text"><%= gettext "Sent to" %></p>
                 <%= for vout <- transaction.vouts do %>
                   <div class="individual-transaction">
                     <a href='<%= address_path(@conn, :index, vout.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vout.address_hash %></a>
@@ -83,7 +83,7 @@
               <% end %>
             </div>
             <div class="other-transaction-information">
-              <p>Network fee: <%=transaction.net_fee%> &middot; Gas System Fee: <%=transaction.sys_fee%> GAS &middot; Data Size: <%=transaction.size%> bytes</p>
+              <p>Network fee: <%=transaction.net_fee%> &middot; <%= gettext "Gas System Fee" %>: <%=transaction.sys_fee%> GAS &middot; <%= gettext "Data Size" %>: <%=transaction.size%> <%= gettext "bytes" %></p>
             </div>
           </div>
         </div>
@@ -93,6 +93,6 @@
 
   </section>
 
-  <p class="number-counter">Showing 12 out of 120000 transactions</p>
-  <a href="<%= transactions_path(@conn, :go_to_page, 2) %>" alt="Load more transactions" title="Load more transactions" class="btn-primary btn-transactions-primary">Load more transactions</a>
+  <p class="number-counter"><%= gettext "Showing 12 out of 120000 transactions" %></p>
+  <a href="<%= transactions_path(@conn, :go_to_page, 2) %>" alt="Load more transactions" title="Load more transactions" class="btn-primary btn-transactions-primary"><%= gettext "Load more transactions" %></a>
 </section>
