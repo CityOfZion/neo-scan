@@ -10,7 +10,7 @@ defmodule Neoprice.GasBtc do
       to_symbol: "BTC",
       config: [
         %Config{
-          cache_name: :GASBTC_day,
+          cache_name: :GASBTC_all,
           definition: :day,
           duration: :start,
           aggregation: 1
@@ -40,7 +40,7 @@ defmodule Neoprice.GasBtc do
           aggregation: 1
         }
       ]
-  def get_day(), do: :ets.tab2list(:GASBTC_day) |> Map.new
+  def get_all(), do: :ets.tab2list(:GASBTC_all) |> Map.new
   def get_3_month(), do: :ets.tab2list(:GASBTC_3_m) |> Map.new
   def get_1_month(), do: :ets.tab2list(:GASBTC_1_m) |> Map.new
   def get_1_week(), do: :ets.tab2list(:GASBTC_1_w) |> Map.new

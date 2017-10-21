@@ -32,7 +32,7 @@ defmodule NeoscanWeb.Router do
     get "/blocks/:page", BlocksController, :go_to_page
     get "/block/:hash/:page", BlockController, :index
     get "/about", AboutController, :index
-
+    get "/price/:from/:to/:graph", PriceController, :index
     get "/", HomeController, :index
     post "/", HomeController, :search
   end

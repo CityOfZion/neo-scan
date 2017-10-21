@@ -10,7 +10,7 @@ defmodule Neoprice.NeoBtc do
       to_symbol: "BTC",
       config: [
         %Config{
-          cache_name: :NEOBTC_day,
+          cache_name: :NEOBTC_all,
           definition: :day,
           duration: :start,
           aggregation: 1
@@ -40,7 +40,7 @@ defmodule Neoprice.NeoBtc do
           aggregation: 1
         }
       ]
-  def get_day(), do: :ets.tab2list(:NEOBTC_day) |> Map.new
+  def get_day(), do: :ets.tab2list(:NEOBTC_all) |> Map.new
   def get_3_month(), do: :ets.tab2list(:NEOBTC_3_m) |> Map.new
   def get_1_month(), do: :ets.tab2list(:NEOBTC_1_m) |> Map.new
   def get_1_week(), do: :ets.tab2list(:NEOBTC_1_w) |> Map.new
