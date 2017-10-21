@@ -10,6 +10,10 @@ defmodule Neoprice.Cryptocompare do
   def last_price(from_symbol, to_symbol) do
     Api.last_price(from_symbol, to_symbol)
   end
+  @spec last_price_full(String.t, String.t) :: float
+  def last_price_full(from_symbol, to_symbol) do
+    Api.last_price_full(from_symbol, to_symbol)
+  end
 
   @spec get_price(atom, non_neg_integer, non_neg_integer, String.t, String.t,
                   non_neg_integer) :: list

@@ -74,6 +74,14 @@ defmodule NeoscanMonitor.Server do
     {:reply, state.monitor.data, state}
   end
 
+  def handle_call(:price, _from, state) do
+    {:reply, state.price, state}
+  end
+
+  def handle_call(:stats, _from, state) do
+    {:reply, state.stats, state}
+  end
+
   defp schedule_work do
     Process.send_after(self(), :broadcast, 10_000) # In 10 seconds
   end

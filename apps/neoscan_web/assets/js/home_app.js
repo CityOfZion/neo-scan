@@ -4,58 +4,104 @@ import List from 'inferno-virtual-list'
 
 var moment = require('moment')
 
-const blocksContainer = document.getElementById('show-blocks')
-const transactionsContainer = document.getElementById('show-transactions')
+const blocksContainer = document.getElementById('blocks-wrapper')
+const transactionsContainer = document.getElementById('transactions-wrapper')
 
 const blockRow = row => (
-  <a href={'/block/' + row.hash} class='box block-color content-background'>
-    <article class='media'>
-      <div class='media-content'>
-        <div class='content white-text'>
-          <p>
-            <i class='fa fa-signal block-color' aria-hidden='true'></i>
-            <strong class='white-text'>&nbsp;{row.index}&nbsp;&nbsp;&nbsp;</strong>
-            <small>Date&nbsp;&nbsp;{moment.unix(row.time).format('DD-MM-YYYY')}&nbsp;&nbsp;</small>
-            <small>Time&nbsp;&nbsp;{moment.unix(row.time).format('HH:mm:ss')}&nbsp;&nbsp;</small>
-            <small class='is-pulled-right'>Number of Transactions {row.tx_count}</small>
-          </p>
-        </div>
-      </div>
-    </article>
-  </a>
+  <div class='full-width-bar block-number'>
+    <div class='information-wrapper'>
+      <p class='fa fa-signal medium-detail-text'></p>
+      <a href={'/block/' + row.hash} alt='View block' title='View block' class='large-blue-link col-4-width'>{row.index}</a>
+      <p class='medium-detail-text col-3-width'>{row.size} bytes</p>
+      <p class='medium-detail-text col-3-width'>{row.tx_count}</p>
+      <p class='medium-detail-text col-2-width'>{ moment.unix(row.time).format('DD-MM-YYYY') + ' | ' + moment.unix(row.time).format('HH:mm:ss')}</p>
+    </div>
+  </div>
 )
 
+let getClass = function (type) {
+  if (type === 'ContractTransaction') {
+    return 'neo-transaction'
+  }
+  if (type === 'ClaimTransaction') {
+    return 'gas-transaction'
+  }
+  if (type === 'MinerTransaction') {
+    return 'miner-transaction'
+  }
+  if (type === 'RegisterTransaction') {
+    return 'register-transaction'
+  }
+  if (type === 'IssueTransaction') {
+    return 'issue-transaction'
+  }
+  if (type === 'PublishTransaction') {
+    return 'publish-transaction'
+  }
+  if (type === 'InvocationTransaction') {
+    return 'invocation-transaction'
+  }
+}
+
+let getName = function (type) {
+  if (type === 'ContractTransaction') {
+    return 'Contract'
+  }
+  if (type === 'ClaimTransaction') {
+    return 'GAS Claim'
+  }
+  if (type === 'MinerTransaction') {
+    return 'Miner'
+  }
+  if (type === 'RegisterTransaction') {
+    return 'Asset Register'
+  }
+  if (type === 'IssueTransaction') {
+    return 'Asset Issue'
+  }
+  if (type === 'PublishTransaction') {
+    return 'Contract Publish'
+  }
+  if (type === 'InvocationTransaction') {
+    return 'Contract Invocation'
+  }
+}
+
 const transactionRow = row => (
-  <a href={'/transaction/' + row.txid} class='box content-background'>
-    <article class='media'>
-      <div class='media-content'>
-        <div class='content white-text'>
-          <p>
-            <strong class='white-text'>{row.type.replace('Transaction', '')}&nbsp;&nbsp;&nbsp;</strong>
-            <small>Date&nbsp;&nbsp;{moment.unix(row.time).format('DD-MM-YYYY')}&nbsp;&nbsp;</small>
-            <small>Time&nbsp;&nbsp;{moment.unix(row.time).format('HH:mm:ss')}&nbsp;&nbsp;</small>
-          </p>
-        </div>
-      </div>
-    </article>
-  </a>
+  <div class={'full-width-bar ' + getClass(row.type)}>
+    <div class='information-wrapper'>
+      <p class='medium-detail-text col-2-width'><span class='fa fa-cube'></span>{getName(row.type)}</p>
+      <a href={'/transaction/' + row.hash} alt='View transaction' title='View transaction' class='large-blue-link col-5-width'>{row.txid}&#8230;</a>
+      <p class='medium-detail-text col-2-width'>&nbsp;&nbsp;&nbsp;<a href={'/block/' + row.block_hash + '1'} alt='View block' title='View block' class='blue-link'>{row.block_height}</a></p>
+      <p class='medium-detail-text col-2-width'>{ moment.unix(row.time).format('DD-MM-YYYY') + ' | ' + moment.unix(row.time).format('HH:mm:ss')}</p>
+    </div>
+  </div>
 )
 
 window.onload = function () {
   if (window.location.pathname === '/') {
     let payload = {
       blocks: [],
-      transactions: []
+      transactions: [],
+      stats: {},
+      price: {}
     }
     let home = new HomeSocket(payload)
 
     setInterval(function () {
       Inferno.render((
-        <List class='collection' sync={false} data={home.payload.blocks} rowHeight={15} rowRender={blockRow} />
+        <List class='blocks-list' sync={false} data={home.payload.blocks} rowHeight={15} rowRender={blockRow} />
       ), blocksContainer)
       Inferno.render((
-        <List class='collection' sync={false} data={home.payload.transactions} rowHeight={15} rowRender={transactionRow} />
+        <List class='transactions-list' sync={false} data={home.payload.transactions} rowHeight={15} rowRender={transactionRow} />
       ), transactionsContainer)
+      document.getElementById('total-tx').innerHTML = home.payload.stats.total_transactions
+      document.getElementById('total-blocks').innerHTML = home.payload.stats.total_blocks
+      document.getElementById('total-addresses').innerHTML = home.payload.stats.total_addresses
+      document.getElementById('neo-price-us').innerHTML = '$' + home.payload.price.neo.usd.PRICE
+      document.getElementById('mkt-cap-us').innerHTML = '$' + home.payload.price.neo.usd.MKTCAP
+      document.getElementById('24hvol').innerHTML = '$' + home.payload.price.neo.usd.VOLUME24HOUR.toFixed(0)
+      document.getElementById('24hchange').innerHTML = home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) +'%'
     }, 500)
     home.connect()
   }
@@ -76,3 +122,66 @@ for (i = 0; i < acc.length; i++) {
     }
   }
 }
+
+var chart = c3.generate({
+  data: {
+    columns: [
+      ['GAS', 60, 63, 66, 69, 78, 82],
+            ['NEO', 69, 72, 75, 84, 66, 90]
+    ],
+    axes: {
+      GAS: 'y',
+      NEO: 'y2'
+    }
+  },
+  axis: {
+    y2: {
+      show: true,
+      padding: {
+        top: 150,
+        bottom: 150
+      }
+    }
+  },
+  grid: {
+    y: {
+      show: true,
+      tick: {
+        format: d3.format('$,'),
+        values: [110, 100, 90, 80, 70, 60]
+      }
+    }
+  },
+  tooltip: {
+    contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
+      return ('<div class="chart-tooltip"><span class="tooltip-xlabel">Xlabel date content here</span><span class="tooltip-neolabel">0.0811</span><span class="tooltip-gaslabel">72.10</span></div>')
+    }
+  },
+  zoom: {
+    enabled: true
+  },
+  point: {
+    r: 6,
+    focus: {
+      expand: {
+        r: 8
+      }
+    }
+  },
+  color: {
+    pattern: ['#00A62C', '#BEEB00']
+  },
+
+  onrendered: function () {
+    var $$ = this
+    var circles = $$.getCircles()
+    for (var i = 0; i < circles.length; i++) {
+      for (var j = 0; j < circles[i].length; j++) {
+        $$.getCircles(j).style('fill', '#313164')
+          .style('fill', $$.color)
+          .style('stroke-width', 2)
+      }
+    }
+  }
+
+})

@@ -36,6 +36,7 @@ defmodule Neoprice.Cache do
         if is_nil(opts[:start_day]), do: 1_500_000_000, else: opts[:start_day]
       )
       def price(), do: unquote(__MODULE__).price(__MODULE__)
+      def last_price_full(), do: unquote(__MODULE__).last_price_full(__MODULE__)
     end
   end
 
@@ -68,6 +69,10 @@ defmodule Neoprice.Cache do
 
   def price(module) do
     Cryptocompare.last_price(module.from_symbol(), module.to_symbol())
+  end
+
+  def last_price_full(module) do
+    Cryptocompare.last_price_full(module.from_symbol(), module.to_symbol())
   end
 
   defp seed(state) do

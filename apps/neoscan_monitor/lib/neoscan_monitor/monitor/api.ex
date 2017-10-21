@@ -47,6 +47,14 @@ defmodule NeoscanMonitor.Api do
     GenServer.call(NeoscanMonitor.Server, :data)
   end
 
+  def get_price do
+    GenServer.call(NeoscanMonitor.Server, :price)
+  end
+
+  def get_stats do
+    GenServer.call(NeoscanMonitor.Server, :stats)
+  end
+
   def add_block(block) do
     GenServer.cast(NeoscanMonitor.Worker, {:add_block, block})
   end

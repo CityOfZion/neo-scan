@@ -1,76 +1,93 @@
-<section class="hero transparent">
-  <!-- Hero content: will be in the left -->
-  <div class="hero-body">
-    <div class="container has-text-left">
-      <h2 class="title white-text sans-coz">
-        <%= gettext "NeoScan ALPHA" %>
-      </h2>
-      <!-- <p class="subtitle white-text sans-font">
-        Your home for all blockchain related information for NEO, GAS and NEP-5 compliant tokens
-      </p> -->
-    </div>
+
+<!-- Welcome -->
+<h1 class="content-title"><%= gettext "Welcome to NEOSCAN" %></h1>
+<p class="content-subline"><%= gettext "Your home for all blockchain related information for NEO" %></p>
+
+<!-- Search input -->
+<div class="hero-input-container">
+  <%= form_for @conn, home_path(@conn, :index), [as: :search], fn f -> %>
+  <%= text_input f, :for,placeholder: "Search for a transaction, block, hash or address...",class: "hero-input", type: "search" %>
+  <%= error_tag f, :for %>
+  <%= submit "", [class: "hero-submit-btn fa fa-search"]  %>
+  <% end %>
+</div>
+
+<!-- Jump link buttons -->
+<section id="jump-links">
+  <div class="individual-jump-link-box">
+    <p class="large-detail-text"><%= gettext "Total transactions" %></p>
+    <p class="large-number" id= "total-tx"></p>
+    <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="View all transactions"><%= gettext "View all transactions" %> <i class="fa fa-arrow-right"></i></a>
+  </div>
+  <div class="individual-jump-link-box">
+    <p class="large-detail-text"><%= gettext "Last block" %></p>
+    <p class="large-number" id= "total-blocks"></p>
+    <a href="<%= blocks_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="View all blocks"><%= gettext "View all blocks" %> <i class="fa fa-arrow-right"></i></a>
+  </div>
+  <div class="individual-jump-link-box">
+    <p class="large-detail-text"><%= gettext "Wallet addresses created" %></p>
+    <p class="large-number" id= "total-addresses"></p>
+    <a href="<%= addresses_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="View all addresses"><%= gettext "View all addresses" %> <i class="fa fa-arrow-right"></i></a>
   </div>
 </section>
 
-<section class="section transparent no-padding-top">
-  <div class="container">
-    <div class="tile is-ancestor">
-      <!-- <div class="tile is-4 is-parent">
-        <div class="tile is-child box">
-          <p class="title">Neo Market</p>
-        </div>
-      </div> -->
-      <div class="tile is-parent">
-        <div class="tile is-child box content-background white-text">
-          <ul>
-            <a href="http://cityofzion.io/dapps/1">
-              <img class="ad" src ="<%= static_path(@conn, "/images/competition.png") %>"></img>
-            </a>
-            <li class="text-center">
-              <%= gettext "The last reports from the dev community can be found" %> <a class="link" href="https://medium.com/@cityofzion"><%= gettext "here" %></a>.
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+<!-- Market graph -->
+<section id="market-graph">
+  <div class="individual-graph-box">
+    <p class="large-detail-text"><%= gettext "NEO" %></p>
+    <p class="large-number" id="neo-price-us"></p>
   </div>
-  <div class="container">
-    <div class="tile is-ancestor">
-      <!-- <div class="tile is-4 is-parent">
-        <div class="tile is-child box">
-          <p class="title">Neo Market</p>
-        </div>
-      </div> -->
-      <div class="tile is-parent">
-        <div class="tile is-child box content-background">
-          <p class=""><%= get_flash(@conn, :info) %></p>
-          <p class=""><%= get_flash(@conn, :error) %></p>
-          <div class="field">
-            <p class="control">
-              <%= form_for @conn, home_path(@conn, :index), [as: :search], fn f -> %>
-                <%= text_input f, :for,placeholder: "Block Height, Hash, Address or Transaction id",class: "input transparent white-text" %>
-                <%= error_tag f, :for %>
-              <% end %>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="individual-graph-box">
+    <p class="large-detail-text"><%= gettext "Current market cap" %></p>
+    <p class="large-number" id="mkt-cap-us"></p>
   </div>
-  <div class="container">
-    <div class="tile is-ancestor">
-      <div class="tile is-6 is-parent">
-        <div class="tile is-child box flex transparent">
-          <p class="title white-text"><%= gettext "Last Blocks" %></p>
-          <ul class="collection" id="show-blocks"></ul>
-        </div>
-      </div>
-      <div class="tile is-6 is-parent">
-        <div class="tile is-child box flex transparent">
-          <p class="title white-text"><%= gettext "Last Transactions" %></p>
-          <ul class="collection" id="show-transactions"></ul>
-        </div>
-      </div>
-    </div>
+  <div class="individual-graph-box">
+    <p class="large-detail-text"><%= gettext "24 hour change" %></p>
+    <p class="large-number large-number-positive" id="24hchange"></p>
+  </div>
+  <div class="individual-graph-box last">
+    <p class="large-detail-text"><%= gettext "24 hour volume" %></p>
+    <p class="large-number large-number-positive" id="24hvol">$47,084,900</p>
+  </div>
+  <div class="chart-container">
+    <div id="chart"></div>
+  </div>
+</section>
+
+<!-- Transactions -->
+<h1 class="content-title"><%= gettext "Opcode Attributes" %></h1>
+<section id="all-transactions-wrapper">
+
+  <div class="detail-bar">
+    <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
+    <p class="detail-type col-5-width"><%= gettext "Transaction ID" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Block" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
+  </div>
+
+  <!-- Transactions -->
+  <section id="transactions-wrapper"></section>
+
+  <div class="see-all-button-container">
+    <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-see-all" alt="See all transactions"><%= gettext "See all transactions" %> <i class="fa fa-arrow-right"></i></a>
+  </div>
+</section>
+
+<!-- Blocks -->
+<h1 class="content-title"><%= gettext "Last Blocks" %></h1>
+<section id="all-blocks-wrapper">
+
+  <div class="detail-bar">
+    <p class="detail-type detail-type-first-4-col"><%= gettext "Opcode Attributes" %></p>
+    <p class="detail-type col-3-width"><%= gettext "Size" %></p>
+    <p class="detail-type col-3-width"><%= gettext "Transactions" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Created on" %></p>
+  </div>
+
+  <!-- Blocks -->
+  <section id="blocks-wrapper"></section>
+
+  <div class="see-all-button-container">
+    <a href="<%= blocks_path(@conn, :index) %>" class="btn-primary btn-see-all" alt="See all transactions"><%= gettext "See all blocks" %> <i class="fa fa-arrow-right"></i></a>
   </div>
 </section>

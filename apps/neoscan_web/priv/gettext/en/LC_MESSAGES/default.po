@@ -238,5 +238,38 @@ msgstr ""
 msgid "Usage"
 msgstr ""
 
-msgid "Bytecode Script"
+msgid "Welcome to NEOSCAN"
+msgstr ""
+
+msgid "Your home for all blockchain related information for NEO"
+msgstr ""
+
+msgid "Total transactions"
+msgstr ""
+
+msgid "View all transactions"
+msgstr ""
+
+msgid "Last block"
+msgstr ""
+
+msgid "View all blocks"
+msgstr ""
+
+msgid "Wallet addresses created"
+msgstr ""
+
+msgid "View all addresses"
+msgstr ""
+
+msgid "24 hour change"
+msgstr ""
+
+msgid "24 hour volume"
+msgstr ""
+
+msgid "See all transactions"
+msgstr ""
+
+msgid "See all blocks"
 msgstr ""
