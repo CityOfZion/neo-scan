@@ -51,19 +51,19 @@
 						<a href="<%= home_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_home_path(@conn), do: " active" %>">Explorer</a>
 					</li>
 					<li>
-						<a href="<%= transactions_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_transactions_path(@conn), do: " active" %>">Transactions</a>
+						<a href="<%= transactions_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_transactions_path(@conn), do: " active" %>"><%= gettext "Transactions" %></a>
 					</li>
 					<li>
-						<a href="<%= addresses_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_addresses_path(@conn), do: " active" %>">Wallet Addresses</a>
+						<a href="<%= addresses_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_addresses_path(@conn), do: " active" %>"><%= gettext "Wallet Addresses" %></a>
 					</li>
 					<li>
-						<a href="<%= blocks_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_blocks_path(@conn), do: " active" %>">Blocks</a>
+						<a href="<%= blocks_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_blocks_path(@conn), do: " active" %>"><%= gettext "Blocks" %></a>
 					</li>
 					<li>
-						<a href="<%= assets_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_assets_path(@conn), do: " active" %>">Assets</a>
+						<a href="<%= assets_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_assets_path(@conn), do: " active" %>"><%= gettext "Assets" %></a>
 					</li>
 					<!-- <li>
-						<a href="<%= about_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_about_path(@conn), do: " active" %>">About</a>
+						<a href="<%= about_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_about_path(@conn), do: " active" %>"><%= gettext "About" %></a>
 					</li> -->
 				</ul>
 			</div>
@@ -81,20 +81,20 @@
 			<div class="footer-content-wrapper">
 				<div class="left-footer-information">
 					<img src="<%= static_path(@conn, "/images/NEOSCAN_Logo.svg") %>" alt="NEOSCAN Home" title="NEOSCAN Home" class="neoscan-logo-footer" width="136px" height="27px" />
-					<p class="medium-detail-text">The source code is <a href="http://opensource.org/licenses/mit-license.php" alt="View MIT License" title="View MIT License" class="large-blue-link">licensed MIT</a></li>
-					<p class="medium-detail-text">The website content is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" alt="#" title="#" class="large-blue-link">CC ANS 4.0</a></p>
-					<p class="medium-detail-text">&copy; 2017 <a href="http://cityofzion.io/" alt="Visit City of Zion" title="Visit City of Zion" class="large-blue-link">City Of Zion</a></p>
+					<p class="medium-detail-text"><%= gettext "The source code is" %> <a href="http://opensource.org/licenses/mit-license.php" alt="View MIT License" title="View MIT License" class="large-blue-link"><%= gettext "licensed" %> MIT</a></li>
+					<p class="medium-detail-text"><%= gettext "The website content is licensed" %> <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" alt="#" title="#" class="large-blue-link">CC ANS 4.0</a></p>
+					<p class="medium-detail-text">&copy; 2017 <a href="http://cityofzion.io/" alt="Visit City of Zion" title="Visit City of Zion" class="large-blue-link"><%= gettext "City Of Zion" %></a></p>
 				</div>
 
 				<div class="right-footer-information">
 					<div class="footer-link-wrapper">
-						<a href="http://slack.cityofzion.io/" alt="#" title="#" class="coz-slack">NEO Slack</a>
+						<a href="http://slack.cityofzion.io/" alt="#" title="#" class="coz-slack"><%= gettext "NEO Slack" %></a>
 					</div>
 					<div class="footer-link-wrapper">
-						<a href="https://github.com/CityOfZion" alt="#" title="#" class="coz-github">City of Zion Github</a>
+						<a href="https://github.com/CityOfZion" alt="#" title="#" class="coz-github"><%= gettext "City of Zion Github" %></a>
 					</div>
 					<div class="footer-link-wrapper">
-						<a href="<%= doc_path(@conn, :index) %>" alt="#" title="#" class="coz-api">NEOSCAN API</a>
+						<a href="<%= doc_path(@conn, :index) %>" alt="#" title="#" class="coz-api"><%= gettext "NEOSCAN API" %></a>
 					</div>
 				</div>
 			</div>

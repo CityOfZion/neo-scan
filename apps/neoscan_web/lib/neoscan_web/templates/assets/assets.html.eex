@@ -11,15 +11,15 @@
       <div class="asset-details-wrapper">
         <div class="left-column">
           <div class="left-asset-detail">
-            <p class="small-detail-text">Type</p>
+            <p class="small-detail-text"><%= gettext "Type" %></p>
             <p class="large-detail-text"><%=asset.type%></p>
           </div>
           <div class="left-asset-detail">
-            <p class="small-detail-text">Supply</p>
+            <p class="small-detail-text"><%= gettext "Supply" %></p>
             <p class="large-detail-text"><%=asset.amount%></p>
           </div>
           <div class="left-asset-detail">
-            <p class="small-detail-text">Registered on</p>
+            <p class="small-detail-text"><%= gettext "Registered on" %></p>
             <p class="small-detail-text bold-text remove-margin-bottom">
               <%=
                 {:ok, date_time} = DateTime.from_unix(asset.time, :second)
@@ -30,21 +30,21 @@
         </div>
         <div class="right-column">
           <div class="right-asset-detail">
-            <p class="small-detail-text">Addresses</p>
+            <p class="small-detail-text"><%= gettext "Addresses" %></p>
             <p class="large-detail-text"><%=asset.stats.addresses%></p>
           </div>
           <div class="right-asset-detail">
-            <p class="small-detail-text">Issued</p>
+            <p class="small-detail-text"><%= gettext "Issued" %></p>
             <p class="large-detail-text"><%=asset.issued%></p>
           </div>
           <div class="right-asset-detail">
-            <p class="small-detail-text">Transactions</p>
+            <p class="small-detail-text"><%= gettext "Transactions" %></p>
             <p class="large-detail-text"><%=asset.stats.transactions%></p>
           </div>
         </div>
       </div>
       <div class="button-wrapper">
-        <a href="<%= asset_path(@conn, :index, asset.txid)%>" alt="Find out more" title="Find out more" class="btn-primary">More details</a>
+        <a href="<%= asset_path(@conn, :index, asset.txid)%>" alt="Find out more" title="Find out more" class="btn-primary"><%= gettext "More details" %></a>
       </div>
     </li>
   <%end%>

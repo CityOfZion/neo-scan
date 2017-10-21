@@ -1,6 +1,6 @@
 <h1 class="content-title">Transaction Information</h1>
 <p class="large-detail-text"><span class="fa fa-cube"></span><span class="bold-text"><%= get_type(@transaction.type) %></span> <span class="green-bar">|</span> <span class="bold-text">Hash:</span> <span class="eggshell-blue-text"><%= @transaction.txid %></span></p>
-<a href="<%= transactions_path(@conn, :index) %>" alt="Back to all transactions" title="Back to all transactions" class="back-link">Back to all transactions</a>
+<a href="<%= transactions_path(@conn, :index) %>" alt="Back to all transactions" title="Back to all transactions" class="back-link"><%= gettext "Back to all transactions" %></a>
 
 <section id="transaction-address-information" class="corner-box">
 
@@ -8,7 +8,7 @@
 	<div class="transaction-panel">
 		<div class="sent-from-wrapper">
       <%= if @transaction.type == "ClaimTransaction" do %>
-        <p class="large-detail-text">Claimed from</p>
+        <p class="large-detail-text"><%= gettext "Claimed from" %></p>
         <%= for input <- @transaction.claims do %>
           <div class="individual-transaction">
             <a href="<%= address_path(@conn, :index, input.address_hash)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= input.address_hash %></a>
@@ -17,7 +17,7 @@
         <% end %>
       <% end %>
       <%= if @transaction.type == "ContractTransaction" do %>
-  			<p class="large-detail-text">Sent from</p>
+  			<p class="large-detail-text"><%= gettext "Sent from" %></p>
         <%= for input <- @transaction.vin do %>
     			<div class="individual-transaction">
     				<a href="<%= address_path(@conn, :index, input.address_hash)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= input.address_hash %></a>
@@ -28,7 +28,7 @@
 		</div>
     <%= if @transaction.type == "ContractTransaction" or @transaction.type == "ClaimTransaction" or @transaction.type == "IssueTransaction" do %>
       <div class="sent-to-wrapper">
-    	  <p class="large-detail-text">Sent to</p>
+    	  <p class="large-detail-text"><%= gettext "Sent to" %></p>
         <%= for vout <- @transaction.vouts do %>
     			<div class="individual-transaction">
     				<a href="<%= address_path(@conn, :index, vout.address_hash)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vout.address_hash %></a>
@@ -39,7 +39,7 @@
     <% end %>
     <%= if @transaction.type == "RegisterTransaction" do %>
       <div class="sent-to-wrapper">
-        <p class="large-detail-text">Registered</p>
+        <p class="large-detail-text"><%= gettext "Registered" %></p>
         <div class="individual-transaction">
           <a href="<%= address_path(@conn, :index, @transaction.asset.admin)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= @transaction.asset.admin %></a>
           <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(@transaction.asset.amount) %> <%= Api.get_asset_name(@transaction.txid) %></p>
@@ -51,24 +51,24 @@
 	<!-- Extra information list -->
 	<ul id="extra-transaction-information">
 		<li class="border-right border-bottom">
-			<p class="small-detail-text">Time</p>
-			<p class="large-detail-text"><%= compare_time_and_get_minutes(@transaction.time) %> minutes ago</p>
+			<p class="small-detail-text"><%= gettext "Time" %></p>
+			<p class="large-detail-text"><%= compare_time_and_get_minutes(@transaction.time) %> <%= gettext "minutes ago" %></p>
 		</li>
 		<li class="border-right border-bottom">
-			<p class="small-detail-text">Network Fee</p>
+			<p class="small-detail-text"><%= gettext "Network Fee" %></p>
 			<p class="large-detail-text"><%= @transaction.net_fee %></p>
 		</li>
 		<li class="border-bottom">
-			<p class="small-detail-text">System Fee</p>
+			<p class="small-detail-text"><%= gettext "System Fee" %></p>
 			<p class="large-detail-text"><%= @transaction.sys_fee %></p>
 		</li>
 		<li class="border-right">
-			<p class="small-detail-text">Included in Block</p>
+			<p class="small-detail-text"><%= gettext "Included in Block" %></p>
 			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash, 1) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%= @transaction.block_height %></a></p>
 		</li>
 		<li>
-			<p class="small-detail-text">Size</p>
-			<p class="large-detail-text"><%= @transaction.size %> bytes</p>
+			<p class="small-detail-text"><%= gettext "Size" %></p>
+			<p class="large-detail-text"><%= @transaction.size %> <%= gettext "bytes" %></p>
 		</li>
 	</ul>
 
@@ -76,13 +76,13 @@
 
 <ul id="bytecode-invocation-list">
 	<li class="corner-box remove-margin-left">
-		<h2>Bytecode Invocation Script</h2>
+		<h2><%= gettext "Bytecode Invocation Script" %></h2>
 		<div class="corner-box">
 			<p class="small-detail-text"><%= get_inv(@transaction.scripts) %></p>
 		</div>
 	</li>
 	<li class="corner-box">
-		<h2>Bytecode Verification Script</h2>
+		<h2><%= gettext "Bytecode Verification Script" %></h2>
 		<div class="corner-box">
 			<p class="small-detail-text"><%= get_ver(@transaction.scripts) %></p>
 		</div>
@@ -90,10 +90,10 @@
 </ul>
 
 <%= if @transaction.attributes != [] do %>
-	<ul id="bytecode-invocation-list"> Bytecode Attributes
+	<ul id="bytecode-invocation-list"> <%= gettext "Bytecode Attributes" %>
 		<%= for att <- @transaction.attributes do %>
 			<li class="corner-box remove-margin-left">
-				<h2>Usage <%=att["usage"]%></h2>
+				<h2><%= gettext "Usage" %> <%=att["usage"]%></h2>
 				<div class="corner-box">
 					<p class="small-detail-text"><%= att["script"] %></p>
 				</div>
@@ -105,7 +105,7 @@
 <%= if @transaction.script != nil do %>
 	<ul id="bytecode-invocation-list">
 		<li class="corner-box remove-margin-left">
-			<h2>Bytecode Script</h2>
+			<h2><%= gettext "Bytecode Script" %></h2>
 			<div class="corner-box">
 				<p class="small-detail-text"><%= @transaction.script %></p>
 			</div>
@@ -115,13 +115,13 @@
 
 <ul id="bytecode-invocation-list">
 	<li class="corner-box remove-margin-left">
-		<h2>Opcode Invocation Script</h2>
+		<h2><%= gettext "Opcode Invocation Script" %></h2>
 		<div class="corner-box">
 			<p class="small-detail-text"><%= parse_invocation(@transaction.scripts) %></p>
 		</div>
 	</li>
 	<li class="corner-box">
-		<h2>Opcode Verification Script</h2>
+		<h2><%= gettext "Opcode Verification Script" %></h2>
 		<div class="corner-box">
 			<p class="small-detail-text"><%= parse_verification(@transaction.scripts) %></p>
 		</div>
@@ -129,10 +129,10 @@
 </ul>
 
 <%= if @transaction.attributes != [] do %>
-	<ul id="bytecode-invocation-list"> Opcode Attributes
+	<ul id="bytecode-invocation-list"> <%= gettext "Opcode Attributes" %>
 		<%= for att <- @transaction.attributes do %>
 			<li class="corner-box remove-margin-left">
-				<h2>Usage <%=att["usage"]%></h2>
+				<h2><%= gettext "Usage" %> <%=att["usage"]%></h2>
 				<div class="corner-box">
 					<p class="small-detail-text"><%= Disassembler.parse_script(att["script"]) %></p>
 				</div>
@@ -144,7 +144,7 @@
 <%= if @transaction.script != nil do %>
 	<ul id="bytecode-invocation-list">
 		<li class="corner-box remove-margin-left">
-			<h2>Opcode Script</h2>
+			<h2><%= gettext "Opcode Script" %></h2>
 			<div class="corner-box">
 				<p class="small-detail-text"><%= Disassembler.parse_script(@transaction.script) %></p>
 			</div>

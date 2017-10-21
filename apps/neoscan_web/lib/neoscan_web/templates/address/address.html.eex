@@ -8,15 +8,15 @@
         <%= if @address.histories != [] do %>
         <ul>
             <p>
-              Transactions
-            </p>
+              <%= gettext "Transactions" %>
+                  </p>
             <%= for  tx <- @address.histories do %>
               <li>
                 <a class="link" href="<%=transaction_path(@conn, :index, tx.txid )%>">
                   <%=tx.txid%>
                 </a>
                 <%= if @address.claimed != nil && Enum.any?(@address.claimed, fn %{:txids => txid} -> Enum.member?(txid, tx.txid) == true end) do %>
-                  Claimed
+                  <%= gettext "Claimed" %>
                 <%end%>
               </li>
             <%end%>
@@ -26,7 +26,7 @@
         <%= if @address.balance != nil do %>
         <ul>
             <p>
-              Balance
+              <%= gettext "Balance" %>
             </p>
             <%= for {asset, %{"amount" => amount}} <- Enum.to_list(@address.balance) do %>
               <li>
@@ -34,7 +34,7 @@
               </li>
             <%end%>
             <li>
-              Unclaimed <%=Neoscan.Claims.Unclaimed.calculate_bonus(@address.id)%> GAS
+              <%= gettext "Unclaimed" %> <%=Neoscan.Claims.Unclaimed.calculate_bonus(@address.id)%> GAS
             </li>
         </ul>
         <%end%>
