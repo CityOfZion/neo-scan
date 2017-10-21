@@ -1,9 +1,11 @@
 defmodule NeoscanWeb.Router do
   use NeoscanWeb, :router
+  alias NeoscanWeb.Plugs.Locale
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug Locale
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers

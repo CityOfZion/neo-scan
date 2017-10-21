@@ -65,7 +65,7 @@ msgid "Transaction"
 msgstr "Transaction"
 
 msgid "Wallet Addresses"
-msgstr "Adresses de portefeuille"
+msgstr "Portefeuille"
 
 msgid "Token"
 msgstr "Token"
@@ -273,3 +273,6 @@ msgstr "Voir toutes les transactions"
 
 msgid "See all blocks"
 msgstr "Voir tous les blocs"
+
+msgid "Current market cap"
+msgstr "Capitalisation"
