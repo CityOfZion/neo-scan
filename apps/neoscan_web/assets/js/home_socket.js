@@ -33,5 +33,7 @@ export default class HomeSocket {
     for (let k in from.transactions) {
       this.payload.transactions[k] = from.transactions[k]
     }
+    this.payload.price = from.price
+    this.payload.stats = from.stats
   }
 }

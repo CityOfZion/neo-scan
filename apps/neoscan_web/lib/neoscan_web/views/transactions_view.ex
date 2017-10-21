@@ -17,6 +17,8 @@ defmodule NeoscanWeb.TransactionsView do
         'invocation-transaction'
       type == "PublishTransaction" ->
         'publish-transaction'
+      type == "MinerTransaction" ->
+        'miner-transaction'
     end
   end
 
