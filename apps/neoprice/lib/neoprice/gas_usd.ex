@@ -10,7 +10,7 @@ defmodule Neoprice.GasUsd do
       to_symbol: "USD",
       config: [
         %Config{
-          cache_name: :GASUSD_day,
+          cache_name: :GASUSD_all,
           definition: :day,
           duration: :start,
           aggregation: 1
@@ -40,7 +40,7 @@ defmodule Neoprice.GasUsd do
           aggregation: 1
         }
       ]
-  def get_day(), do: :ets.tab2list(:GASUSD_day) |> Map.new
+  def get_all(), do: :ets.tab2list(:GASUSD_all) |> Map.new
   def get_3_month(), do: :ets.tab2list(:GASUSD_3_m) |> Map.new
   def get_1_month(), do: :ets.tab2list(:GASUSD_1_m) |> Map.new
   def get_1_week(), do: :ets.tab2list(:GASUSD_1_w) |> Map.new
