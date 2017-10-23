@@ -1,3 +1,81 @@
 defmodule NeoscanWeb.AddressView do
   use NeoscanWeb, :view
+  alias NeoscanMonitor.Api
+  alias Neoscan.Helpers
+
+
+  def get_NEO_balance(nil) do
+   0
+  end
+  def get_NEO_balance(balance) do
+    balance
+    |> Map.to_list
+    |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
+         Api.get_asset_name(asset) == "NEO"
+       end)
+    |> Enum.reduce(0, fn ({_asset, %{"amount" => amount}}, _acc) -> amount end)
+    |> Helpers.round_or_not
+  end
+
+  def get_GAS_balance(nil) do
+   raw('<p class="balance-amount">0<span>#{0}</span></p>')
+  end
+  def get_GAS_balance(balance) do
+    {int, div} = balance
+                  |> Map.to_list
+                  |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
+                       Api.get_asset_name(asset) == "GAS"
+                     end)
+                  |> Enum.reduce(0.0, fn ({_asset, %{"amount" => amount}}, acc) ->
+                       amount + acc
+                     end)
+                  |> Float.to_string
+                  |> Integer.parse
+
+    raw('<p class="balance-amount">#{int}<span>#{div}</span></p>')
+  end
+
+
+  def get_class(type) do
+    cond do
+      type == "ContractTransaction" ->
+        'neo-transaction'
+      type == "ClaimTransaction" ->
+        'gas-transaction'
+      type == "IssueTransaction" ->
+        'issue-transaction'
+      type == "RegisterTransaction" ->
+        'register-transaction'
+      type == "InvocationTransaction" ->
+        'invocation-transaction'
+      type == "PublishTransaction" ->
+        'publish-transaction'
+      type == "MinerTransaction" ->
+        'miner-transaction'
+    end
+  end
+
+
+  def get_current_min_qtd(page, total) do
+    cond do
+      total < 15 ->
+        0
+      true ->
+        (String.to_integer(page)-1) * 15 + 1
+    end
+  end
+
+  def get_current_max_qtd(page, total) do
+    cond do
+      total < 15 ->
+        total
+      true ->
+        cond do
+          String.to_integer(page) * 15 > total ->
+            total
+          true ->
+            String.to_integer(page) * 15
+        end  
+    end
+  end
 end

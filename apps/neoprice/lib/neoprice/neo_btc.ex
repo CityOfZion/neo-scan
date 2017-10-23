@@ -40,7 +40,7 @@ defmodule Neoprice.NeoBtc do
           aggregation: 1
         }
       ]
-  def get_day(), do: :ets.tab2list(:NEOBTC_all) |> Map.new
+  def get_all(), do: :ets.tab2list(:NEOBTC_all) |> Map.new
   def get_3_month(), do: :ets.tab2list(:NEOBTC_3_m) |> Map.new
   def get_1_month(), do: :ets.tab2list(:NEOBTC_1_m) |> Map.new
   def get_1_week(), do: :ets.tab2list(:NEOBTC_1_w) |> Map.new

@@ -3,7 +3,12 @@ defmodule NeoscanWeb.BlockController do
 
   alias Neoscan.Blocks
 
-  def index(conn, %{"hash" => block_hash, "page" => page}) do
+  def index(conn, %{"hash" => block_hash}) do
+    {block, transactions} = Blocks.paginate_transactions(block_hash, 1)
+    route(block, transactions, conn)
+  end
+
+  def go_to_page(conn, %{"hash" => block_hash, "page" => page}) do
     {block, transactions} = Blocks.paginate_transactions(block_hash, page)
     route(block, transactions, conn)
   end

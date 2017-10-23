@@ -27,12 +27,14 @@ defmodule NeoscanWeb.Router do
     get "/addresses/1", AddressesController, :index
     get "/addresses/:page", AddressesController, :go_to_page
     get "/address/:address", AddressController, :index
+    get "/address/:address/:page", AddressController, :go_to_page
     get "/transactions/1", TransactionsController, :index
     get "/transactions/:page", TransactionsController, :go_to_page
     get "/transaction/:txid", TransactionController, :index
     get "/blocks/1", BlocksController, :index
     get "/blocks/:page", BlocksController, :go_to_page
-    get "/block/:hash/:page", BlockController, :index
+    get "/block/:hash", BlockController, :index
+    get "/block/:hash/:page", BlockController, :go_to_page
     get "/about", AboutController, :index
     get "/price/:from/:to/:graph", PriceController, :index
     get "/", HomeController, :index

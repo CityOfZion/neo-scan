@@ -21,7 +21,7 @@
         <div class="full-width-bar wallet-address">
           <div class="information-wrapper">
             <p class="fa fa-key medium-detail-text"></p>
-            <a href="<%= address_path(@conn, :index, address.address)%>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%= address.address %></a></a>
+            <a href="<%= address_path(@conn, :go_to_page, address.address, 1)%>" alt="View address" title="View address" class="large-blue-link col-4-width"><%= address.address %></a></a>
             <p class="medium-detail-text col-2-width">
               <%=
                 {:ok, date_time} = DateTime.from_unix(address.time, :second)

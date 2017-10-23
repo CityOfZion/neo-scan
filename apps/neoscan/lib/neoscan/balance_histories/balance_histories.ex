@@ -4,6 +4,8 @@ defmodule Neoscan.BalanceHistories do
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.BalanceHistories.History
+  alias Neoscan.Transactions
+  alias Neoscan.Transactions.Transaction
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking address history changes.
@@ -42,6 +44,42 @@ defmodule Neoscan.BalanceHistories do
     query = from h in History,
              where: h.address_hash == ^address_hash
     Repo.aggregate(query, :count, :id)
+  end
+
+  def paginate_history_transactions(histories, pag) do
+
+    lookups = Enum.map(histories, fn %{:txid => txid} -> txid end)
+
+    transaction_query = from e in Transaction,
+                        order_by: [
+                          desc: e.block_height
+                        ],
+                        where: e.txid in ^lookups,
+                        select: %{
+                         :id => e.id,
+                         :type => e.type,
+                         :time => e.time,
+                         :txid => e.txid,
+                         :block_height => e.block_height,
+                         :block_hash => e.block_hash,
+                         :vin => e.vin,
+                         :claims => e.claims,
+                         :sys_fee => e.sys_fee,
+                         :net_fee => e.net_fee,
+                         :size => e.size,
+                        },
+                        limit: 15
+
+    transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
+    vouts = Enum.map(transactions, fn tx -> tx.id end)
+              |> Transactions.get_transactions_vouts
+
+    transactions
+    |> Enum.map(fn tx ->
+         Map.put(tx, :vouts, Enum.filter(vouts, fn vout ->
+           vout.transaction_id == tx.id
+         end))
+       end)
   end
 
 end

@@ -20,7 +20,7 @@
         <div class="full-width-bar block-number">
           <div class="information-wrapper">
             <p class="fa fa-signal medium-detail-text"></p>
-            <a href="<%= block_path( @conn, :index, block.hash, 1) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%=block.index%></a>
+            <a href="<%= block_path( @conn, :index, block.hash) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%=block.index%></a>
             <p class="medium-detail-text col-3-width"><%=block.size%> <%= gettext "bytes" %></p>
             <p class="medium-detail-text col-3-width"><%=block.tx_count%></p>
             <p class="medium-detail-text col-2-width">

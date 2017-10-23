@@ -20,14 +20,13 @@ defmodule NeoscanWeb.Plugs.Locale do
       nil <- session_locale(conn),
       nil <- req_header_locale(conn)
     do
-        nil
-      else
-        lang -> validate(lang)
-      end
+      "en"
+    else
+      lang -> validate(lang)
     end
+  end
 
   defp params_locale(conn) do
-    IO.inspect(conn.params)
     conn.params["locale"]
   end
 

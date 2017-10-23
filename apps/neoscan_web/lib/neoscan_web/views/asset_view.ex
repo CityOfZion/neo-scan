@@ -27,6 +27,9 @@ defmodule NeoscanWeb.AssetView do
     int
   end
 
+  def get_NEO_balance(nil) do
+   0
+  end
   def get_NEO_balance(balance) do
     balance
     |> Map.to_list
@@ -37,6 +40,9 @@ defmodule NeoscanWeb.AssetView do
     |> Helpers.round_or_not
   end
 
+  def get_GAS_balance(nil) do
+   raw('<p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span>GAS: 0.<span class="divisible-amount">#{0}</span></p>')
+  end
   def get_GAS_balance(balance) do
     {int, div} = balance
                   |> Map.to_list
@@ -76,5 +82,5 @@ defmodule NeoscanWeb.AssetView do
       value
     end
   end
-  
+
 end
