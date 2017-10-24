@@ -15,7 +15,13 @@ defmodule Neoscan.Claims.Unclaimed do
     get_unclaimed_vouts(address_id)
     |> add_end_height
     |> route_if_there_is_unclaimed
-    |> Helpers.round_or_not
+  end
+
+  #calculate unclaimed gas bonus
+  def calculate_vouts_bonus(address_id) do
+    get_unclaimed_vouts(address_id)
+    |> filter_end_height
+    |> route_if_there_is_unclaimed_but_dont_add
   end
 
   #proceed calculus if there are unclaimed results, otherwise return 0
@@ -30,6 +36,23 @@ defmodule Neoscan.Claims.Unclaimed do
       unclaimed,
       0,
       fn (vout, acc) -> acc + compute_vout_bonus(vout, blocks_with_gas) end
+    )
+  end
+
+  #proceed calculus if there are unclaimed results, otherwise return 0
+  def route_if_there_is_unclaimed_but_dont_add([]) do
+    []
+  end
+  def route_if_there_is_unclaimed_but_dont_add(unclaimed) do
+    blocks_with_gas = get_unclaimed_block_range(unclaimed)
+                      |> get_blocks_gas
+
+    Enum.map(
+      unclaimed,
+      fn %{:value => value} = vout -> Map.merge(vout, %{
+          :unclaimed => compute_vout_bonus(vout, blocks_with_gas),
+          :value => Helpers.round_or_not(value),
+        }) end
     )
   end
 
@@ -49,7 +72,9 @@ defmodule Neoscan.Claims.Unclaimed do
                 )
                 |> Enum.reduce(0, fn (%{:gas => gas}, acc) -> acc + gas end)
 
+
     total_gas * value / total_neo()
+    |> Helpers.round_or_not
   end
 
   #get all unclaimed transaction vouts
@@ -68,6 +93,14 @@ defmodule Neoscan.Claims.Unclaimed do
       unclaimed_vouts,
       fn %{:end_height => height} = vout ->
         Map.put(vout, :end_height, check_end_height(height)) end
+    )
+  end
+
+  def filter_end_height(unclaimed_vouts) do
+    Enum.filter(
+      unclaimed_vouts,
+      fn %{:end_height => height} ->
+        height != nil end
     )
   end
 

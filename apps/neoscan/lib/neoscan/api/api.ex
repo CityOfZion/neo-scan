@@ -124,6 +124,45 @@ defmodule Neoscan.Api do
   end
 
   @doc """
+  Returns the claimed transactions for an address, from its `hash_string`.
+
+  ## Examples
+
+      /api/main_net/v1/get_claimable/{hash_string}
+      {
+        "claimable": [
+          {
+            "txid": "tx_id_string",
+            "asset": "name_string",
+            "amount": "float",
+          },
+          ...
+        ],
+        "address": "hash_string"
+      }
+
+  """
+  def get_claimable(hash) do
+    query = from e in Address,
+                 where: e.address == ^hash,
+                 select: %{
+                   :address => e.address,
+                   :id => e.id
+                 }
+
+    result = case Repo.all(query)
+                  |> List.first do
+      nil -> %{:address => "not found", :claimable => nil}
+
+      %{} = address ->
+        Map.put(address, :claimable, Unclaimed.calculate_vouts_bonus(address.id))
+        |> Map.delete(:id)
+    end
+
+    result
+  end
+
+  @doc """
   Returns the address model from its `hash_string`
 
   ## Examples

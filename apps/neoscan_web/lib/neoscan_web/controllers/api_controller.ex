@@ -13,6 +13,11 @@ defmodule NeoscanWeb.ApiController do
     json(conn, claimed)
   end
 
+  def get_claimable(conn, %{"hash" => hash}) do
+    claimable = Api.get_claimable(hash)
+    json(conn, claimable)
+  end
+
   def get_address(conn, %{"hash" => hash}) do
     address = Api.get_address(hash)
     json(conn, address)
