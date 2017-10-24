@@ -15,8 +15,11 @@ defmodule Neoscan.Api do
   alias Neoscan.ChainAssets.Asset
   alias Neoscan.Blocks.Block
   alias Neoscan.Blocks
+  alias Neoscan.Vouts
   alias Neoscan.Vouts.Vout
   alias NeoscanMonitor.Api
+  alias Neoscan.Helpers
+  alias Neoscan.Claims.Claim
 
   #sanitize struct
   defimpl Poison.Encoder, for: Any do
@@ -63,7 +66,7 @@ defmodule Neoscan.Api do
       nil -> %{:address => "not found", :balance => nil}
 
       %{} = address ->
-        new_balance = filter_balance(address.balance)
+        new_balance = filter_balance(address.address, address.balance)
         Map.put(address, :balance, new_balance)
     end
 
@@ -158,11 +161,16 @@ defmodule Neoscan.Api do
                        balance: h.balance,
                        block_height: h.block_height,
                      }
+    claim_query = from h in Claim,
+                    select: %{
+                      txids: h.txids
+                    }
 
     query = from e in Address,
                  where: e.address == ^hash,
                  preload: [
-                   histories: ^his_query
+                   histories: ^his_query,
+                   claimed: ^claim_query,
                  ],
                  select: e
 
@@ -177,7 +185,7 @@ defmodule Neoscan.Api do
         }
 
       %{} = address ->
-        new_balance = filter_balance(address.balance)
+        new_balance = filter_balance(address.address, address.balance)
 
         new_tx = Enum.map(
           address.histories,
@@ -211,13 +219,26 @@ defmodule Neoscan.Api do
     result
   end
 
-  defp filter_balance(balance) do
+  defp filter_balance(address, balance) do
     Map.to_list(balance)
     |> Enum.map(
          fn {_as, %{"asset" => asset, "amount" => amount}} ->
            %{
              "asset" => ChainAssets.get_asset_name_by_hash(asset),
-             "amount" => amount
+             "amount" => Helpers.round_or_not(amount),
+             "unspent" => Vouts.get_unspent_vouts_for_address_by_asset(address, asset)
+           }
+         end
+       )
+  end
+
+  defp filter_balance( balance) do
+    Map.to_list(balance)
+    |> Enum.map(
+         fn {_as, %{"asset" => asset, "amount" => amount}} ->
+           %{
+             "asset" => ChainAssets.get_asset_name_by_hash(asset),
+             "amount" => Helpers.round_or_not(amount)
            }
          end
        )

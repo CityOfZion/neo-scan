@@ -193,4 +193,14 @@ defmodule Neoscan.Vouts do
     }
   end
 
+  #get unspent vouts for an address for an specific asset
+  def get_unspent_vouts_for_address_by_asset(address, asset) do
+    query = from v in Vout,
+            where: v.address_hash == ^address and v.asset == ^asset and is_nil(v.end_height),
+            select: map(v, [:txid, :value])
+
+    Repo.all(query)
+    |> Enum.map(fn %{:value => value} = vout -> Map.put(vout, :value, Helpers.round_or_not(value)) end)
+  end
+
 end

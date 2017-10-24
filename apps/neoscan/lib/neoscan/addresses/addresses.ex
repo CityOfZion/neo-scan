@@ -164,10 +164,8 @@ defmodule Neoscan.Addresses do
     query = from e in Address,
                  where: e.address == ^hash,
                  preload: [
-                   histories: ^his_query
-                 ],
-                 preload: [
-                   claimed: ^claim_query
+                   histories: ^his_query,
+                   claimed: ^claim_query,
                  ],
                  select: e
     #%{:address => e.address, :tx_ids => e.histories,
