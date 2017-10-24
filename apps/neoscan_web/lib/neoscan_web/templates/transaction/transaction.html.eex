@@ -49,7 +49,7 @@
 	</div>
 
 	<!-- Extra information list -->
-	<ul id="extra-transaction-information">
+	<ul id="extra-information">
 		<li class="border-right border-bottom">
 			<p class="small-detail-text"><%= gettext "Time" %></p>
 			<p class="large-detail-text"><%= compare_time_and_get_minutes(@transaction.time) %> <%= gettext "minutes ago" %></p>

@@ -38,7 +38,7 @@
                  aria-hidden="false">
               <div class="tab-content-container">
                 <div class="chart-container">
-                    <div id="gas-chart"></div>
+                    <div id="gasChart"></div>
                 </div>
               </div>
           </div>
@@ -59,7 +59,7 @@
                aria-hidden="true">
             <div class="tab-content-container">
               <div class="chart-container">
-                  <div id="neo-chart"></div>
+                  <div id="neoChart"></div>
               </div>
             </div>
           </div>
