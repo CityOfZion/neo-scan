@@ -16,8 +16,56 @@
     <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i> Gas balance</p>
     <%= get_GAS_balance(@address.balance) %>
   </div>
-  <div class="chart-container">
-      <div id="address-chart"></div>
+
+
+  <div class="tab-container">
+    <ul class="tabs" role="tablist">
+      <p class="tab-label">
+        Last 25 transactions
+      </p>
+      <li>
+          <input type="radio" name="tabs" id="tab1" checked />
+          <label for="tab1"
+                 role="tab"
+                 aria-selected="true"
+                 aria-controls="panel1"
+                 tabindex="0">GAS</label>
+
+            <div id="tab-content1"
+                 class="tab-content"
+                 role="tabpanel"
+                 aria-labelledby="description"
+                 aria-hidden="false">
+              <div class="tab-content-container">
+                <div class="chart-container">
+                    <div id="gas-chart"></div>
+                </div>
+              </div>
+          </div>
+      </li>
+
+      <li>
+          <input type="radio" name="tabs" id="tab2" />
+          <label for="tab2"
+                 role="tab"
+                 aria-selected="false"
+                 aria-controls="panel2"
+                 tabindex="0">Neo</label>
+          <div class="tab-content-container">
+          <div id="tab-content2"
+               class="tab-content"
+               role="tabpanel"
+               aria-labelledby="specification"
+               aria-hidden="true">
+            <div class="tab-content-container">
+              <div class="chart-container">
+                  <div id="neo-chart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
   </div>
 </section>
 
@@ -117,6 +165,13 @@
 
   <p  class="number-counter">Transactions <%= get_current_min_qtd(@page, length(@address.histories)) %> to <%= get_current_max_qtd(@page, length(@address.histories)) %></p>
   <div class="see-all-button-container">
-      <a href="<%= address_path(@conn, :go_to_page, @address.address, 2)%>" class="btn-primary btn-see-all" alt="See all transactions">Load more transactions <i class="fa fa-arrow-down"></i></a>
+    <div class="btn-group">
+      <%= if @page != "1" do %>
+        <%= get_previous_page(@conn, @address.address, @page) %>
+      <% end %>
+      <%= if check_last(@page, length(@address.histories)) do %>
+        <%= get_next_page(@conn, @address.address, @page) %>
+      <% end %>
+    </div>
   </div>
 </section>

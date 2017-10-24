@@ -102,6 +102,18 @@ window.onload = function () {
       document.getElementById('mkt-cap-us').innerHTML = '$' + home.payload.price.neo.usd.MKTCAP
       document.getElementById('24hvol').innerHTML = '$' + home.payload.price.neo.usd.VOLUME24HOUR.toFixed(0)
       document.getElementById('24hchange').innerHTML = home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) +'%'
+
+      if (home.payload.price.neo.usd.VOLUME24HOUR.toFixed(0) > 0) {
+        document.getElementById('24hvol').setAttribute('class', 'large-number large-number-positive')
+      } else {
+        document.getElementById('24hvol').setAttribute('class', 'large-number large-number-negative')
+      }
+
+      if (home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) > 0) {
+        document.getElementById('24hchange').setAttribute('class', 'large-number large-number-positive')
+      } else {
+        document.getElementById('24hchange').setAttribute('class', 'large-number large-number-negative')
+      }
     }, 500)
     home.connect()
   }
@@ -125,21 +137,22 @@ for (i = 0; i < acc.length; i++) {
 
 var chart = c3.generate({
   data: {
+    x: 'x',
     columns: [
-      ['GAS', 60, 63, 66, 69, 78, 82],
-            ['NEO', 69, 72, 75, 84, 66, 90]
-    ],
-    axes: {
-      GAS: 'y',
-      NEO: 'y2'
-    }
+      ['x', '02-11-17', '03-11-17', '04-11-17', '05-11-17', '06-11-17', '07-11-17', '08-11-17', '09-11-17', '10-11-17', '11-11-17', '12-11-17', '13-11-17', '14-11-17', '15-11-17', '16-11-17', '17-11-17', '18-11-17', '19-11-17', '20-11-17', '21-11-17', '22-11-17', '23-11-17', '24-11-17', '25-11-17', '26-11-17', '27-11-17'],
+      ['NEO', 69, 72, 75, 84, 66, 90, 87, 86, 63, 68, 72, 75, 81, 90, 92, 99, 82, 93, 77, 71, 69, 82, 88, 94, 102]
+    ]
   },
   axis: {
-    y2: {
-      show: true,
-      padding: {
-        top: 150,
-        bottom: 150
+    x: {
+      height: 75,
+      type: 'timeseries',
+      tick: {
+        culling: false,
+        count: 25,
+        rotate: -65,
+        format: '%y - %m - %d',
+        fit: true
       }
     }
   },
@@ -169,19 +182,17 @@ var chart = c3.generate({
     }
   },
   color: {
-    pattern: ['#00A62C', '#BEEB00']
+    pattern: ['#BEEB00']
   },
-
   onrendered: function () {
     var $$ = this
     var circles = $$.getCircles()
     for (var i = 0; i < circles.length; i++) {
       for (var j = 0; j < circles[i].length; j++) {
         $$.getCircles(j).style('fill', '#313164')
-          .style('fill', $$.color)
-          .style('stroke-width', 2)
+            .style('fill', $$.color)
+            .style('stroke-width', 2)
       }
     }
   }
-
 })

@@ -29,6 +29,7 @@ defmodule NeoscanWeb.AddressView do
                   |> Enum.reduce(0.0, fn ({_asset, %{"amount" => amount}}, acc) ->
                        amount + acc
                      end)
+                  |> Float.round(8)
                   |> Float.to_string
                   |> Integer.parse
 
@@ -75,7 +76,41 @@ defmodule NeoscanWeb.AddressView do
             total
           true ->
             String.to_integer(page) * 15
-        end  
+        end
     end
   end
+
+
+  def get_previous_page(conn, address, page) do
+    int = page
+          |> String.to_integer
+
+    num = int - 1
+    |> Integer.to_string
+
+    raw('<a href="#{address_path(conn, :go_to_page, address, num)}" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>')
+  end
+
+  def get_next_page(conn, address, page) do
+    int = page
+          |> String.to_integer
+
+    num = int + 1
+    |> Integer.to_string
+
+    raw('<a href="#{address_path(conn, :go_to_page, address, num)}" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>')
+  end
+
+  def check_last(page, total) do
+    int = page
+          |> String.to_integer
+
+    cond do
+      int * 15 < total -> 
+        true
+      true ->
+        false
+    end
+  end
+
 end

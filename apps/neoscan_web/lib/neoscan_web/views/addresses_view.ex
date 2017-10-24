@@ -61,4 +61,69 @@ defmodule NeoscanWeb.AddressesView do
     raw('<p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span>GAS: #{int}<span class="divisible-amount">#{div}</span></p>')
   end
 
+  def get_current_min_qtd(page) do
+    %{:total_addresses => total } = Api.get_stats
+    cond do
+      total < 15 ->
+        0
+      true ->
+        (String.to_integer(page)-1) * 15 + 1
+    end
+  end
+
+  def get_current_max_qtd(page) do
+    %{:total_addresses => total } = Api.get_stats
+    cond do
+      total < 15 ->
+        total
+      true ->
+        cond do
+          String.to_integer(page) * 15 > total ->
+            total
+          true ->
+            String.to_integer(page) * 15
+        end
+    end
+  end
+
+
+  def get_previous_page(conn, page) do
+    int = page
+          |> String.to_integer
+
+    num = int - 1
+    |> Integer.to_string
+
+    raw('<a href="#{addresses_path(conn, :go_to_page, num)}" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>')
+  end
+
+  def get_next_page(conn, page) do
+    int = page
+          |> String.to_integer
+
+    num = int + 1
+    |> Integer.to_string
+
+    raw('<a href="#{addresses_path(conn, :go_to_page, num)}" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>')
+  end
+
+  def check_last(page) do
+    %{:total_addresses => total } = Api.get_stats
+
+    int = page
+          |> String.to_integer
+
+    cond do
+      int * 15 < total ->
+        true
+      true ->
+        false
+    end
+  end
+
+  def get_total() do
+    %{:total_addresses => total } = Api.get_stats
+    total
+  end
+
 end

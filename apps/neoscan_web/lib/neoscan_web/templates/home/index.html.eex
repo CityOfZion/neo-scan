@@ -43,11 +43,11 @@
   </div>
   <div class="individual-graph-box">
     <p class="large-detail-text"><%= gettext "24 hour change" %></p>
-    <p class="large-number large-number-positive" id="24hchange"></p>
+    <p id="24hchange"></p>
   </div>
   <div class="individual-graph-box last">
     <p class="large-detail-text"><%= gettext "24 hour volume" %></p>
-    <p class="large-number large-number-positive" id="24hvol">$47,084,900</p>
+    <p id="24hvol"></p>
   </div>
   <div class="chart-container">
     <div id="chart"></div>
@@ -55,7 +55,7 @@
 </section>
 
 <!-- Transactions -->
-<h1 class="content-title"><%= gettext "Opcode Attributes" %></h1>
+<h1 class="content-title"><%= gettext "Transactions" %></h1>
 <section id="all-transactions-wrapper">
 
   <div class="detail-bar">

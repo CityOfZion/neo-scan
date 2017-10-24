@@ -118,7 +118,7 @@ defmodule Neoscan.Helpers do
     if Kernel.round(value) == value do
       Kernel.round(value)
     else
-      value
+      Float.round(value, 8)
     end
   end
 

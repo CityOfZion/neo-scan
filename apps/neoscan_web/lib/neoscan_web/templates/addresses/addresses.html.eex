@@ -45,6 +45,15 @@
 
   </section>
 
-  <p class="number-counter"><%= gettext "Showing 12 out of 120000 wallet addresses" %></p>
-  <a href="<%= addresses_path(@conn, :go_to_page, 2) %>" alt="Load more transactions" title="Load more transactions" class="btn-primary btn-transactions-primary">Load more wallets</a>
+  <p  class="number-counter">Addresses <%= get_current_min_qtd(@page) %> to <%= get_current_max_qtd(@page) %> of <%= get_total() %></p>
+  <div class="see-all-button-container">
+    <div class="btn-group">
+      <%= if @page != "1" do %>
+        <%= get_previous_page(@conn, @page) %>
+      <% end %>
+      <%= if check_last(@page) do %>
+        <%= get_next_page(@conn, @page) %>
+      <% end %>
+    </div>
+  </div>
 </section>

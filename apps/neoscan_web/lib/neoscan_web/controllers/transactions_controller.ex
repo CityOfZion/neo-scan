@@ -11,7 +11,7 @@ defmodule NeoscanWeb.TransactionsController do
                       result
                      end)
 
-    render(conn, "transactions.html", transactions: transactions)
+    render(conn, "transactions.html", transactions: transactions, page: "1")
   end
 
   def go_to_page(conn, %{"page" => page}) do
@@ -21,7 +21,7 @@ defmodule NeoscanWeb.TransactionsController do
                       result
                      end)
 
-    render(conn, "transactions.html", transactions: transactions)
+    render(conn, "transactions.html", transactions: transactions, page: page)
   end
 
 end

@@ -141,8 +141,17 @@
 
       </section>
 
-      <p class="number-counter"><%= gettext "Showing 12 out of 120000 transactions" %></p>
-      <a href="<%= block_path(@conn, :go_to_page, @block.hash, 2) %>" alt="Load more transactions" title="Load more transactions" class="btn-primary btn-transactions-primary"><%= gettext "Load more transactions" %></a>
+      <p  class="number-counter">Transactions <%= get_current_min_qtd(@page, @block.tx_count) %> to <%= get_current_max_qtd(@page, @block.tx_count) %> of <%= @block.tx_count %></p>
+      <div class="see-all-button-container">
+        <div class="btn-group">
+          <%= if @page != "1" do %>
+            <%= get_previous_page(@conn, @page) %>
+          <% end %>
+          <%= if check_last(@page, @block.tx_count) do %>
+            <%= get_next_page(@conn, @page) %>
+          <% end %>
+        </div>
+      </div>
 
     </section>
 
