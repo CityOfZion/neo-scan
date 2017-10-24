@@ -5,6 +5,7 @@ defmodule Neoscan.Claims.Unclaimed do
   alias Neoscan.Vouts.Vout
   alias NeoscanMonitor.Api
   alias Neoscan.Blocks.Block
+  alias Neoscan.Helpers
 
   #total amount of available NEO
   def total_neo, do: 100_000_000
@@ -14,6 +15,7 @@ defmodule Neoscan.Claims.Unclaimed do
     get_unclaimed_vouts(address_id)
     |> add_end_height
     |> route_if_there_is_unclaimed
+    |> Helpers.round_or_not
   end
 
   #proceed calculus if there are unclaimed results, otherwise return 0

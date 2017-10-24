@@ -20,6 +20,7 @@ defmodule Neoscan.Api do
   alias NeoscanMonitor.Api
   alias Neoscan.Helpers
   alias Neoscan.Claims.Claim
+  alias Neoscan.Claims.Unclaimed
 
   #sanitize struct
   defimpl Poison.Encoder, for: Any do
@@ -57,8 +58,9 @@ defmodule Neoscan.Api do
     query = from e in Address,
                  where: e.address == ^hash,
                  select: %{
+                   :id => e.id,
                    :address => e.address,
-                   :balance => e.balance
+                   :balance => e.balance,
                  }
 
     result = case Repo.all(query)
@@ -67,7 +69,12 @@ defmodule Neoscan.Api do
 
       %{} = address ->
         new_balance = filter_balance(address.address, address.balance)
-        Map.put(address, :balance, new_balance)
+        Map.merge(address, %{
+            :balance => new_balance,
+            :unclaimed => Unclaimed.calculate_bonus(address.id),
+          }
+        )
+        |> Map.delete(:id)
     end
 
     result
@@ -207,6 +214,7 @@ defmodule Neoscan.Api do
           %{
             :balance => new_balance,
             :txids => new_tx,
+            :unclaimed => Unclaimed.calculate_bonus(address.id)
           }
         )
         |> Map.delete(:inserted_at)
