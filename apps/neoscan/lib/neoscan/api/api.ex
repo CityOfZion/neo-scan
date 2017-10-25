@@ -46,7 +46,15 @@ defmodule Neoscan.Api do
         "balance": [
           {
             "asset": "name_string",
-            "amount": float
+            "amount": float,
+            "unspent": [
+              {
+                "txid": "tx_id_string",
+                "value": float,
+                "n": integer
+              },
+              ...
+            ]
           }
           ...
         ],
@@ -124,7 +132,7 @@ defmodule Neoscan.Api do
   end
 
   @doc """
-  Returns the claimed transactions for an address, from its `hash_string`.
+  Returns the claimable transactions for an address, from its `hash_string`.
 
   ## Examples
 
@@ -133,8 +141,11 @@ defmodule Neoscan.Api do
         "claimable": [
           {
             "txid": "tx_id_string",
-            "asset": "name_string",
-            "amount": "float",
+            "n": integer,
+            "value": float,
+            "unclaimed": float,
+            "start_height": integer,
+            "end_height": integer
           },
           ...
         ],
@@ -192,7 +203,15 @@ defmodule Neoscan.Api do
         "balance": [
           {
             "asset": "name_string",
-            "amount": float
+            "amount": float,
+            "unspent": [
+              {
+                "txid": "tx_id_string",
+                "value": float,
+                "n": integer
+              },
+              ..
+            ]
           }
           ...
         ],

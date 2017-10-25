@@ -387,7 +387,7 @@ defmodule Neoscan.Transactions do
 
     #fetch all addresses involved in the transaction
     address_list = Task.async(
-      fn -> Addresses.get_transaction_addresses(new_vin, vouts, time)
+      fn -> Addresses.get_transaction_addresses(new_vin, vouts, time, attrs["asset"])
             |> Addresses.update_all_addresses(
                  new_vin,
                  new_claim,

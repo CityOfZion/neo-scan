@@ -28,6 +28,5 @@ defmodule Neoscan.Addresses.Address do
   def update_changeset(%Address{} = address, attrs) do
     address
     |> cast(attrs, [:balance])
-    |> validate_required([:balance])
   end
 end

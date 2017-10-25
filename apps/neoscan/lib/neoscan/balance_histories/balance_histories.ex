@@ -21,14 +21,14 @@ defmodule Neoscan.BalanceHistories do
   end
 
   #add a transaction history into an address
-  def add_tx_id(address, txid, index, time) do
+  def add_tx_id(attrs, txid, index, time) do
     new_tx = %{
       :txid => txid,
-      :balance => address.balance,
+      :balance => attrs.balance,
       :block_height => index,
       :time => time
     }
-    %{address | tx_ids: new_tx}
+    %{attrs | tx_ids: new_tx}
   end
 
   @doc """

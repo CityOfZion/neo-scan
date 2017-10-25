@@ -344,7 +344,7 @@ defmodule Neoscan.Addresses do
   def check_if_exist(address) do
     query = from e in Address,
                  where: e.address == ^address,
-                 select: e.addres
+                 select: e.address
 
     case Repo.all(query)
          |> List.first do
@@ -356,9 +356,10 @@ defmodule Neoscan.Addresses do
   end
 
   #get all addresses involved in a transaction
-  def get_transaction_addresses(vins, vouts, time) do
+  def get_transaction_addresses(vins, vouts, time, asset) do
 
-    lookups = (Helpers.map_vins(vins) ++ Helpers.map_vouts(vouts))
+    lookups = (Helpers.map_vins(vins) ++ Helpers.map_vouts(vouts) ++ [asset["admin"]])
+              |> Enum.filter(fn address -> address != nil end)
               |> Enum.uniq
 
     query = from e in Address,
@@ -407,11 +408,12 @@ defmodule Neoscan.Addresses do
         [],
         nil,
         _vouts,
-        _txid,
-        _index,
-        _time
+        txid,
+        index,
+        time
       ) do
     address_list
+    |> insert_tx_in_addresses(txid, index, time)
   end
   def update_all_addresses(
         address_list,
@@ -500,6 +502,25 @@ defmodule Neoscan.Addresses do
       "time" => time,
     }
     %{attrs | balance: Map.put(attrs.balance || %{}, vin.asset, new_balance)}
+  end
+
+  def insert_tx_in_addresses(address_list, txid, index, time) do
+    address_list
+    |> Enum.map(fn tuple -> insert_tx_in_address(tuple, txid, index, time) end)
+  end
+
+  def insert_tx_in_address({address, attrs}, txid, index, time) do
+    new_attrs = Map.merge(
+                  attrs,
+                  %{
+                    :balance => Helpers.check_if_attrs_balance_exists(
+                      attrs
+                    ) || address.balance,
+                    :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
+                  }
+                )
+                |> BalanceHistories.add_tx_id(txid, index, time)
+    {address, new_attrs}
   end
 
 end

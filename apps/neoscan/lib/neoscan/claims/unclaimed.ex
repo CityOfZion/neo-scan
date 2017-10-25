@@ -83,7 +83,7 @@ defmodule Neoscan.Claims.Unclaimed do
                  where: v.address_id == ^address_id
                         and v.claimed == false
                         and v.asset == "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
-                 select: map(v, [:value, :start_height, :end_height])
+                 select: map(v, [:value, :start_height, :end_height, :n, :txid])
 
     Repo.all(query)
   end

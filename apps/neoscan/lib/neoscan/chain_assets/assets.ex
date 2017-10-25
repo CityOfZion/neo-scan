@@ -4,7 +4,6 @@ defmodule Neoscan.ChainAssets do
   alias Neoscan.Repo
   alias Neoscan.ChainAssets.Asset
   alias NeoscanMonitor.Api
-  alias Neoscan.Addresses
 
   require Logger
 
@@ -145,16 +144,15 @@ defmodule Neoscan.ChainAssets do
       update_asset(result, attrs)
     end
   end
-  
+
   @doc """
   Create new assets
   """
   #create new assets
-  def create(%{"amount" => amount, "admin" => admin} = assets, txid, time) do
+  def create(%{"amount" => amount} = asset, txid, time) do
     {float, _} = Float.parse(amount)
-    new_asset = Map.merge(assets, %{"amount" => float, "time" => time})
+    new_asset = Map.merge(asset, %{"amount" => float, "time" => time})
     create_asset(txid, new_asset)
-    Addresses.create_address(%{"address" => admin, "time" => time})
   end
   def create(nil, _txid, _time) do
     nil

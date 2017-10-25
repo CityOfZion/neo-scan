@@ -204,7 +204,8 @@ defmodule Neoscan.Repair do
            address_list = Addresses.get_transaction_addresses(
              [],
              vouts,
-             db_transaction.time
+             db_transaction.time,
+             nil
            )
            Vouts.create_vouts(db_transaction, vouts, address_list)
          end
