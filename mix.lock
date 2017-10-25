@@ -25,6 +25,7 @@
   "mime": {:hex, :mime, "1.1.0", "01c1d6f4083d8aa5c7b8c246ade95139620ef8effb009edde934e0ec3b28090a", [:mix], []},
   "mimerl": {:hex, :mimerl, "1.0.2", "993f9b0e084083405ed8252b99460c4f0563e41729ab42d9074fd5e52439be88", [:rebar3], []},
   "morphix": {:hex, :morphix, "0.0.7", "d4f26d06c0e9670b39cff62d57aed07a8afdd048973518cb0304fc47588221a8", [], [], "hexpm"},
+  "number": {:hex, :number, "0.4.2", "027fc6b03d17d3ccd4beea599c35503ed81901284749048ea2f4519ec877727a", [], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm"},
   "phoenix": {:hex, :phoenix, "1.3.0", "1c01124caa1b4a7af46f2050ff11b267baa3edb441b45dbf243e979cd4c5891b", [:mix], [{:cowboy, "~> 1.0", [hex: :cowboy, optional: true]}, {:phoenix_pubsub, "~> 1.0", [hex: :phoenix_pubsub, optional: false]}, {:plug, "~> 1.3.3 or ~> 1.4", [hex: :plug, optional: false]}, {:poison, "~> 2.2 or ~> 3.0", [hex: :poison, optional: false]}]},
   "phoenix_ecto": {:hex, :phoenix_ecto, "3.3.0", "702f6e164512853d29f9d20763493f2b3bcfcb44f118af2bc37bb95d0801b480", [:mix], [{:ecto, "~> 2.1", [repo: "hexpm", hex: :ecto, optional: false]}, {:phoenix_html, "~> 2.9", [repo: "hexpm", hex: :phoenix_html, optional: true]}, {:plug, "~> 1.0", [repo: "hexpm", hex: :plug, optional: false]}], "hexpm"},
   "phoenix_html": {:hex, :phoenix_html, "2.10.4", "d4f99c32d5dc4918b531fdf163e1fd7cf20acdd7703f16f5d02d4db36de803b7", [:mix], [{:plug, "~> 1.0", [repo: "hexpm", hex: :plug, optional: false]}], "hexpm"},

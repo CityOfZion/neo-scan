@@ -98,9 +98,10 @@ window.onload = function () {
       document.getElementById('total-tx').innerHTML = home.payload.stats.total_transactions
       document.getElementById('total-blocks').innerHTML = home.payload.stats.total_blocks
       document.getElementById('total-addresses').innerHTML = home.payload.stats.total_addresses
-      document.getElementById('neo-price-us').innerHTML = '$' + home.payload.price.neo.usd.PRICE
-      document.getElementById('mkt-cap-us').innerHTML = '$' + home.payload.price.neo.usd.MKTCAP
-      document.getElementById('24hvol').innerHTML = '$' + home.payload.price.neo.usd.VOLUME24HOUR.toFixed(0)
+      document.getElementById('neo-price-us').innerHTML = formatterTwo.format(home.payload.price.neo.usd.PRICE)
+      document.getElementById('mkt-cap-us').innerHTML = formatterZero.format(home.payload.price.neo.usd.MKTCAP)
+      document.getElementById('24hvol').innerHTML = formatterZero.format(home.payload.price.neo.usd.VOLUME24HOUR)
+
       document.getElementById('24hchange').innerHTML = home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) +'%'
 
       if (home.payload.price.neo.usd.VOLUME24HOUR.toFixed(0) > 0) {
@@ -118,6 +119,20 @@ window.onload = function () {
     home.connect()
   }
 }
+
+// Create our number formatter.
+var formatterZero = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0
+})
+
+var formatterTwo = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2
+})
 
 var acc = document.getElementsByClassName('btn-accordion')
 var i
