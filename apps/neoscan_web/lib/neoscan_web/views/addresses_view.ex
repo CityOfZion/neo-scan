@@ -48,31 +48,31 @@ defmodule NeoscanWeb.AddressesView do
   end
   def get_GAS_balance(balance) do
     {int, div} = balance
-                  |> Map.to_list
-                  |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
-                       Api.get_asset_name(asset) == "GAS"
-                     end)
-                  |> Enum.reduce(0.0, fn ({_asset, %{"amount" => amount}}, acc) ->
-                       amount + acc
-                     end)
-                  |> Float.to_string
-                  |> Integer.parse
+    |> Map.to_list
+    |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
+         Api.get_asset_name(asset) == "GAS"
+       end)
+    |> Enum.reduce(0.0, fn ({_asset, %{"amount" => amount}}, acc) ->
+         amount + acc
+       end)
+    |> Float.to_string
+    |> Integer.parse
 
     raw('<p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span>GAS: #{int}<span class="divisible-amount">#{div}</span></p>')
   end
 
   def get_current_min_qtd(page) do
-    %{:total_addresses => total } = Api.get_stats
+    %{:total_addresses => total} = Api.get_stats
     cond do
       total < 15 ->
         0
       true ->
-        (String.to_integer(page)-1) * 15 + 1
+        (String.to_integer(page) - 1) * 15 + 1
     end
   end
 
   def get_current_max_qtd(page) do
-    %{:total_addresses => total } = Api.get_stats
+    %{:total_addresses => total} = Api.get_stats
     cond do
       total < 15 ->
         total
@@ -89,7 +89,7 @@ defmodule NeoscanWeb.AddressesView do
 
   def get_previous_page(conn, page) do
     int = page
-          |> String.to_integer
+    |> String.to_integer
 
     num = int - 1
     |> Integer.to_string
@@ -99,7 +99,7 @@ defmodule NeoscanWeb.AddressesView do
 
   def get_next_page(conn, page) do
     int = page
-          |> String.to_integer
+    |> String.to_integer
 
     num = int + 1
     |> Integer.to_string
@@ -108,7 +108,7 @@ defmodule NeoscanWeb.AddressesView do
   end
 
   def check_last(page) do
-    %{:total_addresses => total } = Api.get_stats
+    %{:total_addresses => total} = Api.get_stats
 
     int = page
           |> String.to_integer
@@ -122,7 +122,7 @@ defmodule NeoscanWeb.AddressesView do
   end
 
   def get_total() do
-    %{:total_addresses => total } = Api.get_stats
+    %{:total_addresses => total} = Api.get_stats
     total
   end
 
