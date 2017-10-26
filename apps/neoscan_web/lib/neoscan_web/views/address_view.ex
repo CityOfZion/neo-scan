@@ -62,7 +62,7 @@ defmodule NeoscanWeb.AddressView do
       total < 15 ->
         0
       true ->
-        (String.to_integer(page)-1) * 15 + 1
+        (String.to_integer(page) - 1) * 15 + 1
     end
   end
 
