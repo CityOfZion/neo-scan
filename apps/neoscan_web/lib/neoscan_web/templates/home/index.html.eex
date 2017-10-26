@@ -50,7 +50,19 @@
     <p id="24hvol"></p>
   </div>
   <div class="chart-container">
-    <div id="chart"></div>
+    <div id="market-chart"></div>
+  </div>
+  <div class="individual-graph-box" id="show-neo-chart">
+    <p class="medium-detail-text"><%= gettext "NEO" %></p>
+  </div>
+  <div class="individual-graph-box" id="show-gas-chart">
+    <p class="medium-detail-text"><%= gettext "GAS" %></p>
+  </div>
+  <div class="individual-graph-box" id="show-usd-chart">
+    <p class="medium-detail-text"><%= gettext "USD" %></p>
+  </div>
+  <div class="individual-graph-box last" id="show-btc-chart">
+    <p class="medium-detail-text"><%= gettext "BTC" %></p>
   </div>
 </section>
 
