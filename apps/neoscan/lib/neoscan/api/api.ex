@@ -298,7 +298,7 @@ defmodule Neoscan.Api do
        )
   end
 
-  defp filter_balance( balance) do
+  defp filter_balance(balance) do
     Map.to_list(balance)
     |> Enum.map(
          fn {_as, %{"asset" => asset, "amount" => amount}} ->

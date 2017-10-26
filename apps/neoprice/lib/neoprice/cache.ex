@@ -99,8 +99,8 @@ defmodule Neoprice.Cache do
     end)
   end
 
-  defp sync_cache(config = %{cache_name: cache_name, definition: definition,
-                    aggregation: aggregation}, module) do
+  defp sync_cache(%{cache_name: cache_name, definition: definition,
+                    aggregation: aggregation} = config, module) do
     cache = :ets.tab2list(cache_name)
     {last_time , _} = List.last(cache)
     if next_value(definition, last_time, aggregation) < now() do
