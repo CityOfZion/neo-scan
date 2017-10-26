@@ -225,29 +225,29 @@
 }
 .tooltip-xlabel {
   width: 100%;
-  text-align: center; 
+  text-align: center;
   display: block;
   padding-bottom: 10px;
 }
-.tooltip-neolabel:before {
+.tooltip-btclabel:before {
   content: "\f15a";
   position: absolute;
-  font-family: FontAwesome;  
+  font-family: FontAwesome;
   font-weight: light;
   font-size: 11px;
   padding-right: 10px;
   left: 0;
 }
-.tooltip-gaslabel:before {
+.tooltip-usdlabel:before {
   content: "$";
-  position: absolute; 
+  position: absolute;
   font-weight: light;
   font-size: 12px;
   margin-right: 12px;
   left: 10px;
 }
-.tooltip-neolabel,
-.tooltip-gaslabel {
+.tooltip-btclabel,
+.tooltip-usdlabel {
   position: relative;
   width: 50%;
   display: inline-block;
