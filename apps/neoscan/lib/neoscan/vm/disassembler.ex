@@ -128,7 +128,7 @@ defmodule Neoscan.Vm.Disassembler do
           opcode_key = String.slice(code, 0..1)
           {opcode_keyword, push_bytes} =
             case Map.fetch(@opcodes_list, opcode_key) do
-              {:ok, keyword} -> { keyword, "" }
+              {:ok, keyword} -> {keyword, ""}
               :error -> check_hex_num(opcode_key)
             end
           base_args = String.slice(code, 2..-1)
@@ -213,6 +213,6 @@ defmodule Neoscan.Vm.Disassembler do
            Enum.at(split_newline, 0) <> " " <> syscall_fn
         end
       end
-    if (Enum.at(final_opcodes, length(final_opcodes)-1) == ""), do: Enum.drop(final_opcodes, -1), else: final_opcodes
+    if (Enum.at(final_opcodes, length(final_opcodes) - 1) == ""), do: Enum.drop(final_opcodes, - 1), else: final_opcodes
   end
 end

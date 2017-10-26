@@ -31,10 +31,10 @@ defmodule Neoscan.Helpers do
   def map_vins([]) do
     []
   end
-  def map_vins([%{"address_hash" => _address } | _tail] = vins) do
+  def map_vins([%{"address_hash" => _address} | _tail] = vins) do
     Enum.map(vins, fn %{"address_hash" => address} -> address end)
   end
-  def map_vins([%{:address_hash => _address } | _tail] = vins) do
+  def map_vins([%{:address_hash => _address} | _tail] = vins) do
     Enum.map(vins, fn %{:address_hash => address} -> address end)
   end
 
@@ -45,11 +45,11 @@ defmodule Neoscan.Helpers do
   def map_vouts([]) do
     []
   end
-  def map_vouts([%{"address" => _address } | _tail] = vouts) do
+  def map_vouts([%{"address" => _address} | _tail] = vouts) do
     #not in db, so still uses string keys
     Enum.map(vouts, fn %{"address" => address} -> address end)
   end
-  def map_vouts([%{:address_hash => _address } | _tail] = vouts) do
+  def map_vouts([%{:address_hash => _address} | _tail] = vouts) do
     #not in db, so still uses string keys
     Enum.map(vouts, fn %{:address_hash => address} -> address end)
   end
@@ -82,7 +82,8 @@ defmodule Neoscan.Helpers do
 
   #helper to substitute main address list with updated addresses tuples
   def substitute_if_updated(
-        %{:address => address_hash} = address,
+        %{:address => address_hash} =
+        address,
         attrs,
         updates
       ) do

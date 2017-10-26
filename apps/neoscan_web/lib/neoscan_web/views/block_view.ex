@@ -58,7 +58,7 @@ defmodule NeoscanWeb.BlockView do
       total < 15 ->
         1
       true ->
-        (String.to_integer(page)-1) * 15 + 1
+        (String.to_integer(page) - 1) * 15 + 1
     end
   end
 

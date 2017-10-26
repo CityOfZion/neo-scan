@@ -24,17 +24,17 @@ defmodule NeoscanWeb.TransactionsView do
 
 
   def get_current_min_qtd(page) do
-    %{:total_transactions => total } = Api.get_stats
+    %{:total_transactions => total} = Api.get_stats
     cond do
       total < 15 ->
         0
       true ->
-        (String.to_integer(page)-1) * 15 + 1
+        (String.to_integer(page) - 1) * 15 + 1
     end
   end
 
   def get_current_max_qtd(page) do
-    %{:total_transactions => total } = Api.get_stats
+    %{:total_transactions => total} = Api.get_stats
     cond do
       total < 15 ->
         total
@@ -69,7 +69,7 @@ defmodule NeoscanWeb.TransactionsView do
   end
 
   def check_last(page) do
-    %{:total_transactions => total } = Api.get_stats
+    %{:total_transactions => total} = Api.get_stats
 
     int = page
           |> String.to_integer
@@ -83,7 +83,7 @@ defmodule NeoscanWeb.TransactionsView do
   end
 
   def get_total() do
-    %{:total_transactions => total } = Api.get_stats
+    %{:total_transactions => total} = Api.get_stats
     total
   end
 
