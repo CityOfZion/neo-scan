@@ -52,6 +52,7 @@ defmodule NeoscanWeb.AssetView do
                   |> Enum.reduce(0.0, fn ({_asset, %{"amount" => amount}}, acc) ->
                        amount + acc
                      end)
+                  |> Float.round(8)
                   |> Float.to_string
                   |> Integer.parse
 
