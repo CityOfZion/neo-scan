@@ -52,17 +52,23 @@
   <div class="chart-container">
     <div id="market-chart"></div>
   </div>
-  <div class="individual-graph-box" id="show-neo-chart">
+  <div class="individual-graph-box narrow-individual-graph-box" id="zoom-out-chart">
+    <p class="medium-detail-text"><%= gettext "Zoom Out (-)" %></p>
+  </div>
+  <div class="individual-graph-box narrow-individual-graph-box" id="show-neo-chart">
     <p class="medium-detail-text"><%= gettext "NEO" %></p>
   </div>
-  <div class="individual-graph-box" id="show-gas-chart">
+  <div class="individual-graph-box narrow-individual-graph-box" id="show-gas-chart">
     <p class="medium-detail-text"><%= gettext "GAS" %></p>
   </div>
-  <div class="individual-graph-box" id="show-usd-chart">
+  <div class="individual-graph-box narrow-individual-graph-box" id="show-usd-chart">
     <p class="medium-detail-text"><%= gettext "USD" %></p>
   </div>
-  <div class="individual-graph-box last" id="show-btc-chart">
+  <div class="individual-graph-box narrow-individual-graph-box last" id="show-btc-chart">
     <p class="medium-detail-text"><%= gettext "BTC" %></p>
+  </div>
+  <div class="individual-graph-box narrow-individual-graph-box last" id="zoom-in-chart">
+    <p class="medium-detail-text"><%= gettext "Zoom In (+)" %></p>
   </div>
 </section>
 

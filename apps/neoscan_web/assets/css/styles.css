@@ -750,6 +750,9 @@ a:hover {
   right: -20px;
   top: 20px;
 }
+.narrow-individual-graph-box {
+  width: 16.666%;
+}
 .chart-container {
   width: 100%;
   display: block;
