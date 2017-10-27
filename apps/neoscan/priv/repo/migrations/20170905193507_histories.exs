@@ -16,6 +16,7 @@ defmodule Neoscan.Repo.Migrations.Histories do
 
     create index(:histories, [:address_hash])
     create index(:histories, [:address_id])
+    create index(:histories, [:time])
 
   end
 end

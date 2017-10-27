@@ -6,6 +6,7 @@ defmodule Neoscan.BalanceHistories do
   alias Neoscan.BalanceHistories.History
   alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
+  alias Neoscan.ChainAssets
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking address history changes.
@@ -80,6 +81,28 @@ defmodule Neoscan.BalanceHistories do
            vout.transaction_id == tx.id
          end))
        end)
+  end
+
+
+  def get_graph_data_for_address(address) do
+    query = from h in History,
+             where: h.address_hash == ^address,
+             order_by: [desc: h.time],
+             limit: 25,
+             select: map(h,[:balance])
+
+    Repo.all(query)
+    |> Enum.map(fn %{:balance => b} -> filter_balance(b) end)
+  end
+
+  defp filter_balance(balance) do
+    balance
+    |> Map.to_list()
+    |> Enum.reduce(
+      %{:time => 0, :assets => []},
+      fn ({asset_hash, %{"amount" => amount, "time" => time}}, %{:assets => assets}) ->
+        %{:time => time, :assets => [{ ChainAssets.get_asset_name_by_hash(asset_hash), amount} | assets]}
+      end)
   end
 
 end

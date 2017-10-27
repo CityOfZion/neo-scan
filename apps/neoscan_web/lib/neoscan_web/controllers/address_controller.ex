@@ -25,7 +25,10 @@ defmodule NeoscanWeb.AddressController do
                       {:ok, result} = Morphix.atomorphiform(tr)
                       result
                      end)
-    render(conn, "address.html", address: address, transactions: transactions, page: page)
+
+    graph_data = BalanceHistories.get_graph_data_for_address(address.address)
+
+    render(conn, "address.html", address: address, transactions: transactions, page: page, graph_data: graph_data)
   end
 
 end
