@@ -44,10 +44,6 @@ defmodule Neoscan.Addresses do
               order_by: [
                 desc: a.updated_at
               ],
-              where: a.updated_at > ago(
-                1,
-                "hour"
-              ),
               select: %{
                 :address => a.address,
                 :balance => a.balance,

@@ -19,50 +19,50 @@ defmodule NeoscanMonitor.Worker do
   #run initial queries and fill state with all info needed in the app,
   #then sends message with new state to server module
   def init(:ok) do
-    monitor_nodes = Utils.load()
-    blocks = Blocks.home_blocks
-    transactions = Transactions.home_transactions
-                    |> Utils.add_vouts
-    assets = ChainAssets.list_assets
-              |> Utils.get_stats
-    contracts = Transactions.list_contracts
-    stats = Utils.get_general_stats()
-    addresses = Addresses.list_latest()
-                 |> Utils.count_txs
+    monitor_nodes = Task.async(fn -> Utils.load() end)
+
+    blocks = Task.async(fn -> Blocks.home_blocks end)
+
+    transactions = Task.async(fn ->
+      Transactions.home_transactions
+      |> Utils.add_vouts
+    end)
+
+    assets = Task.async(fn ->
+      ChainAssets.list_assets
+      |> Utils.get_stats
+    end)
+
+    contracts = Task.async(fn -> Transactions.list_contracts end)
+
+    stats = Task.async(fn -> Utils.get_general_stats() end)
+
+    addresses = Task.async(fn ->
+      Addresses.list_latest()
+      |> Utils.count_txs
+    end)
+
     price = %{neo: %{btc: Neoprice.NeoBtc.last_price_full(), usd: Neoprice.NeoUsd.last_price_full()}, gas: %{btc: Neoprice.GasBtc.last_price_full(), usd: Neoprice.GasUsd.last_price_full()}}
+
+    new_state =  %{
+              :monitor => Task.await(monitor_nodes, 60_000),
+              :blocks => Task.await(blocks, 60_000),
+              :transactions => Task.await(transactions, 60_000),
+              :assets => Task.await(assets, 60_000),
+              :contracts => Task.await(contracts, 60_000),
+              :stats => Task.await(stats, 60_000),
+              :addresses => Task.await(addresses, 60_000),
+              :price => price,
+            }
 
     Process.send(
       NeoscanMonitor.Server,
-      {
-        :state_update,
-        %{
-          :monitor => monitor_nodes,
-          :blocks => blocks,
-          :transactions => transactions,
-          :assets => assets,
-          :contracts => contracts,
-          :stats => stats,
-          :addresses => addresses,
-          :price => price,
-        }
-      },
+      {:state_update, new_state},
       []
     )
     schedule_nodes()
     schedule_update()
-    {
-      :ok,
-      %{
-        :monitor => monitor_nodes,
-        :blocks => blocks,
-        :transactions => transactions,
-        :assets => assets,
-        :contracts => contracts,
-        :stats => stats,
-        :addresses => addresses,
-        :price => price,
-      }
-    }
+    {:ok, new_state}
   end
 
   #update nodes and stats information
