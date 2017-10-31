@@ -2,7 +2,7 @@ import HomeSocket from './home_socket'
 import Inferno from 'inferno'
 import List from 'inferno-virtual-list'
 
-var moment = require('moment')
+const moment = require('moment')
 
 const blocksContainer = document.getElementById('blocks-wrapper')
 const transactionsContainer = document.getElementById('transactions-wrapper')
@@ -117,6 +117,141 @@ window.onload = function () {
       }
     }, 500)
     home.connect()
+
+    const formatChart = (time) => {
+      let count = 32, format = '%m-%d-%y';
+      if (time === '1d') {
+        count = 24
+        format = '%H:%M'
+      }
+      if (time === '1w') {
+        count = 7
+        format = '%m-%d'
+      }
+      if (time === '3m') {
+        count = 36
+        format = '%m-%d'
+      }
+      return [count, format]
+    }
+
+    const createChart = (coin, compareCurrency, time) => {
+      fetch(`/price/${coin}/${compareCurrency}/${time}`).then(res => res.json()).then(results => {
+        console.log('results', results);
+        const dates = ['date']
+        const prices = [coin.toUpperCase()]
+        for (const [unixTimestamp, price] of Object.entries(results)) {
+          const date = new Date(unixTimestamp*1000)
+          const formattedDate = moment(date).format('YYYY-MM-DD HH:MM:SS')
+          if (dates[dates.length-1] !== formattedDate) dates.push(formattedDate)
+          prices.push(price)
+        }
+
+        const [count, format] = formatChart(time)
+        const chart = c3.generate({
+          bindto: '#market-chart',
+          data: {
+            x: 'date',
+            columns: [
+              dates,
+              prices
+            ],
+            xFormat: '%Y-%m-%d %H:%M:%S'
+          },
+          axis: {
+            x: {
+              height: 75,
+              type: 'timeseries',
+              tick: {
+                culling: false,
+                count,
+                rotate: -65,
+                format,
+                fit: true
+              }
+            },
+            y: {
+              tick: {
+                format: function (d) {
+                  if (compareCurrency === 'usd') return '$' + d.toFixed(2)
+                  if (time === '3m') return d.toFixed(3)
+                  if (time === '1m') return d.toFixed(4)
+                  if (time === '1w') return d.toFixed(5)
+                  return d.toFixed(8)
+                }
+              }
+            }
+          },
+          grid: {
+            y: {
+              show: true,
+            }
+          },
+          tooltip: {
+            contents: function (d) {
+              const price = compareCurrency === 'usd' ? d[0] && Number(d[0].value).toFixed(2) : d[0] && Number(d[0].value).toFixed(8)
+              const name = d[0] && d[0].name
+              const time = d[0] && `${d[0].x}`.slice(0, 24)
+              return (`<div class="chart-tooltip"><span class="tooltip-xlabel">Price of ${name} (${compareCurrency})</span><span class="tooltip-xlabel">Time:  ${time}</span><span class="tooltip-${compareCurrency}label">${price}</span></div>`)
+            }
+          },
+          point: {
+            show: false
+          },
+          zoom: {
+            enabled: false,
+          },
+          color: {
+            pattern: ['#BEEB00']
+          }
+        })
+      })
+    }
+
+    let displayCoin = 'neo'
+    let displayChart = 'usd'
+    let displayTime = '1m'
+
+    createChart(displayCoin, displayChart, displayTime)
+
+    const zoomInChart = document.getElementById('zoom-in-chart')
+    const zoomOutChart = document.getElementById('zoom-out-chart')
+    const btcChart = document.getElementById('show-btc-chart')
+    const usdChart = document.getElementById('show-usd-chart')
+    const gasChart = document.getElementById('show-gas-chart')
+    const neoChart = document.getElementById('show-neo-chart')
+
+    const coinClickHandler = (coin) => {
+      displayCoin = coin
+      return createChart(coin, displayChart, displayTime)
+    }
+
+    const compareClickHandler = (compare) => {
+      displayChart = compare
+      return createChart(displayCoin, compare, displayTime)
+    }
+
+    const zoomHandler = (zoom) => {
+      if (displayTime === '1d') {
+        if (zoom === 'in') return
+        displayTime = '1w'
+      } else if (displayTime === '1w') {
+        displayTime = zoom === 'out' ? '1m' : '1d'
+      } else if (displayTime === '1m') {
+        displayTime = zoom === 'out' ? '3m' : '1w'
+      } else if (displayTime === '3m') {
+        if (zoom === 'out') return
+        displayTime = '1m'
+      }
+      return createChart(displayCoin, displayChart, displayTime)
+    }
+
+    zoomInChart.onclick = () => zoomHandler('in')
+    zoomOutChart.onclick = () => zoomHandler('out')
+    btcChart.onclick = () => compareClickHandler('btc')
+    usdChart.onclick = () => compareClickHandler('usd')
+    gasChart.onclick = () => coinClickHandler('gas')
+    neoChart.onclick = () => coinClickHandler('neo')
   }
 }
 
@@ -149,134 +284,3 @@ for (i = 0; i < acc.length; i++) {
     }
   }
 }
-
-const formatChart = (time) => {
-  let count = 32, format = '%m-%d-%y';
-  if (time === '1d') {
-    count = 24
-    format = '%H:%M'
-  }
-  if (time === '1w') {
-    count = 7
-    format = '%m-%d'
-  }
-  if (time === '3m') {
-    count = 36
-    format = '%m-%d'
-  }
-  return [count, format]
-}
-
-const createChart = (coin, compareCurrency, time) => {
-  fetch(`/price/${coin}/${compareCurrency}/${time}`).then(res => res.json()).then(results => {
-    const dates = ['date']
-    const prices = [coin.toUpperCase()]
-    for (const [unixTimestamp, price] of Object.entries(results)) {
-      const date = new Date(unixTimestamp*1000)
-      const formattedDate = moment(date).format('YYYY-MM-DD HH:MM:SS')
-      if (dates[dates.length-1] !== formattedDate) dates.push(formattedDate)
-      prices.push(price)
-    }
-
-    const [count, format] = formatChart(time)
-    const chart = c3.generate({
-      bindto: '#market-chart',
-      data: {
-        x: 'date',
-        columns: [
-          dates,
-          prices
-        ],
-        xFormat: '%Y-%m-%d %H:%M:%S'
-      },
-      axis: {
-        x: {
-          height: 75,
-          type: 'timeseries',
-          tick: {
-            culling: false,
-            count,
-            rotate: -65,
-            format,
-            fit: true
-          }
-        },
-        y: {
-          tick: {
-            format: function (d) {
-              if (compareCurrency === 'usd') return '$' + d.toFixed(2)
-              return d.toFixed(4)
-            }
-          }
-        }
-      },
-      grid: {
-        y: {
-          show: true,
-        }
-      },
-      tooltip: {
-        contents: function (d) {
-          const price = compareCurrency === 'usd' ? d[0] && Number(d[0].value).toFixed(2) : d[0] && Number(d[0].value).toFixed(8)
-          const name = d[0] && d[0].name
-          const time = d[0] && `${d[0].x}`.slice(0, 24)
-          return (`<div class="chart-tooltip"><span class="tooltip-xlabel">Price of ${name} (${compareCurrency})</span><span class="tooltip-xlabel">Time:  ${time}</span><span class="tooltip-${compareCurrency}label">${price}</span></div>`)
-        }
-      },
-      point: {
-        show: false
-      },
-      zoom: {
-        enabled: false,
-      },
-      color: {
-        pattern: ['#BEEB00']
-      }
-    })
-  })
-}
-
-let displayCoin = 'neo'
-let displayChart = 'usd'
-let displayTime = '1m'
-
-createChart(displayCoin, displayChart, displayTime)
-
-const zoomInChart = document.getElementById('zoom-in-chart')
-const zoomOutChart = document.getElementById('zoom-out-chart')
-const btcChart = document.getElementById('show-btc-chart')
-const usdChart = document.getElementById('show-usd-chart')
-const gasChart = document.getElementById('show-gas-chart')
-const neoChart = document.getElementById('show-neo-chart')
-
-const coinClickHandler = (coin) => {
-  displayCoin = coin
-  return createChart(coin, displayChart, displayTime)
-}
-
-const compareClickHandler = (compare) => {
-  displayChart = compare
-  return createChart(displayCoin, compare, displayTime)
-}
-
-const zoomHandler = (zoom) => {
-  if (displayTime === '1d') {
-    if (zoom === 'in') return
-    displayTime = '1w'
-  } else if (displayTime === '1w') {
-    displayTime = zoom === 'out' ? '1m' : '1d'
-  } else if (displayTime === '1m') {
-    displayTime = zoom === 'out' ? '3m' : '1w'
-  } else if (displayTime === '3m') {
-    if (zoom === 'out') return
-    displayTime = '1m'
-  }
-  return createChart(displayCoin, displayChart, displayTime)
-}
-
-zoomInChart.onclick = () => zoomHandler('in')
-zoomOutChart.onclick = () => zoomHandler('out')
-btcChart.onclick = () => compareClickHandler('btc')
-usdChart.onclick = () => compareClickHandler('usd')
-gasChart.onclick = () => coinClickHandler('gas')
-neoChart.onclick = () => coinClickHandler('neo')
