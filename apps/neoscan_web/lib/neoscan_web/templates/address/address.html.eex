@@ -1,6 +1,7 @@
 
 <!-- Welcome -->
 <h1 class="content-title">Address Information</h1>
+<%= content_tag :div, "", [{:data, [graph_data: Poison.encode!(@graph_data)]}, value: "value", id: "graph_data"] %>
 <p class="content-subline"> <i class="fa fa-key address-icon"></i> Address <span class="golden">|</span> Hash: <%= @address.address %> </p>
 <div class="wallet-navigation">
   <a href="<%= addresses_path(@conn, :index) %>" class="browse-wallet-back">Back to all addresses</a>
@@ -17,55 +18,13 @@
     <%= get_GAS_balance(@address.balance) %>
   </div>
 
-
-  <div class="tab-container">
-    <ul class="tabs" role="tablist">
-      <p class="tab-label">
-        Last 25 transactions
-      </p>
-      <li>
-          <input type="radio" name="tabs" id="tab1" checked />
-          <label for="tab1"
-                 role="tab"
-                 aria-selected="true"
-                 aria-controls="panel1"
-                 tabindex="0">GAS</label>
-
-            <div id="tab-content1"
-                 class="tab-content"
-                 role="tabpanel"
-                 aria-labelledby="description"
-                 aria-hidden="false">
-              <div class="tab-content-container">
-                <div class="chart-container">
-                    <div id="gasChart"></div>
-                </div>
-              </div>
-          </div>
-      </li>
-
-      <li>
-          <input type="radio" name="tabs" id="tab2" />
-          <label for="tab2"
-                 role="tab"
-                 aria-selected="false"
-                 aria-controls="panel2"
-                 tabindex="0">Neo</label>
-          <div class="tab-content-container">
-          <div id="tab-content2"
-               class="tab-content"
-               role="tabpanel"
-               aria-labelledby="specification"
-               aria-hidden="true">
-            <div class="tab-content-container">
-              <div class="chart-container">
-                  <div id="neoChart"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </li>
-    </ul>
+  <p class="tab-label" id="last-x-transactions"></p>
+  <div class="chart-container">
+    <div id="address-chart"></div>
+    <div class="select-container">
+      <select id="select-address-chart">
+      </select>
+    </div>
   </div>
 </section>
 

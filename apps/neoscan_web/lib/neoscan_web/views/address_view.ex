@@ -106,7 +106,7 @@ defmodule NeoscanWeb.AddressView do
           |> String.to_integer
 
     cond do
-      int * 15 < total -> 
+      int * 15 < total ->
         true
       true ->
         false

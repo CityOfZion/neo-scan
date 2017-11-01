@@ -101,7 +101,7 @@ defmodule Neoscan.BalanceHistories do
     |> Enum.reduce(
       %{:time => 0, :assets => []},
       fn ({asset_hash, %{"amount" => amount, "time" => time}}, %{:assets => assets}) ->
-        %{:time => time, :assets => [{ ChainAssets.get_asset_name_by_hash(asset_hash), amount} | assets]}
+        %{:time => time, :assets => [%{ ChainAssets.get_asset_name_by_hash(asset_hash) => amount} | assets]}
       end)
   end
 

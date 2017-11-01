@@ -1,124 +1,108 @@
+const moment = require('moment')
 
-var neoChart = c3.generate({
-  data: {
-    x: 'x',
-    columns: [
-      ['x', '02-11-17', '03-11-17', '04-11-17', '05-11-17', '06-11-17', '07-11-17', '08-11-17', '09-11-17', '10-11-17', '11-11-17', '12-11-17', '13-11-17', '14-11-17', '15-11-17', '16-11-17', '17-11-17', '18-11-17', '19-11-17', '20-11-17', '21-11-17', '22-11-17', '23-11-17', '24-11-17', '25-11-17', '26-11-17', '27-11-17'],
-      ['NEO', 69, 72, 75, 84, 66, 90, 87, 86, 63, 68, 72, 75, 81, 90, 92, 99, 82, 93, 77, 71, 69, 82, 88, 94, 102]
-    ]
-  },
-  axis: {
-    x: {
-      height: 75,
-      type: 'timeseries',
-      tick: {
-        culling: false,
-        count: 25,
-        rotate: -65,
-        format: '%y - %m - %d',
-        fit: true
-      }
+$('document').ready(() => {
+  if (window.location.pathname.startsWith('/address/')) {
+    const graph_elem = document.getElementById('graph_data')
+    const graph_data = JSON.parse(graph_elem.dataset.graphData)
+    const count = graph_data.length
+    const assetsList = {}
+    const dates = ['date']
+    graph_data.map(({time, assets}) => {
+      const date = new Date(time*1000)
+      const formattedDate = moment(date).format('YYYY-MM-DD HH:MM:SS')
+      dates.push(formattedDate)
+
+      assets.map((asset) => {
+        const assetName = Object.keys(asset)
+        if (!assetsList[assetName]) {
+          assetsList[assetName] = [assetName, asset[assetName]]
+        } else {
+          assetsList[assetName].push(asset[assetName])
+        }
+      })
+    })
+
+    const assetDropdown = document.getElementById('select-address-chart')
+    const assetNames = Object.keys(assetsList)
+    assetNames.forEach((name) => {
+      const option = document.createElement("option");
+      option.text = name;
+      option.value = name;
+      assetDropdown.add(option);
+    })
+
+    const transactionsTextElem = document.getElementById('last-x-transactions')
+    transactionsTextElem.innerHTML = `Last ${count} Transactions`
+
+    if (assetsList['NEO']) {
+      createAssetChart('NEO', dates, assetsList['NEO'], count)
+    } else if (assetsList['GAS']) {
+      createAssetChart('GAS', dates, assetsList['GAS'], count)
+    } else if (assetNames.length > 0) {
+      createAssetChart(assetNames[0], dates, assetsList[assetNames[0]], count)
     }
-  },
-  grid: {
-    y: {
-      show: true,
-      tick: {
-        format: d3.format('$,'),
-        values: [110, 100, 90, 80, 70, 60]
-      }
-    }
-  },
-  tooltip: {
-    contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
-      return ('<div class="chart-tooltip"><span class="tooltip-xlabel">Xlabel date content here</span><span class="tooltip-neolabel">0.0811</span><span class="tooltip-gaslabel">72.10</span></div>')
-    }
-  },
-  zoom: {
-    enabled: true
-  },
-  point: {
-    r: 6,
-    focus: {
-      expand: {
-        r: 8
-      }
-    }
-  },
-  color: {
-    pattern: ['#BEEB00']
-  },
-  onrendered: function () {
-    var $$ = this
-    var circles = $$.getCircles()
-    for (var i = 0; i < circles.length; i++) {
-      for (var j = 0; j < circles[i].length; j++) {
-        $$.getCircles(j).style('fill', '#313164')
-            .style('fill', $$.color)
-            .style('stroke-width', 2)
-      }
+
+    assetDropdown.onchange = function () {
+      createAssetChart(this.value, dates, assetsList[this.value], count)
     }
   }
 })
 
-var gasChart = c3.generate({
-  data: {
-    x: 'x',
-    columns: [
-      ['x', '02-11-17', '03-11-17', '04-11-17', '05-11-17', '06-11-17', '07-11-17', '08-11-17', '09-11-17', '10-11-17', '11-11-17', '12-11-17', '13-11-17', '14-11-17', '15-11-17', '16-11-17', '17-11-17', '18-11-17', '19-11-17', '20-11-17', '21-11-17', '22-11-17', '23-11-17', '24-11-17', '25-11-17', '26-11-17', '27-11-17'],
-      ['GAS', 69, 72, 75, 84, 66, 90, 87, 86, 63, 68, 72, 75, 81, 90, 92, 99, 82, 93, 77, 71, 69, 82, 88, 94, 102]
-    ]
-  },
-  axis: {
-    x: {
-      height: 75,
-      type: 'timeseries',
-      tick: {
-        culling: false,
-        count: 25,
-        rotate: -65,
-        format: '%y - %m - %d',
-        fit: true
+const createAssetChart = (asset, dates, amounts, count) => {
+  const chart = c3.generate({
+    bindto: '#address-chart',
+    data: {
+      x: 'date',
+      columns: [
+        dates,
+        amounts
+      ],
+      xFormat: '%Y-%m-%d %H:%M:%S'
+    },
+    axis: {
+      x: {
+        height: 125,
+        type: 'timeseries',
+        tick: {
+          culling: false,
+          count,
+          rotate: -65,
+          format: '%Y-%m-%d %H:%M:%S',
+          fit: true
+        }
+      },
+      y: {
+        tick: {
+          format: function (d) {
+            return d.toFixed(0)
+          }
+        }
       }
-    }
-  },
-  grid: {
-    y: {
-      show: true,
-      tick: {
-        format: d3.format('$,'),
-        values: [110, 100, 90, 80, 70, 60]
+    },
+    legend: {
+      hide: true
+    },
+    grid: {
+      y: {
+        show: true,
       }
-    }
-  },
-  tooltip: {
-    contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
-      return ('<div class="chart-tooltip"><span class="tooltip-xlabel">Xlabel date content here</span><span class="tooltip-neolabel">0.0811</span><span class="tooltip-gaslabel">72.10</span></div>')
-    }
-  },
-  zoom: {
-    enabled: true
-  },
-  point: {
-    r: 6,
-    focus: {
-      expand: {
-        r: 8
+    },
+    tooltip: {
+      contents: function (d) {
+        const name = d[0] && d[0].name
+        const value = d[0] && d[0].value
+        const time = d[0] && d[0].x
+        return (`<div class="chart-tooltip"><span class="tooltip-xlabel">${name}: ${value}</span><span class="tooltip-xlabel">Time: ${time} </span></div>`)
       }
+    },
+    point: {
+      show: false
+    },
+    zoom: {
+      enabled: false,
+    },
+    color: {
+      pattern: ['#BEEB00']
     }
-  },
-  color: {
-    pattern: ['#BEEB00']
-  },
-  onrendered: function () {
-    var $$ = this
-    var circles = $$.getCircles()
-    for (var i = 0; i < circles.length; i++) {
-      for (var j = 0; j < circles[i].length; j++) {
-        $$.getCircles(j).style('fill', '#313164')
-            .style('fill', $$.color)
-            .style('stroke-width', 2)
-      }
-    }
-  }
-})
+  })
+}

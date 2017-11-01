@@ -1680,6 +1680,23 @@ body {
   margin-top: 4px;
 }
 
+/* Select button styles */
+
+.select-container {
+  width: 100%;
+  text-align: center;
+}
+
+#select-address-chart {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  background-color: #3A55DF;
+  color: white;
+  height: 34px;
+  width: 80px;
+  font-size: 18px;
+}
+
 /* General right link styles */
 
 
