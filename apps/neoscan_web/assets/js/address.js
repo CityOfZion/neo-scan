@@ -7,32 +7,42 @@ $('document').ready(() => {
     const count = graph_data.length
     const assetsList = {}
     const dates = ['date']
-    graph_data.map(({time, assets}) => {
+    graph_data.forEach(({time, assets}) => {
       const date = new Date(time*1000)
       const formattedDate = moment(date).format('YYYY-MM-DD HH:MM:SS')
+      if (formattedDate === dates[dates.length-1]) return
       dates.push(formattedDate)
 
-      assets.map((asset) => {
+      return assets.forEach((asset) => {
         const assetName = Object.keys(asset)
         if (!assetsList[assetName]) {
-          assetsList[assetName] = [assetName, asset[assetName]]
+          return assetsList[assetName] = [assetName, asset[assetName]]
         } else {
-          assetsList[assetName].push(asset[assetName])
+          return assetsList[assetName].push(asset[assetName])
         }
       })
     })
 
+    const transactionsTextElem = document.getElementById('last-x-transactions')
+    let transactionText = `Last ${count} Transactions for `
+
     const assetDropdown = document.getElementById('select-address-chart')
     const assetNames = Object.keys(assetsList)
-    assetNames.forEach((name) => {
+    assetNames.forEach((name, idx) => {
       const option = document.createElement("option");
       option.text = name;
       option.value = name;
       assetDropdown.add(option);
+      if (assetNames[idx+1]) {
+        transactionText += `${name}, `
+      } else {
+        transactionText = transactionText.slice(0,-2)
+        transactionText += ` and ${name}`
+      }
+
     })
 
-    const transactionsTextElem = document.getElementById('last-x-transactions')
-    transactionsTextElem.innerHTML = `Last ${count} Transactions`
+    transactionsTextElem.innerHTML = transactionText
 
     if (assetsList['NEO']) {
       createAssetChart('NEO', dates, assetsList['NEO'], count)
@@ -61,13 +71,13 @@ const createAssetChart = (asset, dates, amounts, count) => {
     },
     axis: {
       x: {
-        height: 125,
+        height: 90,
         type: 'timeseries',
         tick: {
           culling: false,
           count,
           rotate: -65,
-          format: '%Y-%m-%d %H:%M:%S',
+          format: '%Y-%m-%d',
           fit: true
         }
       },
