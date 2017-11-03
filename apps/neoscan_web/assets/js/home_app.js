@@ -12,9 +12,11 @@ const blockRow = row => (
     <div class='information-wrapper'>
       <p class='fa fa-signal medium-detail-text'></p>
       <a href={'/block/' + row.hash} alt='View block' title='View block' class='large-blue-link col-4-width'>{row.index}</a>
-      <p class='medium-detail-text col-3-width'>{row.size} bytes</p>
-      <p class='medium-detail-text col-3-width'>{row.tx_count}</p>
-      <p class='medium-detail-text col-2-width'>{ moment.unix(row.time).format('DD-MM-YYYY') + ' | ' + moment.unix(row.time).format('HH:mm:ss')}</p>
+      <div class='secondary-info-wrapper'>
+        <p class='medium-detail-text col-3-width'><span class='tablet-detail-text'>Size: </span>{row.size} bytes</p>
+        <p class='medium-detail-text col-3-width'><span class='tablet-detail-text'>Transactions: </span>{row.tx_count}</p>
+        <p class='medium-detail-text col-2-width'><span class='tablet-detail-text'>Created: </span>{ moment.unix(row.time).format('DD-MM-YYYY') + ' | ' + moment.unix(row.time).format('HH:mm:ss')}</p>
+      </div>
     </div>
   </div>
 )
@@ -71,9 +73,11 @@ const transactionRow = row => (
   <div class={'full-width-bar ' + getClass(row.type)}>
     <div class='information-wrapper'>
       <p class='medium-detail-text col-2-width'><span class='fa fa-cube'></span>{getName(row.type)}</p>
-      <a href={'/transaction/' + row.txid} alt='View transaction' title='View transaction' class='large-blue-link col-5-width'>{row.txid}&#8230;</a>
-      <p class='medium-detail-text col-2-width'>&nbsp;&nbsp;&nbsp;<a href={'/block/' + row.block_hash + '1'} alt='View block' title='View block' class='blue-link'>{row.block_height}</a></p>
-      <p class='medium-detail-text col-2-width'>{ moment.unix(row.time).format('DD-MM-YYYY') + ' | ' + moment.unix(row.time).format('HH:mm:ss')}</p>
+      <div class='secondary-info-wrapper'>
+        <a href={'/transaction/' + row.txid} alt='View transaction' title='View transaction' class='large-blue-link col-6-width'>{row.txid}</a>
+        <p class='medium-detail-text col-2-width'>&nbsp;&nbsp;&nbsp;<a href={'/block/' + row.block_hash + '1'} alt='View block' title='View block' class='blue-link'>{row.block_height}</a></p>
+        <p class='medium-detail-text col-2-width'>{ moment.unix(row.time).format('DD-MM-YYYY') + ' | ' + moment.unix(row.time).format('HH:mm:ss')}</p>
+      </div>
     </div>
   </div>
 )
@@ -105,21 +109,21 @@ window.onload = function () {
       document.getElementById('24hchange').innerHTML = home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) +'%'
 
       if (home.payload.price.neo.usd.VOLUME24HOUR.toFixed(0) > 0) {
-        document.getElementById('24hvol').setAttribute('class', 'large-number large-number-positive')
+        document.getElementById('24hvol').setAttribute('class', 'large-stat-number large-number-positive remove-margin-bottom')
       } else {
-        document.getElementById('24hvol').setAttribute('class', 'large-number large-number-negative')
+        document.getElementById('24hvol').setAttribute('class', 'large-stat-number large-number-negative remove-margin-bottom')
       }
 
       if (home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) > 0) {
-        document.getElementById('24hchange').setAttribute('class', 'large-number large-number-positive')
+        document.getElementById('24hchange').setAttribute('class', 'large-stat-number large-number-positive remove-margin-bottom')
       } else {
-        document.getElementById('24hchange').setAttribute('class', 'large-number large-number-negative')
+        document.getElementById('24hchange').setAttribute('class', 'large-stat-number large-number-negative remove-margin-bottom')
       }
     }, 500)
     home.connect()
 
     const formatChart = (time) => {
-      let count = 32, format = '%m-%d-%y';
+      let count = 32, format = '%m-%d-%y'
       if (time === '1d') {
         count = 24
         format = '%H:%M'
@@ -141,7 +145,7 @@ window.onload = function () {
         const prices = [coin.toUpperCase()]
         for (const [unixTimestamp, price] of Object.entries(results)) {
           const formattedDate = moment.unix(unixTimestamp).format('YYYY-MM-DD HH:mm')
-          if (dates[dates.length-1] !== formattedDate) dates.push(formattedDate)
+          if (dates[dates.length - 1] !== formattedDate) dates.push(formattedDate)
           prices.push(price)
         }
 
@@ -182,7 +186,7 @@ window.onload = function () {
           },
           grid: {
             y: {
-              show: true,
+              show: true
             }
           },
           tooltip: {
@@ -197,7 +201,7 @@ window.onload = function () {
             show: false
           },
           zoom: {
-            enabled: false,
+            enabled: false
           },
           color: {
             pattern: ['#BEEB00']
@@ -282,3 +286,26 @@ for (i = 0; i < acc.length; i++) {
     }
   }
 }
+
+var $hamburger = $('.hamburger')
+$hamburger.on('click', function (e) {
+  $hamburger.toggleClass('is-active')
+
+  if ($hamburger.hasClass('is-active')) {
+    $('.nav-wrapper').addClass('active-wrapper')
+  } else {
+    $('.nav-wrapper').removeClass('active-wrapper')
+  }
+
+  if (window.matchMedia('(max-width: 660px)').matches && ($hamburger.hasClass('is-active'))) {
+    $('.searchbar').addClass('mobile-active')
+    $('.search-btn').addClass('mobile-active')
+  } else {
+    $('.searchbar').removeClass('mobile-active')
+    $('.search-btn').removeClass('mobile-active')
+  }
+
+})
+
+// Call simpleselect dropdown
+$('select').simpleselect()

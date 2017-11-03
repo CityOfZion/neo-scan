@@ -15,38 +15,42 @@
 <!-- Jump link buttons -->
 <section id="jump-links">
   <div class="individual-jump-link-box">
-    <p class="large-detail-text"><%= gettext "Total transactions" %></p>
-    <p class="large-number" id= "total-tx"></p>
+    <p class="large-detail-text stat-detail"><%= gettext "Total transactions" %></p>
+    <p class="large-stat-number" id= "total-tx"></p>
     <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="View all transactions"><%= gettext "View all transactions" %> <i class="fa fa-arrow-right"></i></a>
   </div>
   <div class="individual-jump-link-box">
-    <p class="large-detail-text"><%= gettext "Last block" %></p>
-    <p class="large-number" id= "total-blocks"></p>
+    <div class="jump-links-information">
+      <p class="large-detail-text stat-detail"><%= gettext "Last block" %></p>
+      <p class="large-stat-number" id= "total-blocks"></p>
+    </div>
     <a href="<%= blocks_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="View all blocks"><%= gettext "View all blocks" %> <i class="fa fa-arrow-right"></i></a>
   </div>
   <div class="individual-jump-link-box">
-    <p class="large-detail-text"><%= gettext "Wallet addresses created" %></p>
-    <p class="large-number" id= "total-addresses"></p>
+    <div class="jump-links-information">
+      <p class="large-detail-text stat-detail"><%= gettext "Wallet addresses created" %></p>
+      <p class="large-stat-number" id= "total-addresses"></p>
+    </div>
     <a href="<%= addresses_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="View all addresses"><%= gettext "View all addresses" %> <i class="fa fa-arrow-right"></i></a>
   </div>
 </section>
 
 <!-- Market graph -->
 <section id="market-graph">
-  <div class="individual-graph-box">
-    <p class="large-detail-text"><%= gettext "NEO" %></p>
-    <p class="large-number" id="neo-price-us"></p>
+  <div class="individual-graph-box remove-border-right-555px">
+    <p class="large-detail-text stat-detail"><%= gettext "NEO" %></p>
+    <p class="large-stat-number remove-margin-bottom" id="neo-price-us"></p>
   </div>
-  <div class="individual-graph-box">
-    <p class="large-detail-text"><%= gettext "Current market cap" %></p>
-    <p class="large-number" id="mkt-cap-us"></p>
+  <div class="individual-graph-box remove-border-right-920px">
+    <p class="large-detail-text stat-detail"><%= gettext "Current market cap" %></p>
+    <p class="large-stat-number remove-margin-bottom" id="mkt-cap-us"></p>
   </div>
-  <div class="individual-graph-box">
-    <p class="large-detail-text"><%= gettext "24 hour change" %></p>
+  <div class="individual-graph-box remove-border-right-555px">
+    <p class="large-detail-text stat-detail"><%= gettext "24 hour change" %></p>
     <p id="24hchange"></p>
   </div>
   <div class="individual-graph-box last">
-    <p class="large-detail-text"><%= gettext "24 hour volume" %></p>
+    <p class="large-detail-text stat-detail"><%= gettext "24 hour volume" %></p>
     <p id="24hvol"></p>
   </div>
   <div class="chart-container">
@@ -73,33 +77,34 @@
 </section>
 
 <!-- Transactions -->
-<h1 class="content-title"><%= gettext "Transactions" %></h1>
+<h2><%= gettext "Transactions" %></h2>
 <section id="all-transactions-wrapper">
 
   <div class="detail-bar">
     <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
-    <p class="detail-type col-5-width"><%= gettext "Transaction ID" %></p>
+    <p class="detail-type col-6-width"><%= gettext "Transaction ID" %></p>
     <p class="detail-type col-2-width"><%= gettext "Block" %></p>
-    <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
+    <p class="detail-type tablet-full-width"><%= gettext "Completed on" %></p>
   </div>
 
   <!-- Transactions -->
   <section id="transactions-wrapper"></section>
 
   <div class="see-all-button-container">
-    <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-see-all" alt="See all transactions"><%= gettext "See all transactions" %> <i class="fa fa-arrow-right"></i></a>
+    <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-transactions-primary" alt="See all transactions"><%= gettext "See all transactions" %> <i class="fa fa-arrow-right"></i></a>
   </div>
 </section>
 
 <!-- Blocks -->
-<h1 class="content-title"><%= gettext "Last Blocks" %></h1>
+<h2><%= gettext "Last Blocks" %></h2>
 <section id="all-blocks-wrapper">
 
   <div class="detail-bar">
-    <p class="detail-type detail-type-first-4-col"><%= gettext "Opcode Attributes" %></p>
+    <p class="detail-type detail-type-first-4-col"><%= gettext "Height" %></p>
     <p class="detail-type col-3-width"><%= gettext "Size" %></p>
     <p class="detail-type col-3-width"><%= gettext "Transactions" %></p>
     <p class="detail-type col-2-width"><%= gettext "Created on" %></p>
+    <p class="detail-type tablet-full-width">All block information</p>
   </div>
 
   <!-- Blocks -->

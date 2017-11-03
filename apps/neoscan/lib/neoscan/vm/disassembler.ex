@@ -138,7 +138,7 @@ defmodule Neoscan.Vm.Disassembler do
 
   defp reduce_list_to_string(list) do
     Enum.reduce(
-      "",
+      list,
       fn (code, acc) ->
         if Map.has_key?(@opcodes_list, code) and String.length(code) == 2 do
           newline = if code == "68", do: "", else: "\n"

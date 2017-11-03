@@ -4,7 +4,8 @@
 <head>
 <meta charset="utf-8">
 	<title>NEOSCAN | <%= get_page(@conn) %></title>
-	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="format-detection" content="telephone=no"/>
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<link rel="shortcut icon" href="<%= static_path(@conn, "/favicon.ico") %>">
@@ -31,20 +32,35 @@
 		<!-- Navigation -->
 		<nav id="navigation">
 
+			<button class="hamburger hamburger--spin" type="button">
+				<span class="hamburger-box">
+					<span class="hamburger-inner"></span>
+					</span>
+			</button>
+
+			<!-- Language selector dropdown -->
+			<div class="lang-dropdown-wrapper">
+				<select>
+					<option href="?locale=en">English</option>
+					<option href="?locale=fr">Français</option>
+				</select>​
+			</div>
+
 			<!-- Logo -->
 			<div class="logo-wrapper">
-        <a href="/">
+        <a href="/" alt="NEOSCAN Home">
           <img src="<%= static_path(@conn, "/images/NEOSCAN_Logo.svg") %>" alt="NEOSCAN Home" title="NEOSCAN Home" width="163px" height="32px" class="neoscan-logo" />
         </a>
 			</div>
-		    <div class="locale-wrapper">
-		       <a href="?locale=en" alt="English" title="English">🇬🇧</a>
-               <a href="?locale=fr" alt="Francais" title="Francais">🇫🇷</a>
-		    </div>
+	    <!-- <div class="locale-wrapper">
+	       <a href="?locale=en" alt="English" title="English">🇬🇧</a>
+             <a href="?locale=fr" alt="Francais" title="Francais">🇫🇷</a>
+	    </div> -->
 
 			<!-- Search -->
       <%= form_for @conn, home_path(@conn, :index), [as: :search], fn f -> %>
-        <%= text_input f, :for,placeholder: "Block Height, Hash, Address or Transaction id",class: "input", type: "search" %>
+        <%= text_input f, :for,placeholder: "Block Height, Hash, Address or Transaction id",class: "searchbar fa fa-search", type: "search" %>
+				<%= submit "", [class: "icon search-btn fa fa-search"]  %>
         <%= error_tag f, :for %>
       <% end %>
 

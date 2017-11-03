@@ -24,8 +24,15 @@ defmodule NeoscanMonitor.Server do
 
   def handle_info(:broadcast, state) do
     schedule_work() # Reschedule once more
+    payload = %{
+      "blocks" => state.blocks,
+      "transactions" => state.transactions,
+      "price" => state.price,
+      "stats" => state.stats,
+    }
+
     broadcast = Application.fetch_env!(:neoscan_monitor, :broadcast)
-    broadcast.("room:home", "change", state)
+    broadcast.("room:home", "change", payload)
     {:noreply, state}
   end
 
