@@ -7,7 +7,6 @@ defmodule NeoscanMonitor.Server do
   """
 
   use GenServer
-  alias NeoscanWeb.RoomChannel
   alias Neoscan.ChainAssets
 
   def start_link do
@@ -25,7 +24,8 @@ defmodule NeoscanMonitor.Server do
 
   def handle_info(:broadcast, state) do
     schedule_work() # Reschedule once more
-    RoomChannel.broadcast_change(state)
+    broadcast = Application.fetch_env!(:neoscan_monitor, :broadcast)
+    broadcast.("room:home", "change", state)
     {:noreply, state}
   end
 
