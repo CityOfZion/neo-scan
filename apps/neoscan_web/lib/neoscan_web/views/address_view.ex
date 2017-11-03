@@ -2,7 +2,7 @@ defmodule NeoscanWeb.AddressView do
   use NeoscanWeb, :view
   alias NeoscanMonitor.Api
   alias Neoscan.Helpers
-  
+
   def get_NEO_balance(nil) do
     0
   end
