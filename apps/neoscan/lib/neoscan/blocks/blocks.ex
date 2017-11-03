@@ -154,7 +154,6 @@ defmodule Neoscan.Blocks do
     |> List.first
   end
 
-
   @doc """
   Gets a single block by its hash value for blocks page, with paginated transactions
 
@@ -343,40 +342,40 @@ defmodule Neoscan.Blocks do
   #get the total of spent fees in the network between a height range
   def get_fees_in_range(height1, height2) do
     value1 = String.to_integer(height1)
-      try  do
-        String.to_integer(height2)
-      rescue
-        ArgumentError ->
-          "wrong input"
-      else
-        value2 ->
+    try  do
+      String.to_integer(height2)
+    rescue
+      ArgumentError ->
+        "wrong input"
+    else
+      value2 ->
 
-          range = [value1, value2]
+        range = [value1, value2]
 
-          max = Enum.max(range)
-          min = Enum.min(range)
+        max = Enum.max(range)
+        min = Enum.min(range)
 
-          query = from b in Block,
-                       where: b.index >= ^min and b.index <= ^max,
-                       select: %{
-                         :total_sys_fee => b.total_sys_fee,
-                         :total_net_fee => b.total_net_fee
-                       }
+        query = from b in Block,
+                     where: b.index >= ^min and b.index <= ^max,
+                     select: %{
+                       :total_sys_fee => b.total_sys_fee,
+                       :total_net_fee => b.total_net_fee
+                     }
 
-          Repo.all(query)
-          |> Enum.reduce(
-               %{:total_sys_fee => 0, :total_net_fee => 0},
-               fn (%{
-                 :total_sys_fee => sys_fee,
-                 :total_net_fee => net_fee
-               }, acc) ->
-                 %{
-                   :total_sys_fee => acc.total_sys_fee + sys_fee,
-                   :total_net_fee => acc.total_net_fee + net_fee
-                 }
-               end
-             )
-      end
+        Repo.all(query)
+        |> Enum.reduce(
+             %{:total_sys_fee => 0, :total_net_fee => 0},
+             fn (%{
+               :total_sys_fee => sys_fee,
+               :total_net_fee => net_fee
+             }, acc) ->
+               %{
+                 :total_sys_fee => acc.total_sys_fee + sys_fee,
+                 :total_net_fee => acc.total_net_fee + net_fee
+               }
+             end
+           )
+    end
   rescue
     ArgumentError ->
       "wrong input string can't be parsed into integer"

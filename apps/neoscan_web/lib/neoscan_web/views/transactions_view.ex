@@ -22,14 +22,12 @@ defmodule NeoscanWeb.TransactionsView do
     end
   end
 
-
   def get_current_min_qtd(page) do
     %{:total_transactions => total} = Api.get_stats
-    cond do
-      total < 15 ->
-        0
-      true ->
-        (String.to_integer(page) - 1) * 15 + 1
+    if total < 15 do
+      0
+    else
+      (String.to_integer(page) - 1) * 15 + 1
     end
   end
 
@@ -38,13 +36,10 @@ defmodule NeoscanWeb.TransactionsView do
     cond do
       total < 15 ->
         total
+      String.to_integer(page) * 15 > total ->
+        total
       true ->
-        cond do
-          String.to_integer(page) * 15 > total ->
-            total
-          true ->
-            String.to_integer(page) * 15
-        end
+        String.to_integer(page) * 15
     end
   end
 
@@ -53,9 +48,13 @@ defmodule NeoscanWeb.TransactionsView do
           |> String.to_integer
 
     num = int - 1
-    |> Integer.to_string
+          |> Integer.to_string
 
-    raw('<a href="#{transactions_path(conn, :go_to_page, num)}" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>')
+    raw(
+      '<a href="#{
+        transactions_path(conn, :go_to_page, num)
+      }" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
+    )
   end
 
   def get_next_page(conn, page) do
@@ -63,9 +62,13 @@ defmodule NeoscanWeb.TransactionsView do
           |> String.to_integer
 
     num = int + 1
-    |> Integer.to_string
+          |> Integer.to_string
 
-    raw('<a href="#{transactions_path(conn, :go_to_page, num)}" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>')
+    raw(
+      '<a href="#{
+        transactions_path(conn, :go_to_page, num)
+      }" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
+    )
   end
 
   def check_last(page) do
@@ -74,15 +77,14 @@ defmodule NeoscanWeb.TransactionsView do
     int = page
           |> String.to_integer
 
-    cond do
-      int * 15 < total ->
-        true
-      true ->
-        false
+    if int * 15 < total do
+      true
+    else
+      false
     end
   end
 
-  def get_total() do
+  def get_total  do
     %{:total_transactions => total} = Api.get_stats
     total
   end

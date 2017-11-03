@@ -77,7 +77,9 @@ defmodule Neoscan.Api do
 
       %{} = address ->
         new_balance = filter_balance(address.address, address.balance)
-        Map.merge(address, %{
+        Map.merge(
+          address,
+          %{
             :balance => new_balance,
             :unclaimed => Unclaimed.calculate_bonus(address.id),
           }
@@ -166,7 +168,11 @@ defmodule Neoscan.Api do
       nil -> %{:address => "not found", :claimable => nil}
 
       %{} = address ->
-        Map.put(address, :claimable, Unclaimed.calculate_vouts_bonus(address.id))
+        Map.put(
+          address,
+          :claimable,
+          Unclaimed.calculate_vouts_bonus(address.id)
+        )
         |> Map.delete(:id)
     end
 
@@ -227,9 +233,9 @@ defmodule Neoscan.Api do
                        block_height: h.block_height,
                      }
     claim_query = from h in Claim,
-                    select: %{
-                      txids: h.txids
-                    }
+                       select: %{
+                         txids: h.txids
+                       }
 
     query = from e in Address,
                  where: e.address == ^hash,
@@ -292,7 +298,8 @@ defmodule Neoscan.Api do
            %{
              "asset" => ChainAssets.get_asset_name_by_hash(asset),
              "amount" => Helpers.round_or_not(amount),
-             "unspent" => Vouts.get_unspent_vouts_for_address_by_asset(address, asset)
+             "unspent" =>
+               Vouts.get_unspent_vouts_for_address_by_asset(address, asset)
            }
          end
        )
@@ -679,12 +686,14 @@ defmodule Neoscan.Api do
         new_vouts = Enum.map(
           transaction.vouts,
           fn %{:asset => asset} = x ->
-            Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset)) end
+            Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset))
+          end
         )
         new_vins = Enum.map(
           transaction.vin,
           fn %{"asset" => asset} = x ->
-            Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset)) end
+            Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset))
+          end
         )
         Map.delete(transaction, :block)
         |> Map.delete(:inserted_at)

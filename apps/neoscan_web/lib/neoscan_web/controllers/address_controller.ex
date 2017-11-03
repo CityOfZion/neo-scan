@@ -20,15 +20,26 @@ defmodule NeoscanWeb.AddressController do
     |> redirect(to: home_path(conn, :index))
   end
   def route(address, conn, page) do
-    transactions = BalanceHistories.paginate_history_transactions(address.histories, page)
-                    |> Enum.map(fn tr ->
-                      {:ok, result} = Morphix.atomorphiform(tr)
-                      result
-                     end)
+    transactions = BalanceHistories.paginate_history_transactions(
+                     address.histories,
+                     page
+                   )
+                   |> Enum.map(
+                        fn tr ->
+                          {:ok, result} = Morphix.atomorphiform(tr)
+                          result
+                        end
+                      )
 
     graph_data = BalanceHistories.get_graph_data_for_address(address.address)
 
-    render(conn, "address.html", address: address, transactions: transactions, page: page, graph_data: graph_data)
+    render(
+      conn,
+      "address.html",
+      address: address,
+      transactions: transactions,
+      page: page,
+      graph_data: graph_data
+    )
   end
-
 end

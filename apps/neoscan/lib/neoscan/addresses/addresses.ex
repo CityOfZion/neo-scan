@@ -41,15 +41,15 @@ defmodule Neoscan.Addresses do
   """
   def list_latest do
     query = from a in Address,
-              order_by: [
-                desc: a.updated_at
-              ],
-              select: %{
-                :address => a.address,
-                :balance => a.balance,
-                :time => a.time,
-              },
-              limit: 15
+                 order_by: [
+                   desc: a.updated_at
+                 ],
+                 select: %{
+                   :address => a.address,
+                   :balance => a.balance,
+                   :time => a.time,
+                 },
+                 limit: 15
 
     Repo.all(query)
   end
@@ -78,24 +78,26 @@ defmodule Neoscan.Addresses do
   """
   def paginate_addresses(pag) do
     addresses_query = from e in Address,
-                        order_by: [
-                          desc: e.updated_at
-                        ],
-                       select: %{
-                         :address => e.address,
-                         :balance => e.balance,
-                         :time => e.time,
-                       },
-                       limit: 15
+                           order_by: [
+                             desc: e.updated_at
+                           ],
+                           select: %{
+                             :address => e.address,
+                             :balance => e.balance,
+                             :time => e.time,
+                           },
+                           limit: 15
 
     Repo.paginate(addresses_query, page: pag, page_size: 15)
-      |> Enum.map(fn ad ->
+    |> Enum.map(
+         fn ad ->
            Map.put(
-            ad,
-            :tx_count,
-            BalanceHistories.count_hist_for_address(ad.address)
+             ad,
+             :tx_count,
+             BalanceHistories.count_hist_for_address(ad.address)
            )
-         end)
+         end
+       )
   end
 
   @doc """
@@ -109,7 +111,7 @@ defmodule Neoscan.Addresses do
   """
   def count_addresses_for_asset(asset_hash) do
     query = from a in Address,
-            where: fragment("? \\? ?", a.balance, ^asset_hash)
+                 where: fragment("? \\? ?", a.balance, ^asset_hash)
 
     Repo.aggregate(query, :count, :id)
   end
@@ -354,7 +356,10 @@ defmodule Neoscan.Addresses do
   #get all addresses involved in a transaction
   def get_transaction_addresses(vins, vouts, time, asset) do
 
-    lookups = (Helpers.map_vins(vins) ++ Helpers.map_vouts(vouts) ++ [asset["admin"]])
+    lookups = (
+                Helpers.map_vins(vins) ++ Helpers.map_vouts(vouts) ++ [
+                  asset["admin"]
+                ])
               |> Enum.filter(fn address -> address != nil end)
               |> Enum.uniq
 
@@ -370,7 +375,12 @@ defmodule Neoscan.Addresses do
   #get all addresses involved in a list of previous transactions
   def get_transactions_addresses(transactions) do
 
-    lookups = Enum.reduce(transactions, [], fn (%{:vin => vin, :vouts => vouts}, acc) -> acc ++ Helpers.map_vins(vin) ++ Helpers.map_vouts(vouts) end)
+    lookups = Enum.reduce(
+                transactions,
+                [],
+                fn (%{:vin => vin, :vouts => vouts}, acc) ->
+                  acc ++ Helpers.map_vins(vin) ++ Helpers.map_vouts(vouts) end
+              )
               |> Enum.uniq
 
     query = from e in Address,
@@ -518,5 +528,4 @@ defmodule Neoscan.Addresses do
                 |> BalanceHistories.add_tx_id(txid, index, time)
     {address, new_attrs}
   end
-
 end
