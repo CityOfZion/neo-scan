@@ -41,7 +41,6 @@ defmodule NeoscanWeb.TransactionView do
     int
   end
 
-
   def parse_invocation([]) do
     "No Invocation Script"
   end
@@ -61,7 +60,6 @@ defmodule NeoscanWeb.TransactionView do
 
     Disassembler.parse_script(ver)
   end
-
 
   def get_inv([]) do
     "No Invocation Script"

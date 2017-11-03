@@ -72,7 +72,6 @@ defmodule Neoscan.Claims.Unclaimed do
                 )
                 |> Enum.reduce(0, fn (%{:gas => gas}, acc) -> acc + gas end)
 
-
     total_gas * value / total_neo()
     |> Helpers.round_or_not
   end
