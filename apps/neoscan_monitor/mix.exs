@@ -44,7 +44,8 @@ defmodule NeoscanMonitor.Mixfile do
   defp deps do
     [
       {:neoscan, in_umbrella: true},
-      {:neoprice, in_umbrella: true}
+      {:neoprice, in_umbrella: true},
+      {:neoscan_web, in_umbrella: true},
     ]
   end
 end

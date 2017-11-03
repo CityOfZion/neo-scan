@@ -22,10 +22,10 @@ defmodule Neoscan.AddressesTest do
       assert %Address{} = address
     end
 
-    test "update_address/2 with invalid data returns error changeset" do
-      address = insert(:address)
-      assert {:error, %Ecto.Changeset{}} = Addresses.update_address(address, %{"balance" => nil})
-    end
+#    test "update_address/2 with invalid data returns error changeset" do
+#      address = insert(:address)
+#      assert {:error, %Ecto.Changeset{}} = Addresses.update_address(address, %{"balance" => nil})
+#    end
 
     test "delete_address/1 deletes the address" do
       address = insert(:address)

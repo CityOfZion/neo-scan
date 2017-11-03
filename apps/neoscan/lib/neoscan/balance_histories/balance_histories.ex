@@ -43,7 +43,7 @@ defmodule Neoscan.BalanceHistories do
   """
   def count_hist_for_address(address_hash) do
     query = from h in History,
-             where: h.address_hash == ^address_hash
+                 where: h.address_hash == ^address_hash
     Repo.aggregate(query, :count, :id)
   end
 
@@ -52,44 +52,54 @@ defmodule Neoscan.BalanceHistories do
     lookups = Enum.map(histories, fn %{:txid => txid} -> txid end)
 
     transaction_query = from e in Transaction,
-                        order_by: [
-                          desc: e.block_height
-                        ],
-                        where: e.txid in ^lookups,
-                        select: %{
-                         :id => e.id,
-                         :type => e.type,
-                         :time => e.time,
-                         :txid => e.txid,
-                         :block_height => e.block_height,
-                         :block_hash => e.block_hash,
-                         :vin => e.vin,
-                         :claims => e.claims,
-                         :sys_fee => e.sys_fee,
-                         :net_fee => e.net_fee,
-                         :size => e.size,
-                        },
-                        limit: 15
+                             order_by: [
+                               desc: e.block_height
+                             ],
+                             where: e.txid in ^lookups,
+                             select: %{
+                               :id => e.id,
+                               :type => e.type,
+                               :time => e.time,
+                               :txid => e.txid,
+                               :block_height => e.block_height,
+                               :block_hash => e.block_hash,
+                               :vin => e.vin,
+                               :claims => e.claims,
+                               :sys_fee => e.sys_fee,
+                               :net_fee => e.net_fee,
+                               :size => e.size,
+                             },
+                             limit: 15
 
     transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
     vouts = Enum.map(transactions, fn tx -> tx.id end)
-              |> Transactions.get_transactions_vouts
+            |> Transactions.get_transactions_vouts
 
     transactions
-    |> Enum.map(fn tx ->
-         Map.put(tx, :vouts, Enum.filter(vouts, fn vout ->
-           vout.transaction_id == tx.id
-         end))
-       end)
+    |> Enum.map(
+         fn tx ->
+           Map.put(
+             tx,
+             :vouts,
+             Enum.filter(
+               vouts,
+               fn vout ->
+                 vout.transaction_id == tx.id
+               end
+             )
+           )
+         end
+       )
   end
-
 
   def get_graph_data_for_address(address) do
     query = from h in History,
-             where: h.address_hash == ^address,
-             order_by: [desc: h.time],
-             limit: 25,
-             select: map(h,[:balance])
+                 where: h.address_hash == ^address,
+                 order_by: [
+                   desc: h.time
+                 ],
+                 limit: 25,
+                 select: map(h, [:balance])
 
     Repo.all(query)
     |> Enum.map(fn %{:balance => b} -> filter_balance(b) end)
@@ -99,10 +109,20 @@ defmodule Neoscan.BalanceHistories do
     balance
     |> Map.to_list()
     |> Enum.reduce(
-      %{:time => 0, :assets => []},
-      fn ({asset_hash, %{"amount" => amount, "time" => time}}, %{:assets => assets}) ->
-        %{:time => time, :assets => [%{ ChainAssets.get_asset_name_by_hash(asset_hash) => amount} | assets]}
-      end)
+         %{:time => 0, :assets => []},
+         fn ({asset_hash, %{"amount" => amount, "time" => time}}, %{
+           :assets => assets
+         }) ->
+           %{
+             :time => time,
+             :assets => [
+               %{
+                 ChainAssets.get_asset_name_by_hash(asset_hash) => amount
+               } | assets
+             ]
+           }
+         end
+       )
   end
 
 end

@@ -28,7 +28,7 @@ defmodule Neoprice.Cryptocompare do
        limit, aggregate, time)
       end)
     |> List.flatten()
-    |> Enum.filter(fn({k,_}) -> k > from and k < to end)
+    |> Enum.filter(fn({k, _}) -> k > from and k < to end)
   end
 
   @spec limit(non_neg_integer, non_neg_integer, non_neg_integer,

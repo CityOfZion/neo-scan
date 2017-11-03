@@ -6,10 +6,15 @@ defmodule NeoscanMonitor.Worker do
 
   use GenServer
   alias NeoscanMonitor.Utils
+  alias NeoscanMonitor.Server
   alias Neoscan.Blocks
   alias Neoscan.Transactions
   alias Neoscan.Addresses
   alias Neoscan.ChainAssets
+  alias Neoprice.NeoBtc
+  alias Neoprice.NeoUsd
+  alias Neoprice.GasBtc
+  alias Neoprice.GasUsd
 
   #starts the genserver
   def start_link do
@@ -23,37 +28,52 @@ defmodule NeoscanMonitor.Worker do
 
     blocks = Task.async(fn -> Blocks.home_blocks end)
 
-    transactions = Task.async(fn ->
-      Transactions.home_transactions
-      |> Utils.add_vouts
-    end)
+    transactions = Task.async(
+      fn ->
+        Transactions.home_transactions
+        |> Utils.add_vouts
+      end
+    )
 
-    assets = Task.async(fn ->
-      ChainAssets.list_assets
-      |> Utils.get_stats
-    end)
+    assets = Task.async(
+      fn ->
+        ChainAssets.list_assets
+        |> Utils.get_stats
+      end
+    )
 
     contracts = Task.async(fn -> Transactions.list_contracts end)
 
     stats = Task.async(fn -> Utils.get_general_stats() end)
 
-    addresses = Task.async(fn ->
-      Addresses.list_latest()
-      |> Utils.count_txs
-    end)
+    addresses = Task.async(
+      fn ->
+        Addresses.list_latest()
+        |> Utils.count_txs
+      end
+    )
 
-    price = %{neo: %{btc: Neoprice.NeoBtc.last_price_full(), usd: Neoprice.NeoUsd.last_price_full()}, gas: %{btc: Neoprice.GasBtc.last_price_full(), usd: Neoprice.GasUsd.last_price_full()}}
+    price = %{
+      neo: %{
+        btc: NeoBtc.last_price_full(),
+        usd: NeoUsd.last_price_full()
+      },
+      gas: %{
+        btc: GasBtc.last_price_full(),
+        usd: GasUsd.last_price_full()
+      }
+    }
 
-    new_state =  %{
-              :monitor => Task.await(monitor_nodes, 60_000),
-              :blocks => Task.await(blocks, 60_000),
-              :transactions => Task.await(transactions, 60_000),
-              :assets => Task.await(assets, 60_000),
-              :contracts => Task.await(contracts, 60_000),
-              :stats => Task.await(stats, 60_000),
-              :addresses => Task.await(addresses, 60_000),
-              :price => price,
-            }
+    new_state = %{
+      :monitor => Task.await(monitor_nodes, 60_000),
+      :blocks => Task.await(blocks, 60_000),
+      :transactions => Task.await(transactions, 60_000),
+      :assets => Task.await(assets, 60_000),
+      :contracts => Task.await(contracts, 60_000),
+      :stats => Task.await(stats, 60_000),
+      :addresses => Task.await(addresses, 60_000),
+      :price => price,
+    }
 
     Process.send(
       NeoscanMonitor.Server,
@@ -68,15 +88,27 @@ defmodule NeoscanMonitor.Worker do
   #update nodes and stats information
   def handle_info(:update_nodes, state) do
     schedule_nodes() # Reschedule once more
-    new_state = Map.merge(state, %{
+    new_state = Map.merge(
+      state,
+      %{
         :monitor => Utils.load(),
         :assets => ChainAssets.list_assets
-                    |> Utils.get_stats,
+                   |> Utils.get_stats,
         :stats => Utils.get_general_stats(),
         :addresses => Addresses.list_latest()
-                       |> Utils.count_txs,
-        :price => %{neo: %{btc: Neoprice.NeoBtc.last_price_full(), usd: Neoprice.NeoUsd.last_price_full()}, gas: %{btc: Neoprice.GasBtc.last_price_full(), usd: Neoprice.GasUsd.last_price_full()}},
-      })
+                      |> Utils.count_txs,
+        :price => %{
+          neo: %{
+            btc: NeoBtc.last_price_full(),
+            usd: NeoUsd.last_price_full()
+          },
+          gas: %{
+            btc: GasBtc.last_price_full(),
+            usd: GasUsd.last_price_full()
+          }
+        },
+      }
+    )
 
     {:noreply, new_state}
   end
@@ -84,7 +116,7 @@ defmodule NeoscanMonitor.Worker do
   #updates the state in the server module
   def handle_info(:update, state) do
     schedule_update() # Reschedule once more
-    Process.send(NeoscanMonitor.Server, {:state_update, state}, [])
+    Process.send(Server, {:state_update, state}, [])
     {:noreply, state}
   end
 
@@ -114,14 +146,20 @@ defmodule NeoscanMonitor.Worker do
   #adds a transaction to the state
   def handle_cast({:add_transaction, transaction, vouts}, state) do
     count = Enum.count(state.transactions)
-    clean_vouts = Enum.map(vouts, fn vout ->
-                    {:ok, result} = Morphix.atomorphiform(vout)
-                    Map.merge(result, %{
-                      :address_hash => result.address,
-                      :asset => String.slice(to_string(result.asset), -64..-1),
-                    })
-                    |> Map.delete(:address)
-                  end)
+    clean_vouts = Enum.map(
+      vouts,
+      fn vout ->
+        {:ok, result} = Morphix.atomorphiform(vout)
+        Map.merge(
+          result,
+          %{
+            :address_hash => result.address,
+            :asset => String.slice(to_string(result.asset), -64..-1),
+          }
+        )
+        |> Map.delete(:address)
+      end
+    )
     new_transactions = [
                          %{
                            :id => transaction.id,
@@ -166,11 +204,14 @@ defmodule NeoscanMonitor.Worker do
 
   #adds a contract to the state
   def handle_cast({:add_contract, contract, vouts}, state) do
-    clean_vouts = Enum.map(vouts, fn vout ->
-                    {:ok, result} = Morphix.atomorphiform(vout)
-                    Map.put(result, :address_hash, result.address)
-                    |> Map.delete(:address)
-                  end)
+    clean_vouts = Enum.map(
+      vouts,
+      fn vout ->
+        {:ok, result} = Morphix.atomorphiform(vout)
+        Map.put(result, :address_hash, result.address)
+        |> Map.delete(:address)
+      end
+    )
     new_contracts = [Map.put(contract, :vouts, clean_vouts) | state.contracts]
 
     new_state = Map.put(state, :contracts, new_contracts)

@@ -9,10 +9,10 @@ defmodule NeoscanWeb.BlockView do
     ecto_time = Ecto.DateTime.from_unix!(unix_time, :second)
 
     [dt1, dt2] = [ecto_time, Ecto.DateTime.utc]
-                   |> Enum.map(&Ecto.DateTime.to_erl/1)
-                   |> Enum.map(&NaiveDateTime.from_erl!/1)
-                   |> Enum.map(&DateTime.from_naive!(&1, "Etc/UTC"))
-                   |> Enum.map(&DateTime.to_unix(&1))
+                 |> Enum.map(&Ecto.DateTime.to_erl/1)
+                 |> Enum.map(&NaiveDateTime.from_erl!/1)
+                 |> Enum.map(&DateTime.from_naive!(&1, "Etc/UTC"))
+                 |> Enum.map(&DateTime.to_unix(&1))
 
     {int, _str} = (dt2 - dt1) / 60
                   |> Float.floor(0)
@@ -36,7 +36,6 @@ defmodule NeoscanWeb.BlockView do
     Disassembler.parse_script(ver)
   end
 
-
   def get_inv([]) do
     "No Invocation Script"
   end
@@ -51,40 +50,34 @@ defmodule NeoscanWeb.BlockView do
     ver
   end
 
-
-
   def get_current_min_qtd(page, total) do
-    cond do
-      total < 15 ->
-        1
-      true ->
-        (String.to_integer(page) - 1) * 15 + 1
+    if total < 15 do
+      1
+    else
+      (String.to_integer(page) - 1) * 15 + 1
     end
   end
 
   def get_current_max_qtd(page, total) do
     cond do
-      total < 15 ->
-        total
-      true ->
-        cond do
-          String.to_integer(page) * 15 > total ->
-            total
-          true ->
-            String.to_integer(page) * 15
-        end
+      total < 15 -> total
+      String.to_integer(page) * 15 > total -> total
+      true -> String.to_integer(page) * 15
     end
   end
-
 
   def get_previous_page(conn, page) do
     int = page
           |> String.to_integer
 
     num = int - 1
-    |> Integer.to_string
+          |> Integer.to_string
 
-    raw('<a href="#{block_path(conn, :go_to_page, num)}" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>')
+    raw(
+      '<a href="#{
+        block_path(conn, :go_to_page, num)
+      }" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
+    )
   end
 
   def get_next_page(conn, page) do
@@ -92,20 +85,23 @@ defmodule NeoscanWeb.BlockView do
           |> String.to_integer
 
     num = int + 1
-    |> Integer.to_string
+          |> Integer.to_string
 
-    raw('<a href="#{block_path(conn, :go_to_page, num)}" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>')
+    raw(
+      '<a href="#{
+        block_path(conn, :go_to_page, num)
+      }" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
+    )
   end
 
   def check_last(page, total) do
     int = page
           |> String.to_integer
 
-    cond do
-      int * 15 < total ->
-        true
-      true ->
-        false
+    if int * 15 < total do
+      true
+    else
+      false
     end
   end
 

@@ -7,7 +7,12 @@ defmodule NeoscanWeb.RoomChannel do
   def join("room:home", _payload, socket) do
     {
       :ok,
-      %{:blocks => Api.get_blocks, :transactions => Api.get_transactions, :price => Api.get_price, :stats => Api.get_stats},
+      %{
+        :blocks => Api.get_blocks,
+        :transactions => Api.get_transactions,
+        :price => Api.get_price,
+        :stats => Api.get_stats
+      },
       socket
     }
   end

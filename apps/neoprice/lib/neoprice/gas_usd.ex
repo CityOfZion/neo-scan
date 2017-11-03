@@ -1,8 +1,8 @@
 defmodule Neoprice.GasUsd do
   @moduledoc false
 
-  @day 86400
-  @month 2678400
+  @day 86_400
+  @month 2_678_400
 
   alias Neoprice.Cache.Config
   use Neoprice.Cache,
@@ -40,9 +40,9 @@ defmodule Neoprice.GasUsd do
           aggregation: 1
         }
       ]
-  def get_all(), do: :ets.tab2list(:GASUSD_all) |> Map.new
-  def get_3_month(), do: :ets.tab2list(:GASUSD_3_m) |> Map.new
-  def get_1_month(), do: :ets.tab2list(:GASUSD_1_m) |> Map.new
-  def get_1_week(), do: :ets.tab2list(:GASUSD_1_w) |> Map.new
-  def get_1_day(), do: :ets.tab2list(:GASUSD_1_d) |> Map.new
+  def get_all, do: :ets.tab2list(:GASUSD_all) |> Map.new
+  def get_3_month, do: :ets.tab2list(:GASUSD_3_m) |> Map.new
+  def get_1_month, do: :ets.tab2list(:GASUSD_1_m) |> Map.new
+  def get_1_week, do: :ets.tab2list(:GASUSD_1_w) |> Map.new
+  def get_1_day, do: :ets.tab2list(:GASUSD_1_d) |> Map.new
 end
