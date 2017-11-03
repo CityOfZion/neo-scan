@@ -137,12 +137,10 @@ window.onload = function () {
 
     const createChart = (coin, compareCurrency, time) => {
       fetch(`/price/${coin}/${compareCurrency}/${time}`).then(res => res.json()).then(results => {
-        console.log('results', results);
         const dates = ['date']
         const prices = [coin.toUpperCase()]
         for (const [unixTimestamp, price] of Object.entries(results)) {
-          const date = new Date(unixTimestamp*1000)
-          const formattedDate = moment(date).format('YYYY-MM-DD HH:MM:SS')
+          const formattedDate = moment.unix(unixTimestamp).format('YYYY-MM-DD HH:mm')
           if (dates[dates.length-1] !== formattedDate) dates.push(formattedDate)
           prices.push(price)
         }
@@ -156,7 +154,7 @@ window.onload = function () {
               dates,
               prices
             ],
-            xFormat: '%Y-%m-%d %H:%M:%S'
+            xFormat: '%Y-%m-%d %H:%M'
           },
           axis: {
             x: {
