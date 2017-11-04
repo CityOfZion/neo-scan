@@ -126,19 +126,19 @@ defmodule Neoscan.Vm.Disassembler do
 
   def parse_script(hex_string) do
     hex_string
-    |> String.slice(0..40)
     |> String.codepoints
     |> Stream.chunk(2)
     |> Enum.map(&Enum.join/1)
-    |> make_list
+    |> make_list()
     |> reduce_list_to_string()
     |> String.split("\n")
-    |> parse_syscalls
+    |> parse_syscalls()
   end
 
   defp reduce_list_to_string(list) do
     Enum.reduce(
       list,
+      "",
       fn (code, acc) ->
         if Map.has_key?(@opcodes_list, code) and String.length(code) == 2 do
           newline = if code == "68", do: "", else: "\n"
@@ -159,7 +159,7 @@ defmodule Neoscan.Vm.Disassembler do
             true ->
               base_args
           end
-          acc <> push_bytes <> opcode_keyword <> " " <> args <> "\n"
+          acc <> push_bytes <> opcode_keyword <> ": " <> args <> "\n"
         end
       end
     )

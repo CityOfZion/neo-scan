@@ -177,13 +177,21 @@
       <li class="corner-box remove-margin-left">
         <h2><%= gettext "Opcode Invocation Script" %></h2>
         <div class="corner-box">
-          <p class="small-detail-text bar-left-blocks"><%= parse_invocation(@block.script) %></p>
+          <p class="small-detail-text bar-left-blocks">
+            <%= for script <- parse_invocation(@block.script) do %>
+              <span class="script-new-line"><%= script %></span>
+            <% end %>
+          </p>
         </div>
       </li>
       <li class="corner-box">
         <h2><%= gettext "Opcode Verification Script" %></h2>
         <div class="corner-box">
-          <p class="small-detail-text bar-left-blocks"><%= parse_verification(@block.script) %></p>
+          <p class="small-detail-text bar-left-blocks">
+          <%= for script <- parse_verification(@block.script) do %>
+            <span class="script-new-line"><%= script %></span>
+          <% end %>
+          </p>
         </div>
       </li>
     </ul>
