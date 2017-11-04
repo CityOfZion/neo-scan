@@ -3,11 +3,11 @@
     <p class="large-detail-text"><span class="fa fa-signal"></span><span class="bold-text">Block</span> <span class="teal-bar">|</span> <span class="eggshell-blue-text"><%= @block.index %></span></p>
     <a href="<%= blocks_path(@conn, :index) %>" alt="Back to all transactions" title="Back to all transactions" class="back-link">Back to all blocks</a>
 
-    <section id="block-information" class="corner-box">
+    <section id="block-information" class="corner-box bar-left-blocks">
 
       <!-- Extra information list -->
-      <ul id="extra-information">
-        <li class="border-right border-bottom">
+      <ul id="extra-information" class="block-left-information-bar">
+        <li class="border-right border-bottom border-right-smaller remove-border-right-660px">
           <p class="small-detail-text"><%= gettext "Block index" %></p>
           <p class="large-detail-text"><%= @block.index %></p>
         </li>
@@ -15,7 +15,7 @@
           <p class="small-detail-text"><%= gettext "Transactions" %></p>
           <p class="large-detail-text"><%= @block.tx_count %></p>
         </li>
-        <li class="border-bottom">
+        <li class="border-bottom border-right-smaller remove-border-right-660px">
           <p class="small-detail-text"><%= gettext "Hash" %></p>
           <p class="large-detail-text"><%= @block.hash %></p>
         </li>
@@ -23,19 +23,19 @@
           <p class="small-detail-text"><%= gettext "Time" %></p>
           <p class="large-detail-text"><%= compare_time_and_get_minutes(@block.time)%> minutes ago</p>
         </li>
-        <li class="border-right border-bottom">
+        <li class="border-right border-bottom border-right-smaller remove-border-right-660px">
           <p class="small-detail-text"><%= gettext "Version" %></p>
           <p class="large-detail-text"><%= @block.version %></p>
         </li>
-        <li class="border-right border-bottom">
+        <li class="border-bottom">
           <p class="small-detail-text"><%= gettext "Merkle root" %></p>
           <p class="large-detail-text"><%= @block.merkleroot %></p>
         </li>
-        <li class="border-right border-bottom">
+        <li class="border-right border-right-smaller border-bottom-smaller remove-border-right-660px">
           <p class="small-detail-text">Validator</p>
           <a href="<%= address_path(@conn, :index, @block.nextconsensus)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><%= @block.nextconsensus %></a>
         </li>
-        <li>
+        <li class="border-right-smaller remove-border-right-660px remove-border-bottom-660px">
           <p class="small-detail-text">Size</p>
           <p class="large-detail-text"><%= @block.size %> <%= gettext "bytes" %></p>
         </li>
@@ -50,9 +50,10 @@
 
       <div class="detail-bar">
         <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
-        <p class="detail-type col-5-width"><%= gettext "Transaction ID" %></p>
+        <p class="detail-type col-6-width"><%= gettext "Transaction ID" %></p>
         <p class="detail-type col-2-width"><%= gettext "Block" %></p>
         <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
+        <p class="detail-type tablet-full-width">All transaction information</p>
       </div>
 
       <!-- Transactions -->
@@ -61,11 +62,8 @@
         <div class="transactions-list">
 
           <%= for transaction <- @transactions do %>
-            <div class="full-width-bar neo-transaction">
+            <div class="full-width-bar <%= get_class(transaction.type)%>">
               <div class="information-wrapper">
-                <%= if transaction.type == "MinerTransaction" do %>
-                  <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Miner" %></p>
-                <% end %>
                 <%= if transaction.type == "ContractTransaction" do %>
                   <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract" %></p>
                 <% end %>
@@ -73,29 +71,34 @@
                   <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span><%= gettext "Gas Claim" %></p>
                 <% end %>
                 <%= if transaction.type == "InvocationTransaction" do %>
-                  <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Invocation" %></p>
+                  <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Invocation" %></p>
                 <% end %>
                 <%= if transaction.type == "IssueTransaction" do %>
-                  <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Asset Issue" %></p>
+                  <p class="medium-detail-text col-2-width"><span class="fa fa-handshake-o"></span><%= gettext "Asset Issue" %></p>
                 <% end %>
                 <%= if transaction.type == "RegisterTransaction" do %>
-                  <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Asset Register" %></p>
+                  <p class="medium-detail-text col-2-width"><span class="fa fa-list-alt"></span><%= gettext "Asset Register" %></p>
                 <% end %>
                 <%= if transaction.type == "PublishTransaction" do %>
                   <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract Publish" %></p>
                 <% end %>
-                <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-5-width"><%= transaction.txid %>&#8230;</a>
-                <p class="medium-detail-text col-2-width"><%=transaction.block_height%></p>
-                <p class="medium-detail-text col-2-width">
-                  <%=
-                    {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
-                    DateTime.to_date(date_time)
-                  %> |
-                  <%=
-                    {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
-                    DateTime.to_time(date_time)
-                  %>
-                </p>
+                <%= if transaction.type == "MinerTransaction" do %>
+                  <p class="medium-detail-text col-2-width"><span class="fa fa-user-circle-o"></span><%= gettext "Miner" %></p>
+                <% end %>
+                <div class="secondary-info-wrapper">
+                  <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-5-width"><%= transaction.txid %>&#8230;</a>
+                  <p class="medium-detail-text col-2-width"><%=transaction.block_height%></p>
+                  <p class="medium-detail-text col-2-width">
+                    <%=
+                      {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
+                      DateTime.to_date(date_time)
+                    %> |
+                    <%=
+                      {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
+                      DateTime.to_time(date_time)
+                    %>
+                  </p>
+                </div>
               </div>
               <button class="btn-accordion"><img src="<%= static_path(@conn, "/images/ICON_DownArrow.svg") %>" alt="Accordion down arrow" title="Accordion down arrow" class="accordion-down-arrow" width="13px" height="8px" /></button>
               <div class="transaction-panel">
@@ -159,13 +162,13 @@
       <li class="corner-box remove-margin-left">
         <h2><%= gettext "Bytecode Invocation Script" %></h2>
         <div class="corner-box">
-          <p class="small-detail-text"><%= get_inv(@block.script) %></p>
+          <p class="small-detail-text bar-left-blocks"><%= get_inv(@block.script) %></p>
         </div>
       </li>
       <li class="corner-box">
         <h2><%= gettext "Bytecode Verification Script" %></h2>
         <div class="corner-box">
-          <p class="small-detail-text"><%= get_ver(@block.script) %></p>
+          <p class="small-detail-text bar-left-blocks"><%= get_ver(@block.script) %></p>
         </div>
       </li>
     </ul>
@@ -174,13 +177,13 @@
       <li class="corner-box remove-margin-left">
         <h2><%= gettext "Opcode Invocation Script" %></h2>
         <div class="corner-box">
-          <p class="small-detail-text"><%= parse_invocation(@block.script) %></p>
+          <p class="small-detail-text bar-left-blocks"><%= parse_invocation(@block.script) %></p>
         </div>
       </li>
       <li class="corner-box">
         <h2><%= gettext "Opcode Verification Script" %></h2>
         <div class="corner-box">
-          <p class="small-detail-text"><%= parse_verification(@block.script) %></p>
+          <p class="small-detail-text bar-left-blocks"><%= parse_verification(@block.script) %></p>
         </div>
       </li>
     </ul>

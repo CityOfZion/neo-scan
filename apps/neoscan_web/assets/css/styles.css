@@ -119,6 +119,7 @@ a:hover {
 /* Light text */
 .eggshell-blue-text {
   color: #E6ECF2;
+  font-weight: 400;
 }
 
 /******************************************
@@ -467,7 +468,7 @@ a:hover {
 	box-sizing: border-box;
 }
 #navigation .search-btn:hover {
-	background: rgba(49, 49, 100, 0.62);
+	background: rgba(5, 5, 31, 0.6);
 	color: #4598FF;
 	cursor: pointer;
 }
@@ -806,7 +807,7 @@ a:hover {
   outline: none;
 }
 .hero-submit-btn:hover {
-	background: rgba(49, 49, 100, 0.62);
+	background: rgba(5, 5, 31, 0.6);
 	cursor: pointer;
 }
 #wallet-graph,
@@ -1331,6 +1332,7 @@ a:hover {
   box-shadow: 0 6px 12px #181835;
   border-left: 4px solid #4598FF;
   box-sizing: border-box;
+  border-radius: 2px;
 }
 #assets-list .asset-type {
   font-size: 25px;
@@ -2244,6 +2246,7 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 	h1 {
 		margin: 60px 0 15px;
 		font-size: 30px;
+		line-height: 36px;
 	}
 	
 	.medium-detail-text {
@@ -2259,7 +2262,25 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 	}
 	
 	.hero-submit-btn {
-		background: rgba(5, 5, 31, 0.6);
+		background: rgb(25, 25, 57);
+	}
+	
+	/* TARGETED PAGES INFO AFTER VERTICAL BAR */
+	#main-content-wrapper .orange-bar,
+	#main-content-wrapper .bright-teal-bar,
+	#main-content-wrapper .pink-bar,
+	#main-content-wrapper .teal-bar,
+	#main-content-wrapper .blue-bar,
+	#main-content-wrapper .purplepink-bar,
+	#main-content-wrapper .green-bar,
+	#main-content-wrapper .golden {
+		display: inline-block;
+		margin-bottom: 10px;
+	}
+	
+	#main-content-wrapper .golden-blue-text {
+		font-weight: 400;
+		color: #E6ECF2;
 	}
 	
 	/* WALLET ADDRESSES */
@@ -2292,7 +2313,7 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 		border-top: 1px solid #2B2B5E;
 		width: 17.5%;
 		border-right: 0;
-		background: rgba(5, 5, 31, 0.6);
+		background: rgb(25, 25, 57);
 	}
 	/* Navigation search */
 	#navigation input.searchbar {

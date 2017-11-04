@@ -15,6 +15,7 @@ defmodule Neoscan.Claims.Unclaimed do
     get_unclaimed_vouts(address_id)
     |> add_end_height
     |> route_if_there_is_unclaimed
+    |> Helpers.round_or_not()
   end
 
   #calculate unclaimed gas bonus

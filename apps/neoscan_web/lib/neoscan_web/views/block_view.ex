@@ -105,4 +105,23 @@ defmodule NeoscanWeb.BlockView do
     end
   end
 
+  def get_class(type) do
+    cond do
+      type == "ContractTransaction" ->
+        'neo-transaction'
+      type == "ClaimTransaction" ->
+        'gas-transaction'
+      type == "IssueTransaction" ->
+        'issue-transaction'
+      type == "RegisterTransaction" ->
+        'register-transaction'
+      type == "InvocationTransaction" ->
+        'invocation-transaction'
+      type == "PublishTransaction" ->
+        'publish-transaction'
+      type == "MinerTransaction" ->
+        'miner-transaction'
+    end
+  end
+
 end

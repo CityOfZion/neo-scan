@@ -23,6 +23,25 @@ defmodule NeoscanWeb.TransactionView do
     end
   end
 
+  def get_icon(type) do
+    cond do
+      type == "MinerTransaction" ->
+        'fa-user-circle-o'
+      type == "ContractTransaction" ->
+        'fa-cube'
+      type == "ClaimTransaction" ->
+        'fa-cubes'
+      type == "IssueTransaction" ->
+        'fa-handshake-o'
+      type == "RegisterTransaction" ->
+        'fa-list-alt'
+      type == "InvocationTransaction" ->
+        'fa-paper-plane'
+      type == "PublishTransaction" ->
+        'Contract Publish'
+    end
+  end
+
   def compare_time_and_get_minutes(time) do
 
     ecto_time = Ecto.DateTime.from_unix!(time, :second)

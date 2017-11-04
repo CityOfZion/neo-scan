@@ -53,6 +53,8 @@ defmodule NeoscanWeb.AssetView do
         'invocation-transaction'
       type == "PublishTransaction" ->
         'publish-transaction'
+      type == "MinerTransaction" ->
+        'miner-transaction'
     end
   end
 

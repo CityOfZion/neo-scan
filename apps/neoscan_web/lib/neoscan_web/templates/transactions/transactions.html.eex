@@ -5,9 +5,10 @@
 
   <div class="detail-bar">
     <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
-    <p class="detail-type col-5-width"><%= gettext "Transaction ID" %></p>
+    <p class="detail-type col-6-width"><%= gettext "Transaction ID" %></p>
     <p class="detail-type col-2-width"><%= gettext "Block" %></p>
     <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
+    <p class="detail-type tablet-full-width">All transaction information</p>
   </div>
 
   <!-- Transactions -->
@@ -25,29 +26,34 @@
               <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span><%= gettext "Gas Claim" %></p>
             <% end %>
             <%= if transaction.type == "InvocationTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Invocation" %></p>
+              <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Invocation" %></p>
             <% end %>
             <%= if transaction.type == "IssueTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Asset Issue" %></p>
+              <p class="medium-detail-text col-2-width"><span class="fa fa-handshake-o"></span><%= gettext "Asset Issue" %></p>
             <% end %>
             <%= if transaction.type == "RegisterTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Asset Register" %></p>
+              <p class="medium-detail-text col-2-width"><span class="fa fa-list-alt"></span><%= gettext "Asset Register" %></p>
             <% end %>
             <%= if transaction.type == "PublishTransaction" do %>
               <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract Publish" %></p>
             <% end %>
-            <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-5-width"><%=transaction.txid%>&#8230;</a>
-            <p class="medium-detail-text col-2-width">&nbsp;&nbsp;&nbsp;<a href="<%= block_path( @conn, :index, transaction.block_hash) %>" alt="View block" title="View block" class="blue-link"><%= transaction.block_height %></a></p>
-            <p class="medium-detail-text col-2-width">
-              <%=
-                {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
-                DateTime.to_date(date_time)
-              %> |
-              <%=
-                {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
-                DateTime.to_time(date_time)
-              %>
-            </p>
+            <%= if transaction.type == "MinerTransaction" do %>
+              <p class="medium-detail-text col-2-width"><span class="fa fa-user-circle-o"></span><%= gettext "Miner" %></p>
+            <% end %>
+            <div class="secondary-info-wrapper">
+              <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-6-width"><%=transaction.txid%>&#8230;</a>
+              <p class="medium-detail-text col-2-width remove-550px"><a href="<%= block_path( @conn, :index, transaction.block_hash) %>" alt="View block" title="View block" class="blue-link"><%= transaction.block_height %></a></p>
+              <p class="medium-detail-text col-2-width remove-550px">
+                <%=
+                  {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
+                  DateTime.to_date(date_time)
+                %> |
+                <%=
+                  {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
+                  DateTime.to_time(date_time)
+                %>
+              </p>
+            </div>
           </div>
           <button class="btn-accordion"><img src="<%= static_path(@conn, "/images/ICON_DownArrow.svg") %>" alt="Accordion down arrow" title="Accordion down arrow" class="accordion-down-arrow" width="13px" height="8px" /></button>
           <div class="transaction-panel">

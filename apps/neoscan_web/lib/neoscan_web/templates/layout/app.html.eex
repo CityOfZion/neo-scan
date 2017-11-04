@@ -40,9 +40,9 @@
 
 			<!-- Language selector dropdown -->
 			<div class="lang-dropdown-wrapper">
-				<select>
-					<option href="?locale=en">English</option>
-					<option href="?locale=fr">Français</option>
+				<select onchange="window.location.href=this.value">
+					<option value="?locale=en">English</option>
+					<option value="?locale=fr">Français</option>
 				</select>​
 			</div>
 

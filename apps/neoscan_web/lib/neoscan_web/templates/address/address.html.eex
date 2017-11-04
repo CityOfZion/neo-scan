@@ -2,26 +2,30 @@
 <!-- Welcome -->
 <h1 class="content-title">Address Information</h1>
 <%= content_tag :div, "", [{:data, [graph_data: Poison.encode!(@graph_data)]}, value: "value", id: "graph_data"] %>
-<p class="content-subline"> <i class="fa fa-key address-icon"></i> Address <span class="golden">|</span> Hash: <%= @address.address %> </p>
+<p class="large-detail-text"><span class="fa fa-key address-icon"></span><span class="bold-text">Address</span> <span class="golden">|</span> <span class="golden-blue-text hash"><%= @address.address %></span></p>
 <div class="wallet-navigation">
   <a href="<%= addresses_path(@conn, :index) %>" class="browse-wallet-back">Back to all addresses</a>
 </div>
 
 <!-- Market graph -->
-<section id="wallet-graph">
-  <div class="individual-wallet-box">
-    <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> NEO balance</p>
-    <p class="balance-amount"><%= get_NEO_balance(@address.balance) %></p>
+<section id="wallet-graph" class="bar-left-wallet">
+  <div class="individual-wallet-wrapper">
+    <div class="individual-wallet-box">
+      <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> NEO balance</p>
+      <p class="balance-amount"><%= get_NEO_balance(@address.balance) %></p>
+    </div>
+    <div class="individual-wallet-box gas-balance last">
+      <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i> Gas balance</p>
+      <div class="total-gas-balance">
+        <%= get_GAS_balance(@address.balance) %>
+        <p class="unclaimed-GAS"><%= Unclaimed.calculate_bonus(@address.id) %> unclaimed gas</p>
+      </div>
+    </div>
   </div>
-  <div class="individual-wallet-box last">
-    <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i> Gas balance</p>
-    <%= get_GAS_balance(@address.balance) %>
-  </div>
-
-  <p class="tab-label" id="last-x-transactions"></p>
   <div class="chart-container">
+    <p id="last-x-transactions"></p>
     <div id="address-chart"></div>
-    <div class="select-container">
+    <div class="lang-dropdown-wrapper">
       <select id="select-address-chart">
       </select>
     </div>
@@ -34,9 +38,10 @@
 
   <div class="detail-bar">
     <p class="detail-type detail-type-first-2-col">Type</p>
-    <p class="detail-type col-5-width">Transaction ID</p>
+    <p class="detail-type col-6-width">Transaction ID</p>
     <p class="detail-type col-2-width">Block</p>
-    <p class="detail-type col-2-width">Date and time completed</p>
+    <p class="detail-type col-2-width">Completed on</p>
+    <p class="detail-type tablet-full-width">All transaction information</p>
   </div>
 
   <!-- Transactions -->
@@ -45,29 +50,33 @@
     <div class="transactions-list">
 
       <%= for transaction <- @transactions do %>
-        <div class="full-width-bar <%= get_class(transaction.type)%>">
-          <div class="information-wrapper">
-            <%= if transaction.type == "ContractTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract" %></p>
-            <% end %>
-            <%= if transaction.type == "ClaimTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span><%= gettext "Gas Claim" %></p>
-            <% end %>
-            <%= if transaction.type == "InvocationTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Invocation" %></p>
-            <% end %>
-            <%= if transaction.type == "IssueTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Asset Issue" %></p>
-            <% end %>
-            <%= if transaction.type == "RegisterTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Asset Register" %></p>
-            <% end %>
-            <%= if transaction.type == "PublishTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract Publish" %></p>
-            <% end %>
-            <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-5-width"><%=transaction.txid%>&#8230;</a>
-            <p class="medium-detail-text col-2-width">&nbsp;&nbsp;&nbsp;<a href="<%= block_path( @conn, :index, transaction.block_hash) %>" alt="View block" title="View block" class="blue-link"><%= transaction.block_height %></a></p>
-            <p class="medium-detail-text col-2-width">
+      <div class="full-width-bar <%= get_class(transaction.type)%>">
+        <div class="information-wrapper">
+          <%= if transaction.type == "ContractTransaction" do %>
+            <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract" %></p>
+          <% end %>
+          <%= if transaction.type == "ClaimTransaction" do %>
+            <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span><%= gettext "Gas Claim" %></p>
+          <% end %>
+          <%= if transaction.type == "InvocationTransaction" do %>
+            <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Invocation" %></p>
+          <% end %>
+          <%= if transaction.type == "IssueTransaction" do %>
+            <p class="medium-detail-text col-2-width"><span class="fa fa-handshake-o"></span><%= gettext "Asset Issue" %></p>
+          <% end %>
+          <%= if transaction.type == "RegisterTransaction" do %>
+            <p class="medium-detail-text col-2-width"><span class="fa fa-list-alt"></span><%= gettext "Asset Register" %></p>
+          <% end %>
+          <%= if transaction.type == "PublishTransaction" do %>
+            <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract Publish" %></p>
+          <% end %>
+          <%= if transaction.type == "MinerTransaction" do %>
+            <p class="medium-detail-text col-2-width"><span class="fa fa-user-circle-o"></span><%= gettext "Miner" %></p>
+          <% end %>
+          <div class="secondary-info-wrapper">
+            <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-6-width"><%=transaction.txid%>&#8230;</a>
+            <p class="medium-detail-text col-2-width remove-550px"><a href="<%= block_path( @conn, :index, transaction.block_hash) %>" alt="View block" title="View block" class="blue-link"><%= transaction.block_height %></a></p>
+            <p class="medium-detail-text col-2-width remove-550px">
               <%=
                 {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
                 DateTime.to_date(date_time)
@@ -78,6 +87,7 @@
               %>
             </p>
           </div>
+        </div>
           <button class="btn-accordion"><img src="<%= static_path(@conn, "/images/ICON_DownArrow.svg") %>" alt="Accordion down arrow" title="Accordion down arrow" class="accordion-down-arrow" width="13px" height="8px" /></button>
           <div class="transaction-panel">
             <div class="sent-from-wrapper">
