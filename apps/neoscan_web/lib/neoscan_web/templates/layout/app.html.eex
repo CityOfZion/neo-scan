@@ -82,6 +82,9 @@
 					<li>
 						<a href="<%= assets_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_assets_path(@conn), do: " active" %>"><%= gettext "Assets" %></a>
 					</li>
+					<li>
+						<a href="<%= doc_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_assets_path(@conn), do: " active" %>"><%= gettext "Api" %></a>
+					</li>
 					<!-- <li>
 						<a href="<%= about_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_about_path(@conn), do: " active" %>"><%= gettext "About" %></a>
 					</li> -->
