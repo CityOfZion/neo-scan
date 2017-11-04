@@ -83,7 +83,6 @@
   <div class="detail-bar">
     <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
     <p class="detail-type col-6-width"><%= gettext "Transaction ID" %></p>
-    <p class="detail-type col-2-width"><%= gettext "Block" %></p>
     <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
     <p class="detail-type tablet-full-width">All transaction information</p>
   </div>
