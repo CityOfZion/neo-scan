@@ -92,7 +92,7 @@
   <section id="transactions-wrapper"></section>
 
   <div class="see-all-button-container">
-    <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-transactions-primary" alt="See all transactions"><%= gettext "See all transactions" %> <i class="fa fa-arrow-right"></i></a>
+    <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-see-all" alt="See all transactions"><%= gettext "See all transactions" %> <i class="fa fa-arrow-right"></i></a>
   </div>
 </section>
 
