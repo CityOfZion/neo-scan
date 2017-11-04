@@ -77,7 +77,7 @@
 </section>
 
 <!-- Transactions -->
-<h2><%= gettext "Transactions" %></h2>
+<h2><%= gettext "Last 5 Transactions" %></h2>
 <section id="all-transactions-wrapper">
 
   <div class="detail-bar">
@@ -97,7 +97,7 @@
 </section>
 
 <!-- Blocks -->
-<h2><%= gettext "Last Blocks" %></h2>
+<h2><%= gettext "Last 5 Blocks" %></h2>
 <section id="all-blocks-wrapper">
 
   <div class="detail-bar">

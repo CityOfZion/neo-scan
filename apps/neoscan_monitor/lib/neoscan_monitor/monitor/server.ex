@@ -24,9 +24,16 @@ defmodule NeoscanMonitor.Server do
 
   def handle_info(:broadcast, state) do
     schedule_work() # Reschedule once more
+
+    {blocks, _} = state.blocks
+                  |> Enum.split(5)
+
+    {transactions, _} = state.transactions
+                        |> Enum.split(5)
+
     payload = %{
-      "blocks" => state.blocks,
-      "transactions" => state.transactions,
+      "blocks" => blocks,
+      "transactions" => transactions,
       "price" => state.price,
       "stats" => state.stats,
     }

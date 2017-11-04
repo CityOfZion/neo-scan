@@ -37,9 +37,6 @@ msgstr ""
 msgid "minutes ago"
 msgstr ""
 
-msgid "Showing 12 out of 120000 wallet addresses"
-msgstr ""
-
 msgid "Name"
 msgstr ""
 
@@ -112,9 +109,6 @@ msgstr ""
 msgid "GAS"
 msgstr ""
 
-msgid "Gas System Fee"
-msgstr ""
-
 msgid "Data Size"
 msgstr ""
 
@@ -148,12 +142,6 @@ msgstr ""
 msgid "Network Fee"
 msgstr ""
 
-msgid "Showing 12 out of 120000 transactions"
-msgstr ""
-
-msgid "Load more transactions"
-msgstr ""
-
 msgid "Opcode Verification Script"
 msgstr ""
 
@@ -178,10 +166,10 @@ msgstr ""
 msgid "Showing 12 out of 120000 blocks"
 msgstr ""
 
-msgid "Last Blocks"
+msgid "Last 5 Blocks"
 msgstr ""
 
-msgid "Last Transactions"
+msgid "Last 5 Transactions"
 msgstr ""
 
 msgid "The last reports from the dev community can be found"

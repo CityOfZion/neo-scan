@@ -5,11 +5,17 @@ defmodule NeoscanWeb.RoomChannel do
   alias NeoscanWeb.Endpoint
 
   def join("room:home", _payload, socket) do
+    {blocks, _} = Api.get_blocks
+                  |> Enum.split(5)
+
+    {transactions, _} = Api.get_transactions
+                        |> Enum.split(5)
+
     {
       :ok,
       %{
-        :blocks => Api.get_blocks,
-        :transactions => Api.get_transactions,
+        :blocks => blocks,
+        :transactions => transactions,
         :price => Api.get_price,
         :stats => Api.get_stats
       },
@@ -18,9 +24,14 @@ defmodule NeoscanWeb.RoomChannel do
   end
 
   def broadcast_change(state) do
+    {blocks, _} = state.blocks
+                  |> Enum.split(5)
+
+    {transactions, _} = state.transactions
+                        |> Enum.split(5)
     payload = %{
-      "blocks" => state.blocks,
-      "transactions" => state.transactions,
+      "blocks" => blocks,
+      "transactions" => transactions,
       "price" => state.price,
       "stats" => state.stats,
     }
