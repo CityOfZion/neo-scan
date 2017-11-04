@@ -90,6 +90,7 @@
             </div>
             <div class="other-transaction-information">
               <p>Network fee: <%=transaction.net_fee%> <%= gettext "GAS" %> &middot; <%= gettext "System Fee" %>: <%=transaction.sys_fee%> <%= gettext "GAS" %> &middot; <%= gettext "Data Size" %>: <%=transaction.size%> bytes</p>
+            </div>
           </div>
         </div>
       <%end%>

@@ -4,13 +4,13 @@
 <p class="content-subline"><%= gettext "Your home for all blockchain related information for NEO" %></p>
 
 <!-- Search input -->
-<div class="hero-input-container">
+<!-- <div class="hero-input-container">
   <%= form_for @conn, home_path(@conn, :index), [as: :search], fn f -> %>
   <%= text_input f, :for,placeholder: "Search for a transaction, block, hash or address...",class: "hero-input", type: "search" %>
   <%= error_tag f, :for %>
   <%= submit "", [class: "hero-submit-btn fa fa-search"]  %>
   <% end %>
-</div>
+</div> -->
 
 <!-- Jump link buttons -->
 <section id="jump-links">

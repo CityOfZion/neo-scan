@@ -875,7 +875,7 @@ defmodule Neoscan.Api do
 
   @doc """
   Returns the blockchain current height, as determined by the majority of
-  # working nodes.
+  working nodes.
 
   ## Examples
 

@@ -26,6 +26,10 @@ defmodule NeoscanWeb.LayoutView do
     Controller.controller_module(conn) == NeoscanWeb.AssetsController
   end
 
+  def is_doc_path(conn) do
+    Controller.controller_module(conn) == NeoscanWeb.DocController
+  end
+
   def get_page(conn) do
     Controller.controller_module(conn)
     |> to_string
