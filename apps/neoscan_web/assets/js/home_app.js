@@ -123,9 +123,11 @@ window.onload = function () {
     home.connect()
 
     const formatChart = (time) => {
-      let count = 32, format = '%m-%d-%y'
+      const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+      let count = width > 600 ? 32 : 8
+      let format = '%m-%d-%y'
       if (time === '1d') {
-        count = 24
+        count = width >   600 ? 24 : 6
         format = '%H:%M'
       }
       if (time === '1w') {
@@ -133,7 +135,7 @@ window.onload = function () {
         format = '%m-%d'
       }
       if (time === '3m') {
-        count = 36
+        count = width > 600 ? 36 : 10
         format = '%m-%d'
       }
       return [count, format]
@@ -145,8 +147,10 @@ window.onload = function () {
         const prices = [coin.toUpperCase()]
         for (const [unixTimestamp, price] of Object.entries(results)) {
           const formattedDate = moment.unix(unixTimestamp).format('YYYY-MM-DD HH:mm')
-          if (dates[dates.length - 1] !== formattedDate) dates.push(formattedDate)
-          prices.push(price)
+          if (dates[dates.length - 1] !== formattedDate) {
+            dates.push(formattedDate)
+            prices.push(price)
+          }
         }
 
         const [count, format] = formatChart(time)
@@ -196,6 +200,9 @@ window.onload = function () {
               const time = d[0] && `${d[0].x}`.slice(0, 24)
               return (`<div class="chart-tooltip"><span class="tooltip-xlabel">Price of ${name} (${compareCurrency})</span><span class="tooltip-xlabel">Time:  ${time}</span><span class="tooltip-${compareCurrency}label">${price}</span></div>`)
             }
+          },
+          legend: {
+            hide: true
           },
           point: {
             show: false

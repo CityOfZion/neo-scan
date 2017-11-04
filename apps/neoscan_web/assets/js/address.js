@@ -59,6 +59,8 @@ $('document').ready(() => {
 })
 
 const createAssetChart = (asset, dates, amounts, count) => {
+  const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+  let showCount = width > 600 ? count : Math.max(Math.round(count / 2), 1)
   const chart = c3.generate({
     bindto: '#address-chart',
     data: {
@@ -75,7 +77,7 @@ const createAssetChart = (asset, dates, amounts, count) => {
         type: 'timeseries',
         tick: {
           culling: false,
-          count,
+          count: showCount,
           rotate: -65,
           format: '%Y-%m-%d',
           fit: true
