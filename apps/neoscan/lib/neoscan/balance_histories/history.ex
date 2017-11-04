@@ -36,7 +36,7 @@ defmodule Neoscan.BalanceHistories.History do
        )
     |> assoc_constraint(:address, required: true)
     |> validate_required(
-         [:address_hash, :balance, :txid, :block_height, :address_id, :time]
+         [:address_hash, :txid, :block_height, :address_id, :time]
        )
   end
 

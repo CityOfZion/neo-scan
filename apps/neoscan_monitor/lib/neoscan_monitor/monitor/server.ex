@@ -3,11 +3,11 @@ defmodule NeoscanMonitor.Server do
   GenServer module responsable to retrive blocks, states, transactions
   and assets. Common interface to handle it is NeoscanMonitor.
   Api module(look there for more info)
-  The state is updated using handle_info(:state_update,state)
+  The state is updated using handle_info(:state_update, state)
   """
 
   use GenServer
-  alias NeoscanWeb.RoomChannel
+  alias Neoscan.ChainAssets
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -24,7 +24,15 @@ defmodule NeoscanMonitor.Server do
 
   def handle_info(:broadcast, state) do
     schedule_work() # Reschedule once more
-    RoomChannel.broadcast_change(state)
+    payload = %{
+      "blocks" => state.blocks,
+      "transactions" => state.transactions,
+      "price" => state.price,
+      "stats" => state.stats,
+    }
+
+    broadcast = Application.fetch_env!(:neoscan_monitor, :broadcast)
+    broadcast.("room:home", "change", payload)
     {:noreply, state}
   end
 
@@ -48,12 +56,37 @@ defmodule NeoscanMonitor.Server do
     {:reply, state.assets, state}
   end
 
+  def handle_call({:asset, hash}, _from, state) do
+    asset = Enum.find(state.assets, fn %{:txid => txid} -> txid == hash end)
+
+    {:reply, asset, state}
+  end
+
+  def handle_call({:asset_name, hash}, _from, state) do
+    name = Enum.find(state.assets, fn %{:txid => txid} -> txid == hash end)
+            |> Map.get(:name)
+            |> ChainAssets.filter_name
+    {:reply, name, state}
+  end
+
+  def handle_call(:addresses, _from, state) do
+    {:reply, state.addresses, state}
+  end
+
   def handle_call(:contracts, _from, state) do
     {:reply, state.contracts, state}
   end
 
   def handle_call(:data, _from, state) do
     {:reply, state.monitor.data, state}
+  end
+
+  def handle_call(:price, _from, state) do
+    {:reply, state.price, state}
+  end
+
+  def handle_call(:stats, _from, state) do
+    {:reply, state.stats, state}
   end
 
   defp schedule_work do

@@ -48,7 +48,7 @@ defmodule NeoscanWeb.HomeController do
         redirect(conn, to: transaction_path(conn, :index, result.txid))
 
       Map.has_key?(result, :address) ->
-        redirect(conn, to: address_path(conn, :index, result.address))
+        redirect(conn, to: address_path(conn, :index, result.address, 1))
 
     end
   end

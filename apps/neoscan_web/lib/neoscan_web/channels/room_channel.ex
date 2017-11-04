@@ -7,7 +7,12 @@ defmodule NeoscanWeb.RoomChannel do
   def join("room:home", _payload, socket) do
     {
       :ok,
-      %{:blocks => Api.get_blocks, :transactions => Api.get_transactions},
+      %{
+        :blocks => Api.get_blocks,
+        :transactions => Api.get_transactions,
+        :price => Api.get_price,
+        :stats => Api.get_stats
+      },
       socket
     }
   end
@@ -16,6 +21,8 @@ defmodule NeoscanWeb.RoomChannel do
     payload = %{
       "blocks" => state.blocks,
       "transactions" => state.transactions,
+      "price" => state.price,
+      "stats" => state.stats,
     }
 
     Endpoint.broadcast("room:home", "change", payload)

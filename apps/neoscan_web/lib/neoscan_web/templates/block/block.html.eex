@@ -1,66 +1,189 @@
-<section class="section transparent">
-  <div class="container">
-    <div class="tile is-12 is-ancestor box is-vertical transparent">
-      <div class="tile is-parent box content content-background">
-        <p class="title white-text">Block <%=@block.hash%></p>
+
+    <h1 class="content-title">Block Information</h1>
+    <p class="large-detail-text"><span class="fa fa-signal"></span><span class="bold-text">Block</span> <span class="teal-bar">|</span> <span class="eggshell-blue-text"><%= @block.index %></span></p>
+    <a href="<%= blocks_path(@conn, :index) %>" alt="Back to all transactions" title="Back to all transactions" class="back-link">Back to all blocks</a>
+
+    <section id="block-information" class="corner-box bar-left-blocks">
+
+      <!-- Extra information list -->
+      <ul id="extra-information" class="block-left-information-bar">
+        <li class="border-right border-bottom border-right-smaller remove-border-right-660px">
+          <p class="small-detail-text"><%= gettext "Block index" %></p>
+          <p class="large-detail-text"><%= @block.index %></p>
+        </li>
+        <li class="border-right border-bottom">
+          <p class="small-detail-text"><%= gettext "Transactions" %></p>
+          <p class="large-detail-text"><%= @block.tx_count %></p>
+        </li>
+        <li class="border-bottom border-right-smaller remove-border-right-660px">
+          <p class="small-detail-text"><%= gettext "Hash" %></p>
+          <p class="large-detail-text"><%= @block.hash %></p>
+        </li>
+        <li class="border-right border-bottom">
+          <p class="small-detail-text"><%= gettext "Time" %></p>
+          <p class="large-detail-text"><%= compare_time_and_get_minutes(@block.time)%> minutes ago</p>
+        </li>
+        <li class="border-right border-bottom border-right-smaller remove-border-right-660px">
+          <p class="small-detail-text"><%= gettext "Version" %></p>
+          <p class="large-detail-text"><%= @block.version %></p>
+        </li>
+        <li class="border-bottom">
+          <p class="small-detail-text"><%= gettext "Merkle root" %></p>
+          <p class="large-detail-text"><%= @block.merkleroot %></p>
+        </li>
+        <li class="border-right border-right-smaller border-bottom-smaller remove-border-right-660px">
+          <p class="small-detail-text">Validator</p>
+          <a href="<%= address_path(@conn, :index, @block.nextconsensus)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><%= @block.nextconsensus %></a>
+        </li>
+        <li class="border-right-smaller remove-border-right-660px remove-border-bottom-660px">
+          <p class="small-detail-text">Size</p>
+          <p class="large-detail-text"><%= @block.size %> <%= gettext "bytes" %></p>
+        </li>
+      </ul>
+
+    </section>
+
+    <h1 class="content-title"><%= gettext "Transactions" %></h1>
+
+    <!-- All transactions content -->
+    <section id="all-transactions-wrapper">
+
+      <div class="detail-bar">
+        <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
+        <p class="detail-type col-6-width"><%= gettext "Transaction ID" %></p>
+        <p class="detail-type col-2-width"><%= gettext "Block" %></p>
+        <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
+        <p class="detail-type tablet-full-width">All transaction information</p>
       </div>
-      <div class="tile is-parent box content content-background white-text">
-        <ul>
-          <li>
-            <small>Date
-            <%=
-              {:ok, date_time} = DateTime.from_unix(@block.time, :second)
-              DateTime.to_date(date_time)
-            %>&nbsp&nbsp&nbsp
-            </small>
-            <small>Time
-              <%=
-                {:ok, date_time} = DateTime.from_unix(@block.time, :second)
-                DateTime.to_time(date_time)
-              %>
-            </small>
-          </li>
-          <li>
-            Height <%=@block.index%>
-          </li>
-          <li>
-            Transactions count <%=@block.tx_count%>
-          </li>
-          <li class="break-word">
-            Merkle Tree Root <%=@block.merkleroot%>
-          </li>
-          <li>
-            Next Block Hash
-            <a class="link" href="<%=block_path(@conn, :index, @block.nextblockhash )%>">
-               <%=@block.nextblockhash%>
-            </a>
-          </li>
-          <%= if @block.index != 0 do %>
-            <li>
-              Previous Block Hash
-              <a class="link" href="<%=block_path(@conn, :index, @block.previousblockhash )%>">
-                 <%=@block.previousblockhash%>
-              </a>
-            </li>
-          <%end%>
-          <li>
-            Data Size <%=@block.size%> bytes
-          </li>
-        </ul>
+
+      <!-- Transactions -->
+      <section id="transactions-wrapper">
+
+        <div class="transactions-list">
+
+          <%= for transaction <- @transactions do %>
+            <div class="full-width-bar <%= get_class(transaction.type)%>">
+              <div class="information-wrapper">
+                <%= if transaction.type == "ContractTransaction" do %>
+                  <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract" %></p>
+                <% end %>
+                <%= if transaction.type == "ClaimTransaction" do %>
+                  <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span><%= gettext "Gas Claim" %></p>
+                <% end %>
+                <%= if transaction.type == "InvocationTransaction" do %>
+                  <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Invocation" %></p>
+                <% end %>
+                <%= if transaction.type == "IssueTransaction" do %>
+                  <p class="medium-detail-text col-2-width"><span class="fa fa-handshake-o"></span><%= gettext "Asset Issue" %></p>
+                <% end %>
+                <%= if transaction.type == "RegisterTransaction" do %>
+                  <p class="medium-detail-text col-2-width"><span class="fa fa-list-alt"></span><%= gettext "Asset Register" %></p>
+                <% end %>
+                <%= if transaction.type == "PublishTransaction" do %>
+                  <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract Publish" %></p>
+                <% end %>
+                <%= if transaction.type == "MinerTransaction" do %>
+                  <p class="medium-detail-text col-2-width"><span class="fa fa-user-circle-o"></span><%= gettext "Miner" %></p>
+                <% end %>
+                <div class="secondary-info-wrapper">
+                  <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-5-width"><%= transaction.txid %>&#8230;</a>
+                  <p class="medium-detail-text col-2-width"><%=transaction.block_height%></p>
+                  <p class="medium-detail-text col-2-width">
+                    <%=
+                      {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
+                      DateTime.to_date(date_time)
+                    %> |
+                    <%=
+                      {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
+                      DateTime.to_time(date_time)
+                    %>
+                  </p>
+                </div>
+              </div>
+              <button class="btn-accordion"><img src="<%= static_path(@conn, "/images/ICON_DownArrow.svg") %>" alt="Accordion down arrow" title="Accordion down arrow" class="accordion-down-arrow" width="13px" height="8px" /></button>
+              <div class="transaction-panel">
+                <div class="sent-from-wrapper">
+                  <%= if transaction.type == "ContractTransaction" do %>
+                    <p class="large-detail-text"><%= gettext "Sent from" %></p>
+                    <%= for vin <- transaction.vin do %>
+                      <div class="individual-transaction">
+                        <a href='<%= address_path(@conn, :index, vin.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vin.address_hash %></a>
+                        <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vin.value) %> <%= Api.get_asset_name(vin.asset) %></p>
+                      </div>
+                    <% end %>
+                  <% end %>
+                  <%= if transaction.type == "ClaimTransaction" do %>
+                    <p class="large-detail-text"><%= gettext "Claimed from" %></p>
+                    <%= for claim <- transaction.claims do %>
+                      <div class="individual-transaction">
+                        <a href='<%= address_path(@conn, :index, claim.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= claim.address_hash %></a>
+                        <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(claim.value) %> <%= Api.get_asset_name(claim.asset) %></p>
+                      </div>
+                    <% end %>
+                  <% end %>
+                </div>
+                <div class="sent-to-wrapper">
+                  <%= if transaction.type == "ContractTransaction" or transaction.type == "ClaimTransaction" or transaction.type == "IssueTransaction" do %>
+                    <p class="large-detail-text"><%= gettext "Sent to" %></p>
+                    <%= for vout <- transaction.vouts do %>
+                      <div class="individual-transaction">
+                        <a href='<%= address_path(@conn, :index, vout.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vout.address_hash %></a>
+                        <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%=Helpers.round_or_not(vout.value) %> <%= Api.get_asset_name(vout.asset) %></p>
+                      </div>
+                    <% end %>
+                  <% end %>
+                </div>
+                <div class="other-transaction-information">
+                  <p><%= gettext "Network fee" %>: <%=transaction.net_fee%> &middot; <%= gettext "Gas System Fee" %>: <%=transaction.sys_fee%> GAS &middot; <%= gettext "Data Size" %>: <%=transaction.size%> <%= gettext "bytes" %></p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+        </div>
+
+      </section>
+
+      <p  class="number-counter">Transactions <%= get_current_min_qtd(@page, @block.tx_count) %> to <%= get_current_max_qtd(@page, @block.tx_count) %> of <%= @block.tx_count %></p>
+      <div class="see-all-button-container">
+        <div class="btn-group">
+          <%= if @page != "1" do %>
+            <%= get_previous_page(@conn, @page) %>
+          <% end %>
+          <%= if check_last(@page, @block.tx_count) do %>
+            <%= get_next_page(@conn, @page) %>
+          <% end %>
+        </div>
       </div>
-      <div class="box content content-background white-text">
-        <p class="title  white-text">Transactions</p>
-        <ul>
-          <%= for transaction <- @block.transactions do %>
-            <li>
-              <%=transaction.type%>
-              <a class="link" href="<%=transaction_path(@conn, :index, transaction.txid )%>">
-                <%=transaction.txid%>
-              </a>
-            </li>
-          <%end%>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
+
+    </section>
+
+    <ul id="bytecode-invocation-list">
+      <li class="corner-box remove-margin-left">
+        <h2><%= gettext "Bytecode Invocation Script" %></h2>
+        <div class="corner-box">
+          <p class="small-detail-text bar-left-blocks"><%= get_inv(@block.script) %></p>
+        </div>
+      </li>
+      <li class="corner-box">
+        <h2><%= gettext "Bytecode Verification Script" %></h2>
+        <div class="corner-box">
+          <p class="small-detail-text bar-left-blocks"><%= get_ver(@block.script) %></p>
+        </div>
+      </li>
+    </ul>
+
+    <ul id="bytecode-invocation-list">
+      <li class="corner-box remove-margin-left">
+        <h2><%= gettext "Opcode Invocation Script" %></h2>
+        <div class="corner-box">
+          <p class="small-detail-text bar-left-blocks"><%= parse_invocation(@block.script) %></p>
+        </div>
+      </li>
+      <li class="corner-box">
+        <h2><%= gettext "Opcode Verification Script" %></h2>
+        <div class="corner-box">
+          <p class="small-detail-text bar-left-blocks"><%= parse_verification(@block.script) %></p>
+        </div>
+      </li>
+    </ul>

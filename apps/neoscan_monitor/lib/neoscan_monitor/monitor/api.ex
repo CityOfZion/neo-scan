@@ -23,6 +23,18 @@ defmodule NeoscanMonitor.Api do
     GenServer.call(NeoscanMonitor.Server, :assets, 10_000)
   end
 
+  def get_asset(hash) do
+    GenServer.call(NeoscanMonitor.Server, {:asset, hash}, 10_000)
+  end
+
+  def get_asset_name(hash) do
+    GenServer.call(NeoscanMonitor.Server, {:asset_name, hash}, 10_000)
+  end
+
+  def get_addresses do
+    GenServer.call(NeoscanMonitor.Server, :addresses, 10_000)
+  end
+
   def get_contracts do
     GenServer.call(NeoscanMonitor.Server, :contracts, 10_000)
   end
@@ -35,20 +47,31 @@ defmodule NeoscanMonitor.Api do
     GenServer.call(NeoscanMonitor.Server, :data)
   end
 
+  def get_price do
+    GenServer.call(NeoscanMonitor.Server, :price)
+  end
+
+  def get_stats do
+    GenServer.call(NeoscanMonitor.Server, :stats)
+  end
+
   def add_block(block) do
     GenServer.cast(NeoscanMonitor.Worker, {:add_block, block})
   end
 
-  def add_transaction(transaction) do
-    GenServer.cast(NeoscanMonitor.Worker, {:add_transaction, transaction})
+  def add_transaction(transaction, vouts) do
+    GenServer.cast(
+      NeoscanMonitor.Worker,
+      {:add_transaction, transaction, vouts}
+    )
   end
 
   def add_asset(asset) do
     GenServer.cast(NeoscanMonitor.Worker, {:add_asset, asset})
   end
 
-  def add_contract(contract) do
-    GenServer.cast(NeoscanMonitor.Worker, {:add_contract, contract})
+  def add_contract(contract, vouts) do
+    GenServer.cast(NeoscanMonitor.Worker, {:add_contract, contract, vouts})
   end
 
 end

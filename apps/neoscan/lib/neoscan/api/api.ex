@@ -15,8 +15,12 @@ defmodule Neoscan.Api do
   alias Neoscan.ChainAssets.Asset
   alias Neoscan.Blocks.Block
   alias Neoscan.Blocks
+  alias Neoscan.Vouts
   alias Neoscan.Vouts.Vout
   alias NeoscanMonitor.Api
+  alias Neoscan.Helpers
+  alias Neoscan.Claims.Claim
+  alias Neoscan.Claims.Unclaimed
 
   #sanitize struct
   defimpl Poison.Encoder, for: Any do
@@ -42,7 +46,15 @@ defmodule Neoscan.Api do
         "balance": [
           {
             "asset": "name_string",
-            "amount": float
+            "amount": float,
+            "unspent": [
+              {
+                "txid": "tx_id_string",
+                "value": float,
+                "n": integer
+              },
+              ...
+            ]
           }
           ...
         ],
@@ -54,8 +66,9 @@ defmodule Neoscan.Api do
     query = from e in Address,
                  where: e.address == ^hash,
                  select: %{
+                   :id => e.id,
                    :address => e.address,
-                   :balance => e.balance
+                   :balance => e.balance,
                  }
 
     result = case Repo.all(query)
@@ -63,8 +76,15 @@ defmodule Neoscan.Api do
       nil -> %{:address => "not found", :balance => nil}
 
       %{} = address ->
-        new_balance = filter_balance(address.balance)
-        Map.put(address, :balance, new_balance)
+        new_balance = filter_balance(address.address, address.balance)
+        Map.merge(
+          address,
+          %{
+            :balance => new_balance,
+            :unclaimed => Unclaimed.calculate_bonus(address.id),
+          }
+        )
+        |> Map.delete(:id)
     end
 
     result
@@ -114,6 +134,52 @@ defmodule Neoscan.Api do
   end
 
   @doc """
+  Returns the claimable transactions for an address, from its `hash_string`.
+
+  ## Examples
+
+      /api/main_net/v1/get_claimable/{hash_string}
+      {
+        "claimable": [
+          {
+            "txid": "tx_id_string",
+            "n": integer,
+            "value": float,
+            "unclaimed": float,
+            "start_height": integer,
+            "end_height": integer
+          },
+          ...
+        ],
+        "address": "hash_string"
+      }
+
+  """
+  def get_claimable(hash) do
+    query = from e in Address,
+                 where: e.address == ^hash,
+                 select: %{
+                   :address => e.address,
+                   :id => e.id
+                 }
+
+    result = case Repo.all(query)
+                  |> List.first do
+      nil -> %{:address => "not found", :claimable => nil}
+
+      %{} = address ->
+        Map.put(
+          address,
+          :claimable,
+          Unclaimed.calculate_vouts_bonus(address.id)
+        )
+        |> Map.delete(:id)
+    end
+
+    result
+  end
+
+  @doc """
   Returns the address model from its `hash_string`
 
   ## Examples
@@ -143,7 +209,15 @@ defmodule Neoscan.Api do
         "balance": [
           {
             "asset": "name_string",
-            "amount": float
+            "amount": float,
+            "unspent": [
+              {
+                "txid": "tx_id_string",
+                "value": float,
+                "n": integer
+              },
+              ..
+            ]
           }
           ...
         ],
@@ -158,11 +232,16 @@ defmodule Neoscan.Api do
                        balance: h.balance,
                        block_height: h.block_height,
                      }
+    claim_query = from h in Claim,
+                       select: %{
+                         txids: h.txids
+                       }
 
     query = from e in Address,
                  where: e.address == ^hash,
                  preload: [
-                   histories: ^his_query
+                   histories: ^his_query,
+                   claimed: ^claim_query,
                  ],
                  select: e
 
@@ -177,7 +256,7 @@ defmodule Neoscan.Api do
         }
 
       %{} = address ->
-        new_balance = filter_balance(address.balance)
+        new_balance = filter_balance(address.address, address.balance)
 
         new_tx = Enum.map(
           address.histories,
@@ -199,6 +278,7 @@ defmodule Neoscan.Api do
           %{
             :balance => new_balance,
             :txids => new_tx,
+            :unclaimed => Unclaimed.calculate_bonus(address.id)
           }
         )
         |> Map.delete(:inserted_at)
@@ -211,13 +291,27 @@ defmodule Neoscan.Api do
     result
   end
 
+  defp filter_balance(address, balance) do
+    Map.to_list(balance)
+    |> Enum.map(
+         fn {_as, %{"asset" => asset, "amount" => amount}} ->
+           %{
+             "asset" => ChainAssets.get_asset_name_by_hash(asset),
+             "amount" => Helpers.round_or_not(amount),
+             "unspent" =>
+               Vouts.get_unspent_vouts_for_address_by_asset(address, asset)
+           }
+         end
+       )
+  end
+
   defp filter_balance(balance) do
     Map.to_list(balance)
     |> Enum.map(
          fn {_as, %{"asset" => asset, "amount" => amount}} ->
            %{
              "asset" => ChainAssets.get_asset_name_by_hash(asset),
-             "amount" => amount
+             "amount" => Helpers.round_or_not(amount)
            }
          end
        )
@@ -592,12 +686,14 @@ defmodule Neoscan.Api do
         new_vouts = Enum.map(
           transaction.vouts,
           fn %{:asset => asset} = x ->
-            Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset)) end
+            Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset))
+          end
         )
         new_vins = Enum.map(
           transaction.vin,
           fn %{"asset" => asset} = x ->
-            Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset)) end
+            Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset))
+          end
         )
         Map.delete(transaction, :block)
         |> Map.delete(:inserted_at)

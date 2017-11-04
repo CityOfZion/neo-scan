@@ -1,77 +1,128 @@
-<!DOCTYPE html>
-<html lang="en" class="min-height-is-available">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<!DOCTYPE>
 
-    <link rel="icon" type="image/x-icon" href="<%= static_path(@conn, "/favicon.ico") %>" >
-    <title>CoZ - NeoScan</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Orbitron" />
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+	<title>NEOSCAN | <%= get_page(@conn) %></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="format-detection" content="telephone=no"/>
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="shortcut icon" href="<%= static_path(@conn, "/favicon.ico") %>">
+
+	<!-- CSS import + FontAwesome import -->
+	<link href="<%= static_path(@conn, "/css/app.css") %>" rel="stylesheet">
+
+	<!-- Open graph protocol data -->
+	<meta property="og:title" content="FILL IN" />
+	<meta property="og:url" content="[ENTER URL HERE]" />
+	<meta property="og:type" content="website" />
+	<meta property="og:description" content="FILL IN" />
+	<meta property="og:image" content="[ENTER URL HERE/IMAGES/PATH" />
+
+	<!-- Font imports: Orbitron, Source Sans Pro, Teko -->
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i,700,700i|Teko:300,500" rel="stylesheet">
 
 </head>
 
-  <body class="main-background min-height-is-available fill-all">
-    <section class="hero transparent">
-      <!-- Hero header: will stick at the top -->
-      <div class="hero-head">
-        <nav class="navbar transparent">
-          <div class="navbar-brand">
-            <a class="navbar-item white-text sans-coz" href="/">
-                <img class="coz-logo" src="<%= static_path(@conn, "/images/coz.png")%>"></img>
-                &nbspNeoScan
-            </a>
+<body>
 
-            <div class="button navbar-burger" data-target="Options">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
+	<div id="main-wrapper">
 
-          <div class="navbar-menu" id="Options">
-            <div class="navbar-end">
-              <a  class="navbar-item" href="<%= home_path(@conn, :index) %>">Explorer</a>
-              <a  class="navbar-item" href="<%= assets_path(@conn, :index) %>">Assets</a>
-              <a  class="navbar-item" href="<%= contracts_path(@conn, :index) %>">Contracts</a>
-              <a  class="navbar-item" href="<%= doc_path(@conn, :index) %>" >API</a>
-              <a  class="navbar-item" href="https://github.com/CityOfZion/NEOScan">GitHub</a>
-              <a  class="navbar-item" href="https://neoscan-testnet.io">TestNet</a>
-            </div>
-          </div>
-        </nav>
-      </div>
-    </section>
+		<!-- Navigation -->
+		<nav id="navigation">
 
-    <main role="main">
+			<button class="hamburger hamburger--spin" type="button">
+				<span class="hamburger-box">
+					<span class="hamburger-inner"></span>
+					</span>
+			</button>
+
+			<!-- Language selector dropdown -->
+			<div class="lang-dropdown-wrapper">
+				<select onchange="window.location.href=this.value">
+					<option value="?locale=en">English</option>
+					<option value="?locale=fr">Français</option>
+				</select>​
+			</div>
+
+			<!-- Logo -->
+			<div class="logo-wrapper">
+        <a href="/" alt="NEOSCAN Home">
+          <img src="<%= static_path(@conn, "/images/NEOSCAN_Logo.svg") %>" alt="NEOSCAN Home" title="NEOSCAN Home" width="163px" height="32px" class="neoscan-logo" />
+        </a>
+			</div>
+	    <!-- <div class="locale-wrapper">
+	       <a href="?locale=en" alt="English" title="English">🇬🇧</a>
+             <a href="?locale=fr" alt="Francais" title="Francais">🇫🇷</a>
+	    </div> -->
+
+			<!-- Search -->
+      <%= form_for @conn, home_path(@conn, :index), [as: :search], fn f -> %>
+        <%= text_input f, :for,placeholder: "Block Height, Hash, Address or Transaction id",class: "searchbar fa fa-search", type: "search" %>
+				<%= submit "", [class: "icon search-btn fa fa-search"]  %>
+        <%= error_tag f, :for %>
+      <% end %>
+
+			<!-- Navigation links -->
+			<div class="nav-wrapper">
+				<ul class="nav-links-list">
+					<li class="remove-margin-left">
+						<a href="<%= home_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_home_path(@conn), do: " active" %>">Explorer</a>
+					</li>
+					<li>
+						<a href="<%= transactions_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_transactions_path(@conn), do: " active" %>"><%= gettext "Transactions" %></a>
+					</li>
+					<li>
+						<a href="<%= addresses_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_addresses_path(@conn), do: " active" %>"><%= gettext "Wallet Addresses" %></a>
+					</li>
+					<li>
+						<a href="<%= blocks_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_blocks_path(@conn), do: " active" %>"><%= gettext "Blocks" %></a>
+					</li>
+					<li>
+						<a href="<%= assets_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_assets_path(@conn), do: " active" %>"><%= gettext "Assets" %></a>
+					</li>
+					<!-- <li>
+						<a href="<%= about_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_about_path(@conn), do: " active" %>"><%= gettext "About" %></a>
+					</li> -->
+				</ul>
+			</div>
+		</nav>
+
+
+
+		<!-- Main content area -->
+		<section id="main-content-wrapper">
       <%= render @view_module, @view_template, assigns %>
-    </main>
+    </section>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
 
-    <footer class="footer transparent">
-      <div class="container">
-        <div class="content has-text-centered white-text">
-          <p>
-            <h1 class="white-text sans-coz">
-                <img class="coz-logo" src="<%= static_path(@conn, "/images/coz.png")%>"></img>
-                &nbspNeoScan
-            </h1> by <a class="link" href="http://cityofzion.io/">CityOfZion</a> community. The source code is licensed
-            <a class="link" href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
-            is licensed <a class="link" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
-          </p>
-          <p>
-            <a class="link" class="icon" href="https://github.com/CityOfZion">
-              <i class="fa fa-github"></i>
-            </a>
-          </p>
-        </div>
-      </div>
-    </footer>
-  </body>
+    <!-- Footer -->
+		<footer id="footer">
+			<div class="footer-content-wrapper">
+				<div class="left-footer-information">
+					<img src="<%= static_path(@conn, "/images/NEOSCAN_Logo.svg") %>" alt="NEOSCAN Home" title="NEOSCAN Home" class="neoscan-logo-footer" width="136px" height="27px" />
+					<p class="medium-detail-text"><%= gettext "The source code is" %> <a href="http://opensource.org/licenses/mit-license.php" alt="View MIT License" title="View MIT License" class="large-blue-link"><%= gettext "licensed" %> MIT</a></li>
+					<p class="medium-detail-text"><%= gettext "The website content is licensed" %> <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" alt="#" title="#" class="large-blue-link">CC ANS 4.0</a></p>
+					<p class="medium-detail-text">&copy; 2017 <a href="http://cityofzion.io/" alt="Visit City of Zion" title="Visit City of Zion" class="large-blue-link"><%= gettext "City Of Zion" %></a></p>
+				</div>
+
+				<div class="right-footer-information">
+					<div class="footer-link-wrapper">
+						<a href="http://slack.cityofzion.io/" alt="#" title="#" class="coz-slack"><%= gettext "NEO Slack" %></a>
+					</div>
+					<div class="footer-link-wrapper">
+						<a href="https://github.com/CityOfZion" alt="#" title="#" class="coz-github"><%= gettext "City of Zion Github" %></a>
+					</div>
+					<div class="footer-link-wrapper">
+						<a href="<%= doc_path(@conn, :index) %>" alt="#" title="#" class="coz-api"><%= gettext "NEOSCAN API" %></a>
+					</div>
+				</div>
+			</div>
+		</footer>
+
+	</div>
+
+
+</body>
 </html>

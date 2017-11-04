@@ -1,9 +1,11 @@
 defmodule NeoscanWeb.Router do
   use NeoscanWeb, :router
+  alias NeoscanWeb.Plugs.Locale
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug Locale
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
@@ -20,11 +22,21 @@ defmodule NeoscanWeb.Router do
 
     get "/doc", DocController, :index
     get "/assets", AssetsController, :index
+    get "/asset/:hash", AssetController, :index
     get "/contracts", ContractsController, :index
+    get "/addresses/1", AddressesController, :index
+    get "/addresses/:page", AddressesController, :go_to_page
     get "/address/:address", AddressController, :index
+    get "/address/:address/:page", AddressController, :go_to_page
+    get "/transactions/1", TransactionsController, :index
+    get "/transactions/:page", TransactionsController, :go_to_page
     get "/transaction/:txid", TransactionController, :index
+    get "/blocks/1", BlocksController, :index
+    get "/blocks/:page", BlocksController, :go_to_page
     get "/block/:hash", BlockController, :index
-
+    get "/block/:hash/:page", BlockController, :go_to_page
+    get "/about", AboutController, :index
+    get "/price/:from/:to/:graph", PriceController, :index
     get "/", HomeController, :index
     post "/", HomeController, :search
   end
@@ -34,6 +46,7 @@ defmodule NeoscanWeb.Router do
 
     get "/get_balance/:hash", ApiController, :get_balance
     get "/get_claimed/:hash", ApiController, :get_claimed
+    get "/get_claimable/:hash", ApiController, :get_claimable
     get "/get_address/:hash", ApiController, :get_address
     get "/get_assets", ApiController, :get_assets
     get "/get_asset/:hash", ApiController, :get_asset

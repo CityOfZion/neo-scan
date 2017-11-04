@@ -1,0 +1,68 @@
+<h1 class="content-title">Blocks</h1>
+
+<!-- All blocks content -->
+<section id="all-blocks-wrapper">
+
+  <div class="detail-bar">
+    <p class="detail-type detail-type-first-4-col"><%= gettext "Block height index" %></p>
+    <p class="detail-type col-3-width"><%= gettext "Size" %></p>
+    <p class="detail-type col-3-width"><%= gettext "Transactions" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Created on" %></p>
+    <p class="detail-type tablet-full-width">All block information</p>
+  </div>
+
+  <!-- Blocks -->
+  <section id="blocks-wrapper">
+
+    <div class="blocks-list">
+
+      <%= for block <- @blocks do %>
+        <!-- Block -->
+        <div class="full-width-bar block-number">
+          <div class="information-wrapper">
+            <p class="fa fa-signal medium-detail-text"></p>
+            <a href="<%= block_path( @conn, :index, block.hash) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width">
+              <span class="tablet-detail-text">Block: </span>
+              <%=block.index%>
+            </a>
+            <div class="secondary-info-wrapper">
+              <p class="medium-detail-text col-3-width">
+                <span class="tablet-detail-text">Size: </span>
+                <%=block.size%> <%= gettext "bytes" %>
+              </p>
+              <p class="medium-detail-text col-3-width">
+                <span class="tablet-detail-text">Transactions: </span>
+                <%=block.tx_count%>
+              </p>
+              <p class="medium-detail-text col-2-width">
+                <span class="tablet-detail-text">Created: </span>
+                <%=
+                  {:ok, date_time} = DateTime.from_unix(block.time, :second)
+                  DateTime.to_date(date_time)
+                %> |
+                <%=
+                  {:ok, date_time} = DateTime.from_unix(block.time, :second)
+                  DateTime.to_time(date_time)
+                %>
+              </p>
+            </div>
+          </div>
+        </div>
+      <%end%>
+
+    </div>
+
+  </section>
+
+  <p  class="number-counter">Blocks <%= get_current_min_qtd(@page) %> to <%= get_current_max_qtd(@page) %> of <%= get_total() %></p>
+  <div class="see-all-button-container">
+    <div class="btn-group">
+      <%= if @page != "1" do %>
+        <%= get_previous_page(@conn, @page) %>
+      <% end %>
+      <%= if check_last(@page) do %>
+        <%= get_next_page(@conn, @page) %>
+      <% end %>
+    </div>
+  </div>
+</section>

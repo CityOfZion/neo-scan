@@ -1,0 +1,278 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+
+msgid "Transactions"
+msgstr ""
+
+msgid "Claimed"
+msgstr ""
+
+msgid "Balance"
+msgstr ""
+
+msgid "Unclaimed"
+msgstr ""
+
+msgid "Address ID"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Last transaction"
+msgstr ""
+
+msgid "Tokens"
+msgstr ""
+
+msgid "minutes ago"
+msgstr ""
+
+msgid "Showing 12 out of 120000 wallet addresses"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Owner"
+msgstr ""
+
+msgid "System"
+msgstr ""
+
+msgid "Issued"
+msgstr ""
+
+msgid "Supply"
+msgstr ""
+
+msgid "Precision"
+msgstr ""
+
+msgid "Transaction"
+msgstr ""
+
+msgid "Wallet Addresses"
+msgstr ""
+
+msgid "Token"
+msgstr ""
+
+msgid "Addresses"
+msgstr ""
+
+msgid "Transaction ID"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Completed on"
+msgstr ""
+
+msgid "Contract"
+msgstr ""
+
+msgid "Gas Claim"
+msgstr ""
+
+msgid "Invocation"
+msgstr ""
+
+msgid "Asset Issue"
+msgstr ""
+
+msgid "Asset Register"
+msgstr ""
+
+msgid "Contract Publish"
+msgstr ""
+
+msgid "Sent from"
+msgstr ""
+
+msgid "Claimed from"
+msgstr ""
+
+msgid "Sent to"
+msgstr ""
+
+msgid "GAS"
+msgstr ""
+
+msgid "Gas System Fee"
+msgstr ""
+
+msgid "Data Size"
+msgstr ""
+
+msgid "Registered on"
+msgstr ""
+
+msgid "More details"
+msgstr ""
+
+msgid "Block index"
+msgstr ""
+
+msgid "Hash"
+msgstr ""
+
+msgid "Merkle root"
+msgstr ""
+
+msgid "Time"
+msgstr ""
+
+msgid "Version"
+msgstr ""
+
+msgid "bytes"
+msgstr ""
+
+msgid "Miner"
+msgstr ""
+
+msgid "Network Fee"
+msgstr ""
+
+msgid "Showing 12 out of 120000 transactions"
+msgstr ""
+
+msgid "Load more transactions"
+msgstr ""
+
+msgid "Opcode Verification Script"
+msgstr ""
+
+msgid "Opcode Invocation Script"
+msgstr ""
+
+msgid "Bytecode Verification Script"
+msgstr ""
+
+msgid "Bytecode Invocation Script"
+msgstr ""
+
+msgid "Block height index"
+msgstr ""
+
+msgid "Created on"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+msgid "Showing 12 out of 120000 blocks"
+msgstr ""
+
+msgid "Last Blocks"
+msgstr ""
+
+msgid "Last Transactions"
+msgstr ""
+
+msgid "The last reports from the dev community can be found"
+msgstr ""
+
+msgid "here"
+msgstr ""
+
+msgid "NeoScan ALPHA"
+msgstr ""
+
+msgid "Assets"
+msgstr ""
+
+msgid "Blocks"
+msgstr ""
+
+msgid "licensed"
+msgstr ""
+
+msgid "City Of Zion"
+msgstr ""
+
+msgid "The source code is"
+msgstr ""
+
+msgid "The website content is licensed"
+msgstr ""
+
+msgid "NEOSCAN API"
+msgstr ""
+
+msgid "City of Zion Github"
+msgstr ""
+
+msgid "NEO Slack"
+msgstr ""
+
+msgid "Back to all transactions"
+msgstr ""
+
+msgid "Registered"
+msgstr ""
+
+msgid "Included in Block"
+msgstr ""
+
+msgid "System Fee"
+msgstr ""
+
+msgid "Bytecode Attributes"
+msgstr ""
+
+msgid "Usage"
+msgstr ""
+
+msgid "Welcome to NEOSCAN"
+msgstr ""
+
+msgid "Your home for all blockchain related information for NEO"
+msgstr ""
+
+msgid "Total transactions"
+msgstr ""
+
+msgid "View all transactions"
+msgstr ""
+
+msgid "Last block"
+msgstr ""
+
+msgid "View all blocks"
+msgstr ""
+
+msgid "Wallet addresses created"
+msgstr ""
+
+msgid "View all addresses"
+msgstr ""
+
+msgid "24 hour change"
+msgstr ""
+
+msgid "24 hour volume"
+msgstr ""
+
+msgid "See all transactions"
+msgstr ""
+
+msgid "See all blocks"
+msgstr ""
+
+msgid "Current market cap"
+msgstr ""

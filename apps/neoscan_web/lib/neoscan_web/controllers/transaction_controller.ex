@@ -4,7 +4,19 @@ defmodule NeoscanWeb.TransactionController do
   alias Neoscan.Transactions
 
   def index(conn, %{"txid" => transaction_hash}) do
-    Transactions.get_transaction_by_hash_for_view(transaction_hash)
+    tran = Transactions.get_transaction_by_hash_for_view(transaction_hash)
+
+    new_vin = clean_list(tran.vin)
+
+    new_claim = clean_list(tran.claims)
+
+    new_asset = clean_map(tran.asset)
+
+    Map.merge(tran, %{
+      :vin => new_vin,
+      :claims => new_claim,
+      :asset => new_asset,
+      })
     |> route(conn)
   end
 
@@ -17,23 +29,22 @@ defmodule NeoscanWeb.TransactionController do
     render(conn, "transaction.html", transaction: transaction)
   end
 
-  def round_or_not(value) do
-    float = case Kernel.is_float(value) do
-      true ->
-        value
-      false ->
-        case Kernel.is_integer(value) do
-          true ->
-            value
-          false ->
-            {num, _} = Float.parse(value)
-            num
-        end
-    end
-    if Kernel.round(float) == float do
-      Kernel.round(float)
-    else
-      value
-    end
+  defp clean_list(nil) do
+    nil
   end
+  defp clean_list(list) do
+    Enum.map(list, fn l ->
+      {:ok, new_l} = Morphix.atomorphiform(l)
+      new_l
+    end)
+  end
+
+  defp clean_map(nil) do
+    nil
+  end
+  defp clean_map(map) do
+    {:ok, new_map} = Morphix.atomorphiform(map)
+    new_map
+  end
+
 end

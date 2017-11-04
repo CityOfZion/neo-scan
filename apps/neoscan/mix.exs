@@ -23,7 +23,7 @@ defmodule Neoscan.Mixfile do
   def application do
     [
       mod: {Neoscan.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :scrivener_ecto]
     ]
   end
 
@@ -40,7 +40,7 @@ defmodule Neoscan.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
       {:ex_machina, "~> 2.0", only: [:test, :travis]},
-      {:poison, "~> 3.0"},
+      {:scrivener_ecto, "~> 1.0"},
     ]
   end
 
