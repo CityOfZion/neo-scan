@@ -22,26 +22,25 @@ defmodule NeoscanWeb.BlockView do
     int
   end
 
-  def check_if_invocation({"invocation", _hash }) do
+  def check_if_invocation({"invocation", _hash}) do
     true
   end
-  def check_if_invocation({"verification", _hash }) do
+  def check_if_invocation({"verification", _hash}) do
     false
   end
   def check_if_invocation(nil) do
     true
   end
 
-  def check_if_verification({"verification", _hash }) do
+  def check_if_verification({"verification", _hash}) do
     true
   end
-  def check_if_verification({"invocation", _hash }) do
+  def check_if_verification({"invocation", _hash}) do
     false
   end
   def check_if_verification(nil) do
     true
   end
-
 
   def parse_invocation(nil) do
     "No Invocation Script"
