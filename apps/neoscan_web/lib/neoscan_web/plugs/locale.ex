@@ -9,7 +9,6 @@ defmodule NeoscanWeb.Plugs.Locale do
 
   def call(conn, _opts) do
     locale = extract_locale(conn)
-    |> inspect()
     conn = Conn.put_session(conn, "locale", locale)
     Gettext.put_locale(NeoscanWeb.Gettext, locale)
     conn
