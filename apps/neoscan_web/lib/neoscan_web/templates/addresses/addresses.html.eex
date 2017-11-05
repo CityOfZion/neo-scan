@@ -14,17 +14,15 @@
 
   <!-- Transactions -->
   <section id="wallet-address-wrapper">
-
     <div class="wallet-address-list">
-
       <!-- Wallet address -->
       <%= for address <- @addresses do %>
         <div class="full-width-bar wallet-address">
           <div class="information-wrapper">
             <p class="fa fa-key medium-detail-text"></p>
-            <a href="<%= address_path(@conn, :go_to_page, address.address, 1)%>" alt="View address" title="View address" class="large-blue-link col-4-width"><%= address.address %></a></a>
+            <a href="<%= address_path(@conn, :go_to_page, address.address, 1)%>" alt="View address" title="View address" class="large-blue-link col-4-width"><%= address.address %></a>
             <div class="secondary-info-wrapper">
-              <p class="medium-detail-text col-2-width">
+              <p class="medium-detail-text col-2-width remove-760px">
                 <span class="tablet-detail-text">Created</span>
                 <%=
                   {:ok, date_time} = DateTime.from_unix(address.time, :second)
@@ -35,11 +33,11 @@
                   DateTime.to_time(date_time)
                 %>
               </p>
-              <p class="medium-detail-text col-2-width">
+              <p class="medium-detail-text col-2-width remove-550px">
                 <span class="tablet-detail-text">Transactions</span>
                 <%= address.tx_count %>
               </p>
-              <p class="medium-detail-text col-2-width">
+              <p class="medium-detail-text col-2-width remove-550px">
                 <span class="tablet-detail-text">Last transaction</span>
                 <%= compare_time_and_get_minutes(address.balance)%> <%= gettext "minutes ago" %>
               </p>
@@ -52,7 +50,6 @@
         </div>
       <% end %>
     </div>
-
   </section>
 
   <p  class="number-counter">Addresses <%= get_current_min_qtd(@page) %> to <%= get_current_max_qtd(@page) %> of <%= get_total() %></p>

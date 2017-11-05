@@ -122,25 +122,27 @@ window.onload = function () {
       Inferno.render((
         <List class='transactions-list' sync={false} data={home.payload.transactions} rowHeight={15} rowRender={transactionRow} />
       ), transactionsContainer)
-      document.getElementById('total-tx').innerHTML = home.payload.stats.total_transactions
-      document.getElementById('total-blocks').innerHTML = home.payload.stats.total_blocks
-      document.getElementById('total-addresses').innerHTML = home.payload.stats.total_addresses
-      document.getElementById('neo-price-us').innerHTML = formatterTwo.format(home.payload.price.neo.usd.PRICE)
-      document.getElementById('mkt-cap-us').innerHTML = formatterZero.format(home.payload.price.neo.usd.MKTCAP)
-      document.getElementById('24hvol').innerHTML = formatterZero.format(home.payload.price.neo.usd.VOLUME24HOUR)
+      if (home.payload.price.neo) {
+        document.getElementById('total-tx').innerHTML = home.payload.stats.total_transactions
+        document.getElementById('total-blocks').innerHTML = home.payload.stats.total_blocks
+        document.getElementById('total-addresses').innerHTML = home.payload.stats.total_addresses
+        document.getElementById('neo-price-us').innerHTML = formatterTwo.format(home.payload.price.neo.usd.PRICE)
+        document.getElementById('mkt-cap-us').innerHTML = formatterZero.format(home.payload.price.neo.usd.MKTCAP)
+        document.getElementById('24hvol').innerHTML = formatterZero.format(home.payload.price.neo.usd.VOLUME24HOUR)
 
-      document.getElementById('24hchange').innerHTML = home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) +'%'
+        document.getElementById('24hchange').innerHTML = home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) +'%'
 
-      if (home.payload.price.neo.usd.VOLUME24HOUR.toFixed(0) > 0) {
-        document.getElementById('24hvol').setAttribute('class', 'large-stat-number large-number-positive remove-margin-bottom')
-      } else {
-        document.getElementById('24hvol').setAttribute('class', 'large-stat-number large-number-negative remove-margin-bottom')
-      }
+        if (home.payload.price.neo.usd.VOLUME24HOUR.toFixed(0) > 0) {
+          document.getElementById('24hvol').setAttribute('class', 'large-stat-number large-number-positive remove-margin-bottom')
+        } else {
+          document.getElementById('24hvol').setAttribute('class', 'large-stat-number large-number-negative remove-margin-bottom')
+        }
 
-      if (home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) > 0) {
-        document.getElementById('24hchange').setAttribute('class', 'large-stat-number large-number-positive remove-margin-bottom')
-      } else {
-        document.getElementById('24hchange').setAttribute('class', 'large-stat-number large-number-negative remove-margin-bottom')
+        if (home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) > 0) {
+          document.getElementById('24hchange').setAttribute('class', 'large-stat-number large-number-positive remove-margin-bottom')
+        } else {
+          document.getElementById('24hchange').setAttribute('class', 'large-stat-number large-number-negative remove-margin-bottom')
+        }
       }
     }, 500)
     home.connect()

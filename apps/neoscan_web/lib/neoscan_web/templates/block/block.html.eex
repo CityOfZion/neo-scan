@@ -85,7 +85,7 @@
                   <p class="medium-detail-text col-2-width"><span class="fa fa-user-circle-o"></span><%= gettext "Miner" %></p>
                 <% end %>
                 <div class="secondary-info-wrapper">
-                  <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-5-width"><%= transaction.txid %>&#8230;</a>
+                  <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-6-width"><%= transaction.txid %>&#8230;</a>
                   <p class="medium-detail-text col-2-width">
                     <%=
                       {:ok, date_time} = DateTime.from_unix(transaction.time, :second)

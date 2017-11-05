@@ -82,7 +82,7 @@
         <div class="full-width-bar wallet-address">
           <div class="information-wrapper singular-nep5-wrapper">
             <p class="fa fa-key medium-detail-text"></p>
-            <a href="<%= address_path(@conn, :index, address.address)%>" alt="View wallet address" title="View wallet address" class="large-blue-link col-4-width"><%= address.address %></a></a>
+            <a href="<%= address_path(@conn, :index, address.address)%>" alt="View wallet address" title="View wallet address" class="large-blue-link col-4-width"><%= address.address %></a>
             <div class="secondary-info-wrapper" >
               <p class="medium-detail-text col-2-width remove-760px">
                 <span class="tablet-detail-text">Created</span>
