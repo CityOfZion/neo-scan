@@ -69,7 +69,7 @@ let getName = function (type) {
   }
 }
 
-let geticon = function (type) {
+let getIcon = function (type) {
   if (type === 'ContractTransaction') {
     return 'fa-cube'
   }
@@ -96,7 +96,7 @@ let geticon = function (type) {
 const transactionRow = row => (
   <div class={'full-width-bar ' + getClass(row.type)}>
     <div class='information-wrapper'>
-      <p class='medium-detail-text col-2-width'><span class='fa fa-cube'></span>{getName(row.type)}</p>
+      <p class='medium-detail-text col-2-width'><span class={'fa ' + getIcon(row.type)}></span>{getName(row.type)}</p>
       <div class='secondary-info-wrapper'>
         <p class='medium-detail-text col-2-width'><span class='tablet-detail-text'>Txid: </span><a href={'/transaction/' + row.txid} alt='View transaction' title='View transaction' class='large-blue-link col-6-width'>{row.txid}</a></p>
         <p class='medium-detail-text col-2-width remove-550px'><span class='tablet-detail-text'>Created: </span>{ moment.unix(row.time).format('DD-MM-YYYY') + ' | ' + moment.unix(row.time).format('HH:mm:ss')}</p>
