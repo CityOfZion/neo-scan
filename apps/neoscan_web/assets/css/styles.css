@@ -1766,6 +1766,12 @@ MEDIA QUERIES (MAX-WIDTH: 1040PX)
 	.col-2-width {
 	  min-width: 120px;
 	}
+	#all-wallet-address-wrapper .col-2-width {
+		margin-right: 10px;
+	}
+	#wallet-address-wrapper .token-amount-wrapper {
+		margin: 12px 0 10px;
+	}
 	.col-3-width {
 	  min-width: 157px;
 	}
@@ -1826,16 +1832,16 @@ MEDIA QUERIES (MAX-WIDTH: 1040PX)
 	
 	/* WALLET ADDRESSES */
 	#wallet-address-wrapper .col-4-width {
-		width: 205px;
-		min-width: 205px;
+		width: 190px;
+		min-width: 190px;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		white-space: nowrap;
-		margin-right: 20px;
+		margin-right: 15px;
 	}
 	
 	#all-wallet-address-wrapper .detail-type-first-4-col {
-		min-width: 252px;
+		min-width: 232px;
 	}
 	
 	
@@ -2101,6 +2107,11 @@ MEDIA QUERIES (MAX-WIDTH: 920PX)
 		border-right: 0;
 	}
 	
+	/* WALLET ADDRESSES */
+	#wallet-address-wrapper .token-amount-wrapper {
+		margin: 15px 0 10px;
+	}
+	
 }
 
 /******************************************************************
@@ -2197,7 +2208,7 @@ MEDIA QUERIES (MAX-WIDTH: 760PX)
 	#wallet-address-wrapper .token-amount-wrapper {
 		float: right;
 		width: 175px;
-		margin: 14px 11px 13px 0;
+		/* margin: 14px 11px 13px 0; */
 	}
 	#wallet-address-wrapper .information-wrapper .secondary-info-wrapper {
 		padding-left: 0;

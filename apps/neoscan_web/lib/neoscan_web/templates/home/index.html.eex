@@ -15,8 +15,10 @@
 <!-- Jump link buttons -->
 <section id="jump-links">
   <div class="individual-jump-link-box">
+   <div class="jump-links-information">
     <p class="large-detail-text stat-detail"><%= gettext "Total transactions" %></p>
     <p class="large-stat-number" id= "total-tx"></p>
+   </div>
     <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="View all transactions"><%= gettext "View all transactions" %> <i class="fa fa-arrow-right"></i></a>
   </div>
   <div class="individual-jump-link-box">
