@@ -165,8 +165,7 @@ defmodule Neoscan.Transactions do
                          :sys_fee => e.sys_fee,
                          :net_fee => e.net_fee,
                          :size => e.size,
-                        },
-                        limit: 15
+                        }
 
     transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
     vouts = Enum.map(transactions, fn tx -> tx.id end)
@@ -207,8 +206,7 @@ defmodule Neoscan.Transactions do
                          :sys_fee => e.sys_fee,
                          :net_fee => e.net_fee,
                          :size => e.size,
-                        },
-                        limit: 15
+                        }
 
     transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
     vouts = Enum.map(transactions, fn tx -> tx.id end)

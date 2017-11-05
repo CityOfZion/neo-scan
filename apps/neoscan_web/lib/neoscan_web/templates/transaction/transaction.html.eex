@@ -89,7 +89,7 @@
 		<div class="corner-box">
 			<%= for script <- @transaction.scripts do %>
 			  <p class="small-detail-text bar-left-transactions"><%= get_ver(script) %></p>
-			<%= end %>
+			<% end %>
 		</div>
 	</li>
 </ul>
