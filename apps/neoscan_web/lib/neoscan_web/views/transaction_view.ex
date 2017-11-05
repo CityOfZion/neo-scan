@@ -60,42 +60,35 @@ defmodule NeoscanWeb.TransactionView do
     int
   end
 
-  def parse_invocation([]) do
+  def parse_invocation(nil) do
     "No Invocation Script"
   end
-  def parse_invocation(scripts) do
-    %{"invocation" => inv} = scripts
-                            |> List.first
+  def parse_invocation(script) do
+    %{"invocation" => inv} = script
 
     Disassembler.parse_script(inv)
   end
 
-  def parse_verification([]) do
+  def parse_verification(nil) do
     "No Verification Script"
   end
-  def parse_verification(scripts) do
-    %{"verification" => ver} = scripts
-                            |> List.first
+  def parse_verification(script) do
+    %{"verification" => ver} = script
 
     Disassembler.parse_script(ver)
   end
 
-  def get_inv([]) do
+  def get_inv(nil) do
     "No Invocation Script"
   end
-  def get_inv(scripts) do
-    %{"invocation" => inv} = scripts
-                            |> List.first
+  def get_inv(%{"invocation" => inv}) do
     inv
   end
 
-  def get_ver([]) do
+  def get_ver(nil) do
     "No Verification Script"
   end
-  def get_ver(scripts) do
-    %{"verification" => ver} = scripts
-                            |> List.first
-
+  def get_ver(%{"verification" => ver}) do
     ver
   end
 

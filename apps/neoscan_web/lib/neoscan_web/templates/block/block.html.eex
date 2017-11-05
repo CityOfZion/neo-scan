@@ -162,13 +162,21 @@
       <li class="corner-box remove-margin-left">
         <h2><%= gettext "Bytecode Invocation Script" %></h2>
         <div class="corner-box">
-          <p class="small-detail-text bar-left-blocks"><%= get_inv(@block.script) %></p>
+          <%= for script <- @block.script do %>
+            <%= if check_if_invocation(script) do %>
+              <p class="small-detail-text bar-left-blocks"><%= get_inv(script) %></p>
+            <% end %>
+          <% end %>
         </div>
       </li>
       <li class="corner-box">
         <h2><%= gettext "Bytecode Verification Script" %></h2>
         <div class="corner-box">
-          <p class="small-detail-text bar-left-blocks"><%= get_ver(@block.script) %></p>
+          <%= for script <- @block.script do %>
+            <%= if check_if_verification(script) do %>
+              <p class="small-detail-text bar-left-blocks"><%= get_ver(script) %></p>
+            <% end %>
+          <% end %>
         </div>
       </li>
     </ul>
@@ -178,8 +186,10 @@
         <h2><%= gettext "Opcode Invocation Script" %></h2>
         <div class="corner-box">
           <p class="small-detail-text bar-left-blocks">
-            <%= for script <- parse_invocation(@block.script) do %>
-              <span class="script-new-line"><%= script %></span>
+            <%= for script <- @block.script do %>
+              <%= if check_if_invocation(script) do %>
+                <span class="script-new-line"><%= parse_invocation(script) %></span>
+              <% end %>
             <% end %>
           </p>
         </div>
@@ -188,8 +198,10 @@
         <h2><%= gettext "Opcode Verification Script" %></h2>
         <div class="corner-box">
           <p class="small-detail-text bar-left-blocks">
-          <%= for script <- parse_verification(@block.script) do %>
-            <span class="script-new-line"><%= script %></span>
+          <%= for script <- @block.script do %>
+            <%= if check_if_verification(script) do %>
+              <span class="script-new-line"><%= parse_verification(script) %></span>
+            <% end %>
           <% end %>
           </p>
         </div>

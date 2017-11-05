@@ -22,31 +22,52 @@ defmodule NeoscanWeb.BlockView do
     int
   end
 
-  def parse_invocation([]) do
+  def check_if_invocation({"invocation", hash }) do
+    true
+  end
+  def check_if_invocation({"verification", hash }) do
+    false
+  end
+  def check_if_invocation(nil) do
+    true
+  end
+
+  def check_if_verification({"verification", hash }) do
+    true
+  end
+  def check_if_verification({"invocation", hash }) do
+    false
+  end
+  def check_if_verification(nil) do
+    true
+  end
+
+
+  def parse_invocation(nil) do
     "No Invocation Script"
   end
-  def parse_invocation(%{"invocation" => inv}) do
+  def parse_invocation({"invocation", inv}) do
     Disassembler.parse_script(inv)
   end
 
-  def parse_verification([]) do
+  def parse_verification(nil) do
     "No Verification Script"
   end
-  def parse_verification(%{"verification" => ver}) do
+  def parse_verification({"verification", ver}) do
     Disassembler.parse_script(ver)
   end
 
-  def get_inv([]) do
+  def get_inv(nil) do
     "No Invocation Script"
   end
-  def get_inv(%{"invocation" => inv}) do
+  def get_inv({"invocation", inv}) do
     inv
   end
 
-  def get_ver([]) do
+  def get_ver(nil) do
     "No Verification Script"
   end
-  def get_ver(%{"verification" => ver}) do
+  def get_ver({"verification", ver}) do
     ver
   end
 

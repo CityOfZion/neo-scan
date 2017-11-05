@@ -79,13 +79,17 @@
 	<li class="corner-box remove-margin-left">
 		<h2><%= gettext "Bytecode Invocation Script" %></h2>
 		<div class="corner-box">
-			<p class="small-detail-text bar-left-transactions"><%= get_inv(@transaction.scripts) %></p>
+			<%= for script <- @transaction.scripts do %>
+			  <p class="small-detail-text bar-left-transactions"><%= get_inv(script) %></p>
+			<% end %>
 		</div>
 	</li>
 	<li class="corner-box">
 		<h2><%= gettext "Bytecode Verification Script" %></h2>
 		<div class="corner-box">
-			<p class="small-detail-text bar-left-transactions"><%= get_ver(@transaction.scripts) %></p>
+			<%= for script <- @transaction.scripts do %>
+			  <p class="small-detail-text bar-left-transactions"><%= get_ver(script) %></p>
+			<%= end %>
 		</div>
 	</li>
 </ul>
@@ -119,8 +123,8 @@
 		<h2><%= gettext "Opcode Invocation Script" %></h2>
 		<div class="corner-box">
 			<p class="small-detail-text bar-left-transactions">
-        <%= for script <- parse_invocation(@transaction.scripts) do %>
-          <span class="script-new-line"><%= script %></span>
+        <%= for script <- @transaction.scripts do %>
+          <span class="script-new-line"><%= parse_invocation(script) %></span>
         <% end %>
       </p>
 		</div>
@@ -129,8 +133,8 @@
 		<h2><%= gettext "Opcode Verification Script" %></h2>
 		<div class="corner-box">
 			<p class="small-detail-text bar-left-transactions">
-        <%= for script <- parse_verification(@transaction.scripts) do %>
-          <span class="script-new-line"><%= script %></span>
+        <%= for script <- @transaction.scripts do %>
+          <span class="script-new-line"><%= parse_verification(script) %></span>
         <% end %>
       </p>
 		</div>
