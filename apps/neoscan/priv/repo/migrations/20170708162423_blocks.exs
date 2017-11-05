@@ -23,7 +23,7 @@ defmodule Neoscan.Repo.Migrations.Blocks do
       timestamps()
     end
 
-    create index(:blocks, ["index DESC NULLS LAST", :hash], unique: true)
+    create unique_index(:blocks, ["index DESC NULLS LAST", :hash])
 
   end
 end

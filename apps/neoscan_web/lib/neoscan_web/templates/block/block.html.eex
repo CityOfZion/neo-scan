@@ -3,7 +3,7 @@
     <p class="large-detail-text"><span class="fa fa-signal"></span><span class="bold-text">Block</span> <span class="teal-bar">|</span> <span class="eggshell-blue-text"><%= @block.index %></span></p>
     <a href="<%= blocks_path(@conn, :index) %>" alt="Back to all transactions" title="Back to all transactions" class="back-link">Back to all blocks</a>
 
-    <section id="block-information" class="corner-box bar-left-blocks">
+    <section id="asset-information" class="corner-box bar-left-blocks">
 
       <!-- Extra information list -->
       <ul id="extra-information" class="block-left-information-bar">

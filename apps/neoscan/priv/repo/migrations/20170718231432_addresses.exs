@@ -10,7 +10,7 @@ defmodule Neoscan.Repo.Migrations.Addresses do
       timestamps()
     end
 
-    create index(:addresses, [:address], unique: true)
+    create unique_index(:addresses, [:address])
     create index(:addresses, ["inserted_at DESC NULLS LAST"])
 
   end

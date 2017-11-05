@@ -36,7 +36,7 @@ defmodule Neoscan.Repair do
   def get_missing(missing, root) do
     tuples = Enum.map(
                missing,
-               fn txid -> Blockchain.get_transaction(HttpCalls.url(1), txid) end
+               fn txid -> get_transaction(txid) end
              )
              |> check_missing()
 
@@ -44,6 +44,16 @@ defmodule Neoscan.Repair do
     |> add_missing_transactions(tuples)
     |> add_missing_vouts(tuples)
     |> fetch_missing_vouts(root)
+  end
+
+  def get_transaction(txid) do
+    transaction = Blockchain.get_transaction(HttpCalls.url(1), txid)
+    case transaction do
+      {:ok, _tx} ->
+        transaction
+      _ ->
+        get_transaction(txid)
+    end
   end
 
   #return the tuple list, specifying each missing entity
@@ -155,8 +165,12 @@ defmodule Neoscan.Repair do
 
   #get a missing block from the node client
   def get_and_add_missing_block(hash) do
-    {:ok, block} = Blockchain.get_block_by_hash(HttpCalls.url(1), hash)
-    Consumer.add_block(block)
+    case Blockchain.get_block_by_hash(HttpCalls.url(1), hash) do
+      {:ok, block} ->
+        Consumer.add_block(block)
+      _ ->
+        get_and_add_missing_block(hash)
+    end
   end
 
   #adds missing transactions after verifying missing blocks
