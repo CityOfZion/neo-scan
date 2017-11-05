@@ -133,9 +133,9 @@ window.onload = function () {
         document.getElementById('24hchange').innerHTML = home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) +'%'
 
         if (home.payload.price.neo.usd.VOLUME24HOUR.toFixed(0) > 0) {
-          document.getElementById('24hvol').setAttribute('class', 'large-stat-number large-number-positive remove-margin-bottom')
+          document.getElementById('24hvol').setAttribute('class', 'large-stat-number remove-margin-bottom')
         } else {
-          document.getElementById('24hvol').setAttribute('class', 'large-stat-number large-number-negative remove-margin-bottom')
+          document.getElementById('24hvol').setAttribute('class', 'large-stat-number remove-margin-bottom')
         }
 
         if (home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) > 0) {

@@ -86,7 +86,7 @@
                 <% end %>
                 <div class="secondary-info-wrapper">
                   <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-6-width"><%= transaction.txid %>&#8230;</a>
-                  <p class="medium-detail-text col-2-width">
+                  <p class="medium-detail-text col-2-width remove-550px">
                     <%=
                       {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
                       DateTime.to_date(date_time)
