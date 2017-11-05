@@ -2,7 +2,7 @@
 <p class="large-detail-text"><span class="fa <%= get_icon(@transaction.type) %>"></span><span class="bold-text"><%= get_type(@transaction.type) %></span> <span class="green-bar">|</span> <span class="bold-text">Hash:</span> <span class="eggshell-blue-text hash"><%= @transaction.txid %></span></p>
 <a href="<%= transactions_path(@conn, :index) %>" alt="Back to all transactions" title="Back to all transactions" class="back-link"><%= gettext "Back to all transactions" %></a>
 
-<section id="transaction-address-information" class="corner-box bar-left-transactions">
+<section id="asset-information" class="corner-box bar-left-transactions">
 
 	<!-- Transaction panel -->
 	<div class="transaction-panel">

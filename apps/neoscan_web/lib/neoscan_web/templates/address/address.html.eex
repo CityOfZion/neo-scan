@@ -39,7 +39,6 @@
   <div class="detail-bar">
     <p class="detail-type detail-type-first-2-col">Type</p>
     <p class="detail-type col-6-width">Transaction ID</p>
-    <p class="detail-type col-2-width">Block</p>
     <p class="detail-type col-2-width">Completed on</p>
     <p class="detail-type tablet-full-width">All transaction information</p>
   </div>
@@ -75,7 +74,6 @@
           <% end %>
           <div class="secondary-info-wrapper">
             <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-6-width"><%=transaction.txid%>&#8230;</a>
-            <p class="medium-detail-text col-2-width remove-550px"><a href="<%= block_path( @conn, :index, transaction.block_hash) %>" alt="View block" title="View block" class="blue-link"><%= transaction.block_height %></a></p>
             <p class="medium-detail-text col-2-width remove-550px">
               <%=
                 {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
@@ -110,6 +108,7 @@
                 <% end %>
               <% end %>
             </div>
+            <img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" alt="Sent arrow" title="Sent arrow" class="transaction-sent-arrow" />
             <div class="sent-to-wrapper">
               <%= if transaction.type == "ContractTransaction" or transaction.type == "ClaimTransaction" or transaction.type == "IssueTransaction" do %>
                 <p class="large-detail-text"><%= gettext "Sent to" %></p>
