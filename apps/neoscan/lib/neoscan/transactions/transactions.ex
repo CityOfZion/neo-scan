@@ -40,7 +40,10 @@ defmodule Neoscan.Transactions do
 
   """
   def count_transactions do
-    Repo.aggregate(Transaction, :count, :id)
+    query = from t in Transaction,
+            where: t.type != "MinerTransaction"
+
+    Repo.aggregate(query, :count, :id)
   end
 
   @doc """
