@@ -749,8 +749,11 @@ a:hover {
 	font-weight: 400; /* Regular */
 	color: #E6ECF2;
 }
-#main-content-wrapper .large-number-positive {
-	color: #BEEB00;
+#main-content-wrapper .large-stat-number.large-number-positive {
+  color: #00a62c;
+}
+#main-content-wrapper .large-stat-number.large-number-negative {
+  color: #FF8296 !important;
 }
 .hero-input-container {
   position: relative;
@@ -908,13 +911,6 @@ a:hover {
   font-size: 30px;
   padding-bottom: 30px;
 }
-.large-number.large-number-positive {
-  color: #00a62c;
-}
-.large-number.large-number-negative {
-  color: #FF8296 !important;
-}
-
 .btn-jump-box {
   display: inline-block;
   width: 75%;
@@ -952,7 +948,7 @@ a:hover {
  */
 
 .full-width-bar.gas-transaction {
-  border-left: 4px solid #00A62C;
+  border-left: 4px solid #BEEB00;
 }
 .full-width-bar.invocation-transaction {
   border-left: 4px solid #CA8BFF;
