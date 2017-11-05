@@ -17,7 +17,7 @@ input,textarea {
 	width:100%;
 	display:block;
 	outline: none;
-}
+} 
 
 /* HTML5 display-role reset for older browsers */
 article,aside,details,figcaption,figure,footer,
@@ -258,7 +258,7 @@ a:hover {
   padding: 7px 14px;
 }
 .btn-group > .btn-primary i {
-  font-size: 14px;
+  font-size: 14px;  
 }
 .btn.btn-primary.active {
   color: #BEEB00;
@@ -317,7 +317,7 @@ a:hover {
   padding: 21px 0 0;
   float: left;
   margin-left: 13px;
-  margin-bottom: 20px;
+  margin-bottom: 19px;
 }
 
 /* Hide tablet detail text until media queries kick in */
@@ -737,6 +737,7 @@ a:hover {
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 23px;
+	margin-bottom: 40px;
 }
 #main-content-wrapper .large-stat-number {
 	font-size: 28px;
@@ -837,16 +838,16 @@ a:hover {
   padding-top: 40px;
   /* padding-right: 20px; */
 }
-.individual-graph-box {
+.individual-graph-box {  
   width: 25%;
   float: left;
   text-align: center;
   padding: 45px 0;
-  border-right: 1px solid #3d3d79;
+  border-right: 1px solid #3d3d79; 
   margin: 0;
   box-sizing: border-box;
   float: left;
-  border-bottom: 1px solid #3d3d79;
+  border-bottom: 1px solid #3d3d79; 
 }
 .individual-graph-box.last {
   border-right: none;
@@ -911,7 +912,7 @@ a:hover {
   color: #00a62c;
 }
 .large-number.large-number-negative {
-  color: #a60000;
+  color: #FF8296 !important;
 }
 
 .btn-jump-box {
@@ -942,10 +943,13 @@ a:hover {
 
 #transactions-wrapper {
   max-width: 977px;
+  margin-top: 10px;
 }
+/* 
 .transactions-list {
   margin-top: 10px;
 }
+ */
 
 .full-width-bar.gas-transaction {
   border-left: 4px solid #00A62C;
@@ -1008,7 +1012,7 @@ a:hover {
 .individual-transaction {
   margin-bottom: 30px;
 }
-
+ 
 .sent-from-wrapper .large-detail-text,
 .sent-to-wrapper .large-detail-text {
   margin-bottom: 15px;
@@ -1083,12 +1087,15 @@ a:hover {
 
 #wallet-address-wrapper {
   max-width: 977px;
+  margin-top: 10px;
 }
+/* 
 #wallet-address-wrapper .wallet-address-list {
   margin-top: 10px;
 }
+ */
 #wallet-address-wrapper .information-wrapper {
-  padding: 23px 0 0;
+  padding: 21px 0 0;
   margin-bottom: 0;
 }
 #wallet-address-wrapper .singular-nep5-wrapper {
@@ -1099,11 +1106,11 @@ a:hover {
 }
 #wallet-address-wrapper .token-amount-wrapper {
   float: left;
-  margin: 14px 0 13px;
+  margin: 12px 0 10px;
 }
 #wallet-address-wrapper .token-amount-wrapper.general-currency {
   float: left;
-  margin-top: 21px;
+  margin-top: 12px;
 }
 #wallet-address-wrapper .token-amount-wrapper .add-margin-bottom {
   margin-bottom: 3px;
@@ -1288,10 +1295,6 @@ a:hover {
   min-height: 36px;
   box-shadow: 0 6px 12px #181835;
 }
-.script-new-line {
-  display: block;
-  margin-top: 10px;
-}
 
 
 /******************************************
@@ -1302,10 +1305,13 @@ a:hover {
 
 #blocks-wrapper {
   max-width: 977px;
+  margin-top: 10px;
 }
+/* 
 #blocks-wrapper .blocks-list {
   margin-top: 10px;
 }
+ */
 #blocks-wrapper .information-wrapper {
   padding: 21px 0 0;
 }
@@ -1343,7 +1349,7 @@ a:hover {
   border-radius: 2px;
 }
 #assets-list .asset-type {
-  font-size: 25px;
+  font-size: 22px;
   font-weight: 600;
   margin: 0 auto;
 }
@@ -1381,6 +1387,11 @@ a:hover {
   padding: 11px 0 12px;
   width: 80%;
   margin-left: 10%;
+}
+#assets-list .large-detail-text {
+  font-size: 16px;
+  font-weight: 600;
+  padding-bottom: 8px;
 }
 
 /******************************************
@@ -1545,7 +1556,7 @@ a:hover {
 }
 .last-25-info {
   font-size: 12px;
-  margin-left: 20px;
+  margin-left: 20px;  
 }
 .tabs {
   width: 100%;
@@ -1606,7 +1617,7 @@ a:hover {
   width: 60%;
   height: 4px;
   background-color: #4aabff;
-}
+} 
 .tabs [id^="tab"]:checked ~ [id^="tab-content"] {
   display: block;
 }
@@ -1703,12 +1714,29 @@ a:hover {
 
 /******************************************************************
 
+MEDIA QUERIES (MAX-WIDTH: 1160PX)
+
+******************************************************************/
+
+@media screen and (max-width: 1180px) {
+	
+	/* NAVIGATION */
+	/* Navigation search */
+	#navigation input[type=search] {
+	  max-width: 18%;
+	}
+	
+}
+
+
+/******************************************************************
+
 MEDIA QUERIES (MAX-WIDTH: 1100PX)
 
 ******************************************************************/
 
 @media screen and (max-width: 1100px) {
-
+	
 	/* NAVIGATION */
 	#navigation .nav-links-list {
 	  margin-right: 20px;
@@ -1721,10 +1749,10 @@ MEDIA QUERIES (MAX-WIDTH: 1100PX)
 	}
 	/* Navigation search */
 	#navigation input[type=search] {
-	  max-width: 20%;
+	  max-width: 16%;
 	}
 
-
+	
 }
 
 /******************************************************************
@@ -1734,7 +1762,7 @@ MEDIA QUERIES (MAX-WIDTH: 1040PX)
 ******************************************************************/
 
 @media screen and (max-width: 1040px) {
-
+	
 	/* GENERAL */
 	.col-1-width {
 	  min-width: 60px;
@@ -1748,7 +1776,7 @@ MEDIA QUERIES (MAX-WIDTH: 1040PX)
 	.transfer-col-3 {
 		min-width: 177px;
 	}
-	/*
+	/* 
 .col-4-width {
 	  min-width: 265px;
 	}
@@ -1762,12 +1790,12 @@ MEDIA QUERIES (MAX-WIDTH: 1040PX)
 	.detail-type-first-3-col {
 	  min-width: 157px;
 	}
-	/*
+	/* 
 .detail-type-first-4-col {
 	  min-width: 291px;
 	}
  */
-
+	
 	/* ASSETS */
 	#assets-list li {
 	  width: 48%;
@@ -1783,7 +1811,7 @@ MEDIA QUERIES (MAX-WIDTH: 1040PX)
 	#assets-list li .button-wrapper {
 		padding: 15px 0;
 	}
-
+	
 	/* TARGETED WALLET ADDRESS */
 	/* Balance amounts */
 	.wallet-label-icon {
@@ -1799,7 +1827,7 @@ MEDIA QUERIES (MAX-WIDTH: 1040PX)
 	.balance-amount span {
 		font-size: 17px;
 	}
-
+	
 	/* WALLET ADDRESSES */
 	#wallet-address-wrapper .col-4-width {
 		width: 205px;
@@ -1809,12 +1837,12 @@ MEDIA QUERIES (MAX-WIDTH: 1040PX)
 		white-space: nowrap;
 		margin-right: 20px;
 	}
-
+	
 	#all-wallet-address-wrapper .detail-type-first-4-col {
 		min-width: 252px;
 	}
-
-
+	
+	
 }
 
 /******************************************************************
@@ -1882,7 +1910,7 @@ MEDIA QUERIES (MAX-WIDTH: 940PX)
 	#navigation .active-wrapper {
 		display: block !important;
 	}
-
+	
 	/* INFORMATION BARS */
 	/* Wallet */
 	#wallet-address-wrapper .information-wrapper {
@@ -1953,21 +1981,21 @@ MEDIA QUERIES (MAX-WIDTH: 920PX)
 @media screen and (max-width: 920px) {
 
 	/* GENERAL STYLES */
-	#main-wrapper {
+	body {
 	  border: 10px solid #2B2B5E;
 	}
-
+	
 	#main-content-wrapper {
 		padding: 0 20px;
 	}
-
+	
 	/* Word wrap large text on smaller devices */
 	.hash {
 		max-width: 90%;
 		word-wrap: break-word;
 		line-height: 30px;
 	}
-
+	
 	/* TRANSACTION INFORMATION (MULTIPLE PAGES) */
 	#asset-information .transaction-panel,
 	#transactions-wrapper .transaction-panel {
@@ -1988,12 +2016,12 @@ MEDIA QUERIES (MAX-WIDTH: 920PX)
 	#transactions-wrapper .sent-to-wrapper {
 	  border-top: 0;
 	}
-
+	
 	/* Remove margin bottom from mobile transactions */
 	#transactions-wrapper .transaction-panel {
 		margin-bottom: 0;
 	}
-
+	
 	.transaction-sent-arrow {
 		-ms-transform: rotate(90deg); /* IE 9 */
     	-webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
@@ -2001,11 +2029,11 @@ MEDIA QUERIES (MAX-WIDTH: 920PX)
     	width: 8%;
     	padding: 0;
 	}
-
+	
 	.individual-transaction {
 	  margin-bottom: 20px;
 	}
-
+	
 	/* EXTRA INFORMATION - ALL */
 	#extra-information {
 	  width: 100%;
@@ -2028,7 +2056,7 @@ MEDIA QUERIES (MAX-WIDTH: 920PX)
 	  box-sizing: border-box;
 	  padding: 25px;
 	}
-
+	
 	/* EXTRA INFORMATION - BLOCKS */
 	#block-information #extra-information li {
 	  width: 50%;
@@ -2038,7 +2066,7 @@ MEDIA QUERIES (MAX-WIDTH: 920PX)
 	  word-wrap: break-word;
 	  min-height: 130px;
 	}
-
+	
 	/* BYTECODE/OPCODE PANELS */
 	/* Bytecode + upcode information */
 	#bytecode-invocation-list,
@@ -2055,28 +2083,28 @@ MEDIA QUERIES (MAX-WIDTH: 920PX)
 	#upcode-invocation-list li h2 {
 	  margin-top: 35px;
 	}
-
+	
 	/* EXPLORER */
 	#main-content-wrapper .large-stat-number {
 		font-size: 24px;
 		margin-bottom: 19px;
 	}
-
-	.individual-graph-box {
+	
+	.individual-graph-box {  
 	  width: 50%;
 	  float: left;
 	  padding: 18px 0 20px;
 	}
-
+	
 	.individual-graph-box .large-detail-text {
 		padding-bottom: 5px;
 	}
-
+	
 	/* Market graph */
 	.remove-border-right-920px {
 		border-right: 0;
 	}
-
+	
 }
 
 /******************************************************************
@@ -2110,7 +2138,7 @@ MEDIA QUERIES (MAX-WIDTH: 860PX)
 		width: 100%;
 		margin: 0;
 	}
-
+	
 	/* General detail */
 	.col-6-width {
 		width: 240px;
@@ -2120,7 +2148,7 @@ MEDIA QUERIES (MAX-WIDTH: 860PX)
 		white-space: nowrap;
 		text-overflow: ellipsis;
 	}
-
+	
 	/* TRANSFERS */
 	.transfer-col-3 {
 		min-width: 157px;
@@ -2128,7 +2156,7 @@ MEDIA QUERIES (MAX-WIDTH: 860PX)
 	.transfer-col-2 {
 		min-width: 90px;
 	}
-
+	
 }
 
 /******************************************************************
@@ -2138,7 +2166,7 @@ MEDIA QUERIES (MAX-WIDTH: 760PX)
 ******************************************************************/
 
 @media screen and (max-width: 760px) {
-
+	
 	/* INFORMATION BARS */
 	/* Blocks */
 	#all-blocks-wrapper .detail-type-first-4-col {
@@ -2153,12 +2181,12 @@ MEDIA QUERIES (MAX-WIDTH: 760PX)
 	.col-3-width {
 	  min-width: 135px;
 	}
-
+	
 	/* EXTRA INFORMATION - BLOCKS */
 	#block-information #extra-information li {
 	  min-height: 135px;
 	}
-
+	
 	/* WALLET ADDRESSES */
 	#wallet-address-wrapper .information-wrapper {
 		width: 59%;
@@ -2178,7 +2206,7 @@ MEDIA QUERIES (MAX-WIDTH: 760PX)
 	#wallet-address-wrapper .information-wrapper .secondary-info-wrapper {
 		padding-left: 0;
 	}
-
+	
 	/* EXTRA INFORMATION - TARGETED BLOCK/ASSET/TRANSACTION/ISSUE ETC */
 	#asset-information #extra-information li {
 	  width: 100%;
@@ -2187,17 +2215,17 @@ MEDIA QUERIES (MAX-WIDTH: 760PX)
 	  min-height: 0;
 	  word-wrap: break-word;
 	}
-
+	
 	/* ASSET-INFORMATION & EXPLORER: Remove border-right/bottom from #asset-information/#Market graph LIs */
 	.remove-border-right-660px,
 	#extra-information .border-right-smaller {
 		border-right: 0;
 	}
-
+	
 	#asset-information #extra-information .remove-border-bottom-660px {
 		border-bottom: 0;
 	}
-
+	
 	/* TRANSFERS */
 	/* Show tablet text for detail bar */
 	#all-transfers-wrapper .detail-bar .tablet-full-width {
@@ -2223,19 +2251,19 @@ MEDIA QUERIES (MAX-WIDTH: 760PX)
 	#transfers-wrapper .secondary-info-wrapper .large-blue-link {
 		margin-right: 10px;
 	}
-
+	
 	#all-transfers-wrapper .detail-type-first-3-col,
 	#all-transfers-wrapper .detail-bar .col-3-width,
 	#all-transfers-wrapper .detail-bar .col-2-width {
 		display: none;
 	}
-
+	
 	#all-transfers-wrapper .col-3-width,
 	.transfer-col-2 {
 		min-width: 231px;
 		margin-bottom: 8px;
 	}
-
+	
 }
 
 /******************************************************************
@@ -2249,30 +2277,30 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 	/* GENERAL STYLES */
 	a {
 		font-size: 16px;
-	}
-
+	}	
+	
 	h1 {
 		margin: 60px 0 15px;
 		font-size: 30px;
 		line-height: 36px;
 	}
-
+	
 	.medium-detail-text {
 		font-size: 16px;
 	}
-
+	
 	.small-detail-text {
 		font-size: 15px;
 	}
-
+	
 	.large-detail-text {
 		font-size: 18px;
 	}
-
+	
 	.hero-submit-btn {
 		background: rgb(25, 25, 57);
 	}
-
+	
 	/* TARGETED PAGES INFO AFTER VERTICAL BAR */
 	#main-content-wrapper .orange-bar,
 	#main-content-wrapper .bright-teal-bar,
@@ -2285,12 +2313,12 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 		display: inline-block;
 		margin-bottom: 10px;
 	}
-
+	
 	#main-content-wrapper .golden-blue-text {
 		font-weight: 400;
 		color: #E6ECF2;
 	}
-
+	
 	/* WALLET ADDRESSES */
 	#wallet-address-wrapper .token-amount-wrapper {
 		width: 180px;
@@ -2302,7 +2330,7 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 	#extra-information .issued-amount {
 		margin-bottom: 10px;
 	}
-
+	
 	/* ASSET INFORMATION -> TRANSFERS PANEL */
 	/* NAVIGATION */
 	/* Logo wrapper */
@@ -2337,7 +2365,7 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 	#navigation .mobile-active {
 		display: block !important;
 	}
-
+	
 	/* FOOTER */
 	#footer .footer-content-wrapper {
 	  padding: 0 20px;
@@ -2391,7 +2419,7 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 	  margin-left: 150px;
 	  display: inline-block;
 	}
-
+	
 	/* EXTRA INFORMATION */
 	#extra-information {
 	  width: 100%;
@@ -2414,7 +2442,7 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 	  padding: 14px 0 10px 25px;
 	  min-height: 0;
 	}
-
+	
 	/* INFORMATION BARS */
 	/* Show tablet text for detail bar */
 	.detail-bar .tablet-full-width {
@@ -2462,7 +2490,7 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 		display: none;
 	}
 
-
+	
 	/* TRANSACTIONS */
 	.col-6-width {
 		width: 140px;
@@ -2472,13 +2500,13 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 	#all-transactions-wrapper .detail-bar .detail-type-first-2-col {
 		display: none;
 	}
-
+	
 	/* ASSETS */
 	#assets-list li {
 	  width: 100%;
 	  float: left;
 	}
-
+	
 	/* TARGETED WALLET ADDRESS */
 	.address-navigation {
 		width: 100%;
@@ -2491,11 +2519,11 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 	.address-navigation .browse-wallet-next {
 		float: right;
 	}
-
+	
 	.address-navigation .browse-wallet-previous {
 		float: left;
 	}
-
+	
 }
 
 /******************************************************************
@@ -2505,15 +2533,15 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 575PX)
 ******************************************************************/
 
 @media screen and (max-width: 600px) {
-
+	
 	/* ASSET INFORMATION -> TRANSFERS */
 	#all-wallet-address-wrapper .singular-nep5-wrapper .fa-key {
 		display: none;
-	}
+	}	
 	#wallet-address-wrapper .information-wrapper .secondary-info-wrapper {
 		padding-left: 0;
 	}
-
+	
 	/* WALLET ADDRESSES */
 	#wallet-address-wrapper .information-wrapper {
 		width: 90%;
@@ -2554,7 +2582,7 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 555PX)
 	.information-wrapper .secondary-info-wrapper .remove-550px {
 		display: none;
 	}
-
+	
 	/* TRANSACTIONS */
 	.col-6-width {
 		width: 220px;
@@ -2568,7 +2596,7 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 555PX)
 		font-size: 13px;
 		line-height: 18px;
 	}
-
+	
 	/* EXPLORER */
 	/* Jump links */
 	#jump-links .individual-jump-link-box {
@@ -2576,7 +2604,7 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 555PX)
 		padding: 9%;
 		border-bottom: 1px solid #3d3d79;
 		border-right: 0;
-		text-align: center;
+		text-align: left;
 	}
 	#jump-links .jump-links-information {
 		width: 100%;
@@ -2595,14 +2623,14 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 555PX)
 		width: 100%;
 		margin: 0;
 	}
-	.individual-graph-box {
+	.individual-graph-box {  
 	  width: 100%;
 	}
 	/* Market graph */
 	.remove-border-right-555px {
 		border-right: 0;
 	}
-
+	
 }
 
 /******************************************************************
@@ -2612,19 +2640,19 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 480PX)
 ******************************************************************/
 
 @media screen and (max-width: 490px) {
-
+	
 	/* TRANSACTIONS */
 	.col-6-width {
 		width: 160px;
 		margin-right: 0;
 	}
-
+	
 	/* ASSET INFORMATION -> TRANSFERS PANEL */
 	.transfer-float-left {
 		width: 70%;
 		margin-right: 0;
 	}
-
+	
 	/* TARGETED WALLET ADDRESS -> BALANCE */
 	.individual-wallet-wrapper {
 		width: 100%;
@@ -2651,7 +2679,7 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 480PX)
 		float: none;
 		text-align: center;
 	}
-
+	
 	/* NAVIGATION */
 	/* Logo wrapper */
 	#navigation .logo-wrapper {
@@ -2669,7 +2697,7 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 480PX)
 	#navigation .search-btn {
 		width: 20%;
 	}
-
+	
 	/* BLOCKS */
 	#blocks-wrapper .information-wrapper .secondary-info-wrapper .col-3-width,
 	#blocks-wrapper .information-wrapper .secondary-info-wrapper .col-3-width {
@@ -2685,7 +2713,7 @@ VERY SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 420PX)
 ******************************************************************/
 
 @media screen and (max-width: 420px) {
-
+	
 	/* TRANSACTIONS */
 	/* Wallet address */
 	#transactions-wrapper .sent-from-wrapper .wallet-address,
@@ -2703,5 +2731,16 @@ VERY SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 420PX)
 	.col-6-width {
 		width: 80px;
 	}
-
+	
 }
+
+
+
+
+
+
+
+
+
+
+
