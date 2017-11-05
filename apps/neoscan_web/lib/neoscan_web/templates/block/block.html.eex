@@ -148,10 +148,10 @@
       <div class="see-all-button-container">
         <div class="btn-group">
           <%= if @page != "1" do %>
-            <%= get_previous_page(@conn, @page) %>
+            <%= get_previous_page(@conn, @block.hash, @page) %>
           <% end %>
           <%= if check_last(@page, @block.tx_count) do %>
-            <%= get_next_page(@conn, @page) %>
+            <%= get_next_page(@conn, @block.hash, @page) %>
           <% end %>
         </div>
       </div>

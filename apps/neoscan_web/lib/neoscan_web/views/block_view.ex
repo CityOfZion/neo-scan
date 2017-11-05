@@ -66,7 +66,7 @@ defmodule NeoscanWeb.BlockView do
     end
   end
 
-  def get_previous_page(conn, page) do
+  def get_previous_page(conn, hash, page) do
     int = page
           |> String.to_integer
 
@@ -75,12 +75,12 @@ defmodule NeoscanWeb.BlockView do
 
     raw(
       '<a href="#{
-        block_path(conn, :go_to_page, num)
+        block_path(conn, :go_to_page, hash, num)
       }" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
     )
   end
 
-  def get_next_page(conn, page) do
+  def get_next_page(conn, hash, page) do
     int = page
           |> String.to_integer
 
@@ -89,7 +89,7 @@ defmodule NeoscanWeb.BlockView do
 
     raw(
       '<a href="#{
-        block_path(conn, :go_to_page, num)
+        block_path(conn, :go_to_page, hash, num)
       }" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
     )
   end
