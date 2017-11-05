@@ -69,6 +69,30 @@ let getName = function (type) {
   }
 }
 
+let geticon = function (type) {
+  if (type === 'ContractTransaction') {
+    return 'fa-cube'
+  }
+  if (type === 'ClaimTransaction') {
+    return 'fa-cubes'
+  }
+  if (type === 'MinerTransaction') {
+    return 'fa-user-circle-o'
+  }
+  if (type === 'RegisterTransaction') {
+    return 'fa-list-alt'
+  }
+  if (type === 'IssueTransaction') {
+    return 'fa-handshake-o'
+  }
+  if (type === 'PublishTransaction') {
+    return 'fa-cube'
+  }
+  if (type === 'InvocationTransaction') {
+    return 'fa-paper-plane'
+  }
+}
+
 const transactionRow = row => (
   <div class={'full-width-bar ' + getClass(row.type)}>
     <div class='information-wrapper'>
