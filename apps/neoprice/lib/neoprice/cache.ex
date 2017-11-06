@@ -119,7 +119,7 @@ defmodule Neoprice.Cache do
          module
        ) do
     cache = :ets.tab2list(cache_name)
-    {last_time, _} = List.last(cache)
+    {last_time, _} = List.last(cache) || {nil, ""}
     if next_value(definition, last_time, aggregation) < now() do
       Logger.debug fn ->
         "Syncing #{cache_name}"
