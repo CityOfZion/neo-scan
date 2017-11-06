@@ -20,4 +20,3 @@ import 'jquery'
 // paths "./socket" or full ones "web/static/js/socket".
 
 import socket from './home_app'
-import './address'

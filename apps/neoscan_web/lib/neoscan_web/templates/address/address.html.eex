@@ -25,10 +25,8 @@
   <div class="chart-container">
     <p id="last-x-transactions"></p>
     <div id="address-chart"></div>
-    <div class="lang-dropdown-wrapper">
-      <select id="select-address-chart">
-      </select>
-    </div>
+    <select id="select-address-chart">
+    </select>
   </div>
 </section>
 

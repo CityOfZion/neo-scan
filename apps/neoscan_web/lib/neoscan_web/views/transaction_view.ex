@@ -3,6 +3,7 @@ defmodule NeoscanWeb.TransactionView do
   alias NeoscanMonitor.Api
   alias Neoscan.Vm.Disassembler
   alias Neoscan.Helpers
+  alias Neoscan.Explanations
 
   def get_type(type) do
     cond do
@@ -92,4 +93,7 @@ defmodule NeoscanWeb.TransactionView do
     ver
   end
 
+  def get_explanation(topic) do
+    Explanations.get(topic)
+  end
 end

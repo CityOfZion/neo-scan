@@ -40,9 +40,9 @@
 
 			<!-- Language selector dropdown -->
 			<div class="lang-dropdown-wrapper">
-				<select onchange="window.location.href=this.value">
-					<option value="?locale=en">English</option>
-					<option value="?locale=fr">Français</option>
+				<select id="language-dropdown" onchange="window.location.href=this.value">
+					<option class="select-options" value="?locale=en">English</option>
+					<option class="select-options" value="?locale=fr">Français</option>
 				</select>​
 			</div>
 
@@ -119,6 +119,9 @@
 					</div>
 					<div class="footer-link-wrapper">
 						<a href="<%= doc_path(@conn, :index) %>" alt="#" title="#" class="coz-api"><%= gettext "NEOSCAN API" %></a>
+					</div>
+					<div class="footer-link-wrapper">
+						<div id="coz-tooltip" class="btn-primary"><%= gettext "Tooltips Off" %></div>
 					</div>
 				</div>
 			</div>

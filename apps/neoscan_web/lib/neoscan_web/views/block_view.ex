@@ -3,6 +3,7 @@ defmodule NeoscanWeb.BlockView do
   alias Neoscan.Vm.Disassembler
   alias NeoscanMonitor.Api
   alias Neoscan.Helpers
+  alias Neoscan.Explanations
 
   def compare_time_and_get_minutes(unix_time) do
 
@@ -144,4 +145,7 @@ defmodule NeoscanWeb.BlockView do
     end
   end
 
+  def get_explanation(topic) do
+    Explanations.get(topic)
+  end
 end
