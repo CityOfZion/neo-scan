@@ -1,7 +1,7 @@
 
 <!-- Welcome -->
 <h1 class="content-title"><%= gettext "Welcome to NEOSCAN" %></h1>
-<p class="content-subline"><%= gettext "Your home for all blockchain related information for NEO" %></p>
+<p class="content-subline"><%= gettext "Your home for all NEO related blockchain information" %></p>
 
 <!-- Search input -->
 <!-- <div class="hero-input-container">

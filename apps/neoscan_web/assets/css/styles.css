@@ -314,7 +314,7 @@ a:hover {
 /* Text inside wallet, transaction and block bars */
 .information-wrapper {
   overflow: hidden;
-  padding: 21px 0 0;
+  padding: 21px 0 1px;
   float: left;
   margin-left: 13px;
   margin-bottom: 19px;
@@ -1094,20 +1094,24 @@ a:hover {
   padding: 21px 0 0;
   margin-bottom: 0;
 }
+/* 
 #wallet-address-wrapper .singular-nep5-wrapper {
 	padding: 20px 0 20px;
 }
+ */
 #wallet-address-wrapper .full-width-bar.wallet-address {
   border-left: 4px solid #FFB068;
 }
 #wallet-address-wrapper .token-amount-wrapper {
   float: left;
-  margin: 12px 0 10px;
+  margin: 12px 0 13px;
 }
+/* 
 #wallet-address-wrapper .token-amount-wrapper.general-currency {
   float: left;
   margin-top: 12px;
 }
+ */
 #wallet-address-wrapper .token-amount-wrapper .add-margin-bottom {
   margin-bottom: 3px;
 }
@@ -1249,7 +1253,7 @@ a:hover {
 
 /* TARGETED-INVOCATION: Set minimum height of #asset-information LIs */
 #extra-information .min-height-97px {
-	min-height: 97px;
+	min-height: 96px;
 }
 
 #extra-information li .large-detail-text {
@@ -1517,7 +1521,7 @@ a:hover {
 }
 #footer .footer-link-wrapper .coz-slack:after {
 	background: url("../images/ICON_Slack.svg") 0 0 no-repeat;
-  margin-left: 111px;
+  margin-left: 71px;
 }
 #footer .footer-link-wrapper .coz-github:after {
   background: url("../images/ICON_Github.svg") 0 0 no-repeat;
@@ -1932,9 +1936,11 @@ MEDIA QUERIES (MAX-WIDTH: 940PX)
 	#wallet-address-wrapper .information-wrapper {
 	  width: 70%;
 	}
+/* 
 	#wallet-address-wrapper .token-amount-wrapper.singular-nep5-token {
 		margin-top: 25px;
 	}
+ */
 	#wallet-address-wrapper .information-wrapper .tablet-detail-text {
 		display: inline;
 	}
@@ -2109,7 +2115,7 @@ MEDIA QUERIES (MAX-WIDTH: 920PX)
 	
 	/* WALLET ADDRESSES */
 	#wallet-address-wrapper .token-amount-wrapper {
-		margin: 15px 0 10px;
+		margin: 15px 0;
 	}
 	
 }
@@ -2197,7 +2203,7 @@ MEDIA QUERIES (MAX-WIDTH: 760PX)
 	/* WALLET ADDRESSES */
 	#wallet-address-wrapper .information-wrapper {
 		width: 59%;
-		padding: 14px 0 0;
+		padding: 14px 0 1px;
 	}
 	#wallet-address-wrapper .information-wrapper .fa-key {
 		display: none;
@@ -2502,6 +2508,9 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 	.col-6-width {
 		width: 140px;
 	}
+	#transactions-wrapper .col-6-width {
+		width: 130px;
+	}
 	#all-transactions-wrapper .detail-bar .col-2-width,
 	#all-transactions-wrapper .detail-bar .col-6-width,
 	#all-transactions-wrapper .detail-bar .detail-type-first-2-col {
@@ -2535,7 +2544,7 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 
 /******************************************************************
 
-SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 575PX)
+SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 600PX)
 
 ******************************************************************/
 
@@ -2557,16 +2566,18 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 575PX)
 		color: #4598FF;
 		padding: 18px 0 5px 13px;
 	}
+/* 
 	#wallet-address-wrapper .token-amount-wrapper.singular-nep5-token {
 		margin-top: 0;
 	}
+ */
 	#wallet-address-wrapper .fa-key {
 		display: none;
 	}
 	#wallet-address-wrapper .token-amount-wrapper {
 		float: left;
 		width: 90%;
-		padding: 0 0 7px 13px;
+		padding: 0 0 4px 13px;
 		margin-top: 0;
 	}
 	#wallet-address-wrapper .token-amount-wrapper .medium-detail-text {
