@@ -65,13 +65,13 @@ defmodule NeoscanMonitor.Worker do
     }
 
     new_state = %{
-      :monitor => Task.await(monitor_nodes, 60_000),
-      :blocks => Task.await(blocks, 60_000),
-      :transactions => Task.await(transactions, 60_000),
-      :assets => Task.await(assets, 60_000),
-      :contracts => Task.await(contracts, 60_000),
-      :stats => Task.await(stats, 60_000),
-      :addresses => Task.await(addresses, 60_000),
+      :monitor => Task.await(monitor_nodes, 120_000),
+      :blocks => Task.await(blocks, 120_000),
+      :transactions => Task.await(transactions, 120_000),
+      :assets => Task.await(assets, 120_000),
+      :contracts => Task.await(contracts, 120_000),
+      :stats => Task.await(stats, 120_000),
+      :addresses => Task.await(addresses, 120_000),
       :price => price,
     }
 

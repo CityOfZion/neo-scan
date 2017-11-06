@@ -87,7 +87,7 @@
               <p class="medium-detail-text col-2-width"><span class="fa fa-user-circle-o"></span><%= gettext "Miner" %></p>
             <% end %>
             <div class="secondary-info-wrapper">
-              <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-6-width"><%= transaction.txid %>&#8230;</a>
+              <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-5-width"><%= transaction.txid %>&#8230;</a>
               <p class="medium-detail-text col-2-width">
                 <%=
                   {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
@@ -141,9 +141,7 @@
         </div>
       <% end %>
     </div>
-
   </section>
-
   <p  class="number-counter">Transactions <%= get_current_min_qtd(@page, @block.tx_count) %> to <%= get_current_max_qtd(@page, @block.tx_count) %> of <%= @block.tx_count %></p>
   <div class="see-all-button-container">
     <div class="btn-group">

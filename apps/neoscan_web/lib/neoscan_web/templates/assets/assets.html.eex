@@ -16,7 +16,7 @@
           </div>
           <div class="left-asset-detail">
             <p class="small-detail-text"><%= gettext "Supply" %></p>
-            <p class="large-detail-text"><%=asset.amount%></p>
+            <p class="large-detail-text"><%= get_supply(asset.amount) %></p>
           </div>
           <div class="left-asset-detail">
             <p class="small-detail-text"><%= gettext "Registered on" %></p>
