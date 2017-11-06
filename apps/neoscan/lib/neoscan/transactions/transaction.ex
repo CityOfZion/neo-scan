@@ -61,6 +61,7 @@ defmodule Neoscan.Transactions.Transaction do
          ]
        )
     |> assoc_constraint(:block, required: true)
+    |> unique_constraint(:txid)
     |> validate_required(
          [
            :attributes,
