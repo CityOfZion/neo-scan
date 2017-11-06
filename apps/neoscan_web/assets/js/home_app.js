@@ -1,6 +1,7 @@
 import HomeSocket from './home_socket'
 import Inferno from 'inferno'
 import List from 'inferno-virtual-list'
+import { createHomeChart, createAddressChart } from './create_charts'
 
 const moment = require('moment')
 
@@ -106,6 +107,7 @@ const transactionRow = row => (
 )
 
 window.onload = function () {
+  // homepage javascript
   if (window.location.pathname === '/') {
     let payload = {
       blocks: [],
@@ -147,106 +149,11 @@ window.onload = function () {
     }, 500)
     home.connect()
 
-    const formatChart = (time) => {
-      const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
-      let count = width > 600 ? 32 : 8
-      let format = '%m-%d-%y'
-      if (time === '1d') {
-        count = width >   600 ? 24 : 6
-        format = '%H:%M'
-      }
-      if (time === '1w') {
-        count = 7
-        format = '%m-%d'
-      }
-      if (time === '3m') {
-        count = width > 600 ? 36 : 10
-        format = '%m-%d'
-      }
-      return [count, format]
-    }
-
-    const createChart = (coin, compareCurrency, time) => {
-      fetch(`/price/${coin}/${compareCurrency}/${time}`).then(res => res.json()).then(results => {
-        const dates = ['date']
-        const prices = [coin.toUpperCase()]
-        for (const [unixTimestamp, price] of Object.entries(results)) {
-          const formattedDate = moment.unix(unixTimestamp).format('YYYY-MM-DD HH:mm')
-          if (dates[dates.length - 1] !== formattedDate) {
-            dates.push(formattedDate)
-            prices.push(price)
-          }
-        }
-
-        const [count, format] = formatChart(time)
-        const chart = c3.generate({
-          bindto: '#market-chart',
-          data: {
-            x: 'date',
-            columns: [
-              dates,
-              prices
-            ],
-            xFormat: '%Y-%m-%d %H:%M'
-          },
-          axis: {
-            x: {
-              height: 75,
-              type: 'timeseries',
-              tick: {
-                culling: false,
-                count,
-                rotate: -65,
-                format,
-                fit: true
-              }
-            },
-            y: {
-              tick: {
-                format: function (d) {
-                  if (compareCurrency === 'usd') return '$' + d.toFixed(2)
-                  if (time === '3m') return d.toFixed(3)
-                  if (time === '1m') return d.toFixed(4)
-                  if (time === '1w') return d.toFixed(5)
-                  return d.toFixed(8)
-                }
-              }
-            }
-          },
-          grid: {
-            y: {
-              show: true
-            }
-          },
-          tooltip: {
-            contents: function (d) {
-              const price = compareCurrency === 'usd' ? d[0] && Number(d[0].value).toFixed(2) : d[0] && Number(d[0].value).toFixed(8)
-              const name = d[0] && d[0].name
-              const time = d[0] && `${d[0].x}`.slice(0, 24)
-              return (`<div class="chart-tooltip"><span class="tooltip-xlabel">Price of ${name} (${compareCurrency})</span><span class="tooltip-xlabel">Time:  ${time}</span><span class="tooltip-${compareCurrency}label">${price}</span></div>`)
-            }
-          },
-          legend: {
-            hide: true
-          },
-          point: {
-            show: false
-          },
-          zoom: {
-            enabled: false
-          },
-          color: {
-            pattern: ['#BEEB00']
-          }
-        })
-      })
-    }
-
     let displayCoin = 'neo'
     let displayChart = 'usd'
     let displayTime = '1m'
 
-    createChart(displayCoin, displayChart, displayTime)
+    createHomeChart(displayCoin, displayChart, displayTime)
 
     const zoomInChart = document.getElementById('zoom-in-chart')
     const zoomOutChart = document.getElementById('zoom-out-chart')
@@ -257,12 +164,12 @@ window.onload = function () {
 
     const coinClickHandler = (coin) => {
       displayCoin = coin
-      return createChart(coin, displayChart, displayTime)
+      return createHomeChart(coin, displayChart, displayTime)
     }
 
     const compareClickHandler = (compare) => {
       displayChart = compare
-      return createChart(displayCoin, compare, displayTime)
+      return createHomeChart(displayCoin, compare, displayTime)
     }
 
     const zoomHandler = (zoom) => {
@@ -277,7 +184,7 @@ window.onload = function () {
         if (zoom === 'out') return
         displayTime = '1m'
       }
-      return createChart(displayCoin, displayChart, displayTime)
+      return createHomeChart(displayCoin, displayChart, displayTime)
     }
 
     zoomInChart.onclick = () => zoomHandler('in')
@@ -286,6 +193,65 @@ window.onload = function () {
     usdChart.onclick = () => compareClickHandler('usd')
     gasChart.onclick = () => coinClickHandler('gas')
     neoChart.onclick = () => coinClickHandler('neo')
+  }
+
+  // address page javascript
+  if (window.location.pathname.startsWith('/address/')) {
+    const graph_elem = document.getElementById('graph_data')
+    const graph_data = JSON.parse(graph_elem.dataset.graphData)
+    const count = graph_data.length
+    const assetsList = {}
+    const dates = ['date']
+    graph_data.forEach(({time, assets}) => {
+      const date = new Date(time*1000)
+      const formattedDate = moment(date).format('YYYY-MM-DD HH:MM:SS')
+      if (formattedDate === dates[dates.length-1]) return
+      dates.push(formattedDate)
+
+      return assets.forEach((asset) => {
+        const assetName = Object.keys(asset)
+        if (!assetsList[assetName]) {
+          return assetsList[assetName] = [assetName, asset[assetName]]
+        } else {
+          return assetsList[assetName].push(asset[assetName])
+        }
+      })
+    })
+
+    const transactionsTextElem = document.getElementById('last-x-transactions')
+    let transactionText = `Last ${count} Transactions for `
+
+    const assetDropdown = document.getElementById('select-address-chart')
+    const assetNames = Object.keys(assetsList)
+    assetNames.forEach((name, idx) => {
+      const option = document.createElement("option");
+      option.text = name;
+      option.value = name;
+      assetDropdown.add(option);
+      if (!assetNames[idx+1] && !assetNames[idx-1] ) {
+        transactionText += `${name}`
+      } else if (assetNames[idx+1]) {
+        transactionText += `${name}, `
+      } else {
+        transactionText = transactionText.slice(0,-2)
+        transactionText += ` and ${name}`
+      }
+
+    })
+
+    transactionsTextElem.innerHTML = transactionText
+
+    if (assetsList['NEO']) {
+      createAddressChart('NEO', dates, assetsList['NEO'], count)
+    } else if (assetsList['GAS']) {
+      createAddressChart('GAS', dates, assetsList['GAS'], count)
+    } else if (assetNames.length > 0) {
+      createAddressChart(assetNames[0], dates, assetsList[assetNames[0]], count)
+    }
+
+    assetDropdown.onchange = function () {
+      createAddressChart(this.value, dates, assetsList[this.value], count)
+    }
   }
 }
 
@@ -319,25 +285,52 @@ for (i = 0; i < acc.length; i++) {
   }
 }
 
-var $hamburger = $('.hamburger')
-$hamburger.on('click', function (e) {
-  $hamburger.toggleClass('is-active')
+$('document').ready(function () {
+  const $hamburger = $('.hamburger')
+  $hamburger.on('click', function (e) {
+    $hamburger.toggleClass('is-active')
 
-  if ($hamburger.hasClass('is-active')) {
-    $('.nav-wrapper').addClass('active-wrapper')
-  } else {
-    $('.nav-wrapper').removeClass('active-wrapper')
-  }
+    if ($hamburger.hasClass('is-active')) {
+      $('.nav-wrapper').addClass('active-wrapper')
+    } else {
+      $('.nav-wrapper').removeClass('active-wrapper')
+    }
 
-  if (window.matchMedia('(max-width: 660px)').matches && ($hamburger.hasClass('is-active'))) {
-    $('.searchbar').addClass('mobile-active')
-    $('.search-btn').addClass('mobile-active')
-  } else {
-    $('.searchbar').removeClass('mobile-active')
-    $('.search-btn').removeClass('mobile-active')
-  }
+    if (window.matchMedia('(max-width: 660px)').matches && ($hamburger.hasClass('is-active'))) {
+      $('.searchbar').addClass('mobile-active')
+      $('.search-btn').addClass('mobile-active')
+    } else {
+      $('.searchbar').removeClass('mobile-active')
+      $('.search-btn').removeClass('mobile-active')
+    }
+  })
 
+  const $tooltipElement = $('#coz-tooltip')
+  console.log($tooltipElement);
+
+  let hover = false
+  $tooltipElement.click(function () {
+    if(!hover) {
+      $('.tooltip').each(function() {
+        console.log($(this));
+        $(this).addClass('add-hover')
+      })
+      $(this).css('background-color', '#2CE3B5')
+      $(this).text('Tooltips On')
+      hover = true
+    } else {
+      $('.tooltip').each(function() {
+        $(this).removeClass('add-hover')
+      })
+      $(this).css('background-color', '#FF9596')
+      $(this).text('Tooltips Off')
+      hover = false
+    }
+  })
 })
 
-// Call simpleselect dropdown
-$('select').simpleselect()
+// TODO remove double loading to maintain french between pages
+const qs = document.referrer.split('?')[1] || ''
+if (qs === 'locale=fr' && !window.location.search) window.location.href = '?locale=fr'
+const languageDropdown = document.getElementById('language-dropdown')
+languageDropdown.value = window.location.search === '?locale=fr' ? '?locale=fr' : '?locale=en'

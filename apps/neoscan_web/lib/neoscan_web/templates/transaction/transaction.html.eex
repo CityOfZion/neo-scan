@@ -1,5 +1,12 @@
 <h1 class="content-title">Transaction Information</h1>
-<p class="large-detail-text"><span class="fa <%= get_icon(@transaction.type) %>"></span><span class="bold-text"><%= get_type(@transaction.type) %></span> <span class="green-bar">|</span> <span class="bold-text">Hash:</span> <span class="eggshell-blue-text hash"><%= @transaction.txid %></span></p>
+
+<p class="large-detail-text">
+  <span class="fa <%= get_icon(@transaction.type) %>"></span>
+  <span class="bold-text"><%= get_type(@transaction.type) %></span>
+  <span class="green-bar">|</span> <span class="bold-text">Hash:</span>
+  <span class="eggshell-blue-text hash"><%= @transaction.txid %></span>
+</p>
+
 <a href="<%= transactions_path(@conn, :index) %>" alt="Back to all transactions" title="Back to all transactions" class="back-link"><%= gettext "Back to all transactions" %></a>
 
 <section id="asset-information" class="corner-box bar-left-transactions">
@@ -51,25 +58,29 @@
 
 	<!-- Extra information list -->
 	<ul id="extra-information">
-		<li class="border-right border-bottom border-right-smaller min-height-97px remove-border-right-660px">
+		<li class="border-right border-bottom border-right-smaller min-height-97px remove-border-right-660px tooltip">
 			<p class="small-detail-text"><%= gettext "Time" %></p>
 			<p class="large-detail-text"><%= compare_time_and_get_minutes(@transaction.time) %> <%= gettext "minutes ago" %></p>
+      <span class="tooltiptext"><%= get_explanation("transaction_time") %></span>
 		</li>
-		<li class="border-right border-bottom min-height-97px">
+		<li class="border-right border-bottom min-height-97px tooltip">
 			<p class="small-detail-text"><%= gettext "Network Fee" %></p>
 			<p class="large-detail-text"><%= @transaction.net_fee %></p>
+      <span class="tooltiptext"><%= get_explanation("transaction_network_fees") %></span>
 		</li>
-		<li class="border-bottom border-right-smaller min-height-97px remove-border-right-660px">
+		<li class="border-bottom border-right-smaller min-height-97px remove-border-right-660px tooltip">
 			<p class="small-detail-text"><%= gettext "System Fee" %></p>
 			<p class="large-detail-text"><%= @transaction.sys_fee %></p>
+      <span class="tooltiptext"><%= get_explanation("transaction_system_fees") %></span>
 		</li>
 		<li class="border-right border-right-smaller min-height-97px remove-border-right-660px">
 			<p class="small-detail-text"><%= gettext "Included in Block" %></p>
 			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%= @transaction.block_height %></a></p>
 		</li>
-		<li class="min-height-97px remove-border-bottom-660px">
+		<li class="min-height-97px remove-border-bottom-660px tooltip">
 			<p class="small-detail-text"><%= gettext "Size" %></p>
 			<p class="large-detail-text"><%= @transaction.size %> <%= gettext "bytes" %></p>
+      <span class="tooltiptext"><%= get_explanation("transaction_size") %></span>
 		</li>
 	</ul>
 
@@ -77,7 +88,10 @@
 
 <ul id="bytecode-invocation-list">
 	<li class="corner-box remove-margin-left">
-		<h2><%= gettext "Bytecode Invocation Script" %></h2>
+    <div class="tooltip">
+      <h2><%= gettext "Bytecode Invocation Script" %></h2>
+      <span class="tooltiptext"><%= get_explanation("bytecode_invocation_script") %></span>
+    </div>
 		<div class="corner-box">
 			<%= for script <- @transaction.scripts do %>
 			  <p class="small-detail-text bar-left-transactions"><%= get_inv(script) %></p>
@@ -85,7 +99,10 @@
 		</div>
 	</li>
 	<li class="corner-box">
-		<h2><%= gettext "Bytecode Verification Script" %></h2>
+    <div class="tooltip">
+      <h2><%= gettext "Bytecode Verification Script" %></h2>
+      <span class="tooltiptext"><%= get_explanation("bytecode_verification_script") %></span>
+    </div>
 		<div class="corner-box">
 			<%= for script <- @transaction.scripts do %>
 			  <p class="small-detail-text bar-left-transactions"><%= get_ver(script) %></p>
@@ -120,21 +137,31 @@
 
 <ul id="bytecode-invocation-list">
 	<li class="corner-box remove-margin-left">
-		<h2><%= gettext "Opcode Invocation Script" %></h2>
+    <div class="tooltip">
+      <h2><%= gettext "Opcode Invocation Script" %></h2>
+      <span class="tooltiptext"><%= get_explanation("opcode_invocation_script") %></span>
+    </div>
 		<div class="corner-box">
 			<p class="small-detail-text bar-left-transactions">
         <%= for script <- @transaction.scripts do %>
-          <span class="script-new-line"><%= parse_invocation(script) %></span>
+          <%= for operation <- parse_invocation(script) do %>
+            <span class="script-new-line"><%= operation %></span>
+          <% end %>
         <% end %>
       </p>
 		</div>
 	</li>
 	<li class="corner-box">
-		<h2><%= gettext "Opcode Verification Script" %></h2>
+    <div class="tooltip">
+      <h2><%= gettext "Opcode Verification Script" %></h2>
+      <span class="tooltiptext"><%= get_explanation("opcode_verification_script") %></span>
+    </div>
 		<div class="corner-box">
 			<p class="small-detail-text bar-left-transactions">
         <%= for script <- @transaction.scripts do %>
-          <span class="script-new-line"><%= parse_verification(script) %></span>
+          <%= for operation <- parse_verification(script) do %>
+            <span class="script-new-line"><%= operation %></span>
+          <% end %>
         <% end %>
       </p>
 		</div>
