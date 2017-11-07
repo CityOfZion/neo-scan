@@ -5,6 +5,7 @@ defmodule Neoscan.ChainAssets do
   alias Neoscan.ChainAssets.Asset
   alias NeoscanMonitor.Api
   alias NeoscanSync.HttpCalls
+  alias NeoscanSync.Blockchain
 
   require Logger
 

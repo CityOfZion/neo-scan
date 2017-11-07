@@ -41,7 +41,7 @@ defmodule Neoscan.Vouts.Vout do
       ) do
     {new_value, _} = Float.parse(value)
 
-    verified_asset = ChainAssets.verify_asset(asset, time)
+    verified_asset = ChainAssets.verify_asset(String.slice(to_string(asset), -64..-1), time)
 
     new_attrs = attrs
                 |> Map.merge(
@@ -49,7 +49,7 @@ defmodule Neoscan.Vouts.Vout do
                        "start_height" => height,
                        "claimed" => false,
                        "time" => time,
-                       "asset" => String.slice(to_string(verified_asset), -64..-1),
+                       "asset" => verified_asset,
                        "address_id" => address.id,
                        "transaction_id" => transaction_id,
                        "address_hash" => address.address,
