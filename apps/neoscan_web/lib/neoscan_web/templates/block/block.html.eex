@@ -103,7 +103,7 @@
           <button class="btn-accordion"><img src="<%= static_path(@conn, "/images/ICON_DownArrow.svg") %>" alt="Accordion down arrow" title="Accordion down arrow" class="accordion-down-arrow" width="13px" height="8px" /></button>
           <div class="transaction-panel">
             <div class="sent-from-wrapper">
-              <%= if transaction.type == "ContractTransaction" do %>
+              <%= if transaction.type != "ClaimTransaction" do %>
                 <p class="large-detail-text"><%= gettext "Sent from" %></p>
                 <%= for vin <- transaction.vin do %>
                   <div class="individual-transaction">

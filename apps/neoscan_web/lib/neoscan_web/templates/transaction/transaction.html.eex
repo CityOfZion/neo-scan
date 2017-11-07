@@ -23,7 +23,7 @@
           </div>
         <% end %>
       <% end %>
-      <%= if @transaction.type == "ContractTransaction" do %>
+      <%= if @transaction.type != "ClaimTransaction" do %>
   			<p class="large-detail-text"><%= gettext "Sent from" %></p>
         <%= for input <- @transaction.vin do %>
     			<div class="individual-transaction">
