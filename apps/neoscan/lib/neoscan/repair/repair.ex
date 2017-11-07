@@ -99,7 +99,6 @@ defmodule Neoscan.Repair do
         {:block_missing, transaction}
       block ->
         check_if_transaction_exists(block, transaction)
-        {:transaction_missing, {block, transaction}}
     end
   end
 
