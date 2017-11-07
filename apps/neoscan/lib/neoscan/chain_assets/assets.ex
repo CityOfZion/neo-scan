@@ -174,4 +174,25 @@ defmodule Neoscan.ChainAssets do
     nil
   end
 
+  def verify_asset(hash, time) do
+    case Api.check_asset(hash) do
+      true ->
+        hash
+      false ->
+        get_new_asset(hash, time)
+        |> Map.get(:txid)
+    end
+  end
+
+  def get_new_asset(hash, time) do
+    asset = Blockchain.get_asset(HttpCalls.url, hash)
+
+    case asset do
+      {:ok, result} ->
+        create(result, hash, time)
+      _->
+        get_new_asset(hash, time)
+    end
+  end
+
 end

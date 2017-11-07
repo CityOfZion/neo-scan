@@ -62,4 +62,17 @@ defmodule NeoscanSync.Blockchain do
     HttpCalls.request(headers, data, url)
   end
 
+  def get_asset(url, txid) do
+    data = Poison.encode!(
+      %{
+        "jsonrpc": "2.0",
+        "method": "getassetstate",
+        "params": [txid, 1],
+        "id": 5
+      }
+    )
+    headers = [{"Content-Type", "application/json"}]
+    HttpCalls.request(headers, data, url)
+  end
+
 end

@@ -76,6 +76,12 @@ defmodule NeoscanMonitor.Server do
     {:reply, name, state}
   end
 
+  def handle_call({:check_asset, hash}, _from, state) do
+    exist = Enum.any?(state.assets, fn %{:txid => txid} -> txid == hash end)
+
+    {:reply, exist, state}
+  end
+
   def handle_call(:addresses, _from, state) do
     {:reply, state.addresses, state}
   end

@@ -3,6 +3,7 @@ defmodule Neoscan.Vouts.Vout do
   use Ecto.Schema
   import Ecto.Changeset
   alias Neoscan.Vouts.Vout
+  alias Neoscan.ChainAssets
 
   schema "vouts" do
     field :asset, :string
@@ -40,13 +41,15 @@ defmodule Neoscan.Vouts.Vout do
       ) do
     {new_value, _} = Float.parse(value)
 
+    verified_asset = ChainAssets.verify_asset(asset, time)
+
     new_attrs = attrs
                 |> Map.merge(
                      %{
                        "start_height" => height,
                        "claimed" => false,
                        "time" => time,
-                       "asset" => String.slice(to_string(asset), -64..-1),
+                       "asset" => String.slice(to_string(verified_asset), -64..-1),
                        "address_id" => address.id,
                        "transaction_id" => transaction_id,
                        "address_hash" => address.address,
