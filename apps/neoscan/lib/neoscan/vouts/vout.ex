@@ -41,7 +41,8 @@ defmodule Neoscan.Vouts.Vout do
       ) do
     {new_value, _} = Float.parse(value)
 
-    verified_asset = ChainAssets.verify_asset(String.slice(to_string(asset), -64..-1), time)
+    verified_asset =
+      ChainAssets.verify_asset(String.slice(to_string(asset), -64..-1), time)
 
     new_attrs = attrs
                 |> Map.merge(
