@@ -19,7 +19,7 @@ config :neoscan_web, NeoscanWeb.Endpoint,
 
 # Configures Elixir's Logger
 config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
+  format: "$date $time $metadata[$level] [$node] $message\n",
   metadata: [:request_id]
 
 config :neoscan_web, :generators,
