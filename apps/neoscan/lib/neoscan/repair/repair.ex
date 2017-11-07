@@ -220,7 +220,7 @@ defmodule Neoscan.Repair do
              db_transaction.time,
              nil
            )
-           Vouts.create_vouts(db_transaction, vouts, address_list)
+           Vouts.create_vouts(db_transaction, List.flatten(vouts), address_list)
          end
        )
   end
