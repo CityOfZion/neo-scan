@@ -192,7 +192,7 @@ defmodule Neoscan.ChainAssets do
     case asset do
       {:ok, result} ->
         create(result, hash, time)
-      _->
+      _ ->
         get_new_asset(hash, time)
     end
   end
