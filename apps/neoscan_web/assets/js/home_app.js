@@ -328,9 +328,3 @@ $('document').ready(function () {
     }
   })
 })
-
-// TODO remove double loading to maintain french between pages
-const qs = document.referrer.split('?')[1] || ''
-if (qs === 'locale=fr' && !window.location.search) window.location.href = '?locale=fr'
-const languageDropdown = document.getElementById('language-dropdown')
-languageDropdown.value = window.location.search === '?locale=fr' ? '?locale=fr' : '?locale=en'

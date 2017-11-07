@@ -1,6 +1,7 @@
 defmodule NeoscanWeb.LayoutView do
   use NeoscanWeb, :view
   alias Phoenix.Controller
+  alias Plug.Conn
 
   def is_home_path(conn) do
     Controller.controller_module(conn) == NeoscanWeb.HomeController
@@ -37,4 +38,7 @@ defmodule NeoscanWeb.LayoutView do
     |> String.replace("Controller", "")
   end
 
+  def get_language(conn) do
+    Conn.get_session(conn, "locale")
+  end
 end
