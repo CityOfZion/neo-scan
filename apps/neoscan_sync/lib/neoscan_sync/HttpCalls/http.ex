@@ -13,7 +13,7 @@ defmodule NeoscanSync.HttpCalls do
     "http://seed2.antshares.org:10332"
 
   """
-  def url(n) do
+  def url(n \\ 1) do
     Api.get_nodes
     |> test_if_nodes(n)
   end
