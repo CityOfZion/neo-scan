@@ -187,7 +187,7 @@ defmodule Neoscan.ChainAssets do
   end
 
   def get_new_asset(hash, time) do
-    asset = Blockchain.get_asset(HttpCalls.url, hash)
+    asset = Blockchain.get_asset(HttpCalls.url(1), hash)
 
     case asset do
       {:ok, result} ->

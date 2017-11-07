@@ -216,7 +216,7 @@ defmodule Neoscan.Repair do
          fn {db_transaction, vouts} ->
            address_list = Addresses.get_transaction_addresses(
              [],
-             vouts,
+             List.flatten(vouts),
              db_transaction.time,
              nil
            )
