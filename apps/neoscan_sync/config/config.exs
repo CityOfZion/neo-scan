@@ -23,7 +23,7 @@ config :neoscan_sync, ecto_repos: []
 #     config :logger, level: :info
 config :logger,
        :console,
-       format: "$time $metadata[$level] $message\n",
+       format: "$date $time $metadata[$level] [$node] $message\n",
        metadata: [:request_id]
 
 # It is also possible to import configuration files, relative to this

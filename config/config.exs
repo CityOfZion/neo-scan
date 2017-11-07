@@ -11,7 +11,7 @@ import_config "../apps/*/config/config.exs"
 
 # Configures Elixir's Logger
 config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
+  format: "$date $time $metadata[$level] [$node] $message\n",
   metadata: [:request_id],
   loggers: [{Ecto.LogEntry, :log, [:info]}],
   level: :info
