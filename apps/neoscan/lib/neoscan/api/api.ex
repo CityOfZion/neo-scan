@@ -58,6 +58,7 @@ defmodule Neoscan.Api do
           }
           ...
         ],
+        "unclaimed": float,
         "address": "hash_string"
       }
 
@@ -73,7 +74,7 @@ defmodule Neoscan.Api do
 
     result = case Repo.all(query)
                   |> List.first do
-      nil -> %{:address => "not found", :balance => nil}
+      nil -> %{:address => "not found", :balance => nil, :unclaimed => 0}
 
       %{} = address ->
         new_balance = filter_balance(address.address, address.balance)
@@ -85,6 +86,36 @@ defmodule Neoscan.Api do
           }
         )
         |> Map.delete(:id)
+    end
+
+    result
+  end
+
+  @doc """
+  Returns the unclaimed gas for an address from its `hash_string`
+
+  ## Examples
+
+      /api/main_net/v1/get_unclaimed/{hash_string}
+      {
+        "unclaimed": float,
+        "address": "hash_string"
+      }
+
+  """
+  def get_unclaimed(hash) do
+    query = from e in Address,
+                 where: e.address == ^hash,
+                 select: %{
+                   :id => e.id,
+                 }
+
+    result = case Repo.all(query)
+                  |> List.first do
+      nil -> %{:address => "not found", :unclaimed => 0}
+
+      %{} = address ->
+        %{:address => hash, :unclaimed => Unclaimed.calculate_bonus(address.id)}
     end
 
     result
@@ -134,7 +165,7 @@ defmodule Neoscan.Api do
   end
 
   @doc """
-  Returns the claimable transactions for an address, from its `hash_string`.
+  Returns the AVAILABLE claimable transactions for an address, from its `hash_string`.
 
   ## Examples
 
@@ -171,7 +202,7 @@ defmodule Neoscan.Api do
         Map.put(
           address,
           :claimable,
-          Unclaimed.calculate_bonus(address.id)
+          Unclaimed.calculate_vouts_bonus(address.id)
         )
         |> Map.delete(:id)
     end
@@ -860,11 +891,11 @@ defmodule Neoscan.Api do
 
   ## Examples
 
-  /api/main_net/v1/get_nodes
-  {
-  "urls": [
-  "http://seed1.cityofzion.io: 8080",
-  ....
+      /api/main_net/v1/get_nodes
+      {
+        "urls": [
+          "http://seed1.cityofzion.io: 8080",
+          ....
         ]
       }
 

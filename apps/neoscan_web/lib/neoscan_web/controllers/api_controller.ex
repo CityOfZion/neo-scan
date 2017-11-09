@@ -13,6 +13,11 @@ defmodule NeoscanWeb.ApiController do
     json(conn, claimed)
   end
 
+  def get_unclaimed(conn, %{"hash" => hash}) do
+    unclaimed = Api.get_unclaimed(hash)
+    json(conn, unclaimed)
+  end
+
   def get_claimable(conn, %{"hash" => hash}) do
     claimable = Api.get_claimable(hash)
     json(conn, claimable)

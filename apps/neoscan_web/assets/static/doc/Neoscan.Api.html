@@ -153,7 +153,7 @@ Information is updated each 5 minutes</p>
     <a href="#get_claimable/1">get_claimable(hash)</a>
   </div>
 
-    <div class="summary-synopsis"><p>Returns the claimable transactions for an address, from its <code class="inline">hash_string</code></p>
+    <div class="summary-synopsis"><p>Returns the AVAILABLE claimable transactions for an address, from its <code class="inline">hash_string</code></p>
 </div>
 
 </div>
@@ -228,6 +228,15 @@ If no <code class="inline">type</code> is provided, returns all types</p>
   </div>
 
     <div class="summary-synopsis"><p>Returns the transaction model through its <code class="inline">hash_string</code></p>
+</div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_unclaimed/1">get_unclaimed(hash)</a>
+  </div>
+
+    <div class="summary-synopsis"><p>Returns the unclaimed gas for an address from its <code class="inline">hash_string</code></p>
 </div>
 
 </div>
@@ -477,6 +486,7 @@ http://seed5.neo.org:10332</p>
     }
     ...
   ],
+  &quot;unclaimed&quot;: float,
   &quot;address&quot;: &quot;hash_string&quot;
 }</code></pre>
 
@@ -543,7 +553,7 @@ http://seed5.neo.org:10332</p>
 
   </div>
   <section class="docstring">
-    <p>Returns the claimable transactions for an address, from its <code class="inline">hash_string</code>.</p>
+    <p>Returns the AVAILABLE claimable transactions for an address, from its <code class="inline">hash_string</code>.</p>
 <h2 id="get_claimable/1-examples" class="section-heading">
   <a href="#get_claimable/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Examples
@@ -849,12 +859,12 @@ If no <code class="inline">type</code> is provided, returns all types</p>
   Examples
 </h2>
 
-<p>/api/main_net/v1/get_nodes
+<pre><code class="elixir">/api/main_net/v1/get_nodes
 {
-“urls”: [
-“http://seed1.cityofzion.io: 8080”,
-….</p>
-<pre><code class="elixir">  ]
+  &quot;urls&quot;: [
+    &quot;http://seed1.cityofzion.io: 8080&quot;,
+    ....
+  ]
 }</code></pre>
 
   </section>
@@ -922,6 +932,34 @@ If no <code class="inline">type</code> is provided, returns all types</p>
   &quot;block_hash&quot;: &quot;hash_string&quot;,
   &quot;attributes&quot;: array,
   &quot;asset&quot;: array
+}</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="get_unclaimed/1">
+
+
+  <div class="detail-header">
+    <a href="#get_unclaimed/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">get_unclaimed(hash)</span>
+
+
+
+  </div>
+  <section class="docstring">
+    <p>Returns the unclaimed gas for an address from its <code class="inline">hash_string</code></p>
+<h2 id="get_unclaimed/1-examples" class="section-heading">
+  <a href="#get_unclaimed/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="elixir">/api/main_net/v1/get_unclaimed/{hash_string}
+{
+  &quot;unclaimed&quot;: float,
+  &quot;address&quot;: &quot;hash_string&quot;
 }</code></pre>
 
   </section>
