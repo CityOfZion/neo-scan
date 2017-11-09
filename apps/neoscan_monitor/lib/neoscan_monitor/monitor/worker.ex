@@ -24,34 +24,23 @@ defmodule NeoscanMonitor.Worker do
   #run initial queries and fill state with all info needed in the app,
   #then sends message with new state to server module
   def init(:ok) do
-    monitor_nodes = Task.async(fn -> Utils.load() end)
+    monitor_nodes = Utils.load()
 
-    blocks = Task.async(fn -> Blocks.home_blocks end)
+    blocks = Blocks.home_blocks
 
-    transactions = Task.async(
-      fn ->
-        Transactions.home_transactions
-        |> Utils.add_vouts
-      end
-    )
+    transactions = Transactions.home_transactions
+                   |> Utils.add_vouts
 
-    assets = Task.async(
-      fn ->
-        ChainAssets.list_assets
-        |> Utils.get_stats
-      end
-    )
+    assets = ChainAssets.list_assets
+             |> Utils.get_stats
 
-    contracts = Task.async(fn -> Transactions.list_contracts end)
 
-    stats = Task.async(fn -> Utils.get_general_stats() end)
+    contracts = Transactions.list_contracts
 
-    addresses = Task.async(
-      fn ->
-        Addresses.list_latest()
-        |> Utils.count_txs
-      end
-    )
+    stats = Utils.get_general_stats()
+
+    addresses = Addresses.list_latest()
+                |> Utils.count_txs
 
     price = %{
       neo: %{
@@ -65,13 +54,13 @@ defmodule NeoscanMonitor.Worker do
     }
 
     new_state = %{
-      :monitor => Task.await(monitor_nodes, 120_000),
-      :blocks => Task.await(blocks, 120_000),
-      :transactions => Task.await(transactions, 120_000),
-      :assets => Task.await(assets, 120_000),
-      :contracts => Task.await(contracts, 120_000),
-      :stats => Task.await(stats, 120_000),
-      :addresses => Task.await(addresses, 120_000),
+      :monitor => monitor_nodes,
+      :blocks => blocks,
+      :transactions => transactions,
+      :assets => assets,
+      :contracts => contracts,
+      :stats => stats,
+      :addresses => addresses,
       :price => price,
     }
 
