@@ -7,6 +7,6 @@ config :neoscan, Neoscan.Repo,
   database: "neoscan_prodv",
   hostname: "localhost",
   pool_size: 30,
-  pool_timeout: 15_000
+  timeout: 15_000
 
 #import_config "prod.secret.exs"
