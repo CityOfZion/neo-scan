@@ -58,23 +58,17 @@
   <div class="chart-container">
     <div id="market-chart"></div>
   </div>
-  <div class="individual-graph-box narrow-individual-graph-box" id="zoom-out-chart">
-    <p class="medium-detail-text"><%= gettext "Zoom Out (-)" %></p>
-  </div>
-  <div class="individual-graph-box narrow-individual-graph-box" id="show-neo-chart">
-    <p class="medium-detail-text"><%= gettext "NEO" %></p>
-  </div>
-  <div class="individual-graph-box narrow-individual-graph-box" id="show-gas-chart">
-    <p class="medium-detail-text"><%= gettext "GAS" %></p>
-  </div>
-  <div class="individual-graph-box narrow-individual-graph-box" id="show-usd-chart">
-    <p class="medium-detail-text"><%= gettext "USD" %></p>
-  </div>
-  <div class="individual-graph-box narrow-individual-graph-box last" id="show-btc-chart">
-    <p class="medium-detail-text"><%= gettext "BTC" %></p>
-  </div>
-  <div class="individual-graph-box narrow-individual-graph-box last" id="zoom-in-chart">
-    <p class="medium-detail-text"><%= gettext "Zoom In (+)" %></p>
+  <div id="chart-controls">
+    <div id="zoom-out-chart" class="btn-primary"><%= gettext "Zoom Out -" %></div>
+    <select id="price-chart">
+      <option value="neo">NEO</option>
+      <option value="gas">GAS</option>
+    </select>
+    <select id="comparison-chart">
+      <option value="usd"><%= gettext "USD" %></option>
+      <option value="btc"><%= gettext "BTC" %></option>
+    </select>
+    <div id="zoom-in-chart" class="btn-primary"><%= gettext "Zoom In +" %></div>
   </div>
 </section>
 
