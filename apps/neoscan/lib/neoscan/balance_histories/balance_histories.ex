@@ -102,9 +102,20 @@ defmodule Neoscan.BalanceHistories do
                  select: map(h, [:balance])
 
     Repo.all(query)
+    |> check_result
+  end
+
+  defp check_result([]) do
+    nil
+  end
+  defp check_result(list) do
+    list
     |> Enum.map(fn %{:balance => b} -> filter_balance(b) end)
   end
 
+  defp filter_balance(nil) do
+    nil
+  end
   defp filter_balance(balance) do
     balance
     |> Map.to_list()

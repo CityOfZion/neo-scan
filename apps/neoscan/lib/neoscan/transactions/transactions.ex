@@ -92,6 +92,7 @@ defmodule Neoscan.Transactions do
                                :sys_fee => e.sys_fee,
                                :net_fee => e.net_fee,
                                :size => e.size,
+                               :asset => e.asset,
                              },
                              limit: 15
 
@@ -125,6 +126,7 @@ defmodule Neoscan.Transactions do
                                :sys_fee => e.sys_fee,
                                :net_fee => e.net_fee,
                                :size => e.size,
+                               :asset => e.asset,
                              },
                              limit: 5
 
@@ -168,6 +170,7 @@ defmodule Neoscan.Transactions do
                          :sys_fee => e.sys_fee,
                          :net_fee => e.net_fee,
                          :size => e.size,
+                         :asset => e.asset,
                         }
 
     transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
@@ -209,6 +212,7 @@ defmodule Neoscan.Transactions do
                          :sys_fee => e.sys_fee,
                          :net_fee => e.net_fee,
                          :size => e.size,
+                         :asset => e.asset,
                         }
 
     transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)

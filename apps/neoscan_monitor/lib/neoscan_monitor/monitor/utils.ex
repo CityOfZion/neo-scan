@@ -4,7 +4,6 @@ defmodule NeoscanMonitor.Utils do
   alias Neoscan.Blocks
   alias Neoscan.Transactions
   alias Neoscan.Addresses
-  alias Neoscan.BalanceHistories
 
   #blockchain api nodes
   def seeds do
@@ -111,22 +110,6 @@ defmodule NeoscanMonitor.Utils do
       :total_transactions => Transactions.count_transactions,
       :total_addresses => Addresses.count_addresses,
     }
-  end
-
-  #function to count total transactions for an address
-  def count_txs(address_list) do
-    Enum.map(address_list, fn address ->
-      insert_tx_count(address)
-    end)
-  end
-
-  #function to insert tx count in address
-  def insert_tx_count(add) do
-    Map.put(
-      add,
-      :tx_count,
-      BalanceHistories.count_hist_for_address(add.address)
-    )
   end
 
   #function to add vouts to transactions

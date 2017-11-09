@@ -48,6 +48,7 @@ defmodule Neoscan.Addresses do
                    :address => a.address,
                    :balance => a.balance,
                    :time => a.time,
+                   :tx_count => a.tx_count,
                  },
                  limit: 15
 
@@ -85,6 +86,7 @@ defmodule Neoscan.Addresses do
                              :address => e.address,
                              :balance => e.balance,
                              :time => e.time,
+                             :tx_count => e.tx_count,
                            },
                            limit: 15
 
@@ -365,7 +367,7 @@ defmodule Neoscan.Addresses do
 
     query = from e in Address,
                  where: e.address in ^lookups,
-                 select: struct(e, [:id, :address, :balance])
+                 select: struct(e, [:id, :address, :balance, :tx_count])
 
     Repo.all(query)
     |> fetch_missing(lookups, time)
@@ -388,7 +390,7 @@ defmodule Neoscan.Addresses do
                  order_by: [
                    desc: e.updated_at
                  ],
-                 select: map(e, [:id, :address, :balance, :time]),
+                 select: map(e, [:id, :address, :balance, :time, :tx_count]),
                  limit: 5
 
     Repo.all(query)

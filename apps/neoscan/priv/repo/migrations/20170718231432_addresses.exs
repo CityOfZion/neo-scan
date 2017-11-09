@@ -6,6 +6,7 @@ defmodule Neoscan.Repo.Migrations.Addresses do
       add :address, :string
       add :balance, :map
       add :time, :integer
+      add :tx_count, :integer
 
       timestamps()
     end

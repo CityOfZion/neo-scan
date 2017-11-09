@@ -40,7 +40,6 @@ defmodule NeoscanMonitor.Worker do
     stats = Utils.get_general_stats()
 
     addresses = Addresses.list_latest()
-                |> Utils.count_txs
 
     price = %{
       neo: %{
@@ -84,8 +83,7 @@ defmodule NeoscanMonitor.Worker do
         :assets => ChainAssets.list_assets
                    |> Utils.get_stats,
         :stats => Utils.get_general_stats(),
-        :addresses => Addresses.list_latest()
-                      |> Utils.count_txs,
+        :addresses => Addresses.list_latest(),
         :price => %{
           neo: %{
             btc: NeoBtc.last_price_full(),
@@ -163,6 +161,7 @@ defmodule NeoscanMonitor.Worker do
                            :net_fee => transaction.net_fee,
                            :size => transaction.size,
                            :vouts => clean_vouts,
+                           :asset => transaction.asset,
                          } | state.transactions
                        ]
                        |> Utils.cut_if_more(count)
@@ -186,6 +185,7 @@ defmodule NeoscanMonitor.Worker do
     }
 
     new_assets = [new_asset | state.assets]
+                 |> Utils.get_stats
 
     new_state = Map.put(state, :assets, new_assets)
     {:noreply, new_state}

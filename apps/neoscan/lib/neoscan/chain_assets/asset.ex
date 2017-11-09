@@ -26,6 +26,7 @@ defmodule Neoscan.ChainAssets.Asset do
     %Asset{}
     |> cast(new_attrs, [:txid, :admin, :amount, :name, :owner,
                         :precision, :type, :issued, :time])
+    |> unique_constraint(:txid)
     |> validate_required([:txid, :admin, :amount, :name,
                           :owner, :precision, :type, :time])
   end

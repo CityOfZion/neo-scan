@@ -181,9 +181,18 @@ defmodule Neoscan.ChainAssets do
       true ->
         hash
       false ->
+        check_db(hash, time)
+    end
+  end
+
+  def check_db(hash, time) do
+    case get_asset_by_hash(hash) do
+      %Asset{} ->
+        hash
+      nil ->
         get_new_asset(hash, time)
         |> Map.get(:txid)
-    end
+    end  
   end
 
   def get_new_asset(hash, time) do
