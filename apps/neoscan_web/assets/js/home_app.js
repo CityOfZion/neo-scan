@@ -183,9 +183,9 @@ window.onload = function () {
     }
 
     const address_hash = document.getElementById('address_hash').innerHTML
-    fetch(`/api/main_net/v1/get_claimable/${address_hash}`).then(res => res.json()).then(results => {
+    fetch(`/api/main_net/v1/get_balance/${address_hash}`).then(res => res.json()).then(results => {
       document.getElementsByClassName('loading-gas')[0].innerHTML = ''
-      document.getElementsByClassName('unclaimed-gas')[0].innerHTML = `${results.claimable} Unclaimed Gas`
+      document.getElementsByClassName('unclaimed-gas')[0].innerHTML = `${results.unclaimed} Unclaimed Gas`
     })
   }
 }
