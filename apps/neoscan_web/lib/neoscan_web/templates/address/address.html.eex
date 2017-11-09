@@ -2,7 +2,7 @@
 <!-- Welcome -->
 <h1 class="content-title">Address Information</h1>
 <%= content_tag :div, "", [{:data, [graph_data: Poison.encode!(@graph_data)]}, value: "value", id: "graph_data"] %>
-<p class="large-detail-text"><span class="fa fa-key address-icon"></span><span class="bold-text">Address</span> <span class="golden">|</span> <span class="golden-blue-text hash"><%= @address.address %></span></p>
+<p class="large-detail-text"><span class="fa fa-key address-icon"></span><span class="bold-text">Address</span> <span class="golden">|</span> <span id="address_hash" class="golden-blue-text hash"><%= @address.address %></span></p>
 <div class="wallet-navigation">
   <a href="<%= addresses_path(@conn, :index) %>" class="browse-wallet-back">Back to all addresses</a>
 </div>
@@ -18,7 +18,8 @@
       <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i> Gas balance</p>
       <div class="total-gas-balance">
         <%= get_GAS_balance(@address.balance) %>
-        <p class="unclaimed-GAS"><%= Unclaimed.calculate_bonus(@address.id) %> unclaimed gas</p>
+        <p class="loading-gas">Loading Unclaimed Gas<span>.</span><span>.</span><span>.</span></p>
+        <p class="unclaimed-GAS"></p>
       </div>
     </div>
   </div>

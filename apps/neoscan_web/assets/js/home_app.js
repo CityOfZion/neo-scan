@@ -2,6 +2,7 @@ import HomeSocket from './home_socket'
 import Inferno from 'inferno'
 import List from 'inferno-virtual-list'
 import { createHomeChart, createAddressChart } from './create_charts'
+import { getClass, getName, getIcon } from './helpers'
 
 const moment = require('moment')
 
@@ -21,78 +22,6 @@ const blockRow = row => (
     </div>
   </div>
 )
-
-let getClass = function (type) {
-  if (type === 'ContractTransaction') {
-    return 'neo-transaction'
-  }
-  if (type === 'ClaimTransaction') {
-    return 'gas-transaction'
-  }
-  if (type === 'MinerTransaction') {
-    return 'miner-transaction'
-  }
-  if (type === 'RegisterTransaction') {
-    return 'register-transaction'
-  }
-  if (type === 'IssueTransaction') {
-    return 'issue-transaction'
-  }
-  if (type === 'PublishTransaction') {
-    return 'publish-transaction'
-  }
-  if (type === 'InvocationTransaction') {
-    return 'invocation-transaction'
-  }
-}
-
-let getName = function (type) {
-  if (type === 'ContractTransaction') {
-    return 'Contract'
-  }
-  if (type === 'ClaimTransaction') {
-    return 'GAS Claim'
-  }
-  if (type === 'MinerTransaction') {
-    return 'Miner'
-  }
-  if (type === 'RegisterTransaction') {
-    return 'Asset Register'
-  }
-  if (type === 'IssueTransaction') {
-    return 'Asset Issue'
-  }
-  if (type === 'PublishTransaction') {
-    return 'Contract Publish'
-  }
-  if (type === 'InvocationTransaction') {
-    return 'Contract Invocation'
-  }
-}
-
-let getIcon = function (type) {
-  if (type === 'ContractTransaction') {
-    return 'fa-cube'
-  }
-  if (type === 'ClaimTransaction') {
-    return 'fa-cubes'
-  }
-  if (type === 'MinerTransaction') {
-    return 'fa-user-circle-o'
-  }
-  if (type === 'RegisterTransaction') {
-    return 'fa-list-alt'
-  }
-  if (type === 'IssueTransaction') {
-    return 'fa-handshake-o'
-  }
-  if (type === 'PublishTransaction') {
-    return 'fa-cube'
-  }
-  if (type === 'InvocationTransaction') {
-    return 'fa-paper-plane'
-  }
-}
 
 const transactionRow = row => (
   <div class={'full-width-bar ' + getClass(row.type)}>
@@ -155,12 +84,10 @@ window.onload = function () {
 
     createHomeChart(displayCoin, displayChart, displayTime)
 
+    const priceDropdown = document.getElementById('price-chart')
+    const comparisonDropdown = document.getElementById('comparison-chart')
     const zoomInChart = document.getElementById('zoom-in-chart')
     const zoomOutChart = document.getElementById('zoom-out-chart')
-    const btcChart = document.getElementById('show-btc-chart')
-    const usdChart = document.getElementById('show-usd-chart')
-    const gasChart = document.getElementById('show-gas-chart')
-    const neoChart = document.getElementById('show-neo-chart')
 
     const coinClickHandler = (coin) => {
       displayCoin = coin
@@ -187,12 +114,14 @@ window.onload = function () {
       return createHomeChart(displayCoin, displayChart, displayTime)
     }
 
+    priceDropdown.onchange = function () {
+      coinClickHandler(this.value)
+    }
+    comparisonDropdown.onchange = function () {
+      compareClickHandler(this.value)
+    }
     zoomInChart.onclick = () => zoomHandler('in')
     zoomOutChart.onclick = () => zoomHandler('out')
-    btcChart.onclick = () => compareClickHandler('btc')
-    usdChart.onclick = () => compareClickHandler('usd')
-    gasChart.onclick = () => coinClickHandler('gas')
-    neoChart.onclick = () => coinClickHandler('neo')
   }
 
   // address page javascript
@@ -252,6 +181,12 @@ window.onload = function () {
     assetDropdown.onchange = function () {
       createAddressChart(this.value, dates, assetsList[this.value], count)
     }
+
+    const address_hash = document.getElementById('address_hash').innerHTML
+    fetch(`/api/main_net/v1/get_claimable/${address_hash}`).then(res => res.json()).then(results => {
+      document.getElementsByClassName('loading-gas')[0].innerHTML = ''
+      document.getElementsByClassName('unclaimed-gas')[0].innerHTML = `${results.claimable} Unclaimed Gas`
+    })
   }
 }
 
@@ -306,13 +241,11 @@ $('document').ready(function () {
   })
 
   const $tooltipElement = $('#coz-tooltip')
-  console.log($tooltipElement);
 
   let hover = false
   $tooltipElement.click(function () {
     if(!hover) {
       $('.tooltip').each(function() {
-        console.log($(this));
         $(this).addClass('add-hover')
       })
       $(this).css('background-color', '#2CE3B5')

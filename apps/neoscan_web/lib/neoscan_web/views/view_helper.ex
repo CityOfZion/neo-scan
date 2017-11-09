@@ -48,4 +48,22 @@ defmodule NeoscanWeb.ViewHelper do
     |> Enum.reduce(0, fn ({_asset, %{"amount" => amount}}, _acc) -> amount end)
     |> Helpers.round_or_not
   end
+
+  def compare_time_and_get_minutes(time) do
+    date_time =
+      time
+      |> DateTime.from_unix!
+
+    case Timex.before?(date_time, Timex.shift(Timex.now, minutes: -1440)) do
+      false ->
+        {:ok, time_string} =
+          date_time
+          |> Timex.shift([])
+          |> Timex.format("{relative}", :relative)
+
+        time_string
+      true ->
+        Timex.format!(date_time, "%Y-%m-%d | %H:%M:%S", :strftime)
+    end
+  end
 end

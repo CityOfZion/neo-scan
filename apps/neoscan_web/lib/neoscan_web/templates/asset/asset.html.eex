@@ -101,7 +101,7 @@
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
                 <span class="tablet-detail-text">Last transaction</span>
-                <%= compare_time_and_get_minutes(address.balance)%> <%= gettext "minutes ago" %>
+                <%= compare_time_and_get_minutes(address.balance)%>
               </p>
             </div>
           </div>

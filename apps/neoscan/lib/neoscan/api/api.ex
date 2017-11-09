@@ -171,7 +171,7 @@ defmodule Neoscan.Api do
         Map.put(
           address,
           :claimable,
-          Unclaimed.calculate_vouts_bonus(address.id)
+          Unclaimed.calculate_bonus(address.id)
         )
         |> Map.delete(:id)
     end
