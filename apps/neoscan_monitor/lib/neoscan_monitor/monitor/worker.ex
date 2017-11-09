@@ -34,7 +34,6 @@ defmodule NeoscanMonitor.Worker do
     assets = ChainAssets.list_assets
              |> Utils.get_stats
 
-
     contracts = Transactions.list_contracts
 
     stats = Utils.get_general_stats()

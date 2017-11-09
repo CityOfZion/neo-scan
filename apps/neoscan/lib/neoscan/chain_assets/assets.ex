@@ -192,7 +192,7 @@ defmodule Neoscan.ChainAssets do
       nil ->
         get_new_asset(hash, time)
         |> Map.get(:txid)
-    end  
+    end
   end
 
   def get_new_asset(hash, time) do

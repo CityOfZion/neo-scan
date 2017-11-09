@@ -72,7 +72,8 @@ defmodule Neoscan.Factory do
       },
       claimed: [insert(:claim)],
       time: 154856,
-      vouts: [insert(:vout)]
+      vouts: [insert(:vout)],
+      tx_count: 5,
     }
   end
 
