@@ -68,6 +68,7 @@ defmodule Neoscan.BalanceHistories do
                                :sys_fee => e.sys_fee,
                                :net_fee => e.net_fee,
                                :size => e.size,
+                               :asset => e.asset,
                              },
                              limit: 15
 

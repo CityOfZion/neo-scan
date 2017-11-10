@@ -2,45 +2,54 @@ defmodule NeoscanMonitor.Api do
   @moduledoc """
   Interface between server and worker to communicate with external modules
   """
+  alias NeoscanMonitor.Server
+  alias Neoscan.ChainAssets
 
   def get_nodes do
-    GenServer.call(NeoscanMonitor.Server, :nodes, 10_000)
+    Server.get(:monitor)
+    |> Map.get(:nodes)
   end
 
   def get_height do
-    GenServer.call(NeoscanMonitor.Server, :height, 10_000)
+    Server.get(:monitor)
+    |> Map.get(:height)
   end
 
   def get_blocks do
-    GenServer.call(NeoscanMonitor.Server, :blocks, 10_000)
+    Server.get(:blocks)
   end
 
   def get_transactions do
-    GenServer.call(NeoscanMonitor.Server, :transactions, 10_000)
+    Server.get(:transactions)
   end
 
   def get_assets do
-    GenServer.call(NeoscanMonitor.Server, :assets, 10_000)
+    Server.get(:assets)
   end
 
   def get_asset(hash) do
-    GenServer.call(NeoscanMonitor.Server, {:asset, hash}, 10_000)
+    Server.get(:assets)
+    |> Enum.find(fn %{:txid => txid} -> txid == hash end)
   end
 
   def get_asset_name(hash) do
-    GenServer.call(NeoscanMonitor.Server, {:asset_name, hash}, 10_000)
+    Server.get(:assets)
+    |> Enum.find(fn %{:txid => txid} -> txid == hash end)
+    |> Map.get(:name)
+    |> ChainAssets.filter_name
   end
 
   def check_asset(hash) do
-    GenServer.call(NeoscanMonitor.Server, {:check_asset, hash}, 10_000)
+    Server.get(:assets)
+    |> Enum.any?(fn %{:txid => txid} -> txid == hash end)
   end
 
   def get_addresses do
-    GenServer.call(NeoscanMonitor.Server, :addresses, 10_000)
+    Server.get(:addresses)
   end
 
   def get_contracts do
-    GenServer.call(NeoscanMonitor.Server, :contracts, 10_000)
+    Server.get(:contracts)
   end
 
   def error do
@@ -48,15 +57,16 @@ defmodule NeoscanMonitor.Api do
   end
 
   def get_data do
-    GenServer.call(NeoscanMonitor.Server, :data)
+    Server.get(:monitor)
+    |> Map.get(:data)
   end
 
   def get_price do
-    GenServer.call(NeoscanMonitor.Server, :price)
+    Server.get(:price)
   end
 
   def get_stats do
-    GenServer.call(NeoscanMonitor.Server, :stats)
+    Server.get(:stats)
   end
 
   def add_block(block) do

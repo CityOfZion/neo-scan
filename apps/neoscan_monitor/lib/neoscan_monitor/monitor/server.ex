@@ -7,99 +7,60 @@ defmodule NeoscanMonitor.Server do
   """
 
   use GenServer
-  alias Neoscan.ChainAssets
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
   def init(:ok) do
-    {:ok, []}
+    :ets.new(:server, [:set, :named_table, :protected, read_concurrency: true,
+                                             write_concurrency: true])
+    {:ok, nil}
+  end
+
+  def set(key, value) do
+    :ets.insert(:server, {key, value})
+  end
+
+  def get(key) do
+    case :ets.lookup(:server, key) do
+      [{^key, result}] -> result
+       _ -> nil
+    end
   end
 
   def handle_info({:state_update, new_state}, _state) do
     schedule_work()
-    {:noreply, new_state}
+    set(:monitor, new_state.monitor)
+    set(:blocks, new_state.blocks)
+    set(:transactions, new_state.transactions)
+    set(:assets, new_state.assets)
+    set(:contracts, new_state.contracts)
+    set(:stats, new_state.stats)
+    set(:addresses, new_state.addresses)
+    set(:price, new_state.price)
+    {:noreply, nil}
   end
 
   def handle_info(:broadcast, state) do
     schedule_work() # Reschedule once more
 
-    {blocks, _} = state.blocks
+    {blocks, _} = get(:blocks)
                   |> Enum.split(5)
 
-    {transactions, _} = state.transactions
+    {transactions, _} = get(:transactions)
                         |> Enum.split(5)
 
     payload = %{
       "blocks" => blocks,
       "transactions" => transactions,
-      "price" => state.price,
-      "stats" => state.stats,
+      "price" => get(:price),
+      "stats" => get(:stats),
     }
 
     broadcast = Application.fetch_env!(:neoscan_monitor, :broadcast)
     broadcast.("room:home", "change", payload)
     {:noreply, state}
-  end
-
-  def handle_call(:nodes, _from, state) do
-    {:reply, state.monitor.nodes, state}
-  end
-
-  def handle_call(:height, _from, state) do
-    {:reply, state.monitor.height, state}
-  end
-
-  def handle_call(:transactions, _from, state) do
-    {:reply, state.transactions, state}
-  end
-
-  def handle_call(:blocks, _from, state) do
-    {:reply, state.blocks, state}
-  end
-
-  def handle_call(:assets, _from, state) do
-    {:reply, state.assets, state}
-  end
-
-  def handle_call({:asset, hash}, _from, state) do
-    asset = Enum.find(state.assets, fn %{:txid => txid} -> txid == hash end)
-
-    {:reply, asset, state}
-  end
-
-  def handle_call({:asset_name, hash}, _from, state) do
-    name = Enum.find(state.assets, fn %{:txid => txid} -> txid == hash end)
-            |> Map.get(:name)
-            |> ChainAssets.filter_name
-    {:reply, name, state}
-  end
-
-  def handle_call({:check_asset, hash}, _from, state) do
-    exist = Enum.any?(state.assets, fn %{:txid => txid} -> txid == hash end)
-
-    {:reply, exist, state}
-  end
-
-  def handle_call(:addresses, _from, state) do
-    {:reply, state.addresses, state}
-  end
-
-  def handle_call(:contracts, _from, state) do
-    {:reply, state.contracts, state}
-  end
-
-  def handle_call(:data, _from, state) do
-    {:reply, state.monitor.data, state}
-  end
-
-  def handle_call(:price, _from, state) do
-    {:reply, state.price, state}
-  end
-
-  def handle_call(:stats, _from, state) do
-    {:reply, state.stats, state}
   end
 
   defp schedule_work do

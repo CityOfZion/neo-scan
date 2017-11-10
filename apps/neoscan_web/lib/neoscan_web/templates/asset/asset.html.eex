@@ -17,11 +17,11 @@
         <p class="large-detail-text"><%= @asset.type %></p>
       </li>
       <li class="border-bottom border-right-smaller min-height-111px remove-border-right-660px">
-        <p class="small-detail-text"><%= gettext "Owner" %></p>
+        <p class="small-detail-text"><%= gettext "Admin" %></p>
         <%= if @asset.owner == "00" do %>
           <%= gettext "System" %>
         <% else %>
-          <a href="<%= address_path(@conn, :index, @asset.owner)%>" alt="View owner address" title="View owner address" class="large-blue-link wallet-address"><%= @asset.owner %></a>
+          <a href="<%= address_path(@conn, :index, @asset.admin)%>" alt="View owner address" title="View owner address" class="large-blue-link wallet-address"><%= @asset.admin %></a>
         <% end %>
       </li>
       <li class="border-right border-bottom min-height-111px">
@@ -195,7 +195,7 @@
               </div>
               <img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" alt="Sent arrow" title="Sent arrow" class="transaction-sent-arrow" />
               <div class="sent-to-wrapper">
-                <%= if transaction.type == "ContractTransaction" or transaction.type == "ClaimTransaction" or transaction.type == "IssueTransaction" do %>
+                <%= if transaction.vouts != [] do %>
                   <p class="large-detail-text"><%= gettext "Sent to" %></p>
                   <%= for vout <- transaction.vouts do %>
                     <div class="individual-transaction">

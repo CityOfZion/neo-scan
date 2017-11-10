@@ -34,8 +34,8 @@
       <% end %>
 		</div>
 		<img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" alt="Sent arrow" title="Sent arrow" class="transaction-sent-arrow" />
-    <%= if @transaction.type == "ContractTransaction" or @transaction.type == "ClaimTransaction" or @transaction.type == "IssueTransaction" do %>
-      <div class="sent-to-wrapper">
+    <div class="sent-to-wrapper">
+      <%= if @transaction.vouts != [] do %>
     	  <p class="large-detail-text"><%= gettext "Sent to" %></p>
         <%= for vout <- @transaction.vouts do %>
     			<div class="individual-transaction">
@@ -43,17 +43,15 @@
     				<p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vout.value) %> <%= Api.get_asset_name(vout.asset) %></p>
     			</div>
         <% end %>
-    	</div>
-    <% end %>
-    <%= if @transaction.type == "RegisterTransaction" do %>
-      <div class="sent-to-wrapper">
+      <% end %>
+      <%= if @transaction.type == "RegisterTransaction" do %>
         <p class="large-detail-text"><%= gettext "Registered" %></p>
         <div class="individual-transaction">
           <a href="<%= address_path(@conn, :index, @transaction.asset.admin)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= @transaction.asset.admin %></a>
           <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(@transaction.asset.amount) %> <%= Api.get_asset_name(@transaction.txid) %></p>
         </div>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
 	</div>
 
 	<!-- Extra information list -->
