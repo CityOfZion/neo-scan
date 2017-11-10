@@ -55,9 +55,9 @@ window.onload = function () {
         <List class='transactions-list' sync={false} data={home.payload.transactions} rowHeight={15} rowRender={transactionRow} />
       ), transactionsContainer)
       if (home.payload.price.neo) {
-        document.getElementById('total-tx').innerHTML = home.payload.stats.total_transactions
-        document.getElementById('total-blocks').innerHTML = home.payload.stats.total_blocks
-        document.getElementById('total-addresses').innerHTML = home.payload.stats.total_addresses
+        document.getElementById('total-tx').innerHTML = home.payload.stats.total_transactions.toLocaleString()
+        document.getElementById('total-blocks').innerHTML = home.payload.stats.total_blocks.toLocaleString()
+        document.getElementById('total-addresses').innerHTML = home.payload.stats.total_addresses.toLocaleString()
         document.getElementById('neo-price-us').innerHTML = formatterTwo.format(home.payload.price.neo.usd.PRICE)
         document.getElementById('mkt-cap-us').innerHTML = formatterZero.format(home.payload.price.neo.usd.MKTCAP)
         document.getElementById('24hvol').innerHTML = formatterZero.format(home.payload.price.neo.usd.VOLUME24HOUR)
