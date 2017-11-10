@@ -121,7 +121,7 @@
 						<a href="<%= doc_path(@conn, :index) %>" alt="#" title="#" class="coz-api"><%= gettext "NEOSCAN API" %></a>
 					</div>
 					<div class="footer-link-wrapper">
-						<div id="coz-tooltip" class="btn-primary"><%= gettext "Tooltips Off" %></div>
+						<div id="coz-tooltip" class="btn-primary btn-see-all"><%= gettext "Tooltips Off" %></div>
 					</div>
 				</div>
 			</div>

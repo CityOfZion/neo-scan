@@ -547,7 +547,110 @@ a:hover {
 
 *******************************************/
 
-#comparison-chart, #price-chart, #select-address-chart, #language-dropdown {
+#comparison-chart, #price-chart, #language-dropdown {
+	width: 0;
+  height: 0;
+  visibility: hidden;
+}
+#zoom-in-chart, #zoom-out-chart {
+  font-size: 14px;
+  height: 9px;
+  padding-top: 7px;
+  margin-top: 25px;
+  margin-right: 30px;
+  margin-left: 30px;
+  background-color: #4598FF;
+  opacity: 0.85;
+  cursor: pointer;
+}
+
+/* Hidden select container */
+.hidden_select_container {
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}
+.simpleselect,
+.simpleselect * {
+	box-sizing: content-box;
+}
+.simpleselect {
+	margin: 25px auto 0;
+	position: relative;
+	color: #ffffff;
+	font-size: 14px;
+	text-align: left;
+	width: 77px;
+}
+.simpleselect .options {
+	width: 75px;
+}
+.simpleselect .placeholder,
+.simpleselect .options .option,
+.simpleselect .options .optgroup .optgroup-label {
+    line-height: 18px;
+    cursor: pointer;
+    background: none;
+    padding: 3px 5px;
+}
+.simpleselect .options .optgroup .optgroup-label {
+	cursor: default;
+	font-weight: bold;
+	padding: 3px 5px;
+}
+.simpleselect .placeholder,
+.simpleselect .options {
+	background: #313164;
+	border: 1px solid #4598FF;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+.simpleselect .placeholder {
+	position: relative;
+	background: none;
+	width: 65px;
+	border: 1px solid #4598FF;
+}
+.simpleselect .placeholder:after {
+	font-family: FontAwesome;
+	content: "\f063";
+	position: absolute;
+	top: 0;
+	padding-top: 3px;
+	padding-left: 3px;
+	bottom: 0;
+	right: 0;
+	width: 13px;
+	background: #4598FF;
+	font-size: 11px;
+}
+.simpleselect .placeholder:hover {
+	background: #4598FF;
+}
+.simpleselect .options {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1000;
+}
+.simpleselect .options .option.active {
+	background: #4598FF;
+	color: #fff;
+}
+.simpleselect.disabled .placeholder,
+.simpleselect.disabled .placeholder:hover {
+	background: #313164;
+	color: #ffffff;
+	border-color: #eee;
+	cursor: default;
+}
+.simpleselect.disabled .placeholder:after {
+	opacity: .5;
+}
+
+#select-address-chart, #language-dropdown {
   color: #ffffff;
 	font-size: 14px!important;
 	text-align: left;
@@ -580,26 +683,16 @@ a:hover {
     1.6em 2.5em;
   background-repeat: no-repeat;
 }
-#comparison-chart:focus, #price-chart:focus, #select-address-chart:focus, #language-dropdown:focus {
+#select-address-chart:focus, #language-dropdown:focus {
   outline: none;
-}
-#comparison-chart, #price-chart {
-  margin: 0 30px 30px 0;
 }
 #select-address-chart {
   float: right;
   margin: 0 30px 30px 0;
   width: 160px;
 }
-#zoom-in-chart, #zoom-out-chart {
-  font-size: 14px;
-  height: 9px;
-  padding-top: 7px;
-  margin-right: 30px;
-  background-color: #4598FF;
-  opacity: 0.85;
-  cursor: pointer;
-}
+
+
 
 
 /******************************************
@@ -829,8 +922,12 @@ a:hover {
   float: left;
 }
 #chart-controls {
-  width: 100%;
-  text-align: center;
+  margin: 0 auto;
+  width: 60%;
+  display: flex;
+  align-items: center;
+  padding-bottom: 30px;
+  justify-content: center;
 }
 
 /* Jump links */
@@ -1274,34 +1371,35 @@ a:hover {
 }
 
 #last-x-transactions {
-  margin: 10px;
+  margin: 20px;
+  font-weight: 600;
 }
 
 @keyframes blink {
-    0% {
-      opacity: .2;
-    }
-    20% {
-      opacity: 1;
-    }
-    100% {
-      opacity: .2;
-    }
+  0% {
+    opacity: .2;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: .2;
+  }
 }
 
 .loading-gas span {
-    animation-name: blink;
-    animation-duration: 1.4s;
-    animation-iteration-count: infinite;
-    animation-fill-mode: both;
+  animation-name: blink;
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
 }
 
 .loading-gas span:nth-child(2) {
-    animation-delay: .2s;
+  animation-delay: .2s;
 }
 
 .loading-gas span:nth-child(3) {
-    animation-delay: .4s;
+  animation-delay: .4s;
 }
 
 
@@ -1510,10 +1608,6 @@ a:hover {
 }
 .add-hover:hover .tooltiptext {
     visibility: visible;
-}
-#coz-tooltip {
-  background-color: #FF9596;
-  color: #313164;
 }
 #coz-tooltip:hover {
   cursor: pointer;
@@ -2643,6 +2737,13 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 555PX)
 ******************************************************************/
 
 @media screen and (max-width: 555px) {
+
+  #chart-controls {
+    flex-direction: column;
+  }
+  #zoom-out-chart {
+    margin-top: 0;
+  }
 
 	/* GENERAL */
 	.information-wrapper .secondary-info-wrapper .remove-550px {

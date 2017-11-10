@@ -38,6 +38,7 @@ const transactionRow = row => (
 window.onload = function () {
   // homepage javascript
   if (window.location.pathname === '/') {
+
     let payload = {
       blocks: [],
       transactions: [],
@@ -221,6 +222,10 @@ for (i = 0; i < acc.length; i++) {
 }
 
 $('document').ready(function () {
+  $('#language-dropdown').simpleselect()
+  $('#price-chart').simpleselect()
+  $('#comparison-chart').simpleselect()
+
   const $hamburger = $('.hamburger')
   $hamburger.on('click', function (e) {
     $hamburger.toggleClass('is-active')
@@ -248,14 +253,12 @@ $('document').ready(function () {
       $('.tooltip').each(function() {
         $(this).addClass('add-hover')
       })
-      $(this).css('background-color', '#2CE3B5')
       $(this).text('Tooltips On')
       hover = true
     } else {
       $('.tooltip').each(function() {
         $(this).removeClass('add-hover')
       })
-      $(this).css('background-color', '#FF9596')
       $(this).text('Tooltips Off')
       hover = false
     }
