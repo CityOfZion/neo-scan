@@ -1023,7 +1023,7 @@ a:hover {
   border-left: 4px solid #CA8BFF;
 }
 .full-width-bar.neo-transaction {
-  border-left: 4px solid #BEEB00;
+  border-left: 4px solid #00a62c;
 }
 .full-width-bar.register-transaction {
   border-left: 4px solid #EB7B00;
@@ -2651,7 +2651,7 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 		width: 140px;
 	}
 	#transactions-wrapper .col-6-width {
-		width: 130px;
+		width: 200px;
 	}
 	#all-transactions-wrapper .detail-bar .col-2-width,
 	#all-transactions-wrapper .detail-bar .col-6-width,
@@ -2728,6 +2728,11 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 600PX)
 		width: 100%;
 	}
 
+	#transactions-wrapper .col-6-width {
+		width: 150px;
+	}
+
+
 }
 
 /******************************************************************
@@ -2796,6 +2801,10 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 555PX)
 	/* Market graph */
 	.remove-border-right-555px {
 		border-right: 0;
+	}
+
+	#transactions-wrapper .col-6-width {
+		width: 100px;
 	}
 
 }
@@ -2870,6 +2879,10 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 480PX)
 	#blocks-wrapper .information-wrapper .secondary-info-wrapper .col-3-width {
 		min-width: 100%;
 		margin-right: 0;
+	}
+
+	#transactions-wrapper .col-6-width {
+		width: 80px;
 	}
 }
 
