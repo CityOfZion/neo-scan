@@ -1,3 +1,28 @@
+// Create our number formatter.
+export const formatterZero = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0
+})
+
+export const formatterTwo = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2
+})
+
+export const formatBTC = (num) => num.toFixed(8)
+export const formatBTCLarge = (num) => {
+  let formatStyle
+  if (Number(num) > 1000) {
+    formatStyle = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 })
+  } else {
+    formatStyle = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 })
+  }
+  return formatStyle.format(num)
+}
+
 export function getClass (type) {
   if (type === 'ContractTransaction') {
     return 'neo-transaction'

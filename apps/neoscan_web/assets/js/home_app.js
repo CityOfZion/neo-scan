@@ -2,7 +2,7 @@ import HomeSocket from './home_socket'
 import Inferno from 'inferno'
 import List from 'inferno-virtual-list'
 import { createHomeChart, createAddressChart } from './create_charts'
-import { getClass, getName, getIcon } from './helpers'
+import { getClass, getName, getIcon, formatterZero, formatterTwo, formatBTC, formatBTCLarge } from './helpers'
 
 const moment = require('moment')
 
@@ -38,6 +38,9 @@ const transactionRow = row => (
 window.onload = function () {
   // homepage javascript
   if (window.location.pathname === '/') {
+    let displayCoin = 'neo'
+    let displayChart = 'usd'
+    let displayTime = '1m'
 
     let payload = {
       blocks: [],
@@ -54,23 +57,24 @@ window.onload = function () {
       Inferno.render((
         <List class='transactions-list' sync={false} data={home.payload.transactions} rowHeight={15} rowRender={transactionRow} />
       ), transactionsContainer)
-      if (home.payload.price.neo) {
+      if (home.payload.price && home.payload.price.neo && home.payload.price.gas) {
+        const coinPayload = displayCoin === 'neo' ? home.payload.price.neo[displayChart] : home.payload.price.gas[displayChart]
         document.getElementById('total-tx').innerHTML = home.payload.stats.total_transactions.toLocaleString()
         document.getElementById('total-blocks').innerHTML = home.payload.stats.total_blocks.toLocaleString()
         document.getElementById('total-addresses').innerHTML = home.payload.stats.total_addresses.toLocaleString()
-        document.getElementById('neo-price-us').innerHTML = formatterTwo.format(home.payload.price.neo.usd.PRICE)
-        document.getElementById('mkt-cap-us').innerHTML = formatterZero.format(home.payload.price.neo.usd.MKTCAP)
-        document.getElementById('24hvol').innerHTML = formatterZero.format(home.payload.price.neo.usd.VOLUME24HOUR)
+        document.getElementById('mkt-graph-coin-price').innerHTML = displayChart === 'usd' ? formatterTwo.format(coinPayload.PRICE) : `฿ ${formatBTC(coinPayload.PRICE)}`
+        document.getElementById('mkt-cap-us').innerHTML = displayChart === 'usd' ? formatterZero.format(coinPayload.MKTCAP) : `฿ ${formatBTCLarge(coinPayload.MKTCAP)}`
+        document.getElementById('24hvol').innerHTML = displayChart === 'usd' ? formatterZero.format(coinPayload.TOTALVOLUME24HTO) : `฿ ${formatBTCLarge(coinPayload.TOTALVOLUME24HTO)}`
 
-        document.getElementById('24hchange').innerHTML = home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) +'%'
+        document.getElementById('24hchange').innerHTML = coinPayload.CHANGEPCT24HOUR.toFixed(2) +'%'
 
-        if (home.payload.price.neo.usd.VOLUME24HOUR.toFixed(0) > 0) {
+        if (coinPayload.TOTALVOLUME24HTO.toFixed(0) > 0) {
           document.getElementById('24hvol').setAttribute('class', 'large-stat-number remove-margin-bottom')
         } else {
           document.getElementById('24hvol').setAttribute('class', 'large-stat-number remove-margin-bottom')
         }
 
-        if (home.payload.price.neo.usd.CHANGEPCT24HOUR.toFixed(2) > 0) {
+        if (coinPayload.CHANGEPCT24HOUR.toFixed(2) > 0) {
           document.getElementById('24hchange').setAttribute('class', 'large-stat-number large-number-positive remove-margin-bottom')
         } else {
           document.getElementById('24hchange').setAttribute('class', 'large-stat-number large-number-negative remove-margin-bottom')
@@ -78,10 +82,6 @@ window.onload = function () {
       }
     }, 500)
     home.connect()
-
-    let displayCoin = 'neo'
-    let displayChart = 'usd'
-    let displayTime = '1m'
 
     createHomeChart(displayCoin, displayChart, displayTime)
 
@@ -92,6 +92,7 @@ window.onload = function () {
 
     const coinClickHandler = (coin) => {
       displayCoin = coin
+      document.getElementById('mkt-graph-coin').innerHTML = coin.toUpperCase()
       return createHomeChart(coin, displayChart, displayTime)
     }
 
@@ -191,27 +192,13 @@ window.onload = function () {
   }
 }
 
-// Create our number formatter.
-var formatterZero = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0
-})
-
-var formatterTwo = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2
-})
-
-var acc = document.getElementsByClassName('btn-accordion')
-var i
+const acc = document.getElementsByClassName('btn-accordion')
+let i
 
 for (i = 0; i < acc.length; i++) {
   acc[i].onclick = function () {
     this.classList.toggle('active')
-    var panel = this.nextElementSibling
+    let panel = this.nextElementSibling
 
     if (panel.style.maxHeight) {
       panel.style.maxHeight = null

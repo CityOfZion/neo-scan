@@ -30,7 +30,7 @@ config :wobserver,
   remote_url_prefix: "/wobserver"
 
 config :neoscan_monitor,
-  broadcast: &NeoscanWeb.Endpoint.broadcast/3
+  broadcast: &NeoscanWeb.Endpoint.broadcast("room:home", "change", &1)
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

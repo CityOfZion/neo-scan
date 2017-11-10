@@ -23,22 +23,6 @@ defmodule NeoscanWeb.RoomChannel do
     }
   end
 
-  def broadcast_change(state) do
-    {blocks, _} = state.blocks
-                  |> Enum.split(5)
-
-    {transactions, _} = state.transactions
-                        |> Enum.split(5)
-    payload = %{
-      "blocks" => blocks,
-      "transactions" => transactions,
-      "price" => state.price,
-      "stats" => state.stats,
-    }
-
-    Endpoint.broadcast("room:home", "change", payload)
-  end
-
   def handle_out(event, payload, socket) do
     push socket, event, payload
     {:noreply, socket}

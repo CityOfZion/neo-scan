@@ -40,8 +40,8 @@
 <!-- Market graph -->
 <section id="market-graph">
   <div class="individual-graph-box remove-border-right-555px">
-    <p class="large-detail-text stat-detail"><%= gettext "NEO" %></p>
-    <p class="large-stat-number remove-margin-bottom" id="neo-price-us"></p>
+    <p id="mkt-graph-coin" class="large-detail-text stat-detail"><%= gettext "NEO" %></p>
+    <p class="large-stat-number remove-margin-bottom" id="mkt-graph-coin-price"></p>
   </div>
   <div class="individual-graph-box remove-border-right-920px">
     <p class="large-detail-text stat-detail"><%= gettext "Current market cap" %></p>

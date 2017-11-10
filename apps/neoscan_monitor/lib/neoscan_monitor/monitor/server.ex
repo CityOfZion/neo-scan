@@ -59,7 +59,7 @@ defmodule NeoscanMonitor.Server do
     }
 
     broadcast = Application.fetch_env!(:neoscan_monitor, :broadcast)
-    broadcast.("room:home", "change", payload)
+    broadcast.(payload)
     {:noreply, state}
   end
 
