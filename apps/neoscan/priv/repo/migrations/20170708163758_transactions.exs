@@ -37,7 +37,8 @@ defmodule Neoscan.Repo.Migrations.Transactions do
     create index(:transactions, ["block_height DESC NULLS LAST"])
     create index(:transactions, [:type])
     create index(:transactions, [:block_id])
-    create index(:transactions, [:asset])
+    create index(:transactions, [:asset_moved])
+
 
   end
 end

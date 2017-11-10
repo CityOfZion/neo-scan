@@ -194,12 +194,12 @@ defmodule Neoscan.Transactions do
       [%Transaction{}, ...]
 
   """
-  def paginate_transactions_for_block(hash, pag) do
+  def paginate_transactions_for_block(id, pag) do
     transaction_query = from e in Transaction,
                         order_by: [
                           desc: e.block_height
                         ],
-                        where: e.block_hash == ^hash,
+                        where: e.block_id == ^id,
                         select: %{
                          :id => e.id,
                          :type => e.type,

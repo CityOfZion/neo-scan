@@ -167,13 +167,14 @@ defmodule Neoscan.Blocks do
 
   """
   def paginate_transactions(hash, page) do
-    transactions = Transactions.paginate_transactions_for_block(hash, page)
-
     query = from e in Block,
                  where: e.hash == ^hash,
                  select: e
+
     block = Repo.all(query)
             |> List.first
+
+    transactions = Transactions.paginate_transactions_for_block(block.id, page)
 
     {block, transactions}
   end
