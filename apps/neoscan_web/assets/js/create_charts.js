@@ -71,6 +71,9 @@ export const createHomeChart = (coin, compareCurrency, time) => {
           show: true
         }
       },
+      padding: {
+        right: 20
+      },
       tooltip: {
         contents: function (d) {
           const price = compareCurrency === 'usd' ? d[0] && Number(d[0].value).toFixed(2) : d[0] && Number(d[0].value).toFixed(8)
@@ -135,6 +138,9 @@ export const createAddressChart = (asset, dates, amounts, count) => {
       y: {
         show: true,
       }
+    },
+    padding: {
+      right: 20
     },
     tooltip: {
       contents: function (d) {
