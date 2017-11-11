@@ -180,7 +180,9 @@
 			<li class="corner-box remove-margin-left">
 				<h2><%= gettext "Opcode Attribute:" %> <%=att["usage"]%></h2>
 				<div class="corner-box">
-					<p class="small-detail-text bar-left-transactions"><%= Disassembler.parse_script(att["data"]) %></p>
+          <%= for operation <- Disassembler.parse_script(att["data"]) do %>
+  					<p class="small-detail-text bar-left-transactions script-new-line"><%= operation %></p>
+          <% end %>
 				</div>
 			</li>
 		<% end %>
@@ -189,7 +191,9 @@
 		<li class="corner-box">
 			<h2><%= gettext "Opcode Script" %></h2>
 			<div class="corner-box">
-				<p class="small-detail-text bar-left-transactions"><%= Disassembler.parse_script(@transaction.script) %></p>
+        <%= for operation <- Disassembler.parse_script(@transaction.script) do %>
+				  <p class="small-detail-text bar-left-transactions script-new-line"><%= operation %></p>
+        <% end %>
 			</div>
 		</li>
   <% end %>
