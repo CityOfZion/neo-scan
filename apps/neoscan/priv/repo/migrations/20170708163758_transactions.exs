@@ -6,7 +6,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add :attributes, {:array, :map}
       add :net_fee, :string
       add :scripts, {:array, :map}
-      add :script, :string
+      add :script, :text
       add :size, :integer
       add :sys_fee, :string
       add :txid, :string
@@ -22,7 +22,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add :claims, {:array, :map}
       add :pubkey, :string
       add :asset, :map
-      add :description, :string
+      add :description, :text
       add :contract, :map
 
       add :asset_moved, :string
