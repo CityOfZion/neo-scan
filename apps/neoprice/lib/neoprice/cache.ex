@@ -1,8 +1,10 @@
 defmodule Neoprice.Cache do
   @moduledoc "macro to define a buffer"
+
   use GenServer
   alias Neoprice.Cryptocompare
   require Logger
+
   @minute 60
   @hour 3600
   @day 86_400

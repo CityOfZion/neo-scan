@@ -1,6 +1,8 @@
 defmodule Neoprice.Cryptocompare do
   @moduledoc "Cryptocompare interface"
+
   alias Neoprice.Cryptocompare.Api
+
   @limit 2000
   @minute 60
   @hour 3600
