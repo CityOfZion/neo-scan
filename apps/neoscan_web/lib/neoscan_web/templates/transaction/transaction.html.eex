@@ -166,7 +166,7 @@
 <ul id="bytecode-invocation-list">
   <%= if @transaction.attributes != [] do %>
 		<%= for att <- @transaction.attributes do %>
-			<li class="corner-box">
+			<li class="corner-box remove-margin-left">
 				<h2><%= gettext "Opcode Attribute:" %> <%=att["usage"]%></h2>
 				<div class="corner-box">
 					<p class="small-detail-text bar-left-transactions"><%= Disassembler.parse_script(att["data"]) %></p>
