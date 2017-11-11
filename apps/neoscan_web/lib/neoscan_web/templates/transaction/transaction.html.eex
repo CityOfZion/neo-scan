@@ -121,7 +121,7 @@
 		<% end %>
   <% end %>
   <%= if @transaction.script != nil do %>
-		<li class="corner-box remove-margin-left">
+		<li class="corner-box">
 			<h2><%= gettext "Bytecode Script" %></h2>
 			<div class="corner-box">
 				<p class="small-detail-text bar-left-transactions"><%= @transaction.script %></p>
@@ -166,7 +166,7 @@
 <ul id="bytecode-invocation-list">
   <%= if @transaction.attributes != [] do %>
 		<%= for att <- @transaction.attributes do %>
-			<li class="corner-box remove-margin-left">
+			<li class="corner-box">
 				<h2><%= gettext "Opcode Attribute:" %> <%=att["usage"]%></h2>
 				<div class="corner-box">
 					<p class="small-detail-text bar-left-transactions"><%= Disassembler.parse_script(att["data"]) %></p>
@@ -175,7 +175,7 @@
 		<% end %>
   <% end %>
   <%= if @transaction.script != nil do %>
-		<li class="corner-box remove-margin-left">
+		<li class="corner-box">
 			<h2><%= gettext "Opcode Script" %></h2>
 			<div class="corner-box">
 				<p class="small-detail-text bar-left-transactions"><%= Disassembler.parse_script(@transaction.script) %></p>
