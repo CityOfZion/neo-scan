@@ -1,5 +1,6 @@
 defmodule NeoscanWeb.TransactionsView do
   use NeoscanWeb, :view
+  import Number.Delimit
   alias NeoscanMonitor.Api
   alias Neoscan.Helpers
 
