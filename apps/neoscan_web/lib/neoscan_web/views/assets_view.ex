@@ -3,12 +3,11 @@ defmodule NeoscanWeb.AssetsView do
   import Number.Delimit
   alias NeoscanMonitor.Api
 
-
   def get_supply(amount) when amount <= 0 do
     "Unlimited"
   end
   def get_supply(amount) when amount > 0 do
-    amount
+    number_to_delimited(amount)
   end
 
 end

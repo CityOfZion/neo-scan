@@ -51,6 +51,8 @@ defmodule NeoscanWeb.AssetView do
       "Unlimited"
     else
       value
+      |> Helpers.round_or_not()
+      |> number_to_delimited()
     end
   end
 

@@ -30,7 +30,7 @@
       </li>
       <li class="border-right border-bottom border-right-smaller min-height-111px remove-border-right-660px">
         <p class="small-detail-text"><%= gettext "Supply" %></p>
-        <p class="large-detail-text"><%= number_to_delimited(check(Helpers.round_or_not(@asset.amount))) %></p>
+        <p class="large-detail-text"><%= check(@asset.amount) %></p>
       </li>
       <li class="border-bottom min-height-111px">
         <p class="small-detail-text"><%= gettext "Precision" %></p>
