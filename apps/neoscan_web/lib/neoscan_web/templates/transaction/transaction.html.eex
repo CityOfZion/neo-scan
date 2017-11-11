@@ -85,6 +85,17 @@
 </section>
 
 <ul id="bytecode-invocation-list">
+  <%= if @transaction.contractt != nil do %>
+		<li class="corner-box">
+			<h2><%= gettext "Bytecode Script" %></h2>
+			<div class="corner-box">
+				<p class="small-detail-text bar-left-transactions"><%= @transaction.contract %></p>
+			</div>
+		</li>
+  <% end %>
+</ul>
+
+<ul id="bytecode-invocation-list">
 	<li class="corner-box remove-margin-left">
     <div class="tooltip">
       <h2><%= gettext "Bytecode Invocation Script" %></h2>
@@ -113,7 +124,7 @@
   <%= if @transaction.attributes != [] do %>
 		<%= for att <- @transaction.attributes do %>
 			<li class="corner-box remove-margin-left">
-				<h2><%= gettext "Usage: " %> <%=att["usage"]%></h2>
+				<h2><%= gettext "Atributte: " %> <%=att["usage"]%></h2>
 				<div class="corner-box">
 					<p class="small-detail-text bar-left-transactions"><%= att["data"] %></p>
 				</div>
