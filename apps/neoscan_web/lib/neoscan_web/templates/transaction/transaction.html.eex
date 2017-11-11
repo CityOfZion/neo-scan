@@ -110,7 +110,7 @@
 </ul>
 
 <%= if @transaction.attributes != [] do %>
-	<ul id="bytecode-invocation-list"> <%= gettext "Bytecode Attributes" %>
+	<ul id="bytecode-invocation-list">
 		<%= for att <- @transaction.attributes do %>
 			<li class="corner-box remove-margin-left">
 				<h2><%= gettext "Usage: " %> <%=att["usage"]%></h2>
@@ -167,10 +167,10 @@
 </ul>
 
 <%= if @transaction.attributes != [] do %>
-	<ul id="bytecode-invocation-list"> <%= gettext "Opcode Attributes" %>
+	<ul id="bytecode-invocation-list">
 		<%= for att <- @transaction.attributes do %>
 			<li class="corner-box remove-margin-left">
-				<h2><%= gettext "Usage:" %> <%=att["usage"]%></h2>
+				<h2><%= gettext "Opcode Usage:" %> <%=att["usage"]%></h2>
 				<div class="corner-box">
 					<p class="small-detail-text bar-left-transactions"><%= Disassembler.parse_script(att["data"]) %></p>
 				</div>
