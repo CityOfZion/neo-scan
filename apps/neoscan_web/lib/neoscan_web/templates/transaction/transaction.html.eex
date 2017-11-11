@@ -87,7 +87,7 @@
 <ul id="bytecode-invocation-list">
   <%= if @transaction.contract != nil do %>
 		<li class="corner-box">
-			<h2><%= gettext "Bytecode Script" %></h2>
+			<h2><%= gettext "Contract" %></h2>
 			<div class="corner-box">
 				<p class="small-detail-text bar-left-transactions"><%= Poison.encode!(@transaction.contract) %></p>
 			</div>
