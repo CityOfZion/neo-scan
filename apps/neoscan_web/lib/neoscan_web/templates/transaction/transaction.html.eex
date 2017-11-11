@@ -89,7 +89,7 @@
 		<li class="corner-box">
 			<h2><%= gettext "Bytecode Script" %></h2>
 			<div class="corner-box">
-				<p class="small-detail-text bar-left-transactions"><%= Poison.decode!(@transaction.contract) %></p>
+				<p class="small-detail-text bar-left-transactions"><%= Poison.encode!(@transaction.contract) %></p>
 			</div>
 		</li>
   <% end %>
