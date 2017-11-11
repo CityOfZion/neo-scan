@@ -113,9 +113,9 @@
 	<ul id="bytecode-invocation-list"> <%= gettext "Bytecode Attributes" %>
 		<%= for att <- @transaction.attributes do %>
 			<li class="corner-box remove-margin-left">
-				<h2><%= gettext "Usage" %> <%=att["usage"]%></h2>
+				<h2><%= gettext "Usage: " %> <%=att["usage"]%></h2>
 				<div class="corner-box">
-					<p class="small-detail-text bar-left-transactions"><%= att["script"] %></p>
+					<p class="small-detail-text bar-left-transactions"><%= att["data"] %></p>
 				</div>
 			</li>
 		<% end %>
@@ -170,7 +170,7 @@
 	<ul id="bytecode-invocation-list"> <%= gettext "Opcode Attributes" %>
 		<%= for att <- @transaction.attributes do %>
 			<li class="corner-box remove-margin-left">
-				<h2><%= gettext "Usage" %> <%=att["usage"]%></h2>
+				<h2><%= gettext "Usage:" %> <%=att["usage"]%></h2>
 				<div class="corner-box">
 					<p class="small-detail-text bar-left-transactions"><%= Disassembler.parse_script(att["data"]) %></p>
 				</div>
