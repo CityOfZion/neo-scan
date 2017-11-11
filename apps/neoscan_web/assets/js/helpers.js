@@ -58,16 +58,16 @@ export function getName (type) {
     return 'Miner'
   }
   if (type === 'RegisterTransaction') {
-    return 'Asset Register'
+    return 'Register'
   }
   if (type === 'IssueTransaction') {
-    return 'Asset Issue'
+    return 'Issue'
   }
   if (type === 'PublishTransaction') {
-    return 'Contract Publish'
+    return 'Publish'
   }
   if (type === 'InvocationTransaction') {
-    return 'Contract Invocation'
+    return 'Invocation'
   }
 }
 

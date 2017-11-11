@@ -54,7 +54,7 @@
 
   </section>
 
-  <p  class="number-counter">Blocks <%= get_current_min_qtd(@page) %> to <%= get_current_max_qtd(@page) %> of <%= get_total() %></p>
+  <p  class="number-counter">Blocks <%= get_current_min_qtd(@page) %> to <%= get_current_max_qtd(@page) %> of <%= number_to_delimited(get_total()) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != "1" do %>
