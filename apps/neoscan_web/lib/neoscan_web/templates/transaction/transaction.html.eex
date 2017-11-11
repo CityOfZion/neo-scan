@@ -85,7 +85,7 @@
 </section>
 
 <ul id="bytecode-invocation-list">
-  <%= if @transaction.contractt != nil do %>
+  <%= if @transaction.contract != nil do %>
 		<li class="corner-box">
 			<h2><%= gettext "Bytecode Script" %></h2>
 			<div class="corner-box">
