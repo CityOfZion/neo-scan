@@ -156,6 +156,7 @@ defmodule Neoscan.Vm.Disassembler do
               get_jmp_num(base_args)
             push_bytes == "PUSHBYTES" ->
               "0x" <> base_args
+            opcode_keyword == "APPCALL" or opcode_keyword == "TAILCALL" -> String.reverse(base_args)
             true ->
               base_args
           end
@@ -230,7 +231,12 @@ defmodule Neoscan.Vm.Disassembler do
 
   defp handle_opcode_error(current) do
     case Integer.parse(current, 16) do
-      {num, _} -> if num > 1 and num < 75, do: {:ok, num + 1}, else: :error
+      {num, _} ->
+        cond do
+          num > 1 and num < 75 -> {:ok, num + 1}
+          num === 103 or num === 105 -> {:ok, 20 + 1} # 20 bytes
+          true -> :error
+        end
       :error -> :error
     end
   end
