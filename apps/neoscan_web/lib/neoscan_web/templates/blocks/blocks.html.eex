@@ -23,7 +23,7 @@
             <p class="fa fa-signal medium-detail-text"></p>
             <a href="<%= block_path( @conn, :index, block.hash) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width">
               <span class="tablet-detail-text">Block: </span>
-              <%=block.index%>
+              <%=number_to_delimited(block.index)%>
             </a>
             <div class="secondary-info-wrapper">
               <p class="medium-detail-text col-3-width">

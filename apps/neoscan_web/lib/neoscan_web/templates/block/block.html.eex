@@ -1,5 +1,5 @@
 <h1 class="content-title">Block Information</h1>
-<p class="large-detail-text"><span class="fa fa-signal"></span><span class="bold-text">Block</span> <span class="teal-bar">|</span> <span class="eggshell-blue-text"><%= @block.index %></span></p>
+<p class="large-detail-text"><span class="fa fa-signal"></span><span class="bold-text">Block</span> <span class="teal-bar">|</span> <span class="eggshell-blue-text"><%= @block.hash %></span></p>
 <a href="<%= blocks_path(@conn, :index) %>" alt="Back to all transactions" title="Back to all transactions" class="back-link">Back to all blocks</a>
 
 <section id="asset-information" class="corner-box bar-left-blocks">
@@ -7,7 +7,7 @@
   <ul id="extra-information" class="block-left-information-bar">
     <li class="border-right border-bottom border-right-smaller remove-border-right-660px tooltip">
       <p class="small-detail-text"><%= gettext "Block index" %></p>
-      <p class="large-detail-text"><%= @block.index %></p>
+      <p class="large-detail-text"><%= number_to_delimited(@block.index) %></p>
       <span class="tooltiptext"><%= get_explanation("block_index") %></span>
     </li>
     <li class="border-right border-bottom tooltip">
@@ -42,7 +42,7 @@
     </li>
     <li class="border-right-smaller remove-border-right-660px remove-border-bottom-660px tooltip">
       <p class="small-detail-text">Size</p>
-      <p class="large-detail-text"><%= @block.size %> <%= gettext "bytes" %></p>
+      <p class="large-detail-text"><%= number_to_delimited(@block.size) %> <%= gettext "bytes" %></p>
       <span class="tooltiptext"><%= get_explanation("block_size") %></span>
     </li>
   </ul>
@@ -149,7 +149,7 @@
       <% end %>
     </div>
   </section>
-  <p  class="number-counter">Transactions <%= get_current_min_qtd(@page, @block.tx_count) %> to <%= get_current_max_qtd(@page, @block.tx_count) %> of <%= @block.tx_count %></p>
+  <p  class="number-counter">Transactions <%= get_current_min_qtd(@page, @block.tx_count) %> to <%= get_current_max_qtd(@page, @block.tx_count) %> of <%= number_to_delimited(@block.tx_count) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != "1" do %>

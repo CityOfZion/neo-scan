@@ -140,30 +140,38 @@ defmodule Neoscan.Vm.Disassembler do
       list,
       "",
       fn (code, acc) ->
-        if Map.has_key?(@opcodes_list, code) and String.length(code) == 2 do
-          newline = if code == "68", do: "", else: "\n"
-          acc <> @opcodes_list[code] <> newline
-        else
-          opcode_key = String.slice(code, 0..1)
-          {opcode_keyword, push_bytes} =
-            case Map.fetch(@opcodes_list, opcode_key) do
-              {:ok, keyword} -> {keyword, ""}
-              :error -> check_hex_num(opcode_key)
-            end
-          base_args = String.slice(code, 2..-1)
-          args = cond do
-            Map.has_key?(@extended_opcodes, opcode_key) ->
-              get_jmp_num(base_args)
-            push_bytes == "PUSHBYTES" ->
-              "0x" <> base_args
-            opcode_keyword == "APPCALL" or opcode_keyword == "TAILCALL" -> String.reverse(base_args)
-            true ->
-              base_args
-          end
-          acc <> push_bytes <> opcode_keyword <> ": " <> args <> "\n"
-        end
+        work_code_key(code, acc)
       end
     )
+  end
+
+  defp work_code_key(code, acc) do
+    if Map.has_key?(@opcodes_list, code) and String.length(code) == 2 do
+      newline = if code == "68", do: "", else: "\n"
+      acc <> @opcodes_list[code] <> newline
+    else
+      opcode_key = String.slice(code, 0..1)
+      {opcode_keyword, push_bytes} = opcode_tuple(opcode_key)
+      base_args = String.slice(code, 2..-1)
+      args = cond do
+        Map.has_key?(@extended_opcodes, opcode_key) ->
+          get_jmp_num(base_args)
+        push_bytes == "PUSHBYTES" ->
+          "0x" <> base_args
+        opcode_keyword == "APPCALL" or opcode_keyword == "TAILCALL" ->
+          String.reverse(base_args)
+        true ->
+          base_args
+      end
+      acc <> push_bytes <> opcode_keyword <> ": " <> args <> "\n"
+    end
+  end
+
+  defp opcode_tuple(opcode_key) do
+    case Map.fetch(@opcodes_list, opcode_key) do
+      {:ok, keyword} -> {keyword, ""}
+      :error -> check_hex_num(opcode_key)
+    end
   end
 
   defp get_jmp_num(args) do

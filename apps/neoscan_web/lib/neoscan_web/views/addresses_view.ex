@@ -1,5 +1,6 @@
 defmodule NeoscanWeb.AddressesView do
   use NeoscanWeb, :view
+  import Number.Delimit
   alias NeoscanMonitor.Api
   alias NeoscanWeb.ViewHelper
 

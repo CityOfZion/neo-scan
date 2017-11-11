@@ -1,5 +1,6 @@
 defmodule NeoscanWeb.BlockView do
   use NeoscanWeb, :view
+  import Number.Delimit
   alias Neoscan.Vm.Disassembler
   alias NeoscanMonitor.Api
   alias Neoscan.Helpers

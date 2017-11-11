@@ -1,5 +1,6 @@
 defmodule NeoscanWeb.BlocksView do
   use NeoscanWeb, :view
+  import Number.Delimit
   alias NeoscanMonitor.Api
 
   def get_current_min_qtd(page) do

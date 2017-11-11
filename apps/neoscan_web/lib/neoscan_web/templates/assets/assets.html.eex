@@ -16,7 +16,7 @@
           </div>
           <div class="left-asset-detail">
             <p class="small-detail-text"><%= gettext "Supply" %></p>
-            <p class="large-detail-text"><%= get_supply(asset.amount) %></p>
+            <p class="large-detail-text"><%=number_to_delimited(get_supply(asset.amount)) %></p>
           </div>
           <div class="left-asset-detail">
             <p class="small-detail-text"><%= gettext "Registered on" %></p>
@@ -31,15 +31,15 @@
         <div class="right-column">
           <div class="right-asset-detail">
             <p class="small-detail-text"><%= gettext "Addresses" %></p>
-            <p class="large-detail-text"><%=asset.stats.addresses%></p>
+            <p class="large-detail-text"><%= number_to_delimited(asset.stats.addresses)%></p>
           </div>
           <div class="right-asset-detail">
             <p class="small-detail-text"><%= gettext "Issued" %></p>
-            <p class="large-detail-text"><%=asset.issued%></p>
+            <p class="large-detail-text"><%= number_to_delimited(asset.issued) %></p>
           </div>
           <div class="right-asset-detail">
             <p class="small-detail-text"><%= gettext "Transactions" %></p>
-            <p class="large-detail-text"><%=asset.stats.transactions%></p>
+            <p class="large-detail-text"><%= number_to_delimited(asset.stats.transactions)%></p>
           </div>
         </div>
       </div>

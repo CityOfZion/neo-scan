@@ -26,11 +26,11 @@
       </li>
       <li class="border-right border-bottom min-height-111px">
         <p class="small-detail-text"><%= gettext "Issued" %></p>
-        <p class="large-detail-text"><%= @asset.issued %></p>
+        <p class="large-detail-text"><%= number_to_delimited(@asset.issued) %></p>
       </li>
       <li class="border-right border-bottom border-right-smaller min-height-111px remove-border-right-660px">
         <p class="small-detail-text"><%= gettext "Supply" %></p>
-        <p class="large-detail-text"><%= check(Helpers.round_or_not(@asset.amount)) %></p>
+        <p class="large-detail-text"><%= number_to_delimited(check(Helpers.round_or_not(@asset.amount))) %></p>
       </li>
       <li class="border-bottom min-height-111px">
         <p class="small-detail-text"><%= gettext "Precision" %></p>
@@ -38,11 +38,11 @@
       </li>
       <li class="border-right border-right-smaller border-bottom-smaller min-height-111px remove-border-right-660px">
         <p class="small-detail-text"><%= gettext "Transactions" %></p>
-        <p class="large-detail-text"><%=@asset.stats.transactions%></p>
+        <p class="large-detail-text"><%= number_to_delimited(@asset.stats.transactions)%></p>
       </li>
       <li class="border-right border-bottom-smaller min-height-111px">
         <p class="small-detail-text"><%= gettext "Addresses" %></p>
-        <p class="large-detail-text"><%=@asset.stats.addresses%></p>
+        <p class="large-detail-text"><%= number_to_delimited(@asset.stats.addresses) %></p>
       </li>
       <li class="border-right-smaller min-height-111px remove-border-right-660px remove-border-bottom-660px">
         <p class="small-detail-text">Created</p>
@@ -97,7 +97,7 @@
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
                 <span class="tablet-detail-text">Transactions</span>
-                <%= address.tx_count %>
+                <%= number_to_delimited(address.tx_count) %>
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
                 <span class="tablet-detail-text">Last transaction</span>

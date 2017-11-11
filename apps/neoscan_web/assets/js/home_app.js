@@ -13,10 +13,10 @@ const blockRow = row => (
   <div class='full-width-bar block-number'>
     <div class='information-wrapper'>
       <p class='fa fa-signal medium-detail-text'></p>
-      <a href={'/block/' + row.hash} alt='View block' title='View block' class='large-blue-link col-4-width'>{row.index}</a>
+      <a href={'/block/' + row.hash} alt='View block' title='View block' class='large-blue-link col-4-width'>{row.index.toLocaleString()}</a>
       <div class='secondary-info-wrapper'>
-        <p class='medium-detail-text col-3-width'><span class='tablet-detail-text'>Size: </span>{row.size} bytes</p>
-        <p class='medium-detail-text col-3-width'><span class='tablet-detail-text'>Transactions: </span>{row.tx_count}</p>
+        <p class='medium-detail-text col-3-width'><span class='tablet-detail-text'>Size: </span>{row.size.toLocaleString()} bytes</p>
+        <p class='medium-detail-text col-3-width'><span class='tablet-detail-text'>Transactions: </span>{row.tx_count.toLocaleString()}</p>
         <p class='medium-detail-text col-2-width'><span class='tablet-detail-text'>Created: </span>{ moment.unix(row.time).format('DD-MM-YYYY') + ' | ' + moment.unix(row.time).format('HH:mm:ss')}</p>
       </div>
     </div>

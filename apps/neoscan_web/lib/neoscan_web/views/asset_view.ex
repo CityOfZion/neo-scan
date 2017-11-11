@@ -1,5 +1,6 @@
 defmodule NeoscanWeb.AssetView do
   use NeoscanWeb, :view
+  import Number.Delimit
   alias NeoscanMonitor.Api
   alias NeoscanWeb.ViewHelper
   alias Neoscan.Helpers

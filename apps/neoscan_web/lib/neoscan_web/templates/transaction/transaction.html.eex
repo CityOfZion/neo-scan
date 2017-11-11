@@ -63,21 +63,21 @@
 		</li>
 		<li class="border-right border-bottom min-height-97px tooltip">
 			<p class="small-detail-text"><%= gettext "Network Fee" %></p>
-			<p class="large-detail-text"><%= @transaction.net_fee %></p>
+			<p class="large-detail-text"><%= number_to_delimited(@transaction.net_fee) %></p>
       <span class="tooltiptext"><%= get_explanation("transaction_network_fees") %></span>
 		</li>
 		<li class="border-bottom border-right-smaller min-height-97px remove-border-right-660px tooltip">
 			<p class="small-detail-text"><%= gettext "System Fee" %></p>
-			<p class="large-detail-text"><%= @transaction.sys_fee %></p>
+			<p class="large-detail-text"><%= number_to_delimited(@transaction.sys_fee) %></p>
       <span class="tooltiptext"><%= get_explanation("transaction_system_fees") %></span>
 		</li>
 		<li class="border-right border-right-smaller min-height-97px remove-border-right-660px">
 			<p class="small-detail-text"><%= gettext "Included in Block" %></p>
-			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%= @transaction.block_height %></a></p>
+			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%= number_to_delimited(@transaction.block_height) %></a></p>
 		</li>
 		<li class="min-height-97px remove-border-bottom-660px tooltip">
 			<p class="small-detail-text"><%= gettext "Size" %></p>
-			<p class="large-detail-text"><%= @transaction.size %> <%= gettext "bytes" %></p>
+			<p class="large-detail-text"><%= number_to_delimited(@transaction.size) %> <%= gettext "bytes" %></p>
       <span class="tooltiptext"><%= get_explanation("transaction_size") %></span>
 		</li>
 	</ul>

@@ -32,7 +32,7 @@
 </section>
 
 <!-- Transactions -->
-<h2 class="content-title">Transactions (<%= length(@address.histories) %>)</h2>
+<h2 class="content-title">Transactions (<%= number_to_delimited(length(@address.histories)) %>)</h2>
 <section id="all-transactions-wrapper">
 
   <div class="detail-bar">

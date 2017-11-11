@@ -29,6 +29,17 @@ config :wobserver,
   mode: :plug,
   remote_url_prefix: "/wobserver"
 
+config :number, delimit: [
+                  precision: 0,
+                  delimiter: ",",
+                  separator: "."
+                ],
+                currency: [
+                  unit: "$",
+                  delimiter: ",",
+                  separator: ".",
+                ]
+
 config :neoscan_monitor,
   broadcast: &NeoscanWeb.Endpoint.broadcast("room:home", "change", &1)
 
