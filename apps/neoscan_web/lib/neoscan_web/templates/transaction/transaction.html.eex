@@ -75,7 +75,7 @@
 			<p class="small-detail-text"><%= gettext "Included in Block" %></p>
 			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%= number_to_delimited(@transaction.block_height) %></a></p>
 		</li>
-		<li class="min-height-97px remove-border-bottom-660px tooltip">
+		<li class="min-height-97px border-right remove-border-bottom-660px border-bottom-smaller tooltip">
 			<p class="small-detail-text"><%= gettext "Size" %></p>
 			<p class="large-detail-text"><%= number_to_delimited(@transaction.size) %> <%= gettext "bytes" %></p>
       <span class="tooltiptext"><%= get_explanation("transaction_size") %></span>
@@ -175,6 +175,18 @@
 </ul>
 
 <ul id="bytecode-invocation-list">
+  <%= if @transaction.attributes != [] do %>
+    <%= for att <- @transaction.attributes do %>
+      <li class="corner-box remove-margin-left">
+        <h2><%= gettext "Atributte: " %> <%=att["usage"]%></h2>
+        <div class="corner-box">
+          <%= for operation <- Disassembler.parse_script(att["data"]) do %>
+            <span class="script-new-line"><%= operation %></span>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
+  <% end %>
   <%= if @transaction.script != nil do %>
 		<li class="corner-box remove-margin-left">
 			<h2><%= gettext "Opcode Script" %></h2>
