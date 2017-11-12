@@ -180,9 +180,11 @@
       <li class="corner-box remove-margin-left">
         <h2><%= gettext "Atributte: " %> <%=att["usage"]%></h2>
         <div class="corner-box">
-          <%= for operation <- Disassembler.parse_script(att["data"]) do %>
-            <span class="script-new-line"><%= operation %></span>
-          <% end %>
+          <p class="small-detail-text bar-left-transactions">
+            <%= for operation <- Disassembler.parse_script(att["data"]) do %>
+              <span class="script-new-line"><%= operation %></span>
+            <% end %>
+          </p>
         </div>
       </li>
     <% end %>
