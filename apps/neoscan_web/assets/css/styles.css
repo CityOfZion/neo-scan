@@ -1322,7 +1322,7 @@ a:hover {
 
 /* TARGETED-INVOCATION: Set minimum height of #asset-information LIs */
 #extra-information .min-height-97px {
-	min-height: 96px;
+	min-height: 103px;
 }
 
 #extra-information li .large-detail-text {
