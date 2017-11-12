@@ -210,6 +210,7 @@ for (i = 0; i < acc.length; i++) {
 
 $('document').ready(function () {
   $('#language-dropdown').simpleselect()
+  $('#tooltip-dropdown').simpleselect()
   $('#price-chart').simpleselect()
   $('#comparison-chart').simpleselect()
 
@@ -229,25 +230,6 @@ $('document').ready(function () {
     } else {
       $('.searchbar').removeClass('mobile-active')
       $('.search-btn').removeClass('mobile-active')
-    }
-  })
-
-  const $tooltipElement = $('#coz-tooltip')
-
-  let hover = false
-  $tooltipElement.click(function () {
-    if(!hover) {
-      $('.tooltip').each(function() {
-        $(this).addClass('add-hover')
-      })
-      $(this).text('Tooltips On')
-      hover = true
-    } else {
-      $('.tooltip').each(function() {
-        $(this).removeClass('add-hover')
-      })
-      $(this).text('Tooltips Off')
-      hover = false
     }
   })
 })

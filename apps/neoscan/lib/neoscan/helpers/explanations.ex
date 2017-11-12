@@ -6,7 +6,7 @@ defmodule Neoscan.Explanations do
     "block_index" => "Position of this block in the overall chain of blocks forming the 'blockchain'",
     "block_transactions" => "List of transactions included in this block",
     "block_time" => "Time the block was formed",
-    "block_version" => "??The current version of the blockchain system used by NEO??",
+    "block_version" => "The current version of the block system used by NEO",
     "block_merkle_root" => "Each transaction in a block is hashed. all of the individual transaction hashes together are then hashed to form a new hash; this combined hash is known as the merkle root.",
     "block_validator" => "Public address of the consensus node that first announced the transaction",
     "block_size" => "Total size of the block in kilobytes",

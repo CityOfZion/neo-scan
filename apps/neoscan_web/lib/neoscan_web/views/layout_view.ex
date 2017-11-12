@@ -2,6 +2,7 @@ defmodule NeoscanWeb.LayoutView do
   use NeoscanWeb, :view
   alias Phoenix.Controller
   alias Plug.Conn
+  alias NeoscanWeb.ViewHelper
 
   def is_home_path(conn) do
     Controller.controller_module(conn) == NeoscanWeb.HomeController
@@ -40,5 +41,9 @@ defmodule NeoscanWeb.LayoutView do
 
   def get_language(conn) do
     Conn.get_session(conn, "locale")
+  end
+
+  def get_tooltips(conn) do
+    ViewHelper.get_tooltips(conn)
   end
 end

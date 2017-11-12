@@ -3,6 +3,11 @@ defmodule NeoscanWeb.ViewHelper do
   use NeoscanWeb, :view
   alias NeoscanMonitor.Api
   alias Neoscan.Helpers
+  alias Plug.Conn
+
+  def get_tooltips(conn) do
+    Conn.get_session(conn, "tooltips")
+  end
 
   def get_GAS_balance(nil) do
     raw(

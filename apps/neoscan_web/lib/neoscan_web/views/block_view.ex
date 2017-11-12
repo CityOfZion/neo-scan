@@ -136,4 +136,8 @@ defmodule NeoscanWeb.BlockView do
   def get_explanation(topic) do
     Explanations.get(topic)
   end
+
+  def get_tooltips(conn) do
+    ViewHelper.get_tooltips(conn)
+  end
 end

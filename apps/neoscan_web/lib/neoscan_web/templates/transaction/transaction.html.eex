@@ -56,7 +56,7 @@
 
 	<!-- Extra information list -->
 	<ul id="extra-information">
-		<li class="border-right border-bottom border-right-smaller min-height-97px remove-border-right-660px tooltip">
+		<li class="border-right border-bottom border-right-smaller min-height-97px remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
 			<p class="small-detail-text"><%= gettext "Time" %></p>
 			<p class="large-detail-text"><%= compare_time_and_get_minutes(@transaction.time) %></p>
       <span class="tooltiptext"><%= get_explanation("transaction_time") %></span>
@@ -66,7 +66,7 @@
 			<p class="large-detail-text"><%= number_to_delimited(@transaction.net_fee) %></p>
       <span class="tooltiptext"><%= get_explanation("transaction_network_fees") %></span>
 		</li>
-		<li class="border-bottom border-right-smaller min-height-97px remove-border-right-660px tooltip">
+		<li class="border-bottom border-right-smaller min-height-97px remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
 			<p class="small-detail-text"><%= gettext "System Fee" %></p>
 			<p class="large-detail-text"><%= number_to_delimited(@transaction.sys_fee) %></p>
       <span class="tooltiptext"><%= get_explanation("transaction_system_fees") %></span>
@@ -75,7 +75,7 @@
 			<p class="small-detail-text"><%= gettext "Included in Block" %></p>
 			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%= number_to_delimited(@transaction.block_height) %></a></p>
 		</li>
-		<li class="min-height-97px border-right remove-border-bottom-660px border-bottom-smaller tooltip">
+		<li class="min-height-97px border-right remove-border-bottom-660px border-bottom-smaller tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
 			<p class="small-detail-text"><%= gettext "Size" %></p>
 			<p class="large-detail-text"><%= number_to_delimited(@transaction.size) %> <%= gettext "bytes" %></p>
       <span class="tooltiptext"><%= get_explanation("transaction_size") %></span>
@@ -97,7 +97,7 @@
 
 <ul id="bytecode-invocation-list">
 	<li class="corner-box remove-margin-left">
-    <div class="tooltip">
+    <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <h2><%= gettext "Bytecode Invocation Script" %></h2>
       <span class="tooltiptext"><%= get_explanation("bytecode_invocation_script") %></span>
     </div>
@@ -108,7 +108,7 @@
 		</div>
 	</li>
 	<li class="corner-box">
-    <div class="tooltip">
+    <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <h2><%= gettext "Bytecode Verification Script" %></h2>
       <span class="tooltiptext"><%= get_explanation("bytecode_verification_script") %></span>
     </div>
@@ -143,7 +143,7 @@
 
 <ul id="bytecode-invocation-list">
 	<li class="corner-box remove-margin-left">
-    <div class="tooltip">
+    <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <h2><%= gettext "Opcode Invocation Script" %></h2>
       <span class="tooltiptext"><%= get_explanation("opcode_invocation_script") %></span>
     </div>
@@ -158,7 +158,7 @@
 		</div>
 	</li>
 	<li class="corner-box">
-    <div class="tooltip">
+    <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <h2><%= gettext "Opcode Verification Script" %></h2>
       <span class="tooltiptext"><%= get_explanation("opcode_verification_script") %></span>
     </div>
@@ -175,20 +175,6 @@
 </ul>
 
 <ul id="bytecode-invocation-list">
-  <%= if @transaction.attributes != [] do %>
-    <%= for att <- @transaction.attributes do %>
-      <li class="corner-box remove-margin-left">
-        <h2><%= gettext "Atributte: " %> <%=att["usage"]%></h2>
-        <div class="corner-box">
-          <p class="small-detail-text bar-left-transactions">
-            <%= for operation <- Disassembler.parse_script(att["data"]) do %>
-              <span class="script-new-line"><%= operation %></span>
-            <% end %>
-          </p>
-        </div>
-      </li>
-    <% end %>
-  <% end %>
   <%= if @transaction.script != nil do %>
 		<li class="corner-box remove-margin-left">
 			<h2><%= gettext "Opcode Script" %></h2>
