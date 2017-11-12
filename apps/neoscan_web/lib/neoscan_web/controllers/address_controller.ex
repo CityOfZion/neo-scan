@@ -21,7 +21,7 @@ defmodule NeoscanWeb.AddressController do
   end
   def route(address, conn, page) do
     transactions = BalanceHistories.paginate_history_transactions(
-                     address.histories,
+                     address.address,
                      page
                    )
                    |> Enum.map(

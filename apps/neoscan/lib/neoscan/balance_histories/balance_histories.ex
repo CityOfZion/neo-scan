@@ -47,15 +47,25 @@ defmodule Neoscan.BalanceHistories do
     Repo.aggregate(query, :count, :id)
   end
 
-  def paginate_history_transactions(histories, pag) do
+  def paginate_history_transactions(address_hash, pag) do
+    his_query = from h in History,
+                  where: h.address_hash == ^address_hash,
+                  order_by: [
+                    desc: h.block_height
+                  ],
+                  select: %{
+                    txid: h.txid
+                  },
+                  limit: 15
 
-    lookups = Enum.map(histories, fn %{:txid => txid} -> txid end)
+    histories = Repo.paginate(his_query, page: pag, page_size: 15)
+                |> Enum.map(fn %{:txid => txid} -> txid end)
 
     transaction_query = from e in Transaction,
                              order_by: [
                                desc: e.block_height
                              ],
-                             where: e.txid in ^lookups,
+                             where: e.txid in ^histories,
                              select: %{
                                :id => e.id,
                                :type => e.type,
@@ -69,10 +79,9 @@ defmodule Neoscan.BalanceHistories do
                                :net_fee => e.net_fee,
                                :size => e.size,
                                :asset => e.asset,
-                             },
-                             limit: 15
+                             }
 
-    transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
+    transactions = Repo.all(transaction_query)
     vouts = Enum.map(transactions, fn tx -> tx.id end)
             |> Transactions.get_transactions_vouts
 

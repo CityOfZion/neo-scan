@@ -149,24 +149,9 @@ defmodule Neoscan.Addresses do
 
   """
   def get_address_by_hash_for_view(hash) do
-    his_query = from h in History,
-                     order_by: [
-                       desc: h.block_height
-                     ],
-                     select: %{
-                       txid: h.txid
-                     }
 
-    claim_query = from h in Claim,
-                       select: %{
-                         txids: h.txids
-                       }
     query = from e in Address,
                  where: e.address == ^hash,
-                 preload: [
-                   histories: ^his_query,
-                   claimed: ^claim_query,
-                 ],
                  select: e
     #%{:address => e.address, :tx_ids => e.histories,
     #  :balance => e.balance, :claimed => e.claimed}
