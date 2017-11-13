@@ -91,15 +91,6 @@ defmodule Neoscan.Addresses do
                            limit: 15
 
     Repo.paginate(addresses_query, page: pag, page_size: 15)
-    |> Enum.map(
-         fn ad ->
-           Map.put(
-             ad,
-             :tx_count,
-             BalanceHistories.count_hist_for_address(ad.address)
-           )
-         end
-       )
   end
 
   @doc """

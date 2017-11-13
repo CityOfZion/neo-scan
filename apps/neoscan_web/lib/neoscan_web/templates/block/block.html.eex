@@ -3,8 +3,8 @@
 <div class="block-navigation">
  <a href="<%= blocks_path(@conn, :index) %>" class="browse-wallet-back">Back to all blocks</a>
   <div class="address-navigation">
-  	<a href="<%= block_path( @conn, :index, @block.previousblockhash) %>" class="browse-wallet-next">Next block</a>
-  	<a href="<%= block_path( @conn, :index, @block.nextblockhash) %>" class="browse-wallet-previous">Previous block</a>
+  	<a href="<%= block_path( @conn, :index, @block.nextblockhash) %>" class="browse-wallet-next">Next block</a>
+  	<a href="<%= block_path( @conn, :index, @block.previousblockhash) %>" class="browse-wallet-previous">Previous block</a>
   </div>
 </div>
 
