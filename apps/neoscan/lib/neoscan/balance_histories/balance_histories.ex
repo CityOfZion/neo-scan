@@ -106,7 +106,7 @@ defmodule Neoscan.BalanceHistories do
     query = from h in History,
                  where: h.address_hash == ^address,
                  order_by: [
-                   desc: h.block_height
+                   desc: h.id
                  ],
                  limit: 25,
                  select: map(h, [:balance])
