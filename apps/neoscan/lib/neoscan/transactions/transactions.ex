@@ -74,7 +74,7 @@ defmodule Neoscan.Transactions do
   def home_transactions do
     transaction_query = from e in Transaction,
                              order_by: [
-                               desc: e.inserted_at
+                               desc: e.id
                              ],
                              where: e.inserted_at > ago(
                                1,
@@ -111,7 +111,7 @@ defmodule Neoscan.Transactions do
   def get_last_transactions_for_asset(hash) do
     transaction_query = from e in Transaction,
                              order_by: [
-                               desc: e.inserted_at
+                               desc: e.id
                              ],
                              where: e.asset_moved == ^hash and e.type != "MinerTransaction",
                              select: %{
@@ -155,7 +155,7 @@ defmodule Neoscan.Transactions do
   def paginate_transactions(pag) do
     transaction_query = from e in Transaction,
                         order_by: [
-                          desc: e.block_height
+                          desc: e.id
                         ],
                         where: e.type != "MinerTransaction",
                         select: %{
@@ -197,7 +197,7 @@ defmodule Neoscan.Transactions do
   def paginate_transactions_for_block(id, pag) do
     transaction_query = from e in Transaction,
                         order_by: [
-                          desc: e.block_height
+                          desc: e.id
                         ],
                         where: e.block_id == ^id,
                         select: %{
@@ -288,7 +288,7 @@ defmodule Neoscan.Transactions do
   def list_contracts do
     transaction_query = from e in Transaction,
                              order_by: [
-                               desc: e.inserted_at
+                               desc: e.id
                              ],
                              where: e.type == "PublishTransaction"
                                     or e.type == "InvocationTransaction",

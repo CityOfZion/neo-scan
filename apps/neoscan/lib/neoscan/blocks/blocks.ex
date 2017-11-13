@@ -49,7 +49,7 @@ defmodule Neoscan.Blocks do
     block_query = from e in Block,
                        where: e.index > -1,
                        order_by: [
-                         desc: e.index
+                         desc: e.id
                        ],
                        select: %{
                          :index => e.index,
@@ -76,7 +76,7 @@ defmodule Neoscan.Blocks do
     block_query = from e in Block,
                        where: e.index > -1,
                        order_by: [
-                         desc: e.index
+                         desc: e.id
                        ],
                        select: %{
                          :index => e.index,

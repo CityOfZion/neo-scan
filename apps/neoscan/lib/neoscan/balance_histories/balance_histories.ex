@@ -51,7 +51,7 @@ defmodule Neoscan.BalanceHistories do
     his_query = from h in History,
                   where: h.address_hash == ^address_hash,
                   order_by: [
-                    desc: h.time
+                    desc: h.id
                   ],
                   select: %{
                     txid: h.txid
@@ -63,7 +63,7 @@ defmodule Neoscan.BalanceHistories do
 
     transaction_query = from e in Transaction,
                              order_by: [
-                               desc: e.block_height
+                               desc: e.id
                              ],
                              where: e.txid in ^histories,
                              select: %{
