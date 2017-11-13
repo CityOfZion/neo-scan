@@ -5,7 +5,7 @@
 <section id="asset-information" class="corner-box bar-left-blocks">
   <!-- Extra information list -->
   <ul id="extra-information" class="block-left-information-bar">
-    <li class="border-right border-bottom border-right-smaller remove-border-right-660px tooltip">
+    <li class="border-right border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Block index" %></p>
       <p class="large-detail-text"><%= number_to_delimited(@block.index) %></p>
       <span class="tooltiptext"><%= get_explanation("block_index") %></span>
@@ -15,32 +15,32 @@
       <p class="large-detail-text"><%= @block.tx_count %></p>
       <span class="tooltiptext"><%= get_explanation("block_transactions") %></span>
     </li>
-    <li class="border-bottom border-right-smaller remove-border-right-660px tooltip">
+    <li class="border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Hash" %></p>
       <p class="large-detail-text"><%= @block.hash %></p>
       <span class="tooltiptext"><%= get_explanation("block_hash") %></span>
     </li>
-    <li class="border-right border-bottom tooltip">
+    <li class="border-right border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Time" %></p>
       <p class="large-detail-text"><%= compare_time_and_get_minutes(@block.time)%></p>
       <span class="tooltiptext"><%= get_explanation("block_time") %></span>
     </li>
-    <li class="border-right border-bottom border-right-smaller remove-border-right-660px tooltip">
+    <li class="border-right border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Version" %></p>
       <p class="large-detail-text"><%= @block.version %></p>
       <span class="tooltiptext"><%= get_explanation("block_version") %></span>
     </li>
-    <li class="border-bottom tooltip">
+    <li class="border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Merkle root" %></p>
       <p class="large-detail-text"><%= @block.merkleroot %></p>
       <span class="tooltiptext"><%= get_explanation("block_merkle_root") %></span>
     </li>
-    <li class="border-right border-right-smaller remove-border-right-660px tooltip">
+    <li class="border-right border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text">Validator</p>
       <a href="<%= address_path(@conn, :index, @block.nextconsensus)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><%= @block.nextconsensus %></a>
       <span class="tooltiptext"><%= get_explanation("block_validator") %></span>
     </li>
-    <li class="border-right remove-border-right-660px remove-border-bottom-660px tooltip">
+    <li class="border-right remove-border-right-660px remove-border-bottom-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text">Size</p>
       <p class="large-detail-text"><%= number_to_delimited(@block.size) %> <%= gettext "bytes" %></p>
       <span class="tooltiptext"><%= get_explanation("block_size") %></span>
@@ -163,8 +163,8 @@
 </section>
 
 <ul id="bytecode-invocation-list">
-  <li class="corner-box remove-margin-left tooltip">
-    <div class="tooltip">
+  <li class="corner-box remove-margin-left">
+    <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <h2><%= gettext "Bytecode Invocation Script" %></h2>
       <span class="tooltiptext"><%= get_explanation("bytecode_invocation_script") %></span>
     </div>
@@ -176,8 +176,8 @@
       <% end %>
     </div>
   </li>
-  <li class="corner-box tooltip">
-    <div class="tooltip">
+  <li class="corner-box">
+    <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <h2><%= gettext "Bytecode Verification Script" %></h2>
       <span class="tooltiptext"><%= get_explanation("bytecode_verification_script") %></span>
     </div>
@@ -193,7 +193,7 @@
 
 <ul id="bytecode-invocation-list">
   <li class="corner-box remove-margin-left">
-    <div class="tooltip">
+    <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <h2><%= gettext "Opcode Invocation Script" %></h2>
       <span class="tooltiptext"><%= get_explanation("opcode_invocation_script") %></span>
     </div>
@@ -210,7 +210,7 @@
     </div>
   </li>
   <li class="corner-box">
-    <div class="tooltip">
+    <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <h2><%= gettext "Opcode Verification Script" %></h2>
       <span class="tooltiptext"><%= get_explanation("opcode_verification_script") %></span>
     </div>

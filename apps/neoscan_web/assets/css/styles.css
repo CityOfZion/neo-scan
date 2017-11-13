@@ -650,7 +650,7 @@ a:hover {
 	opacity: .5;
 }
 
-#select-address-chart, #language-dropdown {
+#select-address-chart, #language-dropdown, #tooltip-dropdown {
   color: #ffffff;
 	font-size: 14px!important;
 	text-align: left;
@@ -690,6 +690,19 @@ a:hover {
   float: right;
   margin: 0 20px 30px 0;
   width: 160px;
+}
+.tooltip-dropdown-wrapper {
+  float: right;
+  width: 145px;
+  display: inline-block;
+  margin-top: 10px;
+}
+#tooltip-label {
+  color: #4598FF;
+}
+.tooltip-dropdown-wrapper .simpleselect {
+  float: right;
+  margin: -18px 0 0 0;
 }
 
 
