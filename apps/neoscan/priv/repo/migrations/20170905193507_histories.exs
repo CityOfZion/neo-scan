@@ -17,7 +17,6 @@ defmodule Neoscan.Repo.Migrations.Histories do
     create index(:histories, [:address_hash])
     create index(:histories, [:address_id])
     create index(:histories, [:time])
-    create index(:histories, ["block_height DESC NULLS LAST"])
 
   end
 end
