@@ -60,7 +60,7 @@ window.onload = function () {
       if (home.payload.price && home.payload.price.neo && home.payload.price.gas) {
         const coinPayload = displayCoin === 'neo' ? home.payload.price.neo[displayChart] : home.payload.price.gas[displayChart]
         document.getElementById('total-tx').innerHTML = home.payload.stats.total_transactions.toLocaleString()
-        document.getElementById('total-blocks').innerHTML = home.payload.stats.total_blocks.toLocaleString()
+        document.getElementById('total-blocks').innerHTML = (home.payload.stats.total_blocks - 1).toLocaleString()
         document.getElementById('total-addresses').innerHTML = home.payload.stats.total_addresses.toLocaleString()
         document.getElementById('mkt-graph-coin-price').innerHTML = displayChart === 'usd' ? formatterTwo.format(coinPayload.PRICE) : `฿ ${formatBTC(coinPayload.PRICE)}`
         document.getElementById('mkt-cap-us').innerHTML = displayChart === 'usd' ? formatterZero.format(coinPayload.MKTCAP) : `฿ ${formatBTCLarge(coinPayload.MKTCAP)}`
