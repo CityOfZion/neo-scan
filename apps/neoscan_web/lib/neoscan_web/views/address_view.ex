@@ -17,6 +17,7 @@ defmodule NeoscanWeb.AddressView do
        )
     |> Enum.reduce(0, fn ({_asset, %{"amount" => amount}}, _acc) -> amount end)
     |> Helpers.round_or_not
+    |> number_to_delimited()
   end
 
   def get_GAS_balance(nil) do
@@ -40,7 +41,7 @@ defmodule NeoscanWeb.AddressView do
                  |> Float.to_string
                  |> Integer.parse
 
-    raw('<p class="balance-amount">#{int}<span>#{div}</span></p>')
+    raw('<p class="balance-amount">#{number_to_delimited(int)}<span>#{div}</span></p>')
   end
 
   def get_class(type) do

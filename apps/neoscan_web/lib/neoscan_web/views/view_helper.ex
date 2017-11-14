@@ -1,6 +1,7 @@
 defmodule NeoscanWeb.ViewHelper do
   @moduledoc "Contains function used in multiple views"
   use NeoscanWeb, :view
+  import Number.Delimit
   alias NeoscanMonitor.Api
   alias Neoscan.Helpers
   alias Plug.Conn
@@ -34,7 +35,7 @@ defmodule NeoscanWeb.ViewHelper do
 
     raw(
       ~s(<p class="medium-detail-text"><span class="fa fa-cubes fa-cubes-small"></span><span class="bold-text">GAS:</span> ) <> "#{
-        int
+        number_to_delimited(int)
       }" <> ~s(<span class="divisible-amount">) <> "#{div}</span></p>"
     )
   end
@@ -52,6 +53,7 @@ defmodule NeoscanWeb.ViewHelper do
        )
     |> Enum.reduce(0, fn ({_asset, %{"amount" => amount}}, _acc) -> amount end)
     |> Helpers.round_or_not
+    |> number_to_delimited()
   end
 
   def compare_time_and_get_minutes(time) do
