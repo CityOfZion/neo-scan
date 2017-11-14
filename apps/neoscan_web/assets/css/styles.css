@@ -929,6 +929,9 @@ a:hover {
   padding-bottom: 30px;
   justify-content: center;
 }
+.comparison-chart-wrap {
+  margin-left: 30px;
+}
 
 /* Jump links */
 #jump-links {
@@ -1617,6 +1620,13 @@ a:hover {
 }
 #coz-tooltip:hover {
   cursor: pointer;
+}
+#tooltip-label {
+  float: left;
+  margin-top: 30px;
+}
+.tooltip-dropdown-wrap {
+  float: right;
 }
 
 /******************************************
@@ -2748,12 +2758,22 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 555PX)
 ******************************************************************/
 
 @media screen and (max-width: 555px) {
+  #tooltip-label, .tooltip-dropdown-wrap {
+    display: none;
+  }
 
   #chart-controls {
     flex-direction: column;
   }
+  .price-chart-wrap, .comparison-chart-wrap {
+    margin: 10px;
+  }
   #zoom-out-chart {
-    margin-top: 0;
+    margin-bottom: 5px;
+    margin-top: 30px;
+  }
+  #zoom-in-chart {
+    margin-top: 30px;
   }
 
 	/* GENERAL */

@@ -60,14 +60,18 @@
   </div>
   <div id="chart-controls">
     <div id="zoom-out-chart" class="btn-primary"><%= gettext "Zoom Out -" %></div>
-    <select id="price-chart">
-      <option value="neo">NEO</option>
-      <option value="gas">GAS</option>
-    </select>
-    <select id="comparison-chart">
-      <option value="usd"><%= gettext "USD" %></option>
-      <option value="btc"><%= gettext "BTC" %></option>
-    </select>
+      <div class="price-chart-wrap">
+        <select id="price-chart">
+          <option value="neo">NEO</option>
+          <option value="gas">GAS</option>
+        </select>
+      </div>
+      <div class="comparison-chart-wrap">
+        <select id="comparison-chart">
+          <option value="usd"><%= gettext "USD" %></option>
+          <option value="btc"><%= gettext "BTC" %></option>
+        </select>
+      </div>
     <div id="zoom-in-chart" class="btn-primary"><%= gettext "Zoom In +" %></div>
   </div>
 </section>
