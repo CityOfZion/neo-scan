@@ -11,11 +11,11 @@
 <section id="wallet-graph" class="bar-left-wallet">
   <div class="individual-wallet-wrapper">
     <div class="individual-wallet-box">
-      <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> NEO balance</p>
+      <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i> NEO balance</p>
       <p class="balance-amount"><%= get_NEO_balance(@address.balance) %></p>
     </div>
     <div class="individual-wallet-box gas-balance last">
-      <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i> Gas balance</p>
+      <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> Gas balance</p>
       <div class="total-gas-balance">
         <%= get_GAS_balance(@address.balance) %>
         <p class="loading-gas">Loading Unclaimed Gas<span>.</span><span>.</span><span>.</span></p>
