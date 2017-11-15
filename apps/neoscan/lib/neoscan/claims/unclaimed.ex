@@ -28,7 +28,6 @@ defmodule Neoscan.Claims.Unclaimed do
     get_unclaimed_vouts(address_id)
     |> filter_end_height
     |> route_if_there_is_unclaimed_but_dont_add
-    |> divide(total_neo())
   end
 
   #proceed calculus if there are unclaimed results, otherwise return 0
@@ -79,7 +78,7 @@ defmodule Neoscan.Claims.Unclaimed do
                 )
                 |> Enum.reduce(0, fn (%{:gas => gas}, acc) -> acc + gas end)
 
-    round(value) * total_gas
+    round(value) * total_gas / total_neo()
   end
 
   #get all unclaimed transaction vouts
