@@ -75,7 +75,7 @@ defmodule Neoscan.Claims.Unclaimed do
                 |> Enum.reduce(0, fn (%{:gas => gas}, acc) -> acc + gas end)
 
     D.new(value * total_gas)
-    |> D.div(total_neo())
+    |> D.div(D.new(total_neo()))
     |> D.to_float()
   end
 
