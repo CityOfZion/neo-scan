@@ -75,9 +75,7 @@ defmodule Neoscan.Claims.Unclaimed do
                 )
                 |> Enum.reduce(0, fn (%{:gas => gas}, acc) -> acc + gas end)
 
-    fact = D.div(D.new(value), D.new(total_neo()))
-
-    D.mult(D.new(total_gas), D.new(fact))
+    D.mult(D.new(value), D.new(total_gas))
     |> D.div(D.new(100_000_000))
     |> D.to_float()
   end
@@ -146,10 +144,10 @@ defmodule Neoscan.Claims.Unclaimed do
     Repo.all(query)
     |> Enum.map(
          fn %{:index => index, :total_sys_fee => sys, :gas_generated => gen} ->
-           sys = sys * 100_000_000
+           sys = sys
                  |> round()
 
-           gen = gen * 100_000_000
+           gen = gen
                  |> round
            %{:index => index, :gas => sys + gen}
          end
