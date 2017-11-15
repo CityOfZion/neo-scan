@@ -6,7 +6,6 @@ defmodule Neoscan.Claims.Unclaimed do
   alias Neoscan.Vouts.Vout
   alias NeoscanMonitor.Api
   alias Neoscan.Blocks.Block
-  alias Neoscan.Helpers
 
   #total amount of available NEO
   def total_neo, do: 100_000_000
@@ -17,6 +16,11 @@ defmodule Neoscan.Claims.Unclaimed do
     get_unclaimed_vouts(address_id)
     |> add_end_height
     |> route_if_there_is_unclaimed
+    |> divide(total_neo())
+  end
+
+  defp divide(a, b) do
+    a / b
   end
 
   #calculate unclaimed gas bonus
@@ -74,9 +78,7 @@ defmodule Neoscan.Claims.Unclaimed do
                 )
                 |> Enum.reduce(0, fn (%{:gas => gas}, acc) -> acc + gas end)
 
-    D.new(value * total_gas)
-    |> D.div(D.new(total_neo()))
-    |> D.to_float()
+    value * total_gas
   end
 
   #get all unclaimed transaction vouts
