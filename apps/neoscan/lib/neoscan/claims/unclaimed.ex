@@ -1,6 +1,7 @@
 defmodule Neoscan.Claims.Unclaimed do
   @moduledoc false
   import Ecto.Query, warn: false
+  alias Decimal, as: D
   alias Neoscan.Repo
   alias Neoscan.Vouts.Vout
   alias NeoscanMonitor.Api
@@ -9,6 +10,7 @@ defmodule Neoscan.Claims.Unclaimed do
 
   #total amount of available NEO
   def total_neo, do: 100_000_000
+  D.set_context(%D.Context{D.get_context | precision: 10})
 
   #calculate unclaimed gas bonus
   def calculate_bonus(address_id) do
@@ -73,8 +75,11 @@ defmodule Neoscan.Claims.Unclaimed do
                 )
                 |> Enum.reduce(0, fn (%{:gas => gas}, acc) -> acc + gas end)
 
-    total_gas * value / total_neo()
-    |> Helpers.round_or_not
+    fact = D.div(D.new(value), D.new(total_neo()))
+
+    D.mult(D.new(total_gas), D.new(fact))
+    |> D.div(D.new(100_000_000))
+    |> D.to_float()
   end
 
   #get all unclaimed transaction vouts
@@ -141,6 +146,11 @@ defmodule Neoscan.Claims.Unclaimed do
     Repo.all(query)
     |> Enum.map(
          fn %{:index => index, :total_sys_fee => sys, :gas_generated => gen} ->
+           sys = sys * 100_000_000
+                 |> round()
+
+           gen = gen * 100_000_000
+                 |> round
            %{:index => index, :gas => sys + gen}
          end
        )
