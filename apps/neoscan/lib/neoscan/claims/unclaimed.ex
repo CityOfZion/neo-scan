@@ -28,6 +28,7 @@ defmodule Neoscan.Claims.Unclaimed do
     get_unclaimed_vouts(address_id)
     |> filter_end_height
     |> route_if_there_is_unclaimed_but_dont_add
+    |> divide(total_neo())
   end
 
   #proceed calculus if there are unclaimed results, otherwise return 0
