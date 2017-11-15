@@ -17,11 +17,6 @@ defmodule Neoscan.Claims.Unclaimed do
     get_unclaimed_vouts(address_id)
     |> add_end_height
     |> route_if_there_is_unclaimed
-    |> divide(total_neo())
-  end
-
-  defp divide(a, b) do
-    a / b
   end
 
   #calculate unclaimed gas bonus
@@ -79,7 +74,9 @@ defmodule Neoscan.Claims.Unclaimed do
                 )
                 |> Enum.reduce(0, fn (%{:gas => gas}, acc) -> acc + gas end)
 
-    value * total_gas
+    D.new(value * total_gas)
+    |> D.div(total_neo())
+    |> D.to_float()
   end
 
   #get all unclaimed transaction vouts
