@@ -187,7 +187,7 @@ window.onload = function () {
     const address_hash = document.getElementById('address_hash').innerHTML
     fetch(`/api/main_net/v1/get_unclaimed/${address_hash}`).then(res => res.json()).then(results => {
       document.getElementsByClassName('loading-gas')[0].innerHTML = ''
-      document.getElementsByClassName('unclaimed-gas')[0].innerHTML = `${results.unclaimed} Unclaimed Gas`
+      document.getElementsByClassName('unclaimed-gas')[0].innerHTML = `${results.unclaimed.toLocaleString('en-GB', {maximumFractionDigits: 8})} Unclaimed Gas`
     })
   }
 }

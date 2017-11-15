@@ -41,7 +41,6 @@ defmodule Neoscan.Mixfile do
       {:ecto, "~> 2.1"},
       {:ex_machina, "~> 2.0", only: [:test, :travis]},
       {:scrivener_ecto, "~> 1.0"},
-      {:decimal, "~> 1.0"},
     ]
   end
 

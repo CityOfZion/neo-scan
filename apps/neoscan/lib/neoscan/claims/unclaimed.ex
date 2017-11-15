@@ -1,7 +1,6 @@
 defmodule Neoscan.Claims.Unclaimed do
   @moduledoc false
   import Ecto.Query, warn: false
-  alias Decimal, as: D
   alias Neoscan.Repo
   alias Neoscan.Vouts.Vout
   alias NeoscanMonitor.Api
@@ -9,18 +8,12 @@ defmodule Neoscan.Claims.Unclaimed do
 
   #total amount of available NEO
   def total_neo, do: 100_000_000
-  D.set_context(%D.Context{D.get_context | precision: 10})
 
   #calculate unclaimed gas bonus
   def calculate_bonus(address_id) do
     get_unclaimed_vouts(address_id)
     |> add_end_height
     |> route_if_there_is_unclaimed
-    |> divide(total_neo())
-  end
-
-  defp divide(a, b) do
-    a / b
   end
 
   #calculate unclaimed gas bonus
