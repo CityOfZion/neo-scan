@@ -74,7 +74,7 @@ defmodule Neoscan.Claims.Unclaimed do
     total_gas = Enum.filter(
                   blocks_with_gas,
                   fn %{:index => index} ->
-                    index >= start_height && index <= end_height end
+                    index > start_height && index <= end_height end
                 )
                 |> Enum.reduce(0, fn (%{:gas => gas}, acc) -> acc + gas end)
 
