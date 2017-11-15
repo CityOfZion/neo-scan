@@ -18,7 +18,6 @@ defmodule Neoscan.Claims.Unclaimed do
     |> add_end_height
     |> route_if_there_is_unclaimed
     |> divide(total_neo())
-    |> Helpers.round_or_not()
   end
 
   defp divide(a, b) do
@@ -59,7 +58,7 @@ defmodule Neoscan.Claims.Unclaimed do
       unclaimed,
       fn %{:value => value} = vout -> Map.merge(vout, %{
           :unclaimed => compute_vout_bonus(vout, blocks_with_gas),
-          :value => Helpers.round_or_not(value),
+          :value => round(value),
         }) end
     )
   end
@@ -141,7 +140,7 @@ defmodule Neoscan.Claims.Unclaimed do
   #get total gas distribution amount for all blocks in a given range tuple
   def get_blocks_gas({min, max}) do
     query = from b in Block,
-                 where: b.index >= ^min and b.index <= ^max,
+                 where: b.index > ^min and b.index <= ^max,
                  select: map(b, [:index, :total_sys_fee, :gas_generated])
 
     Repo.all(query)
