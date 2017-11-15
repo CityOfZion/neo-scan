@@ -78,7 +78,7 @@ defmodule Neoscan.Claims.Unclaimed do
                 )
                 |> Enum.reduce(0, fn (%{:gas => gas}, acc) -> acc + gas end)
 
-    value * total_gas
+    round(value) * total_gas
   end
 
   #get all unclaimed transaction vouts
