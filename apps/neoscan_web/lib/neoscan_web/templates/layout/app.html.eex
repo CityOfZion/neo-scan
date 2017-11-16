@@ -107,6 +107,7 @@
 					<img src="<%= static_path(@conn, "/images/NEOSCAN_Logo.svg") %>" alt="NEOSCAN Home" title="NEOSCAN Home" class="neoscan-logo-footer" width="136px" height="27px" />
 					<p class="medium-detail-text"><%= gettext "The source code is" %> <a href="http://opensource.org/licenses/mit-license.php" alt="View MIT License" title="View MIT License" class="large-blue-link"><%= gettext "licensed" %> MIT</a></li>
 					<p class="medium-detail-text"><%= gettext "The website content is licensed" %> <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" alt="#" title="#" class="large-blue-link">CC ANS 4.0</a></p>
+					<p class="medium-detail-text"><a href="https://neoscan-testnet.io/" alt="NEOSCAN Testnet" title="NEOSCAN Testnet" class="large-blue-link"><%= gettext "City Of Zion" %>NEOSCAN Testnet</a></p>
 					<p class="medium-detail-text">&copy; 2017 <a href="http://cityofzion.io/" alt="Visit City of Zion" title="Visit City of Zion" class="large-blue-link"><%= gettext "City Of Zion" %></a></p>
 				</div>
 
