@@ -30,7 +30,6 @@ defmodule NeoscanMonitor.Server do
   end
 
   def handle_info({:first_state_update, new_state}, _state) do
-    schedule_work()
     set(:monitor, new_state.monitor)
     set(:blocks, new_state.blocks)
     set(:transactions, new_state.transactions)
@@ -47,11 +46,11 @@ defmodule NeoscanMonitor.Server do
     set(:stats, new_state.stats)
     set(:addresses, new_state.addresses)
     set(:price, new_state.price)
+    Process.send_after(self(), :broadcast, 1_000) # In 10 seconds
     {:noreply, nil}
   end
 
   def handle_info(:broadcast, state) do
-    schedule_work() # Reschedule once more
 
     {blocks, _} = get(:blocks)
                   |> Enum.split(5)
@@ -71,7 +70,4 @@ defmodule NeoscanMonitor.Server do
     {:noreply, state}
   end
 
-  defp schedule_work do
-    Process.send_after(self(), :broadcast, 1_000) # In 10 seconds
-  end
 end
