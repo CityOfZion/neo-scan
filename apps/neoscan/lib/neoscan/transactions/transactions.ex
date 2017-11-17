@@ -452,12 +452,6 @@ defmodule Neoscan.Transactions do
     Api.add_transaction(transaction, vouts)
     transaction
   end
-  def update_transaction_state(%{:type => type} = transaction, vouts)
-      when type == "PublishTransaction" or type == "InvocationTransaction" do
-    Api.add_transaction(transaction, vouts)
-    Api.add_contract(transaction, vouts)
-    transaction
-  end
   def update_transaction_state(transaction, _vouts) do
     transaction
   end

@@ -24,6 +24,7 @@ defmodule NeoscanMonitor.Worker do
   #run initial queries and fill state with all info needed in the app,
   #then sends message with new state to server module
   def init(:ok) do
+
     monitor_nodes = Utils.load()
 
     blocks = Blocks.home_blocks
@@ -33,8 +34,6 @@ defmodule NeoscanMonitor.Worker do
 
     assets = ChainAssets.list_assets
              |> Utils.get_stats
-
-    contracts = Transactions.list_contracts
 
     stats = Utils.get_general_stats()
 
@@ -56,7 +55,6 @@ defmodule NeoscanMonitor.Worker do
       :blocks => blocks,
       :transactions => transactions,
       :assets => assets,
-      :contracts => contracts,
       :stats => stats,
       :addresses => addresses,
       :price => price,
@@ -64,17 +62,16 @@ defmodule NeoscanMonitor.Worker do
 
     Process.send(
       NeoscanMonitor.Server,
-      {:state_update, new_state},
+      {:first_state_update, new_state},
       []
     )
-    schedule_nodes()
-    schedule_update()
+    Process.send_after(self(), :update, 1_000) # In 10s
+    Process.send_after(self(), :update_nodes, 1_000) # In 30s
     {:ok, new_state}
   end
 
   #update nodes and stats information
   def handle_info(:update_nodes, state) do
-    schedule_nodes() # Reschedule once more
     new_state = Map.merge(
       state,
       %{
@@ -96,13 +93,14 @@ defmodule NeoscanMonitor.Worker do
       }
     )
 
+    Process.send_after(self(), :update_nodes, 5_000) # In 10s
     {:noreply, new_state}
   end
 
   #updates the state in the server module
   def handle_info(:update, state) do
-    schedule_update() # Reschedule once more
     Process.send(Server, {:state_update, state}, [])
+    Process.send_after(self(), :update, 1_000) # In 10s
     {:noreply, state}
   end
 
@@ -112,8 +110,9 @@ defmodule NeoscanMonitor.Worker do
   end
 
   #adds a block to the state
-  def handle_cast({:add_block, block}, state) do
-    count = Enum.count(state.blocks)
+  def add_block(block) do
+    currrent = Server.get(:blocks)
+    count = Enum.count(currrent)
     new_blocks = [
                    %{
                      :index => block.index,
@@ -121,17 +120,17 @@ defmodule NeoscanMonitor.Worker do
                      :tx_count => block.tx_count,
                      :hash => block.hash,
                      :size => block.size
-                   } | state.blocks
+                   } | currrent
                  ]
                  |> Utils.cut_if_more(count)
 
-    new_state = Map.put(state, :blocks, new_blocks)
-    {:noreply, new_state}
+    Server.set(:blocks, new_blocks)
   end
 
   #adds a transaction to the state
-  def handle_cast({:add_transaction, transaction, vouts}, state) do
-    count = Enum.count(state.transactions)
+  def add_transaction(transaction, vouts) do
+    current = Server.get(:transactions)
+    count = Enum.count(current)
     clean_vouts = Enum.map(
       vouts,
       fn vout ->
@@ -161,59 +160,11 @@ defmodule NeoscanMonitor.Worker do
                            :size => transaction.size,
                            :vouts => clean_vouts,
                            :asset => transaction.asset,
-                         } | state.transactions
+                         } | current
                        ]
                        |> Utils.cut_if_more(count)
 
-    new_state = Map.put(state, :transactions, new_transactions)
-    {:noreply, new_state}
-  end
-
-  #adds an asset to the state
-  def handle_cast({:add_asset, asset}, state) do
-    new_asset = %{
-      :txid => asset.txid,
-      :admin => asset.admin,
-      :amount => asset.amount,
-      :issued => asset.issued,
-      :type => asset.type,
-      :time => asset.time,
-      :name => asset.name,
-      :owner => asset.owner,
-      :precision => asset.precision,
-    }
-
-    new_assets = [new_asset | state.assets]
-                 |> Utils.get_stats
-
-    new_state = Map.put(state, :assets, new_assets)
-    {:noreply, new_state}
-  end
-
-  #adds a contract to the state
-  def handle_cast({:add_contract, contract, vouts}, state) do
-    clean_vouts = Enum.map(
-      vouts,
-      fn vout ->
-        {:ok, result} = Morphix.atomorphiform(vout)
-        Map.put(result, :address_hash, result.address)
-        |> Map.delete(:address)
-      end
-    )
-    new_contracts = [Map.put(contract, :vouts, clean_vouts) | state.contracts]
-
-    new_state = Map.put(state, :contracts, new_contracts)
-    {:noreply, new_state}
-  end
-
-  #schedule msgs to perform updates
-  defp schedule_nodes do
-    Process.send_after(self(), :update_nodes, 30_000) # In 30s
-  end
-
-  #schedule msgs to perform updates
-  defp schedule_update do
-    Process.send_after(self(), :update, 10_000) # In 10s
+    Server.set(:transactions, new_transactions)
   end
 
 end

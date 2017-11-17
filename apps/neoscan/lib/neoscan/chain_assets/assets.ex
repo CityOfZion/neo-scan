@@ -24,11 +24,6 @@ defmodule Neoscan.ChainAssets do
   def create_asset(transaction_id, attrs) do
     Asset.changeset(transaction_id, attrs)
     |> Repo.insert!()
-    |> update_asset_state
-  end
-  def update_asset_state(asset) do
-    Api.add_asset(asset)
-    asset
   end
 
   @doc """

@@ -3,6 +3,7 @@ defmodule NeoscanMonitor.Api do
   Interface between server and worker to communicate with external modules
   """
   alias NeoscanMonitor.Server
+  alias NeoscanMonitor.Worker
   alias Neoscan.ChainAssets
 
   def get_nodes do
@@ -70,22 +71,11 @@ defmodule NeoscanMonitor.Api do
   end
 
   def add_block(block) do
-    GenServer.cast(NeoscanMonitor.Worker, {:add_block, block})
+    Worker.add_block(block)
   end
 
   def add_transaction(transaction, vouts) do
-    GenServer.cast(
-      NeoscanMonitor.Worker,
-      {:add_transaction, transaction, vouts}
-    )
-  end
-
-  def add_asset(asset) do
-    GenServer.cast(NeoscanMonitor.Worker, {:add_asset, asset})
-  end
-
-  def add_contract(contract, vouts) do
-    GenServer.cast(NeoscanMonitor.Worker, {:add_contract, contract, vouts})
+    Worker.add_transaction(transaction, vouts)
   end
 
 end
