@@ -11,115 +11,115 @@ msgstr ""
 "Language: en\n"
 
 msgid "Transactions"
-msgstr ""
+msgstr "Transações"
 
 msgid "Claimed"
-msgstr ""
+msgstr "Extrair"
 
 msgid "Balance"
-msgstr ""
+msgstr "Saldo"
 
 msgid "Unclaimed"
 msgstr ""
 
 msgid "Address ID"
-msgstr ""
+msgstr "ID do Endereço"
 
 msgid "Created"
-msgstr ""
+msgstr "Criado em"
 
-msgid "Last transaction"
-msgstr ""
+msgid "Last transactions"
+msgstr "Últimas Transações"
 
 msgid "Tokens"
 msgstr ""
 
 msgid "minutes ago"
-msgstr ""
+msgstr "minutos atrás"
 
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 msgid "Owner"
-msgstr ""
+msgstr "Dono"
 
 msgid "System"
-msgstr ""
+msgstr "Sistema"
 
 msgid "Issued"
-msgstr ""
+msgstr "Emitido"
 
 msgid "Supply"
-msgstr ""
+msgstr "Disponível"
 
 msgid "Precision"
-msgstr ""
+msgstr "Precisão"
 
 msgid "Transaction"
-msgstr ""
+msgstr "Transação"
 
 msgid "Wallet Addresses"
-msgstr ""
+msgstr "Endereço"
 
 msgid "Token"
 msgstr ""
 
 msgid "Addresses"
-msgstr ""
+msgstr "Endereços"
 
 msgid "Transaction ID"
-msgstr ""
+msgstr "ID da Transação"
 
 msgid "Block"
-msgstr ""
+msgstr "Bloco"
 
 msgid "Completed on"
-msgstr ""
+msgstr "Completado em"
 
 msgid "Contract"
-msgstr ""
+msgstr "Contrato"
 
 msgid "Gas Claim"
-msgstr ""
+msgstr "Extração de Gas"
 
 msgid "Invocation"
-msgstr ""
+msgstr "Invocação"
 
 msgid "Asset Issue"
-msgstr ""
+msgstr "Emissão de Ativo"
 
 msgid "Asset Register"
-msgstr ""
+msgstr "Registro de Ativo"
 
 msgid "Contract Publish"
-msgstr ""
+msgstr "Publicação de Contrato"
 
 msgid "Sent from"
-msgstr ""
+msgstr "Enviado de"
 
 msgid "Claimed from"
-msgstr ""
+msgstr "Extraido de"
 
 msgid "Sent to"
-msgstr ""
+msgstr "Enviado para"
 
 msgid "GAS"
 msgstr ""
 
 msgid "Data Size"
-msgstr ""
+msgstr "Tamanho dos Dados"
 
 msgid "Registered on"
-msgstr ""
+msgstr "Registrado em"
 
 msgid "More details"
-msgstr ""
+msgstr "Mais Detalhes"
 
 msgid "Block index"
-msgstr ""
+msgstr "Index do Bloco"
 
 msgid "Hash"
 msgstr ""
@@ -128,67 +128,64 @@ msgid "Merkle root"
 msgstr ""
 
 msgid "Time"
-msgstr ""
+msgstr "Data"
 
 msgid "Version"
-msgstr ""
+msgstr "Versão"
 
 msgid "bytes"
 msgstr ""
 
 msgid "Miner"
-msgstr ""
+msgstr "Minerador"
 
 msgid "Network Fee"
-msgstr ""
+msgstr "Taxa da Rede"
 
 msgid "Opcode Verification Script"
-msgstr ""
+msgstr "Opcode do Script de Verificação"
 
 msgid "Opcode Invocation Script"
-msgstr ""
+msgstr "Opcode do Script de Invocação"
 
 msgid "Bytecode Verification Script"
-msgstr ""
+msgstr "Bytecode do Script de Verificação"
 
 msgid "Bytecode Invocation Script"
-msgstr ""
-
-msgid "Block height index"
-msgstr ""
+msgstr "Bytecode do Script de Invocação"
 
 msgid "Created on"
-msgstr ""
+msgstr "Criado em"
 
 msgid "Size"
-msgstr ""
+msgstr "Tamanho"
 
 msgid "Last 5 Blocks"
-msgstr ""
+msgstr "Últimos 5 Blocos"
 
 msgid "Last 5 Transactions"
-msgstr ""
+msgstr "Últimas 5 Transações"
 
 msgid "here"
-msgstr ""
+msgstr "aqui"
 
 msgid "Assets"
-msgstr ""
+msgstr "Ativos"
 
 msgid "Blocks"
-msgstr ""
+msgstr "Blocos"
 
 msgid "licensed"
-msgstr ""
+msgstr "Licenciado"
 
 msgid "City Of Zion"
 msgstr ""
 
 msgid "The source code is"
-msgstr ""
+msgstr "O código fonte é"
 
 msgid "The website content is licensed"
-msgstr ""
+msgstr "O conteúdo desse site é licenciado"
 
 msgid "NEOSCAN API"
 msgstr ""
@@ -199,68 +196,74 @@ msgstr ""
 msgid "NEO Slack"
 msgstr ""
 
+msgid "NEO Balance"
+msgstr "Saldo de NEO"
+
+msgid "GAS Balance"
+msgstr "Saldo de GAS"
+
 msgid "Back to all transactions"
-msgstr ""
+msgstr "Voltar para Todas as Transações"
 
 msgid "Registered"
-msgstr ""
+msgstr "Registrado"
 
 msgid "Included in Block"
-msgstr ""
+msgstr "Incluída no Bloco"
 
 msgid "System Fee"
-msgstr ""
+msgstr "Taxa do Sistema"
 
 msgid "Bytecode Attributes"
-msgstr ""
+msgstr "Bytecode dos Atributos"
 
 msgid "Usage"
-msgstr ""
+msgstr "Uso"
 
 msgid "Welcome to NEOSCAN"
-msgstr ""
+msgstr "Bem Vindo ao NEOSCAN"
 
 msgid "Your home for all blockchain related information for NEO"
-msgstr ""
+msgstr "Seu lugar para informações sobre a NEO Blockchain "
 
 msgid "Total transactions"
-msgstr ""
+msgstr "Total de Transações"
 
 msgid "View all transactions"
-msgstr ""
+msgstr "Ver Todas as Transações"
 
 msgid "View transaction"
-msgstr ""
+msgstr "Ver Transação"
 
 msgid "Last block"
-msgstr ""
+msgstr "Último Bloco"
 
 msgid "View all blocks"
-msgstr ""
+msgstr "Ver Todos os Blocos"
 
 msgid "View block"
-msgstr ""
+msgstr "Ver Bloco"
 
 msgid "Wallet addresses created"
-msgstr ""
+msgstr "Endereçoes Criados"
 
 msgid "View all addresses"
-msgstr ""
+msgstr "Ver Todos os Endereços"
 
 msgid "View address"
-msgstr ""
+msgstr "Ver Endereço"
 
 msgid "24 hour change"
-msgstr ""
+msgstr "Variação em 24h"
 
 msgid "24 hour volume"
-msgstr ""
+msgstr "Volume em 24h"
 
 msgid "See all transactions"
-msgstr ""
+msgstr "Ver Todas as Transações"
 
 msgid "See all blocks"
-msgstr ""
+msgstr "Ver Todos os Blocos"
 
 msgid "Current market cap"
-msgstr ""
+msgstr "Capitalização do Mercado Atual"

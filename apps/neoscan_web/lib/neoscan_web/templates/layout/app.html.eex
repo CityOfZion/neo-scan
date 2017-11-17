@@ -43,6 +43,7 @@
 				<select id="language-dropdown" onchange="window.location.href=this.value">
   					<option <%= if get_language(@conn) == "en" do %>selected<% end %> class="select-options" value="?locale=en">English</option>
   					<option <%= if get_language(@conn) == "fr" do %>selected<% end %> class="select-options" value="?locale=fr">Français</option>
+						<option <%= if get_language(@conn) == "pt-br" do %>selected<% end %> class="select-options" value="?locale=pt-br">Português</option>
 				</select>​
 			</div>
 
@@ -52,10 +53,6 @@
           <img src="<%= static_path(@conn, "/images/NEOSCAN_Logo.svg") %>" alt="<%= gettext "NEOSCAN Home" %>" title="<%= gettext "NEOSCAN Home" %>" width="163px" height="32px" class="neoscan-logo" />
         </a>
 			</div>
-	    <!-- <div class="locale-wrapper">
-	       <a href="?locale=en" alt="English" title="English">🇬🇧</a>
-             <a href="?locale=fr" alt="Francais" title="Francais">🇫🇷</a>
-	    </div> -->
 
 			<!-- Search -->
       <%= form_for @conn, home_path(@conn, :index), [as: :search], fn f -> %>
