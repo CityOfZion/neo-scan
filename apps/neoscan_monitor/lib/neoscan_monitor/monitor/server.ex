@@ -37,6 +37,7 @@ defmodule NeoscanMonitor.Server do
     set(:stats, new_state.stats)
     set(:addresses, new_state.addresses)
     set(:price, new_state.price)
+    Process.send_after(self(), :broadcast, 10_000) # In 10 seconds
     {:noreply, nil}
   end
 
@@ -46,7 +47,6 @@ defmodule NeoscanMonitor.Server do
     set(:stats, new_state.stats)
     set(:addresses, new_state.addresses)
     set(:price, new_state.price)
-    Process.send_after(self(), :broadcast, 1_000) # In 10 seconds
     {:noreply, nil}
   end
 
@@ -67,6 +67,7 @@ defmodule NeoscanMonitor.Server do
 
     broadcast = Application.fetch_env!(:neoscan_monitor, :broadcast)
     broadcast.(payload)
+    Process.send_after(self(), :broadcast, 1_000) # In 10 seconds
     {:noreply, state}
   end
 
