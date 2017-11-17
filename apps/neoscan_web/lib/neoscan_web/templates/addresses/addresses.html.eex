@@ -1,4 +1,4 @@
-<h1 class="content-title">Wallet Addresses</h1>
+<h1 class="content-title"><%= gettext "Wallet Addresses" %></h1>
 
 <!-- All wallet addresses content -->
 <section id="all-wallet-address-wrapper">
@@ -9,7 +9,7 @@
     <p class="detail-type col-2-width"><%= gettext "Transactions" %></p>
     <p class="detail-type col-2-width"><%= gettext "Last transaction" %></p>
     <p class="detail-type col-1-width"><%= gettext "Tokens" %></p>
-    <p class="detail-type tablet-full-width">All wallet address information</p>
+    <p class="detail-type tablet-full-width"><%= gettext "All wallet address information" %></p>
   </div>
 
   <!-- Transactions -->
@@ -20,10 +20,10 @@
         <div class="full-width-bar wallet-address">
           <div class="information-wrapper">
             <p class="fa fa-key medium-detail-text"></p>
-            <a href="<%= address_path(@conn, :go_to_page, address.address, 1)%>" alt="View address" title="View address" class="large-blue-link col-4-width"><%= address.address %></a>
+            <a href="<%= address_path(@conn, :go_to_page, address.address, 1)%>" alt="<%= gettext "View address"%>" title="<%= gettext "View address"%>" class="large-blue-link col-4-width"><%= address.address %></a>
             <div class="secondary-info-wrapper">
               <p class="medium-detail-text col-2-width remove-760px">
-                <span class="tablet-detail-text">Created</span>
+                <span class="tablet-detail-text"><%= gettext "Created" %></span>
                 <%=
                   {:ok, date_time} = DateTime.from_unix(address.time, :second)
                   DateTime.to_date(date_time)
@@ -34,11 +34,11 @@
                 %>
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
-                <span class="tablet-detail-text">Transactions</span>
+                <span class="tablet-detail-text"><%= gettext "Transactions" %></span>
                 <%= number_to_delimited(address.tx_count) %>
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
-                <span class="tablet-detail-text">Last transaction</span>
+                <span class="tablet-detail-text"><%= gettext "Last transaction"%></span>
                 <%= compare_time_and_get_minutes(address.balance)%>
               </p>
             </div>
@@ -52,7 +52,7 @@
     </div>
   </section>
 
-  <p  class="number-counter">Addresses <%= get_current_min_qtd(@page) %> to <%= get_current_max_qtd(@page) %> of <%= number_to_delimited(get_total()) %></p>
+  <p  class="number-counter"><%= gettext "Addresses"%> <%= get_current_min_qtd(@page) %> to <%= get_current_max_qtd(@page) %> of <%= number_to_delimited(get_total()) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != "1" do %>

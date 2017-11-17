@@ -1,7 +1,7 @@
 
-  <h1 class="content-title">Asset Information - <%=Api.get_asset_name(@asset.txid) %></h1>
-  <p class="large-detail-text"><span class="fa fa-id-card"></span><span class="bold-text">Asset Hash</span> <span class="blue-bar">|</span> <span class="eggshell-blue-text hash"><%= @asset.txid %></span></p>
-  <a href="<%= assets_path(@conn, :index) %>" alt="Back to all transactions" title="Back to all transactions" class="back-link">Back to all assets</a>
+  <h1 class="content-title"><%= gettext "Asset Information" %> - <%=Api.get_asset_name(@asset.txid) %></h1>
+  <p class="large-detail-text"><span class="fa fa-id-card"></span><span class="bold-text"><%= gettext "Asset Hash" %></span> <span class="blue-bar">|</span> <span class="eggshell-blue-text hash"><%= @asset.txid %></span></p>
+  <a href="<%= assets_path(@conn, :index) %>" alt="<%= gettext "Back to all transactions"%>" title="<%= gettext "Back to all transactions"%>" class="back-link"><%= gettext "Back to all assets"%></a>
 
   <!-- Asset information -->
   <section id="asset-information" class="corner-box bar-left-assets">
@@ -45,7 +45,7 @@
         <p class="large-detail-text"><%= number_to_delimited(@asset.stats.addresses) %></p>
       </li>
       <li class="border-right-smaller min-height-111px remove-border-right-660px remove-border-bottom-660px">
-        <p class="small-detail-text">Created</p>
+        <p class="small-detail-text"><%= gettext "Created"%></p>
         <a href="<%=transaction_path(@conn, :index, @asset.txid )%>" alt="View asset creation" title="View asset creation" class="large-blue-link">
           <%=
             {:ok, date_time} = DateTime.from_unix(@asset.time, :second)
@@ -71,7 +71,7 @@
       <p class="detail-type col-2-width"><%= gettext "Transactions" %></p>
       <p class="detail-type col-2-width"><%= gettext "Last transaction" %></p>
       <p class="detail-type col-1-width"><%= gettext "Tokens" %></p>
-      <p class="detail-type tablet-full-width">All wallet address information</p>
+      <p class="detail-type tablet-full-width"><%= gettext "All wallet address information"%></p>
     </div>
     <section id="wallet-address-wrapper">
 
@@ -82,10 +82,10 @@
         <div class="full-width-bar wallet-address">
           <div class="information-wrapper singular-nep5-wrapper">
             <p class="fa fa-key medium-detail-text"></p>
-            <a href="<%= address_path(@conn, :index, address.address)%>" alt="View wallet address" title="View wallet address" class="large-blue-link col-4-width"><%= address.address %></a>
+            <a href="<%= address_path(@conn, :index, address.address)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link col-4-width"><%= address.address %></a>
             <div class="secondary-info-wrapper" >
               <p class="medium-detail-text col-2-width remove-760px">
-                <span class="tablet-detail-text">Created</span>
+                <span class="tablet-detail-text"><%= gettext "Created"%></span>
                 <%=
                   {:ok, date_time} = DateTime.from_unix(address.time, :second)
                   DateTime.to_date(date_time)
@@ -96,11 +96,11 @@
                 %>
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
-                <span class="tablet-detail-text">Transactions</span>
+                <span class="tablet-detail-text"><%= gettext "Transactions"%></span>
                 <%= number_to_delimited(address.tx_count) %>
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
-                <span class="tablet-detail-text">Last transaction</span>
+                <span class="tablet-detail-text"><%= gettext "Last transactions"%></span>
                 <%= compare_time_and_get_minutes(address.balance)%>
               </p>
             </div>
@@ -125,7 +125,7 @@
       <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
       <p class="detail-type col-6-width"><%= gettext "Transaction ID" %></p>
       <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
-      <p class="detail-type tablet-full-width">All transaction information</p>
+      <p class="detail-type tablet-full-width"><%= gettext "All transaction information"%></p>
     </div>
 
     <!-- Transactions -->
@@ -158,7 +158,7 @@
                 <p class="medium-detail-text col-2-width"><span class="fa fa-user-circle-o"></span><%= gettext "Miner" %></p>
               <% end %>
               <div class="secondary-info-wrapper">
-                <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-6-width"><%=transaction.txid%>&#8230;</a>
+                <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="<%= gettext "View transaction"%>" title="<%= gettext "View transaction"%>" class="large-blue-link col-6-width"><%=transaction.txid%>&#8230;</a>
                 <p class="medium-detail-text col-2-width remove-550px">
                   <%=
                     {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
@@ -213,7 +213,7 @@
                 <% end %>
               </div>
               <div class="other-transaction-information">
-                <p>Network fee: <%=transaction.net_fee%> <%= gettext "GAS" %> &middot; <%= gettext "System Fee" %>: <%=transaction.sys_fee%> <%= gettext "GAS" %> &middot; <%= gettext "Data Size" %>: <%=transaction.size%> bytes</p>
+                <p><%= gettext "Network fee"%>: <%=transaction.net_fee%> <%= gettext "GAS" %> &middot; <%= gettext "System Fee" %>: <%=transaction.sys_fee%> <%= gettext "GAS" %> &middot; <%= gettext "Data Size" %>: <%=transaction.size%> bytes</p>
               </div>
             </div>
           </div>

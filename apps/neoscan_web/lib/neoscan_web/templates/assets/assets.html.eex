@@ -1,11 +1,11 @@
-<h1 class="content-title">Assets</h1>
+<h1 class="content-title"><%= gettext "Assets"%></h1>
 
 <ul id="assets-list">
 
   <%= for asset <- @assets do %>
     <li>
       <div class="main-asset-type-wrapper">
-        <p class="small-detail-text">Asset</p>
+        <p class="small-detail-text"><%= gettext "Asset"%></p>
         <h2 class="asset-type"><%=Api.get_asset_name(asset.txid)%></h2>
       </div>
       <div class="asset-details-wrapper">

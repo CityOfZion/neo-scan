@@ -1,24 +1,24 @@
 
 <!-- Welcome -->
-<h1 class="content-title">Address Information</h1>
+<h1 class="content-title"><%= gettext "Address Information" %></h1>
 <%= content_tag :div, "", [{:data, [graph_data: Poison.encode!(@graph_data)]}, value: "value", id: "graph_data"] %>
-<p class="large-detail-text"><span class="fa fa-key address-icon"></span><span class="bold-text">Address</span> <span class="golden">|</span> <span id="address_hash" class="golden-blue-text hash"><%= @address.address %></span></p>
+<p class="large-detail-text"><span class="fa fa-key address-icon"></span><span class="bold-text"><%= gettext "Address" %></span> <span class="golden">|</span> <span id="address_hash" class="golden-blue-text hash"><%= @address.address %></span></p>
 <div class="wallet-navigation">
-  <a href="<%= addresses_path(@conn, :index) %>" class="browse-wallet-back">Back to all addresses</a>
+  <a href="<%= addresses_path(@conn, :index) %>" class="browse-wallet-back"> <%= gettext "Back to all addresses" %></a>
 </div>
 
 <!-- Market graph -->
 <section id="wallet-graph" class="bar-left-wallet">
   <div class="individual-wallet-wrapper">
     <div class="individual-wallet-box">
-      <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i> NEO balance</p>
+      <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i><%= gettext "NEO balance" %></p>
       <p class="balance-amount"><%= get_NEO_balance(@address.balance) %></p>
     </div>
     <div class="individual-wallet-box gas-balance last">
-      <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> Gas balance</p>
+      <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> <%= gettext "Gas balance" %></p>
       <div class="total-gas-balance">
         <%= get_GAS_balance(@address.balance) %>
-        <p class="loading-gas">Loading Unclaimed Gas<span>.</span><span>.</span><span>.</span></p>
+        <p class="loading-gas"><%= gettext "Loading Unclaimed Gas" %><span>.</span><span>.</span><span>.</span></p>
         <p class="unclaimed-GAS"></p>
       </div>
     </div>
@@ -32,14 +32,14 @@
 </section>
 
 <!-- Transactions -->
-<h2 class="content-title">Transactions (<%= number_to_delimited(@address.tx_count) %>)</h2>
+<h2 class="content-title"><%= gettext "Transactions" %> (<%= number_to_delimited(@address.tx_count) %>)</h2>
 <section id="all-transactions-wrapper">
 
   <div class="detail-bar">
-    <p class="detail-type detail-type-first-2-col">Type</p>
-    <p class="detail-type col-6-width">Transaction ID</p>
-    <p class="detail-type col-2-width">Completed on</p>
-    <p class="detail-type tablet-full-width">All transaction information</p>
+    <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
+    <p class="detail-type col-6-width"><%= gettext "Transaction ID" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
+    <p class="detail-type tablet-full-width"><%= gettext "All transaction information" %></p>
   </div>
 
   <!-- Transactions -->
@@ -72,7 +72,7 @@
             <p class="medium-detail-text col-2-width"><span class="fa fa-user-circle-o"></span><%= gettext "Miner" %></p>
           <% end %>
           <div class="secondary-info-wrapper">
-            <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="View transaction" title="View transaction" class="large-blue-link col-6-width"><%=transaction.txid%>&#8230;</a>
+            <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="<%= gettext "View transaction"%>" title="<%= gettext "View transaction" %>" class="large-blue-link col-6-width"><%=transaction.txid%>&#8230;</a>
             <p class="medium-detail-text col-2-width remove-550px">
               <%=
                 {:ok, date_time} = DateTime.from_unix(transaction.time, :second)

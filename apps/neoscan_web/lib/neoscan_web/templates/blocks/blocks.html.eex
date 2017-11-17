@@ -1,4 +1,4 @@
-<h1 class="content-title">Blocks</h1>
+<h1 class="content-title"><%= gettext "Blocks"%></h1>
 
 <!-- All blocks content -->
 <section id="all-blocks-wrapper">
@@ -8,7 +8,7 @@
     <p class="detail-type col-3-width"><%= gettext "Size" %></p>
     <p class="detail-type col-3-width"><%= gettext "Transactions" %></p>
     <p class="detail-type col-2-width"><%= gettext "Created on" %></p>
-    <p class="detail-type tablet-full-width">All block information</p>
+    <p class="detail-type tablet-full-width"><%= gettext "All block information"%></p>
   </div>
 
   <!-- Blocks -->
@@ -21,21 +21,21 @@
         <div class="full-width-bar block-number">
           <div class="information-wrapper">
             <p class="fa fa-signal medium-detail-text"></p>
-            <a href="<%= block_path( @conn, :index, block.hash) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width">
-              <span class="tablet-detail-text">Block: </span>
+            <a href="<%= block_path( @conn, :index, block.hash) %>" alt="<%= gettext "View block"%>" title="<%= gettext "View block"%>" class="large-blue-link col-4-width">
+              <span class="tablet-detail-text"><%= gettext "Block"%>: </span>
               <%=number_to_delimited(block.index)%>
             </a>
             <div class="secondary-info-wrapper">
               <p class="medium-detail-text col-3-width">
-                <span class="tablet-detail-text">Size: </span>
+                <span class="tablet-detail-text"><%= gettext "Size"%>: </span>
                 <%=block.size%> <%= gettext "bytes" %>
               </p>
               <p class="medium-detail-text col-3-width">
-                <span class="tablet-detail-text">Transactions: </span>
+                <span class="tablet-detail-text"><%= gettext "Transactions"%>: </span>
                 <%=block.tx_count%>
               </p>
               <p class="medium-detail-text col-2-width">
-                <span class="tablet-detail-text">Created: </span>
+                <span class="tablet-detail-text"><%= gettext "Created"%>: </span>
                 <%=
                   {:ok, date_time} = DateTime.from_unix(block.time, :second)
                   DateTime.to_date(date_time)
@@ -54,7 +54,7 @@
 
   </section>
 
-  <p  class="number-counter">Blocks <%= get_current_min_qtd(@page) %> to <%= get_current_max_qtd(@page) %> of <%= number_to_delimited(get_total()) %></p>
+  <p  class="number-counter"><%= gettext "Blocks"%> <%= get_current_min_qtd(@page) %> to <%= get_current_max_qtd(@page) %> of <%= number_to_delimited(get_total()) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != "1" do %>

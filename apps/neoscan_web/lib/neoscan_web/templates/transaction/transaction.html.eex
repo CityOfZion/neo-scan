@@ -1,4 +1,4 @@
-<h1 class="content-title">Transaction Information</h1>
+<h1 class="content-title"><%= gettext "Transaction Information"%></h1>
 
 <p class="large-detail-text">
   <span class="fa <%= get_icon(@transaction.type) %>"></span>
@@ -7,7 +7,7 @@
   <span class="eggshell-blue-text hash"><%= @transaction.txid %></span>
 </p>
 
-<a href="<%= transactions_path(@conn, :index) %>" alt="Back to all transactions" title="Back to all transactions" class="back-link"><%= gettext "Back to all transactions" %></a>
+<a href="<%= transactions_path(@conn, :index) %>" alt="<%= gettext "Back to all transactions"%>" title="<%= gettext "Back to all transactions"%>" class="back-link"><%= gettext "Back to all transactions" %></a>
 
 <section id="asset-information" class="corner-box bar-left-transactions">
 
@@ -18,7 +18,7 @@
         <p class="large-detail-text"><%= gettext "Claimed from" %></p>
         <%= for input <- @transaction.claims do %>
           <div class="individual-transaction">
-            <a href="<%= address_path(@conn, :index, input.address_hash)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= input.address_hash %></a>
+            <a href="<%= address_path(@conn, :index, input.address_hash)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= input.address_hash %></a>
             <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(input.value) %> <%= Api.get_asset_name(input.asset) %></p>
           </div>
         <% end %>
@@ -27,19 +27,19 @@
   			<p class="large-detail-text"><%= gettext "Sent from" %></p>
         <%= for input <- @transaction.vin do %>
     			<div class="individual-transaction">
-    				<a href="<%= address_path(@conn, :index, input.address_hash)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= input.address_hash %></a>
+    				<a href="<%= address_path(@conn, :index, input.address_hash)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= input.address_hash %></a>
     				<p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(input.value) %> <%= Api.get_asset_name(input.asset) %></p>
     			</div>
         <% end %>
       <% end %>
 		</div>
-		<img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" alt="Sent arrow" title="Sent arrow" class="transaction-sent-arrow" />
+		<img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" class="transaction-sent-arrow" />
     <div class="sent-to-wrapper">
       <%= if @transaction.vouts != [] do %>
     	  <p class="large-detail-text"><%= gettext "Sent to" %></p>
         <%= for vout <- @transaction.vouts do %>
     			<div class="individual-transaction">
-    				<a href="<%= address_path(@conn, :index, vout.address_hash)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vout.address_hash %></a>
+    				<a href="<%= address_path(@conn, :index, vout.address_hash)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vout.address_hash %></a>
     				<p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vout.value) %> <%= Api.get_asset_name(vout.asset) %></p>
     			</div>
         <% end %>
@@ -47,7 +47,7 @@
       <%= if @transaction.type == "RegisterTransaction" do %>
         <p class="large-detail-text"><%= gettext "Registered" %></p>
         <div class="individual-transaction">
-          <a href="<%= address_path(@conn, :index, @transaction.asset.admin)%>" alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= @transaction.asset.admin %></a>
+          <a href="<%= address_path(@conn, :index, @transaction.asset.admin)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= @transaction.asset.admin %></a>
           <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(@transaction.asset.amount) %> <%= Api.get_asset_name(@transaction.txid) %></p>
         </div>
       <% end %>
@@ -73,7 +73,7 @@
 		</li>
 		<li class="border-right border-right-smaller min-height-97px remove-border-right-660px">
 			<p class="small-detail-text"><%= gettext "Included in Block" %></p>
-			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash) %>" alt="View transaction" title="View transaction" class="large-blue-link col-4-width"><%= number_to_delimited(@transaction.block_height) %></a></p>
+			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash) %>" alt="<%= gettext "View block"%>" title="<%= gettext "View block"%>" class="large-blue-link col-4-width"><%= number_to_delimited(@transaction.block_height) %></a></p>
 		</li>
 		<li class="min-height-97px border-right remove-border-bottom-660px border-bottom-smaller tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
 			<p class="small-detail-text"><%= gettext "Size" %></p>
@@ -124,7 +124,7 @@
   <%= if @transaction.attributes != [] do %>
 		<%= for att <- @transaction.attributes do %>
 			<li class="corner-box remove-margin-left">
-				<h2><%= gettext "Atributte: " %> <%=att["usage"]%></h2>
+				<h2><%= gettext "Atributte" %>: <%=att["usage"]%></h2>
 				<div class="corner-box">
 					<p class="small-detail-text bar-left-transactions"><%= att["data"] %></p>
 				</div>
