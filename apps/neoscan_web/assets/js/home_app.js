@@ -85,19 +85,39 @@ window.onload = function () {
 
     createHomeChart(displayCoin, displayChart, displayTime)
 
-    const priceDropdown = document.getElementById('price-chart')
-    const comparisonDropdown = document.getElementById('comparison-chart')
+    const gasChart = document.getElementById('gas-chart')
+    const neoChart = document.getElementById('neo-chart')
+    const btcChart = document.getElementById('btc-chart')
+    const usdChart = document.getElementById('usd-chart')
     const zoomInChart = document.getElementById('zoom-in-chart')
     const zoomOutChart = document.getElementById('zoom-out-chart')
+
+    const setRadioButton = (type) => {
+      if (type === 'neo') {
+        neoChart.classList.add('radio-active')
+        gasChart.classList.remove('radio-active')
+      } else if (type === 'gas') {
+        gasChart.classList.add('radio-active')
+        neoChart.classList.remove('radio-active')
+      } else if (type === 'usd') {
+        usdChart.classList.add('radio-active')
+        btcChart.classList.remove('radio-active')
+      } else if (type === 'btc') {
+        btcChart.classList.add('radio-active')
+        usdChart.classList.remove('radio-active')
+      }
+    }
 
     const coinClickHandler = (coin) => {
       displayCoin = coin
       document.getElementById('mkt-graph-coin').innerHTML = coin.toUpperCase()
+      setRadioButton(coin)
       return createHomeChart(coin, displayChart, displayTime)
     }
 
     const compareClickHandler = (compare) => {
       displayChart = compare
+      setRadioButton(compare)
       return createHomeChart(displayCoin, compare, displayTime)
     }
 
@@ -116,12 +136,10 @@ window.onload = function () {
       return createHomeChart(displayCoin, displayChart, displayTime)
     }
 
-    priceDropdown.onchange = function () {
-      coinClickHandler(this.value)
-    }
-    comparisonDropdown.onchange = function () {
-      compareClickHandler(this.value)
-    }
+    gasChart.onclick = () => coinClickHandler('gas')
+    neoChart.onclick = () => coinClickHandler('neo')
+    btcChart.onclick = () => compareClickHandler('btc')
+    usdChart.onclick = () => compareClickHandler('usd')
     zoomInChart.onclick = () => zoomHandler('in')
     zoomOutChart.onclick = () => zoomHandler('out')
   }
@@ -210,8 +228,6 @@ for (i = 0; i < acc.length; i++) {
 
 $('document').ready(function () {
   $('#language-dropdown').simpleselect()
-  $('#price-chart').simpleselect()
-  $('#comparison-chart').simpleselect()
 
   const $hamburger = $('.hamburger')
   $hamburger.on('click', function (e) {

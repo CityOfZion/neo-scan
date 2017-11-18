@@ -55,24 +55,25 @@
     <p class="large-detail-text stat-detail"><%= gettext "24 hour volume" %></p>
     <p id="24hvol"></p>
   </div>
+  <div id="chart-controls">
+    <div class="currency-wrapper">
+      <div class="chart-controls-label"><%= gettext "Currency" %></div>
+      <div id="usd-chart" class="btn btn-primary radio-btn radio-active"><%= gettext "USD" %></div>
+      <div id="btc-chart" class="btn btn-primary second-btn radio-btn"><%= gettext "BTC" %></div>
+    </div>
+    <div class="token-wrapper">
+      <div class="chart-controls-label"><%= gettext "Token" %></div>
+      <div id="neo-chart" class="btn btn-primary radio-btn radio-active"><%= gettext "NEO" %></div>
+      <div id="gas-chart" class="btn btn-primary second-btn radio-btn"><%= gettext "GAS" %></div>
+    </div>
+    <div class="zoom-wrapper">
+      <div class="chart-controls-label"><%= gettext "Graph Zoom" %></div>
+      <div id="zoom-out-chart" class="btn btn-primary zoom-btn"><i class="fa fa-search-minus" aria-hidden="true"></i></div>
+      <div id="zoom-in-chart" class="btn btn-primary second-btn zoom-btn"><i class="fa fa-search-plus" aria-hidden="true"></i></div>
+    </div>
+  </div>
   <div class="chart-container">
     <div id="market-chart"></div>
-  </div>
-  <div id="chart-controls">
-    <div id="zoom-out-chart" class="btn-primary"><%= gettext "Zoom Out -" %></div>
-      <div class="price-chart-wrap">
-        <select id="price-chart">
-          <option value="neo">NEO</option>
-          <option value="gas">GAS</option>
-        </select>
-      </div>
-      <div class="comparison-chart-wrap">
-        <select id="comparison-chart">
-          <option value="usd"><%= gettext "USD" %></option>
-          <option value="btc"><%= gettext "BTC" %></option>
-        </select>
-      </div>
-    <div id="zoom-in-chart" class="btn-primary"><%= gettext "Zoom In +" %></div>
   </div>
 </section>
 
