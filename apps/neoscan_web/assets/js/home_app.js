@@ -210,7 +210,6 @@ for (i = 0; i < acc.length; i++) {
 
 $('document').ready(function () {
   $('#language-dropdown').simpleselect()
-  $('#tooltip-dropdown').simpleselect()
   $('#price-chart').simpleselect()
   $('#comparison-chart').simpleselect()
 
@@ -232,4 +231,12 @@ $('document').ready(function () {
       $('.search-btn').removeClass('mobile-active')
     }
   })
+  $('.tooltip-btn').on('click', function () {
+    if ($(this).text().trim() === 'Tooltips On') {
+      window.location.href = '?tooltips=off'
+    } else if ($(this).text().trim() === 'Tooltips Off') {
+      window.location.href = '?tooltips=on'
+    }
+  })
+
 })
