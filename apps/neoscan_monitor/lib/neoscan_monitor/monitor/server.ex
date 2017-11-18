@@ -65,8 +65,13 @@ defmodule NeoscanMonitor.Server do
       "stats" => get(:stats),
     }
 
-    broadcast = Application.fetch_env!(:neoscan_monitor, :broadcast)
-    broadcast.(payload)
+    check_endpoint = function_exported?(NeoscanWeb.Endpoint, :broadcast, 3)
+
+    if check_endpoint do
+      broadcast = Application.fetch_env!(:neoscan_monitor, :broadcast)
+      broadcast.(payload)
+    end
+
     Process.send_after(self(), :broadcast, 1_000) # In 10 seconds
     {:noreply, state}
   end

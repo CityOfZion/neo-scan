@@ -106,7 +106,7 @@ defmodule Neoscan.Addresses do
     query = from a in Address,
                  where: fragment("? \\? ?", a.balance, ^asset_hash)
 
-    Repo.aggregate(query, :count, :id)
+    Repo.aggregate(query, :count, :balance)
   end
 
   @doc """

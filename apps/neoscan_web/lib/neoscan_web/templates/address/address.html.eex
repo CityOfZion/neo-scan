@@ -11,11 +11,11 @@
 <section id="wallet-graph" class="bar-left-wallet">
   <div class="individual-wallet-wrapper">
     <div class="individual-wallet-box">
-      <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i><%= gettext "NEO balance" %></p>
+      <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i><%= gettext "NEO Balance" %></p>
       <p class="balance-amount"><%= get_NEO_balance(@address.balance) %></p>
     </div>
     <div class="individual-wallet-box gas-balance last">
-      <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> <%= gettext "Gas balance" %></p>
+      <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> <%= gettext "GAS Balance" %></p>
       <div class="total-gas-balance">
         <%= get_GAS_balance(@address.balance) %>
         <p class="loading-gas"><%= gettext "Loading Unclaimed Gas" %><span>.</span><span>.</span><span>.</span></p>
@@ -137,7 +137,7 @@
 
   </section>
 
-  <p  class="number-counter">Transactions <%= get_current_min_qtd(@page, @address.tx_count) %> to <%= get_current_max_qtd(@page, @address.tx_count) %></p>
+  <p  class="number-counter"><%= gettext "Transactions"%> <%= get_current_min_qtd(@page, @address.tx_count) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @address.tx_count) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != "1" do %>

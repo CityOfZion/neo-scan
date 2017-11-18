@@ -8,19 +8,19 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Language: en\n"
+"Language: pt-br\n"
 
 msgid "Transactions"
 msgstr "Transações"
 
 msgid "Claimed"
-msgstr "Extrair"
+msgstr "Resgatado"
 
 msgid "Balance"
 msgstr "Saldo"
 
 msgid "Unclaimed"
-msgstr ""
+msgstr "Pendente"
 
 msgid "Address ID"
 msgstr "ID do Endereço"
@@ -30,6 +30,9 @@ msgstr "Criado em"
 
 msgid "Last transactions"
 msgstr "Últimas Transações"
+
+msgid "Last transaction"
+msgstr "Última Transação"
 
 msgid "Tokens"
 msgstr ""
@@ -62,7 +65,7 @@ msgid "Transaction"
 msgstr "Transação"
 
 msgid "Wallet Addresses"
-msgstr "Endereço"
+msgstr "Endereços"
 
 msgid "Token"
 msgstr ""
@@ -83,7 +86,7 @@ msgid "Contract"
 msgstr "Contrato"
 
 msgid "Gas Claim"
-msgstr "Extração de Gas"
+msgstr "Resgate de Gas"
 
 msgid "Invocation"
 msgstr "Invocação"
@@ -101,7 +104,7 @@ msgid "Sent from"
 msgstr "Enviado de"
 
 msgid "Claimed from"
-msgstr "Extraido de"
+msgstr "Resgatado de"
 
 msgid "Sent to"
 msgstr "Enviado para"
@@ -136,11 +139,20 @@ msgstr "Versão"
 msgid "bytes"
 msgstr ""
 
+msgid "to"
+msgstr "a"
+
+msgid "of"
+msgstr "de"
+
 msgid "Miner"
 msgstr "Minerador"
 
 msgid "Network Fee"
 msgstr "Taxa da Rede"
+
+msgid "Transaction Information"
+msgstr "Informações da Transação"
 
 msgid "Opcode Verification Script"
 msgstr "Opcode do Script de Verificação"
@@ -169,8 +181,17 @@ msgstr "Últimas 5 Transações"
 msgid "here"
 msgstr "aqui"
 
+msgid "Address Information"
+msgstr "Informações do Endereço"
+
 msgid "Assets"
 msgstr "Ativos"
+
+msgid "Back to all addresses"
+msgstr "Voltar Para Todos os Endereços"
+
+msgid "Asset"
+msgstr "Ativo"
 
 msgid "Blocks"
 msgstr "Blocos"
@@ -182,7 +203,7 @@ msgid "City Of Zion"
 msgstr ""
 
 msgid "The source code is"
-msgstr "O código fonte é"
+msgstr "Esse código fonte é"
 
 msgid "The website content is licensed"
 msgstr "O conteúdo desse site é licenciado"
@@ -198,6 +219,42 @@ msgstr ""
 
 msgid "NEO Balance"
 msgstr "Saldo de NEO"
+
+msgid "Block Information"
+msgstr "Informações do Bloco"
+
+msgid "Back to all blocks"
+msgstr "Voltar Para Todos os Blocos"
+
+msgid "Next block"
+msgstr "Próximo Bloco"
+
+msgid "Previous block"
+msgstr "Bloco Anterior"
+
+msgid "Generated GAS"
+msgstr "GAS Gerado"
+
+msgid "Validator"
+msgstr "Verificador"
+
+msgid "Asset Information"
+msgstr "Informações do Ativo"
+
+msgid "Asset Hash"
+msgstr "Hash do Ativo"
+
+msgid "Back to all assets"
+msgstr "Voltar Para Todos os Ativos"
+
+msgid "Last 5 Wallet Addresses"
+msgstr "Últimos 5 Endereços"
+
+msgid "Loading Unclaimed Gas"
+msgstr "Carregando GAS disponível"
+
+msgid "Unclaimed Gas"
+msgstr "GAS disponível"
 
 msgid "GAS Balance"
 msgstr "Saldo de GAS"
@@ -220,11 +277,17 @@ msgstr "Bytecode dos Atributos"
 msgid "Usage"
 msgstr "Uso"
 
+msgid "Height"
+msgstr "Index"
+
 msgid "Welcome to NEOSCAN"
 msgstr "Bem Vindo ao NEOSCAN"
 
-msgid "Your home for all blockchain related information for NEO"
-msgstr "Seu lugar para informações sobre a NEO Blockchain "
+msgid "Your home for all NEO related blockchain information"
+msgstr "Seu lugar para informações sobre a NEO Blockchain"
+
+msgid "Block Height, Hash, Address or Transaction id"
+msgstr "Index de Bloco, Hash, Endereço ou ID da Transação"
 
 msgid "Total transactions"
 msgstr "Total de Transações"

@@ -4,7 +4,7 @@
 <section id="all-blocks-wrapper">
 
   <div class="detail-bar">
-    <p class="detail-type detail-type-first-4-col"><%= gettext "Block height index" %></p>
+    <p class="detail-type detail-type-first-4-col"><%= gettext "Height" %></p>
     <p class="detail-type col-3-width"><%= gettext "Size" %></p>
     <p class="detail-type col-3-width"><%= gettext "Transactions" %></p>
     <p class="detail-type col-2-width"><%= gettext "Created on" %></p>
@@ -54,7 +54,7 @@
 
   </section>
 
-  <p  class="number-counter"><%= gettext "Blocks"%> <%= get_current_min_qtd(@page) %> to <%= get_current_max_qtd(@page) %> of <%= number_to_delimited(get_total()) %></p>
+  <p  class="number-counter"><%= gettext "Blocks"%> <%= get_current_min_qtd(@page) %> <%= gettext "to"%> <%= get_current_max_qtd(@page) %> <%= gettext "of"%> <%= number_to_delimited(get_total()) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != "1" do %>

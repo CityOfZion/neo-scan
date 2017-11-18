@@ -59,7 +59,7 @@ defmodule Neoscan.Transactions do
     query = from t in Transaction,
             where: t.asset_moved == ^asset_hash
 
-    Repo.aggregate(query, :count, :id)
+    Repo.aggregate(query, :count, :asset_moved)
   end
 
   @doc """

@@ -62,7 +62,7 @@
   </section>
 
   <!-- All wallet addresses -->
-  <h1 class="content-title"><%= gettext "Wallet Addresses" %></h1>
+  <h1 class="content-title"><%= gettext "Last 5 Wallet Addresses" %></h1>
   <!-- All wallet addresses content -->
   <section id="all-wallet-address-wrapper">
     <div class="detail-bar">
@@ -82,7 +82,7 @@
         <div class="full-width-bar wallet-address">
           <div class="information-wrapper singular-nep5-wrapper">
             <p class="fa fa-key medium-detail-text"></p>
-            <a href="<%= address_path(@conn, :index, address.address)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link col-4-width"><%= address.address %></a>
+            <a href="<%= address_path(@conn, :index, address.address)%>" alt="<%= gettext "View address"%>" title="<%= gettext "View address"%>" class="large-blue-link col-4-width"><%= address.address %></a>
             <div class="secondary-info-wrapper" >
               <p class="medium-detail-text col-2-width remove-760px">
                 <span class="tablet-detail-text"><%= gettext "Created"%></span>
@@ -118,7 +118,7 @@
   </section>
 
   <!-- All transactions -->
-  <h1 class="content-title"><%= gettext "Transactions" %></h1>
+  <h1 class="content-title"><%= gettext "Last 5 Transactions" %></h1>
   <section id="all-transactions-wrapper">
 
     <div class="detail-bar">

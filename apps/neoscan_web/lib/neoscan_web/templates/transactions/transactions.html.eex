@@ -95,7 +95,7 @@
               <% end %>
             </div>
             <div class="other-transaction-information">
-              <p>Network fee: <%=transaction.net_fee%> <%= gettext "GAS" %> &middot; <%= gettext "System Fee" %>: <%=transaction.sys_fee%> <%= gettext "GAS" %> &middot; <%= gettext "Data Size" %>: <%=transaction.size%> bytes</p>
+              <p><%= gettext "Network Fee"%>: <%=transaction.net_fee%> <%= gettext "GAS" %> &middot; <%= gettext "System Fee" %>: <%=transaction.sys_fee%> <%= gettext "GAS" %> &middot; <%= gettext "Data Size" %>: <%=transaction.size%> bytes</p>
             </div>
           </div>
         </div>
@@ -105,7 +105,7 @@
 
   </section>
 
-  <p  class="number-counter"><%= gettext "Transactions"%> <%= get_current_min_qtd(@page) %> to <%= get_current_max_qtd(@page) %> of <%= number_to_delimited(get_total()) %></p>
+  <p  class="number-counter"><%= gettext "Transactions"%> <%= get_current_min_qtd(@page) %> <%= gettext "to"%> <%= get_current_max_qtd(@page) %> <%= gettext "of"%> <%= number_to_delimited(get_total()) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != "1" do %>
