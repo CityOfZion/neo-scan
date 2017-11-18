@@ -119,12 +119,9 @@
 						<a href="<%= doc_path(@conn, :index) %>" alt="<%= gettext "NEOSCAN API" %>" title="<%= gettext "NEOSCAN API" %>" class="coz-api"><%= gettext "NEOSCAN API" %></a>
 					</div>
           <div class="footer-link-wrapper">
-            <div id="tooltip-label"><%= gettext "Tooltips" %></div>
-            <div class="tooltip-dropdown-wrap">
-              <select id="tooltip-dropdown" onchange="window.location.href=this.value">
-                <option <%= if get_tooltips(@conn) == "on" do %>selected<% end %> class="select-options" value="?tooltips=on"><%= gettext "On" %></option>
-                <option <%= if get_tooltips(@conn) == "off" do %>selected<% end %> class="select-options" value="?tooltips=off"><%= gettext "Off" %></option>
-              </select>​
+            <div class="btn btn-primary tooltip-btn">
+              <%= if get_tooltips(@conn) == "on" do %><%= gettext "Tooltips On " %><i class="fa fa-eye tooltip-eye" aria-hidden="true"></i><% end %>
+              <%= if get_tooltips(@conn) == "off" do %><%= gettext "Tooltips Off " %><i class="fa fa-eye-slash tooltip-eye" aria-hidden="true"></i><% end %>
             </div>
           </div>
 				</div>
