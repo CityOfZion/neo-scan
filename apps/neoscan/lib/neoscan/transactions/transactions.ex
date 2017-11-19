@@ -43,7 +43,7 @@ defmodule Neoscan.Transactions do
     query = from t in Transaction,
             where: t.type != "MinerTransaction"
 
-    Repo.aggregate(query, :count, :id)
+    Repo.aggregate(query, :count, :type)
   end
 
   @doc """
