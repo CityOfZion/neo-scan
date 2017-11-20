@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Language: fr\n"
+"Language: en\n"
 
 msgid "Transactions"
 msgstr "Transactions"
@@ -37,9 +37,6 @@ msgstr "Tokens"
 msgid "minutes ago"
 msgstr "minutes"
 
-msgid "Showing 12 out of 120000 wallet addresses"
-msgstr "Afficher 12 sur 120000 adresses de portefeuille"
-
 msgid "Name"
 msgstr "Nom"
 
@@ -56,7 +53,7 @@ msgid "Issued"
 msgstr "Publié"
 
 msgid "Supply"
-msgstr ""
+msgstr "Offre"
 
 msgid "Precision"
 msgstr "Précision"
@@ -65,7 +62,7 @@ msgid "Transaction"
 msgstr "Transaction"
 
 msgid "Wallet Addresses"
-msgstr "Portefeuille"
+msgstr "Adresse du portefeuille"
 
 msgid "Token"
 msgstr "Token"
@@ -91,7 +88,7 @@ msgstr "Gas réclamé"
 msgid "Invocation"
 msgstr "Invocation"
 
-msgid "Asset Issued"
+msgid "Asset Issue"
 msgstr "Actif émis"
 
 msgid "Asset Register"
@@ -112,14 +109,11 @@ msgstr "Envoyé à"
 msgid "GAS"
 msgstr "GAS"
 
-msgid "Gas System Fee"
-msgstr "Frais de système GAS"
-
 msgid "Data Size"
 msgstr "Taille des données"
 
 msgid "Registered on"
-msgstr "Enregistré sur"
+msgstr "Enregistré au"
 
 msgid "More details"
 msgstr "Plus de détails"
@@ -131,7 +125,7 @@ msgid "Hash"
 msgstr "Hash"
 
 msgid "Merkle root"
-msgstr "Merkle root"
+msgstr "Racine de Merkle"
 
 msgid "Time"
 msgstr "Temps"
@@ -148,12 +142,6 @@ msgstr "Miner"
 msgid "Network Fee"
 msgstr "Frais de réseau"
 
-msgid "Showing 12 out of 120000 transactions"
-msgstr "Affichage de 12 transactions sur 120000"
-
-msgid "Load more transactions"
-msgstr "Charger plus de transactions"
-
 msgid "Opcode Verification Script"
 msgstr "Script de vérification d'opcode"
 
@@ -161,13 +149,13 @@ msgid "Opcode Invocation Script"
 msgstr "Script d'appel Opcode"
 
 msgid "Bytecode Verification Script"
-msgstr "Bytecode Verification Script"
+msgstr "Script de vérification bytecode"
 
 msgid "Bytecode Invocation Script"
 msgstr "Script d'invocation bytecode"
 
 msgid "Block height index"
-msgstr "Bloc hauteur index"
+msgstr "Index du Bloc"
 
 msgid "Created on"
 msgstr "Créé à"
@@ -175,23 +163,14 @@ msgstr "Créé à"
 msgid "Size"
 msgstr "Taile"
 
-msgid "Showing 12 out of 120000 blocks"
-msgstr "Affichage de 12 transactions sur 120000"
+msgid "Last 5 Blocks"
+msgstr "5 derniers blocs"
 
-msgid "Last Blocks"
-msgstr "Derniers blocs"
-
-msgid "Last Transactions"
-msgstr "Dernières transactions"
-
-msgid "The last reports from the dev community can be found"
-msgstr "Les derniers rapports de la communauté dev peuvent être trouvés (en)"
+msgid "Last 5 Transactions"
+msgstr "5 dernieres transactions"
 
 msgid "here"
 msgstr "ici"
-
-msgid "NeoScan ALPHA"
-msgstr "NeoScan ALPHA"
 
 msgid "Assets"
 msgstr "Actifs"
@@ -200,16 +179,16 @@ msgid "Blocks"
 msgstr "Blocs"
 
 msgid "licensed"
-msgstr "licensed"
+msgstr "autorisé"
 
 msgid "City Of Zion"
 msgstr "City Of Zion"
 
 msgid "The source code is"
-msgstr "The source code is"
+msgstr "Le code source est"
 
 msgid "The website content is licensed"
-msgstr "The website content is licensed"
+msgstr "Le contenu du site est sous licence "
 
 msgid "NEOSCAN API"
 msgstr "NEOSCAN API"
@@ -250,10 +229,16 @@ msgstr "Total des transactions"
 msgid "View all transactions"
 msgstr "Voir toutes les transactions"
 
+msgid "View transaction"
+msgstr "Voir transaction"
+
 msgid "Last block"
 msgstr "Dernier bloc"
 
 msgid "View all blocks"
+msgstr "Voir tous les blocs"
+
+msgid "View block"
 msgstr "Voir tous les blocs"
 
 msgid "Wallet addresses created"
@@ -261,6 +246,9 @@ msgstr "Adresses de portefeuille créées"
 
 msgid "View all addresses"
 msgstr "Voir toutes les adresses"
+
+msgid "View address"
+msgstr "Voir adresse"
 
 msgid "24 hour change"
 msgstr "Changement dans les dernieres 24 heures"
