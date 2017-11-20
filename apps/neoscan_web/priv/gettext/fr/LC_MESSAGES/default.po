@@ -230,7 +230,7 @@ msgid "View all transactions"
 msgstr "Voir toutes les transactions"
 
 msgid "View transaction"
-msgid "Voir transaction"
+msgstr "Voir transaction"
 
 msgid "Last block"
 msgstr "Dernier bloc"
