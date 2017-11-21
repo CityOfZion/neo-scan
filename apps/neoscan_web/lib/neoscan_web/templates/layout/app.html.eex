@@ -43,7 +43,9 @@
 				<select id="language-dropdown" onchange="window.location.href=this.value">
   					<option <%= if get_language(@conn) == "en" do %>selected<% end %> class="select-options" value="?locale=en">English</option>
   					<option <%= if get_language(@conn) == "fr" do %>selected<% end %> class="select-options" value="?locale=fr">Français</option>
-						<option <%= if get_language(@conn) == "pt-br" do %>selected<% end %> class="select-options" value="?locale=pt-br">Português</option>
+					<option <%= if get_language(@conn) == "pt-br" do %>selected<% end %> class="select-options" value="?locale=pt-br">Português</option>
+					<option <%= if get_language(@conn) == "it" do %>selected<% end %> class="select-options" value="?locale=it">Italiano</option>
+
 				</select>​
 			</div>
 
