@@ -8,7 +8,7 @@ script:
   - "mix local.hex --force"
   - "mix deps.get"
   - "MIX_ENV=travis mix test"
-  - "mix credo --strict"
+  - "MIX_ENV=travis mix credo --strict"
 services:
   - postgresql
 addons:
