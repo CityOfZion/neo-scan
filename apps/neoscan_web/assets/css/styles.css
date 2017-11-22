@@ -952,7 +952,7 @@ a:hover {
 .radio-active:before {
   margin-right: 5px;
   font-family: FontAwesome;
-  content: "\f05d";
+  content: "\f192";
 }
 .zoom-btn {
   font-size: 12px;
