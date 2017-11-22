@@ -159,7 +159,11 @@ defmodule Neoscan.Vm.Disassembler do
         push_bytes == "PUSHBYTES" ->
           "0x" <> base_args
         opcode_keyword == "APPCALL" or opcode_keyword == "TAILCALL" ->
-          String.reverse(base_args)
+          base_args
+          |> String.codepoints
+          |> Stream.chunk(2)
+          |> Enum.reverse
+          |> Enum.join
         true ->
           base_args
       end
