@@ -125,7 +125,7 @@ msgid "Hash"
 msgstr "Hash"
 
 msgid "Merkle root"
-msgstr ""
+msgstr "Merkle-Wurzel"
 
 msgid "Time"
 msgstr "Zeit"
@@ -194,10 +194,10 @@ msgid "NEOSCAN API"
 msgstr "NEOSCAN API"
 
 msgid "City of Zion Github"
-msgstr ""
+msgstr "City of Zion Github"
 
 msgid "NEO Slack"
-msgstr ""
+msgstr "NEO Slack"
 
 msgid "Back to all transactions"
 msgstr "Alle Transaktionen anzeigen"
