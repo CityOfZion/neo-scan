@@ -133,9 +133,6 @@ msgstr "bis"
 msgid "of"
 msgstr "von"
 
-msgid "Miner"
-msgstr "Minerador"
-
 msgid "Time"
 msgstr "Zeit"
 
