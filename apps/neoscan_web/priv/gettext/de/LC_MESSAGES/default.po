@@ -62,7 +62,7 @@ msgid "Transaction"
 msgstr "Transaktion"
 
 msgid "Wallet Addresses"
-msgstr "Adresse der Brieftasche"
+msgstr "Brieftaschen-Adressen"
 
 msgid "Token"
 msgstr "Token"
@@ -77,7 +77,7 @@ msgid "Block"
 msgstr "Block"
 
 msgid "Completed on"
-msgstr "Abgeschlossem am"
+msgstr "Abgeschlossen am"
 
 msgid "Contract"
 msgstr "Vertrag"
@@ -119,13 +119,19 @@ msgid "More details"
 msgstr "Weitere Informationen"
 
 msgid "Block index"
-msgstr "Block Verzeichnis"
+msgstr "Block Höhe"
 
 msgid "Hash"
 msgstr "Hash"
 
 msgid "Merkle root"
-msgstr "Merkle-Wurzel"
+msgstr ""
+
+msgid "to"
+msgstr "bis"
+
+msgid "of"
+msgstr "von"
 
 msgid "Time"
 msgstr "Zeit"
@@ -182,7 +188,7 @@ msgid "licensed"
 msgstr "lizensiert"
 
 msgid "City Of Zion"
-msgstr ""
+msgstr "City Of Zion"
 
 msgid "The source code is"
 msgstr "The Quellcode ist"
@@ -199,8 +205,26 @@ msgstr "City of Zion Github"
 msgid "NEO Slack"
 msgstr "NEO Slack"
 
+msgid "NEO Balance"
+msgstr "Saldo de NEO"
+
+msgid "Block Information"
+msgstr "Block Information"
+
+msgid "Back to all blocks"
+msgstr "Zurück zu allen Blöcken"
+
+msgid "Next block"
+msgstr "Nächster Block"
+
+msgid "Previous block"
+msgstr "Voriger Block"
+
+msgid "Generated GAS"
+msgstr "Generiertes GAS"
+
 msgid "Back to all transactions"
-msgstr "Alle Transaktionen anzeigen"
+msgstr "Zurück zu allen Transaktionen"
 
 msgid "Registered"
 msgstr "Registriert"
@@ -217,14 +241,20 @@ msgstr "Bytecode Attribute"
 msgid "Usage"
 msgstr "Nutzung"
 
+msgid "Height"
+msgstr "Höhe"
+
 msgid "Welcome to NEOSCAN"
 msgstr "Willkommen auf NEOSCAN"
 
-msgid "Your home for all blockchain related information for NEO"
-msgstr "Dein Zuhause für alle blockchain-bezogenen Informationen über NEO"
+msgid "Your home for all NEO related blockchain information"
+msgstr "Dein Zuhause für alle NEO bezogenen Blockchain-Informationen"
+
+msgid "Block Height, Hash, Address or Transaction id"
+msgstr "Block Höhe, Hash, Adresse oder Transaktions-ID"
 
 msgid "Total transactions"
-msgstr "Anzahl aller Transaktionen"
+msgstr "Gesamte Transaktionen"
 
 msgid "View all transactions"
 msgstr "Alle Transaktionen anzeigen"
@@ -233,7 +263,7 @@ msgid "View transaction"
 msgstr "Transaktion anzeigen"
 
 msgid "Last block"
-msgstr "Letzer Block"
+msgstr "Letzter Block"
 
 msgid "View all blocks"
 msgstr "Alle Blöcke anzeigen"
@@ -242,7 +272,7 @@ msgid "View block"
 msgstr "Block anzeigen"
 
 msgid "Wallet addresses created"
-msgstr "Brieftaschen-Adresse erstellt"
+msgstr "Brieftaschen-Adressen erstellt"
 
 msgid "View all addresses"
 msgstr "Alle Adressen anzeigen"
@@ -251,10 +281,10 @@ msgid "View address"
 msgstr "Adresse anzeigen"
 
 msgid "24 hour change"
-msgstr "24-Stunden Änderung"
+msgstr "24h Änderung"
 
 msgid "24 hour volume"
-msgstr "24-Stunden Volumen"
+msgstr "24h Volumen"
 
 msgid "See all transactions"
 msgstr "Alle Transaktionen anzeigen"
@@ -263,4 +293,4 @@ msgid "See all blocks"
 msgstr "Alle Blöcke ansehen"
 
 msgid "Current market cap"
-msgstr "Momentanen Marktkapitalisierung"
+msgstr "Marktkapitalisierung"
