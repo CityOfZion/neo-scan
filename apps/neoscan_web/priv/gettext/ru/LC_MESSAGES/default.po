@@ -1,0 +1,266 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: ru\n"
+
+msgid "Transactions"
+msgstr "Транзакции"
+
+msgid "Claimed"
+msgstr "Утверждено"
+
+msgid "Balance"
+msgstr "Баланс"
+
+msgid "Unclaimed"
+msgstr "Не Утверждено"
+
+msgid "Address ID"
+msgstr "Адрес ID"
+
+msgid "Created"
+msgstr "Создано"
+
+msgid "Last transaction"
+msgstr "Последняя Транзакция"
+
+msgid "Tokens"
+msgstr "Токены"
+
+msgid "minutes ago"
+msgstr "минут назад"
+
+msgid "Name"
+msgstr "Имя"
+
+msgid "Type"
+msgstr "Тип"
+
+msgid "Owner"
+msgstr "Владелец"
+
+msgid "System"
+msgstr "Система"
+
+msgid "Issued"
+msgstr "Выпущено"
+
+msgid "Supply"
+msgstr "Снабжение"
+
+msgid "Precision"
+msgstr "Чёткость"
+
+msgid "Transaction"
+msgstr "Транзакция"
+
+msgid "Wallet Addresses"
+msgstr "Адрес Кошелька"
+
+msgid "Token"
+msgstr "Токен"
+
+msgid "Addresses"
+msgstr "Адреса"
+
+msgid "Transaction ID"
+msgstr "ID Транзакции"
+
+msgid "Block"
+msgstr "Блок"
+
+msgid "Completed on"
+msgstr "Завершено"
+
+msgid "Contract"
+msgstr "Контракт"
+
+msgid "Gas Claim"
+msgstr "Утвердить Gas"
+
+msgid "Invocation"
+msgstr "Вызов"
+
+msgid "Asset Issue"
+msgstr "Исход Актива"
+
+msgid "Asset Register"
+msgstr "Регистр Актива"
+
+msgid "Contract Publish"
+msgstr "Публиковать Контракт"
+
+msgid "Sent from"
+msgstr "Отправлено от"
+
+msgid "Claimed from"
+msgstr "Утверждено от"
+
+msgid "Sent to"
+msgstr "Отправлено в"
+
+msgid "GAS"
+msgstr "GAS"
+
+msgid "Data Size"
+msgstr "Размер данных"
+
+msgid "Registered on"
+msgstr "Зарегистрировано"
+
+msgid "More details"
+msgstr "Больше деталей"
+
+msgid "Block index"
+msgstr "Индекс Блока"
+
+msgid "Hash"
+msgstr "Хэш"
+
+msgid "Merkle root"
+msgstr "Merkle root"
+
+msgid "Time"
+msgstr "Время"
+
+msgid "Version"
+msgstr "Версия"
+
+msgid "bytes"
+msgstr "байтов"
+
+msgid "Miner"
+msgstr "Майнер"
+
+msgid "Network Fee"
+msgstr "Сетевой сбор"
+
+msgid "Opcode Verification Script"
+msgstr "Opcode Верификационный Скрипт"
+
+msgid "Opcode Invocation Script"
+msgstr "Opcode Вызовный Скрипт"
+
+msgid "Bytecode Verification Script"
+msgstr "Bytecode Верификационный Скрипт"
+
+msgid "Bytecode Invocation Script"
+msgstr "Bytecode Вызовный Скрипт"
+
+msgid "Block height index"
+msgstr "Индекс Высоты Блока"
+
+msgid "Created on"
+msgstr "Создано"
+
+msgid "Size"
+msgstr "Размер"
+
+msgid "Last 5 Blocks"
+msgstr "Последние 5 блоков"
+
+msgid "Last 5 Transactions"
+msgstr "Последние 5 Транзакций"
+
+msgid "here"
+msgstr "здесь"
+
+msgid "Assets"
+msgstr "Активы"
+
+msgid "Blocks"
+msgstr "Блоки"
+
+msgid "licensed"
+msgstr "лицензировано"
+
+msgid "City Of Zion"
+msgstr ""
+
+msgid "The source code is"
+msgstr "Исходный Код это"
+
+msgid "The website content is licensed"
+msgstr "Содержимое веб-сайта лицензировано"
+
+msgid "NEOSCAN API"
+msgstr "NEOSCAN API"
+
+msgid "City of Zion Github"
+msgstr "City of Zion Github"
+
+msgid "NEO Slack"
+msgstr "NEO Slack"
+
+msgid "Back to all transactions"
+msgstr "Обратно ко всем транзакциям"
+
+msgid "Registered"
+msgstr "Зарегистрирован"
+
+msgid "Included in Block"
+msgstr "Включено в Блок"
+
+msgid "System Fee"
+msgstr "Системный Сбор"
+
+msgid "Bytecode Attributes"
+msgstr "Bytecode Атрибуты"
+
+msgid "Usage"
+msgstr "Применение"
+
+msgid "Welcome to NEOSCAN"
+msgstr "Добро Пожаловать в NEOSCAN"
+
+msgid "Your home for all blockchain related information for NEO"
+msgstr "Ваш дом для всей информации относящийся к NEO Blockchain"
+
+msgid "Total transactions"
+msgstr "Всего транзакций"
+
+msgid "View all transactions"
+msgstr "Смотреть все транзакции"
+
+msgid "View transaction"
+msgstr "Смотреть транзакцию"
+
+msgid "Last block"
+msgstr "Последний блок"
+
+msgid "View all blocks"
+msgstr "Смотреть все блоки"
+
+msgid "View block"
+msgstr "Смотреть блок"
+
+msgid "Wallet addresses created"
+msgstr "Адреса кошельков созданы"
+
+msgid "View all addresses"
+msgstr "Смотреть все адреса"
+
+msgid "View address"
+msgstr "Смотреть Адрес"
+
+msgid "24 hour change"
+msgstr "24-часовое изменение"
+
+msgid "24 hour volume"
+msgstr "24-часовой объем"
+
+msgid "See all transactions"
+msgstr "Смотреть все транзакции"
+
+msgid "See all blocks"
+msgstr "Смотреть все блоки"
+
+msgid "Current market cap"
+msgstr "Текущая рыночная капитализация"
