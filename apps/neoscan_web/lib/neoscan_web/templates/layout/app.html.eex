@@ -46,6 +46,9 @@
 					<option <%= if get_language(@conn) == "pt-br" do %>selected<% end %> class="select-options" value="?locale=pt-br">Português</option>
 					<option <%= if get_language(@conn) == "it" do %>selected<% end %> class="select-options" value="?locale=it">Italiano</option>
 					<option <%= if get_language(@conn) == "de" do %>selected<% end %> class="select-options" value="?locale=de">Deutsch</option>
+					<option <%= if get_language(@conn) == "ru" do %>selected<% end %> class="select-options" value="?locale=ru">Русский</option>
+					<option <%= if get_language(@conn) == "ro" do %>selected<% end %> class="select-options" value="?locale=ro">Română</option>
+
 				</select>​
 			</div>
 
