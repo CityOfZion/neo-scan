@@ -227,8 +227,6 @@ for (i = 0; i < acc.length; i++) {
 }
 
 $('document').ready(function () {
-  $('#language-dropdown').simpleselect()
-
   const $hamburger = $('.hamburger')
   $hamburger.on('click', function (e) {
     $hamburger.toggleClass('is-active')
@@ -253,6 +251,15 @@ $('document').ready(function () {
     } else if ($(this).text().trim() === 'Tooltips Off') {
       window.location.href = '?tooltips=on'
     }
+  })
+  $('#language-dropdown').on('click', function () {
+    $('.language-dropdown-options').toggle()
+  })
+  $('.language-dropdown-options li').each(function () {
+    $(this).on('click', function () {
+      const lang = $(this).attr('value');
+      window.location.href = `?locale=${lang}`
+    })
   })
 
 })

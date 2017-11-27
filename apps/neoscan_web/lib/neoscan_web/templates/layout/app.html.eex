@@ -40,16 +40,18 @@
 
 			<!-- Language selector dropdown -->
 			<div class="lang-dropdown-wrapper">
-				<select id="language-dropdown" onchange="window.location.href=this.value">
-  					<option <%= if get_language(@conn) == "en" do %>selected<% end %> class="select-options" value="?locale=en">English</option>
-  					<option <%= if get_language(@conn) == "fr" do %>selected<% end %> class="select-options" value="?locale=fr">Français</option>
-					<option <%= if get_language(@conn) == "pt-br" do %>selected<% end %> class="select-options" value="?locale=pt-br">Português</option>
-					<option <%= if get_language(@conn) == "it" do %>selected<% end %> class="select-options" value="?locale=it">Italiano</option>
-					<option <%= if get_language(@conn) == "de" do %>selected<% end %> class="select-options" value="?locale=de">Deutsch</option>
-					<option <%= if get_language(@conn) == "ru" do %>selected<% end %> class="select-options" value="?locale=ru">Русский</option>
-					<option <%= if get_language(@conn) == "ro" do %>selected<% end %> class="select-options" value="?locale=ro">Română</option>
-
-				</select>​
+        <div id="language-dropdown">
+          <div class="selected-language-text"><%= get_lang_text(@conn) %></div>
+        </div>
+				<ul class="language-dropdown-options">
+          <li value="en" class="<%= if get_language(@conn) == "en" do %>active-lang<% end %>">English</li>
+          <li value="fr" class="<%= if get_language(@conn) == "fr" do %>active-lang<% end %>">Français</li>
+          <li value="pt-br" class="<%= if get_language(@conn) == "pt-br" do %>active-lang<% end %>">Português</li>
+          <li value="it" class="<%= if get_language(@conn) == "it" do %>active-lang<% end %>">Italiano</li>
+          <li value="de" class="<%= if get_language(@conn) == "de" do %>active-lang<% end %>">Deutsch</li>
+          <li value="ru" class="<%= if get_language(@conn) == "ru" do %>active-lang<% end %>">Русский</li>
+          <li value="ro" class="<%= if get_language(@conn) == "ro" do %>active-lang<% end %>">Română</li>
+				</ul>​
 			</div>
 
 			<!-- Logo -->
