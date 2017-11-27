@@ -227,8 +227,6 @@ for (i = 0; i < acc.length; i++) {
 }
 
 $('document').ready(function () {
-  $('#language-dropdown').simpleselect()
-
   const $hamburger = $('.hamburger')
   $hamburger.on('click', function (e) {
     $hamburger.toggleClass('is-active')
