@@ -4,6 +4,16 @@ defmodule NeoscanWeb.LayoutView do
   alias Plug.Conn
   alias NeoscanWeb.ViewHelper
 
+  @languages %{
+    "en" => "English",
+    "fr" => "Français",
+    "pt-br" => "Português",
+    "it" => "Italiano",
+    "de" => "Deutsch",
+    "ru" => "Русский",
+    "ro" => "Română"
+  }
+
   def is_home_path(conn) do
     Controller.controller_module(conn) == NeoscanWeb.HomeController
   end
@@ -41,6 +51,13 @@ defmodule NeoscanWeb.LayoutView do
 
   def get_language(conn) do
     Conn.get_session(conn, "locale")
+  end
+
+  def get_lang_text(conn) do
+    case @languages[get_language(conn)] do
+      nil -> "English"
+      lang -> lang
+    end
   end
 
   def get_tooltips(conn) do

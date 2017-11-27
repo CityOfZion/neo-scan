@@ -427,7 +427,7 @@ a:hover {
 
 #navigation {
   width: 100%;
-  overflow: hidden;
+  height: 78px;
   border-bottom: 1px solid #35356b;
   position: relative;
 }
@@ -548,10 +548,11 @@ a:hover {
 *******************************************/
 
 #language-dropdown, #select-address-chart {
+  cursor: pointer;
   color: #ffffff;
 	font-size: 14px!important;
 	text-align: left;
-	width: 85px;
+	width: 95px;
   margin: 22px auto 0;
 	position: relative;
   background: transparent;
@@ -588,6 +589,28 @@ a:hover {
   margin: 0 30px 30px 0;
   width: 160px;
 }
+.language-dropdown-options {
+  display: none;
+  text-align: left;
+  width: 93px;
+  border: 1px solid #4598FF;
+  background-color: #232349;
+}
+.language-dropdown-options li {
+  cursor: pointer;
+  height: auto;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  border-top: 1px solid #4598FF;
+}
+.language-dropdown-options li:first-of-type {
+  border-top: none;
+}
+.active-lang {
+  background-color: #4598FF
+}
+
 
 
 
@@ -1805,7 +1828,7 @@ MEDIA QUERIES (MAX-WIDTH: 1160PX)
 
 ******************************************************************/
 
-@media screen and (max-width: 1180px) {
+@media screen and (max-width: 1200px) {
 
 	/* NAVIGATION */
 	/* Navigation search */
@@ -1951,6 +1974,9 @@ MEDIA QUERIES (MAX-WIDTH: 940PX)
 		box-sizing: border-box;
 		width: 100%;
 	}
+  .language-dropdown-options {
+    margin: 0 auto;
+  }
 	#navigation .nav-wrapper {
 		display: none;
 	  	width: 100%;

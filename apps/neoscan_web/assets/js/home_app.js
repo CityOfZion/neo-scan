@@ -252,5 +252,14 @@ $('document').ready(function () {
       window.location.href = '?tooltips=on'
     }
   })
+  $('#language-dropdown').on('click', function () {
+    $('.language-dropdown-options').toggle()
+  })
+  $('.language-dropdown-options li').each(function () {
+    $(this).on('click', function () {
+      const lang = $(this).attr('value');
+      window.location.href = `?locale=${lang}`
+    })
+  })
 
 })
