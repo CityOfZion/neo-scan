@@ -23,17 +23,31 @@ defmodule NeoscanWeb.TransactionsView do
     end
   end
 
-  def get_current_min_qtd(page) do
-    %{:total_transactions => total} = Api.get_stats
-    if total < 15 do
-      0
+  def get_current_min_qtd(page, type) do
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
+
+    total =
+      case type do
+        nil -> total
+        txType -> Map.get(filtered_totals, String.capitalize(txType) <> "Transaction")
+      end
+
+    if total == 0 do
+      1
     else
       (String.to_integer(page) - 1) * 15 + 1
     end
   end
 
-  def get_current_max_qtd(page) do
-    %{:total_transactions => total} = Api.get_stats
+  def get_current_max_qtd(page, type) do
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
+
+    total =
+      case type do
+        nil -> total
+        txType -> Map.get(filtered_totals, String.capitalize(txType) <> "Transaction")
+      end
+
     cond do
       total < 15 ->
         total
@@ -88,11 +102,17 @@ defmodule NeoscanWeb.TransactionsView do
     end
   end
 
-  def check_last(page) do
-    %{:total_transactions => total} = Api.get_stats
-
+  def check_last(page, type) do
     int = page
-          |> String.to_integer
+      |> String.to_integer
+
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
+
+    total =
+      case type do
+        nil -> total
+        txType -> Map.get(filtered_totals, String.capitalize(txType) <> "Transaction")
+      end
 
     if int * 15 < total do
       true

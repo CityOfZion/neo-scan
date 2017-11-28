@@ -121,13 +121,13 @@
 
   </section>
 
-  <p  class="number-counter"><%= gettext "Transactions"%> <%= get_current_min_qtd(@page) %> <%= gettext "to"%> <%= get_current_max_qtd(@page) %> <%= gettext "of"%> <%= number_to_delimited(get_total(@type)) %></p>
+  <p  class="number-counter"><%= gettext "Transactions"%> <%= get_current_min_qtd(@page, @type) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @type) %> <%= gettext "of"%> <%= number_to_delimited(get_total(@type)) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != "1" do %>
         <%= get_previous_page(@conn, @page, @type) %>
       <% end %>
-      <%= if check_last(@page) do %>
+      <%= if check_last(@page, @type) do %>
         <%= get_next_page(@conn, @page, @type) %>
       <% end %>
     </div>

@@ -122,18 +122,5 @@ defmodule Neoscan.Helpers do
       Float.round(value, 8)
     end
   end
-  def format_type_list(type_list) do
-    case length(type_list) do
-      1 ->
-        formattedType =
-          type_list
-          |> Enum.at(0)
-          |> String.capitalize()
-          |> Kernel.<>("Transaction")
-
-        [formattedType]
-      _ -> type_list
-    end
-  end
 
 end

@@ -14,7 +14,6 @@ defmodule Neoscan.Transactions do
   alias Neoscan.ChainAssets
   alias Neoscan.Addresses
   alias Neoscan.Vouts
-  alias Neoscan.Helpers
 
   require Logger
 
@@ -169,7 +168,18 @@ defmodule Neoscan.Transactions do
 
   """
   def paginate_transactions(pag, type_list \\ @type_list) do
-    type_list = Helpers.format_type_list(type_list)
+    type_list =
+      case length(type_list) do
+        1 ->
+          formatted_type =
+            type_list
+            |> Enum.at(0)
+            |> String.capitalize()
+            |> Kernel.<>("Transaction")
+
+          [formatted_type]
+        _ -> type_list
+      end
     transaction_query = from e in Transaction,
                         order_by: [
                           desc: e.id
