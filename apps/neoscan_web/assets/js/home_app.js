@@ -217,7 +217,6 @@ window.onload = function () {
     $('.transactions-dropdown-options li').each(function () {
       $(this).on('click', function () {
         const type = $(this).attr('value');
-        console.log('type', type);
         if (type === 'any') {
           window.location.href = '/transactions/1'
         } else {

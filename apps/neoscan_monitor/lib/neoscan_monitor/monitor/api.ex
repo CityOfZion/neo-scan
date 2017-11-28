@@ -71,18 +71,6 @@ defmodule NeoscanMonitor.Api do
     Server.get(:stats)
   end
 
-  def get_filtered_count(type) do
-    case Server.get(:filtered_trans_count) do
-      nil -> Worker.set_filtered_count(type)
-      [stored_type, count] ->
-        if stored_type == type, do: count, else: Worker.set_filtered_count(type)
-    end
-  end
-
-  def remove_filtered_count do
-    Server.set(:filtered_trans_count, nil)
-  end
-
   def add_block(block) do
     Worker.add_block(block)
   end

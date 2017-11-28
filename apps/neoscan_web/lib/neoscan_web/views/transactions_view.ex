@@ -102,10 +102,10 @@ defmodule NeoscanWeb.TransactionsView do
   end
 
   def get_total(type)  do
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
     if type do
-      Api.get_filtered_count(type)
+      Map.get(filtered_totals, String.capitalize(type) <> "Transaction")
     else
-      %{:total_transactions => total} = Api.get_stats
       total
     end
   end

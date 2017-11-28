@@ -167,24 +167,4 @@ defmodule NeoscanMonitor.Worker do
     Server.set(:transactions, new_transactions)
   end
 
-  def set_filtered_count(type) do
-    count = Transactions.count_transactions([type])
-    Server.set(:filtered_trans_count, [type, count])
-    IO.puts "first count #{count}"
-    Process.send_after(self(), :update_filtered_count, 10_000) # In 10s
-    count
-  end
-
-  def handle_info(:update_filtered_count, state) do
-    case Server.get(:filtered_trans_count) do
-      nil -> nil
-      [type, _count] ->
-        count = Transactions.count_transactions([type])
-        IO.puts "follow on counts #{count}"
-        Server.set(:filtered_trans_count, [type, count])
-        Process.send_after(self(), :update_filtered_count, 10_000) # In 10s
-    end
-    {:noreply, state}
-  end
-
 end

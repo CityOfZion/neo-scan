@@ -51,11 +51,15 @@ defmodule Neoscan.Transactions do
 
   """
   def count_transactions(type_list \\ @type_list) do
-    type_list = Helpers.format_type_list(type_list)
-    query = from t in Transaction,
-            where: t.type in ^type_list
-
-    Repo.aggregate(query, :count, :type)
+    Enum.reduce(type_list, [%{}, 0], fn tx, acc ->
+      query = from t in Transaction,
+                where: t.type == ^tx
+      count = Repo.aggregate(query, :count, :type)
+      [
+        Map.put(Enum.at(acc, 0), tx, count),
+        Enum.at(acc, 1) + count
+      ]
+    end)
   end
 
   @doc """
