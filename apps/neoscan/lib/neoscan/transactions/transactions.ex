@@ -14,8 +14,19 @@ defmodule Neoscan.Transactions do
   alias Neoscan.ChainAssets
   alias Neoscan.Addresses
   alias Neoscan.Vouts
+  alias Neoscan.Helpers
 
   require Logger
+
+  @type_list [
+    "PublishTransaction",
+    "ContractTransaction",
+    "InvocationTransaction",
+    "IssueTransaction",
+    "RegisterTransaction",
+    "EnrollmentTransaction",
+    "ClaimTransaction"
+  ]
 
   @doc """
   Returns the list of transactions.
@@ -39,9 +50,10 @@ defmodule Neoscan.Transactions do
       50
 
   """
-  def count_transactions do
+  def count_transactions(type_list \\ @type_list) do
+    type_list = Helpers.format_type_list(type_list)
     query = from t in Transaction,
-            where: t.type != "MinerTransaction"
+            where: t.type in ^type_list
 
     Repo.aggregate(query, :count, :type)
   end
@@ -152,12 +164,13 @@ defmodule Neoscan.Transactions do
       [%Transaction{}, ...]
 
   """
-  def paginate_transactions(pag) do
+  def paginate_transactions(pag, type_list \\ @type_list) do
+    type_list = Helpers.format_type_list(type_list)
     transaction_query = from e in Transaction,
                         order_by: [
                           desc: e.id
                         ],
-                        where: e.type != "MinerTransaction",
+                        where: e.type in ^type_list,
                         select: %{
                          :id => e.id,
                          :type => e.type,

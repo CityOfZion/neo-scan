@@ -5,6 +5,7 @@ defmodule NeoscanMonitor.Api do
   alias NeoscanMonitor.Server
   alias NeoscanMonitor.Worker
   alias Neoscan.ChainAssets
+  alias Neoscan.Transactions
 
   def get_nodes do
     Server.get(:monitor)
@@ -68,6 +69,18 @@ defmodule NeoscanMonitor.Api do
 
   def get_stats do
     Server.get(:stats)
+  end
+
+  def get_filtered_count(type) do
+    case Server.get(:filtered_trans_count) do
+      nil -> Worker.set_filtered_count(type)
+      [stored_type, count] ->
+        if stored_type == type, do: count, else: Worker.set_filtered_count(type)
+    end
+  end
+
+  def remove_filtered_count do
+    Server.set(:filtered_trans_count, nil)
   end
 
   def add_block(block) do
