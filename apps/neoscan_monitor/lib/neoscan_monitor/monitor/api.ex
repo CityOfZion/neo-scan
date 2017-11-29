@@ -5,6 +5,7 @@ defmodule NeoscanMonitor.Api do
   alias NeoscanMonitor.Server
   alias NeoscanMonitor.Worker
   alias Neoscan.ChainAssets
+  alias Neoscan.Transactions
 
   def get_nodes do
     Server.get(:monitor)

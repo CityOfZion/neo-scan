@@ -65,8 +65,8 @@ defmodule NeoscanMonitor.Worker do
       {:first_state_update, new_state},
       []
     )
-    Process.send_after(self(), :update, 1_000) # In 10s
-    Process.send_after(self(), :update_nodes, 1_000) # In 30s
+    Process.send_after(self(), :update, 1_000) # In 1s
+    Process.send_after(self(), :update_nodes, 1_000) # In 1s
     {:ok, new_state}
   end
 
@@ -93,14 +93,14 @@ defmodule NeoscanMonitor.Worker do
       }
     )
 
-    Process.send_after(self(), :update_nodes, 5_000) # In 10s
+    Process.send_after(self(), :update_nodes, 5_000) # In 5s
     {:noreply, new_state}
   end
 
   #updates the state in the server module
   def handle_info(:update, state) do
     Process.send(Server, {:state_update, state}, [])
-    Process.send_after(self(), :update, 1_000) # In 10s
+    Process.send_after(self(), :update, 1_000) # In 1s
     {:noreply, state}
   end
 

@@ -23,17 +23,31 @@ defmodule NeoscanWeb.TransactionsView do
     end
   end
 
-  def get_current_min_qtd(page) do
-    %{:total_transactions => total} = Api.get_stats
-    if total < 15 do
-      0
+  def get_current_min_qtd(page, type) do
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
+
+    total =
+      case type do
+        nil -> total
+        txType -> Map.get(filtered_totals, String.capitalize(txType) <> "Transaction")
+      end
+
+    if total == 0 do
+      1
     else
       (String.to_integer(page) - 1) * 15 + 1
     end
   end
 
-  def get_current_max_qtd(page) do
-    %{:total_transactions => total} = Api.get_stats
+  def get_current_max_qtd(page, type) do
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
+
+    total =
+      case type do
+        nil -> total
+        txType -> Map.get(filtered_totals, String.capitalize(txType) <> "Transaction")
+      end
+
     cond do
       total < 15 ->
         total
@@ -44,39 +58,61 @@ defmodule NeoscanWeb.TransactionsView do
     end
   end
 
-  def get_previous_page(conn, page) do
+  def get_previous_page(conn, page, type) do
     int = page
           |> String.to_integer
 
     num = int - 1
           |> Integer.to_string
 
-    raw(
-      '<a href="#{
-        transactions_path(conn, :go_to_page, num)
-      }" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
-    )
+    if type do
+      raw(
+        '<a href="#{
+          transactions_path(conn, :filtered_transactions, type, num)
+          }" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
+      )
+    else
+      raw(
+        '<a href="#{
+          transactions_path(conn, :go_to_page, num)
+          }" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
+      )
+    end
   end
 
-  def get_next_page(conn, page) do
+  def get_next_page(conn, page, type) do
     int = page
           |> String.to_integer
 
     num = int + 1
           |> Integer.to_string
 
-    raw(
-      '<a href="#{
-        transactions_path(conn, :go_to_page, num)
-      }" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
-    )
+    if type do
+      raw(
+        '<a href="#{
+          transactions_path(conn, :filtered_transactions, type, num)
+        }" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
+      )
+    else
+      raw(
+        '<a href="#{
+          transactions_path(conn, :go_to_page, num)
+        }" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
+      )
+    end
   end
 
-  def check_last(page) do
-    %{:total_transactions => total} = Api.get_stats
-
+  def check_last(page, type) do
     int = page
-          |> String.to_integer
+      |> String.to_integer
+
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
+
+    total =
+      case type do
+        nil -> total
+        txType -> Map.get(filtered_totals, String.capitalize(txType) <> "Transaction")
+      end
 
     if int * 15 < total do
       true
@@ -85,9 +121,13 @@ defmodule NeoscanWeb.TransactionsView do
     end
   end
 
-  def get_total  do
-    %{:total_transactions => total} = Api.get_stats
-    total
+  def get_total(type)  do
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
+    if type do
+      Map.get(filtered_totals, String.capitalize(type) <> "Transaction")
+    else
+      total
+    end
   end
 
 end

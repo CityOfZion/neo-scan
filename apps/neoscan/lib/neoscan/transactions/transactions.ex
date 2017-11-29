@@ -17,6 +17,16 @@ defmodule Neoscan.Transactions do
 
   require Logger
 
+  @type_list [
+    "PublishTransaction",
+    "ContractTransaction",
+    "InvocationTransaction",
+    "IssueTransaction",
+    "RegisterTransaction",
+    "EnrollmentTransaction",
+    "ClaimTransaction"
+  ]
+
   @doc """
   Returns the list of transactions.
 
@@ -39,11 +49,16 @@ defmodule Neoscan.Transactions do
       50
 
   """
-  def count_transactions do
-    query = from t in Transaction,
-            where: t.type != "MinerTransaction"
-
-    Repo.aggregate(query, :count, :type)
+  def count_transactions(type_list \\ @type_list) do
+    Enum.reduce(type_list, [%{}, 0], fn tx, acc ->
+      query = from t in Transaction,
+                where: t.type == ^tx
+      count = Repo.aggregate(query, :count, :type)
+      [
+        Map.put(Enum.at(acc, 0), tx, count),
+        Enum.at(acc, 1) + count
+      ]
+    end)
   end
 
   @doc """
@@ -152,12 +167,24 @@ defmodule Neoscan.Transactions do
       [%Transaction{}, ...]
 
   """
-  def paginate_transactions(pag) do
+  def paginate_transactions(pag, type_list \\ @type_list) do
+    type_list =
+      case length(type_list) do
+        1 ->
+          formatted_type =
+            type_list
+            |> Enum.at(0)
+            |> String.capitalize()
+            |> Kernel.<>("Transaction")
+
+          [formatted_type]
+        _ -> type_list
+      end
     transaction_query = from e in Transaction,
                         order_by: [
                           desc: e.id
                         ],
-                        where: e.type != "MinerTransaction",
+                        where: e.type in ^type_list,
                         select: %{
                          :id => e.id,
                          :type => e.type,

@@ -208,6 +208,23 @@ window.onload = function () {
       document.getElementsByClassName('unclaimed-gas')[0].innerHTML = `${results.unclaimed.toLocaleString('en-GB', {maximumFractionDigits: 8})} Unclaimed Gas`
     })
   }
+
+  // transactions page
+  if (window.location.pathname.startsWith('/transactions/')) {
+    $('#transactions-dropdown').on('click', function () {
+      $('.transactions-dropdown-options').toggle()
+    })
+    $('.transactions-dropdown-options li').each(function () {
+      $(this).on('click', function () {
+        const type = $(this).attr('value');
+        if (type === 'any') {
+          window.location.href = '/transactions/1'
+        } else {
+          window.location.href = `/transactions/type/${type}/1`
+        }
+      })
+    })
+  }
 }
 
 const acc = document.getElementsByClassName('btn-accordion')

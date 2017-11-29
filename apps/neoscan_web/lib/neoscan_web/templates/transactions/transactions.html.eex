@@ -1,4 +1,20 @@
-<h1 class="content-title"><%= gettext "Transactions"%></h1>
+<h1 class="transactions-content-title"><%= gettext "Transactions"%></h1>
+
+<div class="transactions-dropdown-wrapper">
+  <div id="transactions-dropdown">
+    <div class="selected-transaction-text"><%= if @type, do: String.capitalize(@type), else: "Any" %></div>
+  </div>
+  <ul class="transactions-dropdown-options">
+    <li value="any" class="<%= if @type == nil do %>active-trans<% end %>">Any</li>
+    <li value="contract" class="<%= if @type == "contract" do %>active-trans<% end %>">Contract</li>
+    <li value="invocation" class="<%= if @type == "invocation" do %>active-trans<% end %>">Invocation</li>
+    <li value="publish" class="<%= if @type == "publish" do %>active-trans<% end %>">Publish</li>
+    <li value="issue" class="<%= if @type == "issue" do %>active-trans<% end %>">Issue</li>
+    <li value="register" class="<%= if @type == "register" do %>active-trans<% end %>">Register</li>
+    <li value="claim" class="<%= if @type == "claim" do %>active-trans<% end %>">Claim</li>
+    <!-- <li value="enrollment" class="<%= if @type == "enrollment" do %>active-trans<% end %>">Enrollment</li> -->
+  </ul>​
+</div>
 
 <!-- All transactions content -->
 <section id="all-transactions-wrapper">
@@ -105,14 +121,14 @@
 
   </section>
 
-  <p  class="number-counter"><%= gettext "Transactions"%> <%= get_current_min_qtd(@page) %> <%= gettext "to"%> <%= get_current_max_qtd(@page) %> <%= gettext "of"%> <%= number_to_delimited(get_total()) %></p>
+  <p  class="number-counter"><%= gettext "Transactions"%> <%= get_current_min_qtd(@page, @type) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @type) %> <%= gettext "of"%> <%= number_to_delimited(get_total(@type)) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != "1" do %>
-        <%= get_previous_page(@conn, @page) %>
+        <%= get_previous_page(@conn, @page, @type) %>
       <% end %>
-      <%= if check_last(@page) do %>
-        <%= get_next_page(@conn, @page) %>
+      <%= if check_last(@page, @type) do %>
+        <%= get_next_page(@conn, @page, @type) %>
       <% end %>
     </div>
   </div>
