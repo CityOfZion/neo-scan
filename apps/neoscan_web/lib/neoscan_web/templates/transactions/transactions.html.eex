@@ -2,18 +2,18 @@
 
 <div class="transactions-dropdown-wrapper">
   <div id="transactions-dropdown">
-    <div class="selected-transaction-text"><%= if @type, do: String.capitalize(@type), else: "Any" %></div>
+    <div class="selected-transaction-text"><%= if @type, do: String.capitalize(@type), else: gettext "Any" %></div>
   </div>
   <ul class="transactions-dropdown-options">
-    <li value="any" class="<%= if @type == nil do %>active-trans<% end %>">Any</li>
-    <li value="contract" class="<%= if @type == "contract" do %>active-trans<% end %>">Contract</li>
-    <li value="invocation" class="<%= if @type == "invocation" do %>active-trans<% end %>">Invocation</li>
-    <li value="publish" class="<%= if @type == "publish" do %>active-trans<% end %>">Publish</li>
-    <li value="issue" class="<%= if @type == "issue" do %>active-trans<% end %>">Issue</li>
-    <li value="register" class="<%= if @type == "register" do %>active-trans<% end %>">Register</li>
-    <li value="claim" class="<%= if @type == "claim" do %>active-trans<% end %>">Claim</li>
+    <li value="any" class="<%= if @type == nil do %>active-trans<% end %>"><%= gettext "Any" %></li>
+    <li value="contract" class="<%= if @type == "contract" do %>active-trans<% end %>"><%= gettext "Contract" %></li>
+    <li value="invocation" class="<%= if @type == "invocation" do %>active-trans<% end %>"><%= gettext "Invocation" %></li>
+    <li value="publish" class="<%= if @type == "publish" do %>active-trans<% end %>"><%= gettext "Publish" %></li>
+    <li value="issue" class="<%= if @type == "issue" do %>active-trans<% end %>"><%= gettext "Issue" %></li>
+    <li value="register" class="<%= if @type == "register" do %>active-trans<% end %>"><%= gettext "Register" %></li>
+    <li value="claim" class="<%= if @type == "claim" do %>active-trans<% end %>"><%= gettext "Claim" %></li>
     <!-- <li value="enrollment" class="<%= if @type == "enrollment" do %>active-trans<% end %>">Enrollment</li> -->
-  </ul>​
+  </ul>
 </div>
 
 <!-- All transactions content -->
