@@ -1018,7 +1018,6 @@ a:hover {
 	background: rgba(49, 49, 100, 0.85);
 }
 #asset-information .transaction-panel {
-	max-height: 1000px;
 	border-bottom: 1px solid #3F3F7C;
 	border-top: 0;
 }
