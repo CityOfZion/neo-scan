@@ -188,7 +188,7 @@ msgid "The source code is"
 msgstr "Il codice sorgente è"
 
 msgid "The website content is licensed"
-msgstr "Il contenuto del sito e patentato"
+msgstr "Il contenuto del sito è patentato"
 
 msgid "NEOSCAN API"
 msgstr "NEOSCAN API"
@@ -219,6 +219,9 @@ msgstr "Uso"
 
 msgid "Welcome to NEOSCAN"
 msgstr "Benvenuto a NEOSCAN"
+
+msgid "Your home for all NEO related blockchain information"
+msgstr "Il tuo portale per tutte le informazioni relative alla NEO Blockchain"
 
 msgid "Your home for all blockchain related information for NEO"
 msgstr "Il tuo portale per tutte le informazioni relative alla NEO Blockchain"
@@ -263,4 +266,4 @@ msgid "See all blocks"
 msgstr "Vedi tutti i blocchi"
 
 msgid "Current market cap"
-msgstr "Capitalizzazione del Mercato Attuale"
+msgstr "Capitalizzazione del Mercato"
