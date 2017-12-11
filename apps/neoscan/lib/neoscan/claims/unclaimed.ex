@@ -138,11 +138,6 @@ defmodule Neoscan.Claims.Unclaimed do
     Repo.all(query)
     |> Enum.map(
          fn %{:index => index, :total_sys_fee => sys, :gas_generated => gen} ->
-           sys = sys
-                 |> round()
-
-           gen = gen
-                 |> round()
            %{:index => index, :gas => sys + gen}
          end
        )
