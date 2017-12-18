@@ -7,6 +7,8 @@ defmodule Neoscan.Claims.Unclaimed do
   alias NeoscanMonitor.Api
   alias Neoscan.Blocks.Block
 
+  require Logger
+
   #total amount of available NEO
   def total_neo, do: 100_000_000
 
@@ -44,16 +46,12 @@ defmodule Neoscan.Claims.Unclaimed do
     []
   end
   def route_if_there_is_unclaimed_but_dont_add(unclaimed) do
-    range = get_unclaimed_block_range(unclaimed)
-
-    blocks_with_gas = get_blocks_gas(range)
-                      |> Enum.sort_by(fn %{:index => index} -> index end)
-                      |> check_blocks(range)
-
+    blocks =  get_unclaimed_block_range(unclaimed)
+              |> verified_blocks()
     Enum.map(
       unclaimed,
       fn %{:value => value} = vout -> Map.merge(vout, %{
-          :unclaimed => compute_vout_bonus(vout, blocks_with_gas),
+          :unclaimed => compute_vout_bonus(vout, blocks),
           :value => round(value),
         }) end
     )
@@ -148,25 +146,40 @@ defmodule Neoscan.Claims.Unclaimed do
   end
 
   def check_blocks(blocks, {min, max}) do
-    count = max - min
+    count = max - min + 1
 
     cond do
       Enum.count(blocks) == count ->
         blocks
       true ->
-        verify_missing_blocks(blocks, {min,max})
-        get_blocks_gas({min, max})
+        get_missing_block(blocks, {min, max})
     end
   end
 
-  def verify_missing_blocks(blocks, {min, _max}) do
+  def verified_blocks(range) do
+    blocks_with_gas = get_blocks_gas(range)
+                      |> Enum.sort_by(fn %{:index => index} -> index end)
+                      |> check_blocks(range)
+
+    case blocks_with_gas do
+      false ->
+        verified_blocks(range)
+      _ ->
+        blocks_with_gas
+    end
+  end
+
+
+  def get_missing_block(blocks, {min, _max}) do
     blocks
-    |> Enum.reduce(min, fn (%{:index => index}, acc) ->
+    |> Enum.reduce_while(min, fn (%{:index => index}, acc) ->
       cond do
         index == acc ->
-          index + 1
+          {:cont, index + 1}
         true ->
+          Logger.info("Block #{acc} missing")
           Repair.get_and_add_missing_block_from_height(acc)
+          {:halt, false}
       end
     end)
   end
