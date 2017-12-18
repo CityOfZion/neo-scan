@@ -378,6 +378,9 @@ defmodule Neoscan.Transactions do
   """
   def get_transaction_by_hash_for_view(hash) do
     vout_query = from v in Vout,
+                      order_by: [
+                        asc: v.n
+                      ],
                       select: %{
                         asset: v.asset,
                         address_hash: v.address_hash,

@@ -2,7 +2,6 @@ defmodule NeoscanWeb.RoomChannel do
   @moduledoc false
   use Phoenix.Channel
   alias NeoscanMonitor.Api
-  alias NeoscanWeb.Endpoint
 
   def join("room:home", _payload, socket) do
     {blocks, _} = Api.get_blocks

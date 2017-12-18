@@ -2,6 +2,7 @@ defmodule Neoscan.Claims.Unclaimed do
   @moduledoc false
   import Ecto.Query, warn: false
   alias Neoscan.Repo
+  alias Neoscan.Repair
   alias Neoscan.Vouts.Vout
   alias NeoscanMonitor.Api
   alias Neoscan.Blocks.Block
@@ -43,8 +44,11 @@ defmodule Neoscan.Claims.Unclaimed do
     []
   end
   def route_if_there_is_unclaimed_but_dont_add(unclaimed) do
-    blocks_with_gas = get_unclaimed_block_range(unclaimed)
-                      |> get_blocks_gas
+    range = get_unclaimed_block_range(unclaimed)
+
+    blocks_with_gas = get_blocks_gas(range)
+                      |> Enum.sort_by(fn %{:index => index} -> index end)
+                      |> check_blocks(range)
 
     Enum.map(
       unclaimed,
@@ -132,7 +136,7 @@ defmodule Neoscan.Claims.Unclaimed do
   #get total gas distribution amount for all blocks in a given range tuple
   def get_blocks_gas({min, max}) do
     query = from b in Block,
-                 where: b.index > ^min and b.index <= ^max,
+                 where: b.index >= ^min and b.index <= ^max,
                  select: map(b, [:index, :total_sys_fee, :gas_generated])
 
     Repo.all(query)
@@ -141,6 +145,30 @@ defmodule Neoscan.Claims.Unclaimed do
            %{:index => index, :gas => sys + gen}
          end
        )
+  end
+
+  def check_blocks(blocks, {min, max}) do
+    count = max - min
+
+    cond do
+      Enum.count(blocks) == count ->
+        blocks
+      true ->
+        verify_missing_blocks(blocks, {min,max})
+        get_blocks_gas({min, max})
+    end
+  end
+
+  def verify_missing_blocks(blocks, {min, _max}) do
+    blocks
+    |> Enum.reduce(min, fn (%{:index => index}, acc) ->
+      cond do
+        index == acc ->
+          index + 1
+        true ->
+          Repair.get_and_add_missing_block_from_height(acc)
+      end
+    end)
   end
 
 end

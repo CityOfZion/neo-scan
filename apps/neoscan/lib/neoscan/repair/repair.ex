@@ -172,6 +172,16 @@ defmodule Neoscan.Repair do
     end
   end
 
+  #get a missing block from the node client, from its height
+  def get_and_add_missing_block_from_height(height) do
+    case Blockchain.get_block_by_height(HttpCalls.url(1), height) do
+      {:ok, block} ->
+        Consumer.add_block(block)
+      _ ->
+        get_and_add_missing_block_from_height(height)
+    end
+  end
+
   #adds missing transactions after verifying missing blocks
   def add_missing_transactions(:ok, tuples) do
     case Enum.any?(
