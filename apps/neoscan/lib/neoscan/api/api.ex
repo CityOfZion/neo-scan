@@ -58,7 +58,6 @@ defmodule Neoscan.Api do
           }
           ...
         ],
-        "unclaimed": float,
         "address": "hash_string"
       }
 
@@ -82,7 +81,7 @@ defmodule Neoscan.Api do
           address,
           %{
             :balance => new_balance,
-            :unclaimed => Unclaimed.calculate_bonus(address.id),
+            #:unclaimed => Unclaimed.calculate_bonus(address.id),
           }
         )
         |> Map.delete(:id)
