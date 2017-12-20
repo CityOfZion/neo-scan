@@ -37,7 +37,7 @@ defmodule NeoscanMonitor.Server do
     set(:stats, new_state.stats)
     set(:addresses, new_state.addresses)
     set(:price, new_state.price)
-    Process.send_after(self(), :broadcast, 30_000) # In 10 seconds
+    Process.send_after(self(), :broadcast, 30_000) # In 30 seconds
     {:noreply, nil}
   end
 

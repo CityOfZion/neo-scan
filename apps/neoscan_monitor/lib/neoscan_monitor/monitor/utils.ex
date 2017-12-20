@@ -104,11 +104,13 @@ defmodule NeoscanMonitor.Utils do
   end
 
   #function to get general db stats
-  def get_general_stats do
+  def get_general_stats(init \\ false) do
+    transaction_counts =
+      if init, do: Transactions.count_transactions(init), else: Transactions.count_transactions()
     %{
-      :total_blocks => Blocks.count_blocks,
-      :total_transactions => Transactions.count_transactions,
-      :total_addresses => Addresses.count_addresses,
+      :total_blocks => Blocks.count_blocks(),
+      :total_transactions => transaction_counts,
+      :total_addresses => Addresses.count_addresses(),
     }
   end
 

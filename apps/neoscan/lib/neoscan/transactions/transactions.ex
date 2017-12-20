@@ -49,25 +49,22 @@ defmodule Neoscan.Transactions do
       50
 
   """
-  def count_transactions(type_list \\ @type_list) do
-    query = from t in Transaction,
-              where: t.type in ^type_list
-    Repo.aggregate(query, :count, :type)
-  end
-
-  @doc """
-  Count total transactions in DB.
-
-  ## Examples
-
-      iex> count_transactions()
-      50
-
-  """
-  def count_transactions_for_type(type) do
-    query = from t in Transaction,
-                where: t.type == ^type
-    Repo.aggregate(query, :count, :type)
+  def count_transactions(init \\ false, type_list \\ @type_list) do
+    if init do
+      query = from t in Transaction,
+                  where: t.type in ^type_list
+      [%{}, Repo.aggregate(query, :count, :type)]
+    else
+      Enum.reduce(type_list, [%{}, 0], fn tx, acc ->
+        query = from t in Transaction,
+                  where: t.type == ^tx
+        count = Repo.aggregate(query, :count, :type)
+        [
+          Map.put(Enum.at(acc, 0), tx, count),
+          Enum.at(acc, 1) + count
+        ]
+      end)
+    end
   end
 
   @doc """
