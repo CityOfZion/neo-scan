@@ -9,6 +9,7 @@ defmodule Neoscan.Blocks do
   alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
   alias NeoscanMonitor.Api
+  alias Neoscan.Stats
 
   @doc """
   Returns the list of blocks.
@@ -219,6 +220,7 @@ defmodule Neoscan.Blocks do
   end
   def update_blocks_state(block) do
     Api.add_block(block)
+    Stats.add_block_to_table()
     block
   end
 

@@ -11,6 +11,7 @@ defmodule Neoscan.Stats.Counter do
     field :contract_transactions, :integer
     field :invocation_transactions, :integer
     field :miner_transactions, :integer
+    field :claim_transactions, :integer
     field :publish_transactions, :integer
     field :issue_transacions, :integer
     field :register_transactions, :integer
@@ -30,6 +31,7 @@ defmodule Neoscan.Stats.Counter do
                     :contract_transactions,
                     :invocation_transactions,
                     :miner_transactions,
+                    :claim_transactions,
                     :publish_transactions,
                     :issue_transactions,
                     :register_transactions,
@@ -47,6 +49,7 @@ defmodule Neoscan.Stats.Counter do
                     :contract_transactions,
                     :invocation_transactions,
                     :miner_transactions,
+                    :claim_transactions,
                     :publish_transactions,
                     :issue_transactions,
                     :register_transactions,

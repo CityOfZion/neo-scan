@@ -71,4 +71,69 @@ defmodule Neoscan.Stats do
     counter
   end
 
+  def add_block_to_table() do
+    counter = get_counter()
+    attrs = %{:total_blocks => Map.get(counter, :total_blocks) + 1}
+    update_counter(counter, attrs)
+  end
+
+  def add_transaction_to_table(transaction) do
+    counter = get_counter()
+    attrs = case Map.get(transaction, :type) do
+      "ContractTransaction" ->
+        %{
+          :total_transactions => Map.get(counter, :total_transactions) + 1,
+          :contract_transactions => Map.get(counter, :contract_transactions) + 1,
+        }
+      "InvocationTransaction" ->
+        %{
+           :total_transactions => Map.get(counter, :total_transactions) + 1,
+           :invocation_transactions => Map.get(counter, :invocation_transactions) + 1,
+         }
+      "ClaimTransaction" ->
+        %{
+           :total_transactions => Map.get(counter, :total_transactions) + 1,
+           :claim_transactions => Map.get(counter, :claim_transactions) + 1,
+         }
+      "PublishTransaction" ->
+        %{
+           :total_transactions => Map.get(counter, :total_transactions) + 1,
+           :publish_transactions => Map.get(counter, :publish_transactions) + 1,
+         }
+      "RegisterTransaction" ->
+        %{
+           :total_transactions => Map.get(counter, :total_transactions) + 1,
+           :register_transactions => Map.get(counter, :register_transactions) + 1,
+         }
+      "IssueTransaction" ->
+        %{
+           :total_transactions => Map.get(counter, :total_transactions) + 1,
+           :issue_transactions => Map.get(counter, :issue_transactions) + 1,
+         }
+      "MinerTransaction" ->
+        %{
+           :miner_transactions => Map.get(counter, :miner_transactions) + 1,
+         }
+    end
+
+    attrs = case Map.get(transaction, :asset_moved) do
+      nil ->
+        attrs
+      asset ->
+        new_map = Map.get(counter, :asset_transactions)
+                  |> Map.get_and_update(asset, fn n ->
+                    case n do
+                      nil ->
+                        1
+                      n ->
+                        n + 1
+                    end
+                  end)
+
+        Map.put(attrs, :asset_transactions, new_map)
+    end
+
+    update_counter(counter, attrs)
+  end
+
 end
