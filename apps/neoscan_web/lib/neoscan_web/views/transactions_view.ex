@@ -3,7 +3,6 @@ defmodule NeoscanWeb.TransactionsView do
   import Number.Delimit
   alias NeoscanMonitor.Api
   alias Neoscan.Helpers
-  alias Neoscan.Transactions
 
   def get_class(type) do
     cond do
@@ -25,12 +24,12 @@ defmodule NeoscanWeb.TransactionsView do
   end
 
   def get_current_min_qtd(page, type) do
-    %{:total_transactions => total} = Api.get_stats
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
 
     total =
       case type do
         nil -> total
-        txType -> Transactions.count_transactions_for_type(String.capitalize(txType) <> "Transaction")
+        txType -> Map.get(filtered_totals, String.capitalize(txType) <> "Transaction")
       end
 
     if total == 0 do
@@ -41,12 +40,12 @@ defmodule NeoscanWeb.TransactionsView do
   end
 
   def get_current_max_qtd(page, type) do
-    %{:total_transactions => total} = Api.get_stats
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
 
     total =
       case type do
         nil -> total
-        txType -> Transactions.count_transactions_for_type(String.capitalize(txType) <> "Transaction")
+        txType -> Map.get(filtered_totals, String.capitalize(txType) <> "Transaction")
       end
 
     cond do
@@ -107,12 +106,12 @@ defmodule NeoscanWeb.TransactionsView do
     int = page
       |> String.to_integer
 
-    %{:total_transactions => total} = Api.get_stats
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
 
     total =
       case type do
         nil -> total
-        txType -> Transactions.count_transactions_for_type(String.capitalize(txType) <> "Transaction")
+        txType -> Map.get(filtered_totals, String.capitalize(txType) <> "Transaction")
       end
 
     if int * 15 < total do
@@ -123,9 +122,9 @@ defmodule NeoscanWeb.TransactionsView do
   end
 
   def get_total(type)  do
-    %{:total_transactions => total} = Api.get_stats
+    %{:total_transactions => [filtered_totals, total]} = Api.get_stats
     if type do
-      Transactions.count_transactions_for_type(String.capitalize(type) <> "Transaction")
+      Map.get(filtered_totals, String.capitalize(type) <> "Transaction")
     else
       total
     end
