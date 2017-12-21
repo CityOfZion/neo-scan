@@ -14,6 +14,7 @@ defmodule Neoscan.Addresses do
   alias Neoscan.Claims
   alias Neoscan.Claims.Claim
   alias Neoscan.Helpers
+  alias Neoscan.Stats
   alias Ecto.Multi
 
   @doc """
@@ -185,6 +186,7 @@ defmodule Neoscan.Addresses do
 
   """
   def create_address(attrs \\ %{}) do
+    Stats.add_address_to_table()
     %Address{}
     |> Address.changeset(attrs)
     |> Repo.insert!()

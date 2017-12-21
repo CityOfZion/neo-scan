@@ -1,7 +1,6 @@
 defmodule NeoscanMonitor.Utils do
   @moduledoc false
   alias NeoscanSync.Blockchain
-  alias Neoscan.Blocks
   alias Neoscan.Transactions
   alias Neoscan.Addresses
   alias Neoscan.Stats
@@ -107,7 +106,7 @@ defmodule NeoscanMonitor.Utils do
   #function to get general db stats
   def get_general_stats do
     %{
-      :total_blocks => Blocks.count_blocks,
+      :total_blocks => Stats.count_blocks,
       :total_transactions => Stats.count_transactions,
       :total_addresses => Stats.count_addresses,
     }

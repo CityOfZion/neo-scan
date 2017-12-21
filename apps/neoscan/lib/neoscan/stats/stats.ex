@@ -28,6 +28,7 @@ defmodule Neoscan.Stats do
       :total_transactions=> Transactions.count_transactions(),
       :total_addresses => Addresses.count_addresses(),
       :contract_transactions => Transactions.count_transactions(["ContractTransaction"]),
+      :claim_transactions => Transactions.count_transactions(["ClaimTransaction"]),
       :invocation_transactions => Transactions.count_transactions(["InvocationTransaction"]),
       :miner_transactions => Transactions.count_transactions(["MinerTransaction"]),
       :publish_transactions => Transactions.count_transactions(["PublishTransaction"]),
@@ -137,6 +138,11 @@ defmodule Neoscan.Stats do
     update_counter(counter, attrs)
   end
 
+  def add_address_to_table() do
+    %{:total_addresses => addresses} = counter = get_counter()
+    update_counter(counter, %{:total_addresses => addresses + 1})
+  end
+
   def count_transactions() do
     counter = get_counter()
     [
@@ -147,7 +153,7 @@ defmodule Neoscan.Stats do
         "MinerTransaction" => Map.get(counter, :miner_transactions),
         "PublishTransaction" => Map.get(counter, :publish_transactions),
         "IssueTransaction" => Map.get(counter, :issue_transactions),
-        "RegistertTransaction" => Map.get(counter, :register_transactions),
+        "RegisterTransaction" => Map.get(counter, :register_transactions),
        },
       Map.get(counter, :total_transactions)
     ]
@@ -157,6 +163,11 @@ defmodule Neoscan.Stats do
   def count_addresses() do
     get_counter()
     |> Map.get(:total_addresses)
+  end
+
+  def count_blocks() do
+    get_counter()
+    |> Map.get(:total_blocks)
   end
 
   def count_transactions_for_asset(txid) do
