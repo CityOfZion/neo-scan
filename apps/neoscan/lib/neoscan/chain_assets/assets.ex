@@ -203,14 +203,24 @@ defmodule Neoscan.ChainAssets do
     end
   end
 
-  def get_assets_stats() do
+  def get_assets_stats do
     assets = list_assets()
 
     asset_addresses = assets
-                      |> Enum.reduce(%{}, fn (%{:txid => txid}, acc) -> Map.put(acc, txid, Addresses.count_addresses_for_asset(txid)) end)
+                      |> Enum.reduce(%{}, fn (%{:txid => txid}, acc) ->
+                        Map.put(acc,
+                                txid,
+                                Addresses.count_addresses_for_asset(txid)
+                                )
+                      end)
 
     asset_transactions = assets
-                      |> Enum.reduce(%{}, fn (%{:txid => txid}, acc) -> Map.put(acc, txid, Stats.count_transactions_for_asset(txid)) end)
+                      |> Enum.reduce(%{}, fn (%{:txid => txid}, acc) ->
+                        Map.put(acc,
+                                txid,
+                                Stats.count_transactions_for_asset(txid)
+                                )
+                      end)
 
     %{
      :assets_addresses => asset_addresses,

@@ -92,7 +92,7 @@ defmodule Neoscan.Stats do
       nil ->
         attrs
       asset ->
-        { _ , new_map} = Map.get(counter, :assets_transactions)
+        {_ , new_map} = Map.get(counter, :assets_transactions)
                   |> Map.get_and_update(asset, fn n ->
                     case n do
                       nil ->
@@ -155,7 +155,7 @@ defmodule Neoscan.Stats do
     update_counter(counter, %{:total_addresses => addresses + 1})
   end
 
-  def count_transactions() do
+  def count_transactions do
     counter = get_counter()
     [
       %{
