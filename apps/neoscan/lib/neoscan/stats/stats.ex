@@ -27,12 +27,12 @@ defmodule Neoscan.Stats do
       :total_blocks => Blocks.count_blocks(),
       :total_transactions=> Transactions.count_transactions(),
       :total_addresses => Addresses.count_addresses(),
-      :contract_transactions => Transactions.count_transactions(['ContractTransaction']),
-      :invocation_transactions => Transactions.count_transactions(['InvocationTransaction']),
-      :miner_transactions => Transactions.count_transactions(['MinerTransaction']),
-      :publish_transactions => Transactions.count_transactions(['PublishTransaction']),
-      :issue_transactions => Transactions.count_transactions(['IssueTransaction']),
-      :register_transactions => Transactions.count_transactions(['RegisterTransaction']),
+      :contract_transactions => Transactions.count_transactions(["ContractTransaction"]),
+      :invocation_transactions => Transactions.count_transactions(["InvocationTransaction"]),
+      :miner_transactions => Transactions.count_transactions(["MinerTransaction"]),
+      :publish_transactions => Transactions.count_transactions(["PublishTransaction"]),
+      :issue_transactions => Transactions.count_transactions(["IssueTransaction"]),
+      :register_transactions => Transactions.count_transactions(["RegisterTransaction"]),
     }
     |> Map.merge(ChainAssets.get_assets_stats())
     |> Counter.changeset()
@@ -120,20 +120,57 @@ defmodule Neoscan.Stats do
       nil ->
         attrs
       asset ->
-        new_map = Map.get(counter, :asset_transactions)
+        { _ , new_map} = Map.get(counter, :assets_transactions)
                   |> Map.get_and_update(asset, fn n ->
                     case n do
                       nil ->
-                        1
+                        {n, 1}
                       n ->
-                        n + 1
+                        {n, n + 1}
                     end
                   end)
 
-        Map.put(attrs, :asset_transactions, new_map)
+
+        Map.put(attrs, :assets_transactions, new_map)
     end
 
     update_counter(counter, attrs)
+  end
+
+  def count_transactions() do
+    counter = get_counter()
+    [
+      %{
+        "ContractTransaction" => Map.get(counter, :contract_transactions),
+        "ClaimTransaction" => Map.get(counter, :claim_transactions),
+        "InvocationTransaction" => Map.get(counter, :invocation_transactions),
+        "MinerTransaction" => Map.get(counter, :miner_transactions),
+        "PublishTransaction" => Map.get(counter, :publish_transactions),
+        "IssueTransaction" => Map.get(counter, :issue_transactions),
+        "RegistertTransaction" => Map.get(counter, :register_transactions),
+       },
+      Map.get(counter, :total_transactions)
+    ]
+
+  end
+
+  def count_addresses() do
+    get_counter()
+    |> Map.get(:total_addresses)
+  end
+
+  def count_transactions_for_asset(txid) do
+    get_counter()
+    |> Map.get(:assets_transactions)
+    |> Map.get(txid)
+    |> check_if_nil
+  end
+
+  def check_if_nil(nil) do
+    0
+  end
+  def check_if_nil(result) do
+    result
   end
 
 end

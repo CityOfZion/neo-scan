@@ -11,7 +11,7 @@ defmodule Neoscan.Repo.Migrations.Counters do
       add :miner_transactions, :integer
       add :claim_transactions, :integer
       add :publish_transactions, :integer
-      add :issue_transacions, :integer
+      add :issue_transactions, :integer
       add :register_transactions, :integer
       add :assets_transactions, {:map, :integer}
       add :assets_addresses, {:map, :integer}

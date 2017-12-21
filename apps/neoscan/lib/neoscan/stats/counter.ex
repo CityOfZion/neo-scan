@@ -13,7 +13,7 @@ defmodule Neoscan.Stats.Counter do
     field :miner_transactions, :integer
     field :claim_transactions, :integer
     field :publish_transactions, :integer
-    field :issue_transacions, :integer
+    field :issue_transactions, :integer
     field :register_transactions, :integer
     field :assets_transactions, {:map, :integer}
     field :assets_addresses, {:map, :integer}
