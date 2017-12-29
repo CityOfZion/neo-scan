@@ -305,10 +305,13 @@ defmodule Neoscan.Api do
             } ->
               prev_tx = Enum.at(address.histories, index + 1)
               prev_balance = Map.fetch(prev_tx, :balance)
+              asset_moved = # get transaction by id and get the asset_moved
               %{
                 :txid => txid,
-                :balance => modify_balance_output(balance, prev_balance),
+                :balance => filter_balance(balance),
                 :block_height => block_height
+                :asset_moved => asset_moved
+                :amount_moved => calculate_amount_moved(asset_moved, balance, prev_balance)
               }
             end
           )
@@ -344,28 +347,20 @@ defmodule Neoscan.Api do
        )
   end
 
-  defp modify_balance_output(balance, prev_balance) do
-    prev_amounts =
-      Map.to_list(prev_balance)
-      |> Enum.map(
-           fn {_as, %{"asset" => asset, "amount" => amount}} ->
-             %{
-               "asset" => ChainAssets.get_asset_name_by_hash(asset),
-               "amount" => Helpers.round_or_not(amount)
-             }
-           end
-         )
-    current_amounts =
-      Map.to_list(balance)
-      |> Enum.map(
-           fn {_as, %{"asset" => asset, "amount" => amount}} ->
-             %{
-               "asset" => ChainAssets.get_asset_name_by_hash(asset),
-               "amount" => Helpers.round_or_not(amount)
-             }
-           end
-         )
-    # TODO compare tx differences here and add the asset and amount of the tx in the response
+  defp filter_balance(balance) do
+    Map.to_list(balance)
+    |> Enum.map(
+         fn {_as, %{"asset" => asset, "amount" => amount}} ->
+           %{
+             "asset" => ChainAssets.get_asset_name_by_hash(asset),
+             "amount" => Helpers.round_or_not(amount)
+           }
+         end
+       )
+  end
+
+  defp calculate_amount_moved(asset_moved, balance, prev_balance) do
+
   end
 
   @doc """
