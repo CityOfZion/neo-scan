@@ -170,6 +170,7 @@ defmodule Neoscan.Api do
 
       /api/main_net/v1/get_claimable/{hash_string}
       {
+        "unclaimed": float,
         "claimable": [
           {
             "txid": "tx_id_string",
@@ -198,10 +199,12 @@ defmodule Neoscan.Api do
       nil -> %{:address => "not found", :claimable => nil}
 
       %{} = address ->
-        Map.put(
+        Map.merge(
           address,
-          :claimable,
-          Unclaimed.calculate_vouts_bonus(address.id)
+          %{
+            claimable: Unclaimed.calculate_vouts_bonus(address.id),
+            unclaimed: Unclaimed.calculate_bonus(address.id)
+          }
         )
         |> Map.delete(:id)
     end
@@ -288,27 +291,33 @@ defmodule Neoscan.Api do
       %{} = address ->
         new_balance = filter_balance(address.address, address.balance)
 
-        new_tx = Enum.map(
-          address.histories,
-          fn %{
-               :txid => txid,
-               :balance => balance,
-               :block_height => block_height
-             } ->
-            %{
-              :txid => txid,
-              :balance => filter_balance(balance),
-              :block_height => block_height
-            }
-          end
-        )
+        new_tx =
+          address.histories
+          |> Stream.with_index()
+          |> Enum.map(
+            fn {
+              %{
+                :txid => txid,
+                :balance => balance,
+                :block_height => block_height
+              },
+              index
+            } ->
+              prev_tx = Enum.at(address.histories, index + 1)
+              prev_balance = Map.fetch(prev_tx, :balance)
+              %{
+                :txid => txid,
+                :balance => modify_balance_output(balance, prev_balance),
+                :block_height => block_height
+              }
+            end
+          )
 
         Map.merge(
           address,
           %{
             :balance => new_balance,
-            :txids => new_tx,
-            :unclaimed => Unclaimed.calculate_bonus(address.id)
+            :txids => new_tx
           }
         )
         |> Map.delete(:inserted_at)
@@ -335,16 +344,28 @@ defmodule Neoscan.Api do
        )
   end
 
-  defp filter_balance(balance) do
-    Map.to_list(balance)
-    |> Enum.map(
-         fn {_as, %{"asset" => asset, "amount" => amount}} ->
-           %{
-             "asset" => ChainAssets.get_asset_name_by_hash(asset),
-             "amount" => Helpers.round_or_not(amount)
-           }
-         end
-       )
+  defp modify_balance_output(balance, prev_balance) do
+    prev_amounts =
+      Map.to_list(prev_balance)
+      |> Enum.map(
+           fn {_as, %{"asset" => asset, "amount" => amount}} ->
+             %{
+               "asset" => ChainAssets.get_asset_name_by_hash(asset),
+               "amount" => Helpers.round_or_not(amount)
+             }
+           end
+         )
+    current_amounts =
+      Map.to_list(balance)
+      |> Enum.map(
+           fn {_as, %{"asset" => asset, "amount" => amount}} ->
+             %{
+               "asset" => ChainAssets.get_asset_name_by_hash(asset),
+               "amount" => Helpers.round_or_not(amount)
+             }
+           end
+         )
+    # TODO compare tx differences here and add the asset and amount of the tx in the response
   end
 
   @doc """
