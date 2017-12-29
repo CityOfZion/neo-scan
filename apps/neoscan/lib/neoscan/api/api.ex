@@ -10,6 +10,7 @@ defmodule Neoscan.Api do
   alias Neoscan.Repo
   alias Neoscan.Addresses.Address
   alias Neoscan.BalanceHistories.History
+  alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
   alias Neoscan.ChainAssets
   alias Neoscan.ChainAssets.Asset
@@ -303,15 +304,19 @@ defmodule Neoscan.Api do
               },
               index
             } ->
-              prev_tx = Enum.at(address.histories, index + 1)
-              prev_balance = Map.fetch(prev_tx, :balance)
-              current_tx = Transaction.get_transaction_by_hash(txid)
+              prev_tx =
+                case Enum.at(address.histories, index + 1) do
+                  nil -> %{balance: nil}
+                  map -> map
+                end
+              {:ok, prev_balance} = Map.fetch(prev_tx, :balance)
+              current_tx = Transactions.get_transaction_by_hash(txid)
               asset_moved = Map.get(current_tx, :asset_moved)
               %{
                 :txid => txid,
                 :balance => filter_balance(balance),
-                :block_height => block_height
-                :asset_moved => asset_moved
+                :block_height => block_height,
+                :asset_moved => asset_moved,
                 :amount_moved => calculate_amount_moved(asset_moved, balance, prev_balance)
               }
             end
@@ -367,13 +372,22 @@ defmodule Neoscan.Api do
   end
 
   defp get_sent_amounts(balance, asset_moved) do
-    Map.to_list(balance)
-    |> Stream.filter(
-         fn {_as, %{"asset" => asset}} ->
-           asset == asset_moved
-         end
-       )
-    # get the amount from here
+    if balance == nil do
+      0
+    else
+      sent_amount =
+        Map.to_list(balance)
+        |> Enum.filter(
+             fn {_as, %{"asset" => asset}} ->
+               asset == asset_moved
+             end
+           )
+
+      case sent_amount do
+        [] -> 0
+        [{_, %{ "amount" => amount }}] -> amount
+      end
+    end
   end
 
   @doc """
