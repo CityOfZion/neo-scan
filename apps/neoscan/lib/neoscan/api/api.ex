@@ -305,7 +305,8 @@ defmodule Neoscan.Api do
             } ->
               prev_tx = Enum.at(address.histories, index + 1)
               prev_balance = Map.fetch(prev_tx, :balance)
-              asset_moved = # get transaction by id and get the asset_moved
+              current_tx = Transaction.get_transaction_by_hash(txid)
+              asset_moved = Map.get(current_tx, :asset_moved)
               %{
                 :txid => txid,
                 :balance => filter_balance(balance),
@@ -360,7 +361,19 @@ defmodule Neoscan.Api do
   end
 
   defp calculate_amount_moved(asset_moved, balance, prev_balance) do
+    current_amount = get_sent_amounts(balance, asset_moved)
+    prev_amount = get_sent_amounts(prev_balance, asset_moved)
+    current_amount - prev_amount
+  end
 
+  defp get_sent_amounts(balance, asset_moved) do
+    Map.to_list(balance)
+    |> Stream.filter(
+         fn {_as, %{"asset" => asset}} ->
+           asset == asset_moved
+         end
+       )
+    # get the amount from here
   end
 
   @doc """
