@@ -28,6 +28,11 @@ defmodule NeoscanWeb.ApiController do
     json(conn, address)
   end
 
+  def get_address_neon(conn, %{"hash" => hash}) do
+    address = Api.get_address_neon(hash)
+    json(conn, address)
+  end
+
   def get_assets(conn, _params) do
     assets = Api.get_assets()
     json(conn, assets)

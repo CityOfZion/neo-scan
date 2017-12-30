@@ -52,6 +52,7 @@ defmodule NeoscanWeb.Router do
     get "/get_unclaimed/:hash", ApiController, :get_unclaimed
     get "/get_claimable/:hash", ApiController, :get_claimable
     get "/get_address/:hash", ApiController, :get_address
+    get "/get_address_neon/:hash", ApiController, :get_address_neon
     get "/get_assets", ApiController, :get_assets
     get "/get_asset/:hash", ApiController, :get_asset
     get "/get_block/:hash", ApiController, :get_block
