@@ -213,12 +213,122 @@ defmodule Neoscan.Api do
     result
   end
 
+@doc """
+Returns the address model from its `hash_string`
+
+## Examples
+    /api/main_net/v1/get_address/{hash_string}
+    {
+      "txids": [
+        {
+          "txid": "tx_id_string",
+          "balance": "balance_object_snapshot"
+        },
+        ...
+      ],
+      "claimed": [
+        {
+          "txids": [
+            "tx_id_string",
+            "tx_id_string",
+            "tx_id_string",
+            ...
+          ],
+          "asset": "name_string",
+          "amount": "float",
+        },
+        ...
+      ],
+      "balance": [
+        {
+          "asset": "name_string",
+          "amount": float,
+          "unspent": [
+            {
+              "txid": "tx_id_string",
+              "value": float,
+              "n": integer
+            },
+            ..
+          ]
+        }
+        ...
+      ],
+      "address": "hash_string"
+    }
+"""
+def get_address(hash) do
+  his_query = from h in History,
+                   select: %{
+                     txid: h.txid,
+                     balance: h.balance,
+                     block_height: h.block_height,
+                   }
+  claim_query = from h in Claim,
+                     select: %{
+                       txids: h.txids
+                     }
+
+  query = from e in Address,
+               where: e.address == ^hash,
+               preload: [
+                 histories: ^his_query,
+                 claimed: ^claim_query,
+               ],
+               select: e
+
+  result = case Repo.all(query)
+                |> List.first do
+    nil ->
+      %{
+        :address => "not found",
+        :balance => nil,
+        :txids => nil,
+        :claimed => nil
+      }
+
+    %{} = address ->
+      new_balance = filter_balance(address.address, address.balance)
+
+      new_tx = Enum.map(
+        address.histories,
+        fn %{
+             :txid => txid,
+             :balance => balance,
+             :block_height => block_height
+           } ->
+          %{
+            :txid => txid,
+            :balance => filter_balance(balance),
+            :block_height => block_height
+          }
+        end
+      )
+
+      Map.merge(
+        address,
+        %{
+          :balance => new_balance,
+          :txids => new_tx,
+          :unclaimed => Unclaimed.calculate_bonus(address.id)
+        }
+      )
+      |> Map.delete(:inserted_at)
+      |> Map.delete(:histories)
+      |> Map.delete(:updated_at)
+      |> Map.delete(:vouts)
+      |> Map.delete(:id)
+  end
+
+  result
+end
+
   @doc """
   Returns the address model from its `hash_string`
 
   ## Examples
 
-      /api/main_net/v1/get_address/{hash_string}
+      /api/main_net/v1/get_address_neon/{hash_string}
       {
         "txids": [
           {
@@ -259,7 +369,7 @@ defmodule Neoscan.Api do
       }
 
   """
-  def get_address(hash) do
+  def get_address_neon(hash) do
     his_query = from h in History,
                      select: %{
                        txid: h.txid,
