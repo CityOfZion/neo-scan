@@ -10,6 +10,7 @@ defmodule Neoscan.Api do
   alias Neoscan.Repo
   alias Neoscan.Addresses.Address
   alias Neoscan.BalanceHistories.History
+  alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
   alias Neoscan.ChainAssets
   alias Neoscan.ChainAssets.Asset
@@ -170,6 +171,7 @@ defmodule Neoscan.Api do
 
       /api/main_net/v1/get_claimable/{hash_string}
       {
+        "unclaimed": float,
         "claimable": [
           {
             "txid": "tx_id_string",
@@ -198,10 +200,12 @@ defmodule Neoscan.Api do
       nil -> %{:address => "not found", :claimable => nil}
 
       %{} = address ->
-        Map.put(
+        Map.merge(
           address,
-          :claimable,
-          Unclaimed.calculate_vouts_bonus(address.id)
+          %{
+            claimable: Unclaimed.calculate_vouts_bonus(address.id),
+            unclaimed: Unclaimed.calculate_bonus(address.id)
+          }
         )
         |> Map.delete(:id)
     end
@@ -209,12 +213,122 @@ defmodule Neoscan.Api do
     result
   end
 
+@doc """
+Returns the address model from its `hash_string`
+
+## Examples
+    /api/main_net/v1/get_address/{hash_string}
+    {
+      "txids": [
+        {
+          "txid": "tx_id_string",
+          "balance": "balance_object_snapshot"
+        },
+        ...
+      ],
+      "claimed": [
+        {
+          "txids": [
+            "tx_id_string",
+            "tx_id_string",
+            "tx_id_string",
+            ...
+          ],
+          "asset": "name_string",
+          "amount": "float",
+        },
+        ...
+      ],
+      "balance": [
+        {
+          "asset": "name_string",
+          "amount": float,
+          "unspent": [
+            {
+              "txid": "tx_id_string",
+              "value": float,
+              "n": integer
+            },
+            ..
+          ]
+        }
+        ...
+      ],
+      "address": "hash_string"
+    }
+"""
+def get_address(hash) do
+  his_query = from h in History,
+                   select: %{
+                     txid: h.txid,
+                     balance: h.balance,
+                     block_height: h.block_height,
+                   }
+  claim_query = from h in Claim,
+                     select: %{
+                       txids: h.txids
+                     }
+
+  query = from e in Address,
+               where: e.address == ^hash,
+               preload: [
+                 histories: ^his_query,
+                 claimed: ^claim_query,
+               ],
+               select: e
+
+  result = case Repo.all(query)
+                |> List.first do
+    nil ->
+      %{
+        :address => "not found",
+        :balance => nil,
+        :txids => nil,
+        :claimed => nil
+      }
+
+    %{} = address ->
+      new_balance = filter_balance(address.address, address.balance)
+
+      new_tx = Enum.map(
+        address.histories,
+        fn %{
+             :txid => txid,
+             :balance => balance,
+             :block_height => block_height
+           } ->
+          %{
+            :txid => txid,
+            :balance => filter_balance(balance),
+            :block_height => block_height
+          }
+        end
+      )
+
+      Map.merge(
+        address,
+        %{
+          :balance => new_balance,
+          :txids => new_tx,
+          :unclaimed => Unclaimed.calculate_bonus(address.id)
+        }
+      )
+      |> Map.delete(:inserted_at)
+      |> Map.delete(:histories)
+      |> Map.delete(:updated_at)
+      |> Map.delete(:vouts)
+      |> Map.delete(:id)
+  end
+
+  result
+end
+
   @doc """
   Returns the address model from its `hash_string`
 
   ## Examples
 
-      /api/main_net/v1/get_address/{hash_string}
+      /api/main_net/v1/get_address_neon/{hash_string}
       {
         "txids": [
           {
@@ -255,7 +369,7 @@ defmodule Neoscan.Api do
       }
 
   """
-  def get_address(hash) do
+  def get_address_neon(hash) do
     his_query = from h in History,
                      select: %{
                        txid: h.txid,
@@ -288,27 +402,41 @@ defmodule Neoscan.Api do
       %{} = address ->
         new_balance = filter_balance(address.address, address.balance)
 
-        new_tx = Enum.map(
-          address.histories,
-          fn %{
-               :txid => txid,
-               :balance => balance,
-               :block_height => block_height
-             } ->
-            %{
-              :txid => txid,
-              :balance => filter_balance(balance),
-              :block_height => block_height
-            }
-          end
-        )
+        new_tx =
+          address.histories
+          |> Stream.with_index()
+          |> Enum.map(
+            fn {
+              %{
+                :txid => txid,
+                :balance => balance,
+                :block_height => block_height
+              },
+              index
+            } ->
+              prev_tx =
+                case Enum.at(address.histories, index + 1) do
+                  nil -> %{balance: nil}
+                  map -> map
+                end
+              {:ok, prev_balance} = Map.fetch(prev_tx, :balance)
+              current_tx = Transactions.get_transaction_by_hash(txid)
+              asset_moved = Map.get(current_tx, :asset_moved)
+              %{
+                :txid => txid,
+                :balance => filter_balance(balance),
+                :block_height => block_height,
+                :asset_moved => asset_moved,
+                :amount_moved => calculate_amount_moved(asset_moved, balance, prev_balance)
+              }
+            end
+          )
 
         Map.merge(
           address,
           %{
             :balance => new_balance,
-            :txids => new_tx,
-            :unclaimed => Unclaimed.calculate_bonus(address.id)
+            :txids => new_tx
           }
         )
         |> Map.delete(:inserted_at)
@@ -345,6 +473,31 @@ defmodule Neoscan.Api do
            }
          end
        )
+  end
+
+  defp calculate_amount_moved(asset_moved, balance, prev_balance) do
+    current_amount = get_sent_amounts(balance, asset_moved)
+    prev_amount = get_sent_amounts(prev_balance, asset_moved)
+    current_amount - prev_amount
+  end
+
+  defp get_sent_amounts(balance, asset_moved) do
+    if balance == nil do
+      0
+    else
+      sent_amount =
+        Map.to_list(balance)
+        |> Enum.filter(
+             fn {_as, %{"asset" => asset}} ->
+               asset == asset_moved
+             end
+           )
+
+      case sent_amount do
+        [] -> 0
+        [{_, %{ "amount" => amount }}] -> amount
+      end
+    end
   end
 
   @doc """
