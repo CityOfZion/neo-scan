@@ -6,6 +6,8 @@ defmodule Neoscan.ChainAssets do
   alias NeoscanMonitor.Api
   alias NeoscanSync.HttpCalls
   alias NeoscanSync.Blockchain
+  alias Neoscan.Addresses
+  alias Neoscan.Stats
 
   require Logger
 
@@ -199,6 +201,31 @@ defmodule Neoscan.ChainAssets do
       _ ->
         get_new_asset(hash, time)
     end
+  end
+
+  def get_assets_stats do
+    assets = list_assets()
+
+    asset_addresses = assets
+                      |> Enum.reduce(%{}, fn (%{:txid => txid}, acc) ->
+                        Map.put(acc,
+                                txid,
+                                Addresses.count_addresses_for_asset(txid)
+                                )
+                      end)
+
+    asset_transactions = assets
+                      |> Enum.reduce(%{}, fn (%{:txid => txid}, acc) ->
+                        Map.put(acc,
+                                txid,
+                                Stats.count_transactions_for_asset(txid)
+                                )
+                      end)
+
+    %{
+     :assets_addresses => asset_addresses,
+     :assets_transactions => asset_transactions,
+    }
   end
 
 end

@@ -1,9 +1,9 @@
 defmodule NeoscanMonitor.Utils do
   @moduledoc false
   alias NeoscanSync.Blockchain
-  alias Neoscan.Blocks
   alias Neoscan.Transactions
   alias Neoscan.Addresses
+  alias Neoscan.Stats
 
   #blockchain api nodes
   def seeds do
@@ -98,7 +98,7 @@ defmodule NeoscanMonitor.Utils do
     Enum.map(assets, fn asset -> Map.put(asset, :stats,
      %{
        :addresses => Addresses.count_addresses_for_asset(asset.txid),
-       :transactions => Transactions.count_transactions_for_asset(asset.txid),
+       :transactions => Stats.count_transactions_for_asset(asset.txid),
      })
     end)
   end
@@ -106,9 +106,9 @@ defmodule NeoscanMonitor.Utils do
   #function to get general db stats
   def get_general_stats do
     %{
-      :total_blocks => Blocks.count_blocks,
-      :total_transactions => Transactions.count_transactions,
-      :total_addresses => Addresses.count_addresses,
+      :total_blocks => Stats.count_blocks,
+      :total_transactions => Stats.count_transactions,
+      :total_addresses => Stats.count_addresses,
     }
   end
 

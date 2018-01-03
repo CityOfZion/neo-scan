@@ -14,6 +14,7 @@ defmodule Neoscan.Transactions do
   alias Neoscan.ChainAssets
   alias Neoscan.Addresses
   alias Neoscan.Vouts
+  alias Neoscan.Stats
 
   require Logger
 
@@ -51,22 +52,7 @@ defmodule Neoscan.Transactions do
   """
   def count_transactions(type_list \\ @type_list) do
     query = from t in Transaction,
-              where: t.type in ^type_list
-    Repo.aggregate(query, :count, :type)
-  end
-
-  @doc """
-  Count total transactions in DB.
-
-  ## Examples
-
-      iex> count_transactions()
-      50
-
-  """
-  def count_transactions_for_type(type) do
-    query = from t in Transaction,
-                where: t.type == ^type
+                where: t.type in ^type_list
     Repo.aggregate(query, :count, :type)
   end
 
@@ -489,9 +475,11 @@ defmodule Neoscan.Transactions do
   def update_transaction_state(%{:type => type} = transaction, vouts)
       when type != "MinerTransaction" do
     Api.add_transaction(transaction, vouts)
+    Stats.add_transaction_to_table(transaction)
     transaction
   end
   def update_transaction_state(transaction, _vouts) do
+    Stats.add_transaction_to_table(transaction)
     transaction
   end
 

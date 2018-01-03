@@ -169,7 +169,6 @@ defmodule Neoscan.Claims.Unclaimed do
     end
   end
 
-
   def get_missing_block(blocks, {min, _max}) do
     blocks
     |> Enum.reduce_while(min, fn (%{:index => index}, acc) ->
