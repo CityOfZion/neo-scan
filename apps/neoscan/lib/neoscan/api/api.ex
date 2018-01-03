@@ -481,22 +481,21 @@ end
     current_amount - prev_amount
   end
 
+  defp get_sent_amounts(nil, asset_moved) do
+    0
+  end
   defp get_sent_amounts(balance, asset_moved) do
-    if balance == nil do
-      0
-    else
-      sent_amount =
-        Map.to_list(balance)
-        |> Enum.filter(
-             fn {_as, %{"asset" => asset}} ->
-               asset == asset_moved
-             end
-           )
+    sent_amount =
+      Map.to_list(balance)
+      |> Enum.filter(
+           fn {_as, %{"asset" => asset}} ->
+             asset == asset_moved
+           end
+         )
 
-      case sent_amount do
-        [] -> 0
-        [{_, %{ "amount" => amount }}] -> amount
-      end
+    case sent_amount do
+      [] -> 0
+      [{_, %{ "amount" => amount }}] -> amount
     end
   end
 
