@@ -481,7 +481,7 @@ end
     current_amount - prev_amount
   end
 
-  defp get_sent_amounts(nil, asset_moved) do
+  defp get_sent_amounts(nil, _asset_moved) do
     0
   end
   defp get_sent_amounts(balance, asset_moved) do
@@ -1092,5 +1092,10 @@ end
       [height1, height2] = range
       Blocks.get_fees_in_range(height1, height2)
     end
+  end
+
+
+  def repair_blocks do
+    Unclaimed.repair_blocks()
   end
 end

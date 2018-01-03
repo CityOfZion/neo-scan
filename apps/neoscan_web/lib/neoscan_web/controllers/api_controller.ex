@@ -93,4 +93,9 @@ defmodule NeoscanWeb.ApiController do
     json(conn, fees)
   end
 
+  def repair_blocks(conn, %{}) do
+    result = Api.repair_blocks()
+    json(conn, result)
+  end
+
 end

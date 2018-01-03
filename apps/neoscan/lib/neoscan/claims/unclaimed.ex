@@ -6,6 +6,7 @@ defmodule Neoscan.Claims.Unclaimed do
   alias Neoscan.Vouts.Vout
   alias NeoscanMonitor.Api
   alias Neoscan.Blocks.Block
+  alias Neoscan.Blocks
 
   require Logger
 
@@ -153,6 +154,21 @@ defmodule Neoscan.Claims.Unclaimed do
         blocks
       true ->
         get_missing_block(blocks, {min, max})
+    end
+  end
+
+  def repair_blocks() do
+    {:ok, index} = Blocks.get_highest_block_in_db()
+    range = {0, index}
+    blocks_with_gas = get_blocks_gas(range)
+                      |> Enum.sort_by(fn %{:index => index} -> index end)
+                      |> check_blocks(range)
+
+    case blocks_with_gas do
+      false ->
+        repair_blocks()
+      _ ->
+        "Ok"
     end
   end
 
