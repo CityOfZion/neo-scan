@@ -66,6 +66,7 @@ defmodule NeoscanWeb.Router do
     get "/get_nodes", ApiController, :get_nodes
     get "/get_fees_in_range/:range", ApiController, :get_fees_in_range
     get "/repair_blocks", ApiController, :repair_blocks
+    get "/repair_block_counter", ApiController, :repair_block_counter
   end
   # Other scopes may use custom stacks.
   # scope "/api", NeoscanWeb do

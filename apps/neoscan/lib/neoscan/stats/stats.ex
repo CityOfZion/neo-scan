@@ -84,6 +84,12 @@ defmodule Neoscan.Stats do
     update_counter(counter, attrs)
   end
 
+  def set_blocks(amount) do
+    counter = get_counter()
+    attrs = %{:total_blocks => amount}
+    update_counter(counter, attrs)
+  end
+
   def add_transaction_to_table(transaction) do
     counter = get_counter()
     attrs = get_attrs_for_type(counter, transaction)
