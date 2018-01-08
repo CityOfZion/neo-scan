@@ -15,6 +15,7 @@ defmodule Neoscan.Stats.Counter do
     field :publish_transactions, :integer
     field :issue_transactions, :integer
     field :register_transactions, :integer
+    field :enrollment_transactions, :integer
     field :assets_transactions, {:map, :integer}
     field :assets_addresses, {:map, :integer}
 
@@ -35,6 +36,7 @@ defmodule Neoscan.Stats.Counter do
                     :publish_transactions,
                     :issue_transactions,
                     :register_transactions,
+                    :enrollment_transactions,
                     :assets_transactions,
                     :assets_addresses,
                    ])
@@ -53,6 +55,7 @@ defmodule Neoscan.Stats.Counter do
                     :publish_transactions,
                     :issue_transactions,
                     :register_transactions,
+                    :enrollment_transactions,
                     :assets_transactions,
                     :assets_addresses,
                    ])

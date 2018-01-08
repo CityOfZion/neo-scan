@@ -75,7 +75,9 @@ defmodule NeoscanSync.Producer do
       if block_a == block_b do
         block_a
       else
-        cross_check(height)
+        #cross_check(height)
+        Logger.info("Blocks don't match!")
+        block_a
       end
     else
       cross_check(height)

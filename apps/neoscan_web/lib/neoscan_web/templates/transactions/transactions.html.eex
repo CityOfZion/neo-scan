@@ -12,7 +12,7 @@
     <li value="issue" class="<%= if @type == "issue" do %>active-trans<% end %>"><%= gettext "Issue" %></li>
     <li value="register" class="<%= if @type == "register" do %>active-trans<% end %>"><%= gettext "Register" %></li>
     <li value="claim" class="<%= if @type == "claim" do %>active-trans<% end %>"><%= gettext "Claim" %></li>
-    <!-- <li value="enrollment" class="<%= if @type == "enrollment" do %>active-trans<% end %>">Enrollment</li> -->
+    <li value="enrollment" class="<%= if @type == "enrollment" do %>active-trans<% end %>">Enrollment</li>
   </ul>
 </div>
 
@@ -42,6 +42,9 @@
             <% end %>
             <%= if transaction.type == "InvocationTransaction" do %>
               <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Invocation" %></p>
+            <% end %>
+            <%= if transaction.type == "EnrollmentTransaction" do %>
+              <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Enrollment" %></p>
             <% end %>
             <%= if transaction.type == "IssueTransaction" do %>
               <p class="medium-detail-text col-2-width"><span class="fa fa-handshake-o"></span><%= gettext "Asset Issue" %></p>

@@ -39,6 +39,8 @@ defmodule NeoscanWeb.AssetView do
         'register-transaction'
       type == "InvocationTransaction" ->
         'invocation-transaction'
+      type == "EnrollmentTransaction" ->
+        'invocation-transaction'
       type == "PublishTransaction" ->
         'publish-transaction'
       type == "MinerTransaction" ->

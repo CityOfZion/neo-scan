@@ -24,6 +24,8 @@ defmodule NeoscanWeb.TransactionView do
         'Contract Invocation'
       type == "PublishTransaction" ->
         'Contract Publish'
+      type == "EnrollmentTransaction" ->
+        'Enrollment'
     end
   end
 
@@ -40,6 +42,8 @@ defmodule NeoscanWeb.TransactionView do
       type == "RegisterTransaction" ->
         'fa-list-alt'
       type == "InvocationTransaction" ->
+        'fa-paper-plane'
+      type == "EnrollmentTransaction" ->
         'fa-paper-plane'
       type == "PublishTransaction" ->
         'Contract Publish'
