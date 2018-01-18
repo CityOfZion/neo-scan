@@ -4,8 +4,7 @@ defmodule NeoscanWeb.ContractsController do
   alias NeoscanMonitor.Api
 
   def index(conn, _params) do
-    contracts = Api.get_contracts
+    contracts = Api.get_contracts()
     render(conn, "contracts.html", contracts: contracts)
   end
-
 end

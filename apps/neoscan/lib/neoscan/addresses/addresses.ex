@@ -41,17 +41,20 @@ defmodule Neoscan.Addresses do
 
   """
   def list_latest do
-    query = from a in Address,
-                 order_by: [
-                   desc: a.updated_at
-                 ],
-                 select: %{
-                   :address => a.address,
-                   :balance => a.balance,
-                   :time => a.time,
-                   :tx_count => a.tx_count,
-                 },
-                 limit: 15
+    query =
+      from(
+        a in Address,
+        order_by: [
+          desc: a.updated_at
+        ],
+        select: %{
+          :address => a.address,
+          :balance => a.balance,
+          :time => a.time,
+          :tx_count => a.tx_count
+        },
+        limit: 15
+      )
 
     Repo.all(query)
   end
@@ -79,17 +82,20 @@ defmodule Neoscan.Addresses do
 
   """
   def paginate_addresses(pag) do
-    addresses_query = from e in Address,
-                           order_by: [
-                             desc: e.updated_at
-                           ],
-                           select: %{
-                             :address => e.address,
-                             :balance => e.balance,
-                             :time => e.time,
-                             :tx_count => e.tx_count,
-                           },
-                           limit: 15
+    addresses_query =
+      from(
+        e in Address,
+        order_by: [
+          desc: e.updated_at
+        ],
+        select: %{
+          :address => e.address,
+          :balance => e.balance,
+          :time => e.time,
+          :tx_count => e.tx_count
+        },
+        limit: 15
+      )
 
     Repo.paginate(addresses_query, page: pag, page_size: 15)
   end
@@ -104,8 +110,7 @@ defmodule Neoscan.Addresses do
 
   """
   def count_addresses_for_asset(asset_hash) do
-    query = from a in Address,
-                 where: fragment("? \\? ?", a.balance, ^asset_hash)
+    query = from(a in Address, where: fragment("? \\? ?", a.balance, ^asset_hash))
 
     Repo.aggregate(query, :count, :balance)
   end
@@ -128,6 +133,7 @@ defmodule Neoscan.Addresses do
     from(a in Address, where: a.id == ^id, preload: :histories)
     |> Repo.all()
   end
+
   @doc """
   Gets a single address by its hash and send it as a map
 
@@ -141,14 +147,17 @@ defmodule Neoscan.Addresses do
 
   """
   def get_address_by_hash_for_view(hash) do
+    query =
+      from(
+        e in Address,
+        where: e.address == ^hash,
+        select: e
+      )
 
-    query = from e in Address,
-                 where: e.address == ^hash,
-                 select: e
-    #%{:address => e.address, :tx_ids => e.histories,
+    # %{:address => e.address, :tx_ids => e.histories,
     #  :balance => e.balance, :claimed => e.claimed}
     Repo.all(query)
-    |> List.first
+    |> List.first()
   end
 
   @doc """
@@ -164,13 +173,15 @@ defmodule Neoscan.Addresses do
 
   """
   def get_address_by_hash(hash) do
-
-    query = from e in Address,
-                 where: e.address == ^hash,
-                 select: e
+    query =
+      from(
+        e in Address,
+        where: e.address == ^hash,
+        select: e
+      )
 
     Repo.all(query)
-    |> List.first
+    |> List.first()
   end
 
   @doc """
@@ -187,6 +198,7 @@ defmodule Neoscan.Addresses do
   """
   def create_address(attrs \\ %{}) do
     Stats.add_address_to_table()
+
     %Address{}
     |> Address.changeset(attrs)
     |> Repo.insert!()
@@ -210,21 +222,19 @@ defmodule Neoscan.Addresses do
     |> Repo.update()
   end
 
-  #updates all addresses in the transactions with their
+  # updates all addresses in the transactions with their
   # respective changes/inserts
   def update_multiple_addresses(list) do
     list
-    |> Enum.map(
-         fn {address, attrs} ->
-           verify_if_claim_and_call_changesets(address, attrs)
-         end
-       )
+    |> Enum.map(fn {address, attrs} ->
+      verify_if_claim_and_call_changesets(address, attrs)
+    end)
     |> create_multi
-    |> Repo.transaction
+    |> Repo.transaction()
     |> check_repo_transaction_results()
   end
 
-  #verify if there was claim operations for the address
+  # verify if there was claim operations for the address
   def verify_if_claim_and_call_changesets(
         address,
         %{:claimed => claim} = attrs
@@ -236,7 +246,8 @@ defmodule Neoscan.Addresses do
       change_address(address, attrs)
     }
   end
-  def verify_if_claim_and_call_changesets(address, attrs)do
+
+  def verify_if_claim_and_call_changesets(address, attrs) do
     {
       address,
       nil,
@@ -245,16 +256,12 @@ defmodule Neoscan.Addresses do
     }
   end
 
-  #creates new Ecto.Multi sequence for single DB transaction
+  # creates new Ecto.Multi sequence for single DB transaction
   def create_multi(changesets) do
-    Enum.reduce(
-      changesets,
-      Multi.new,
-      fn (tuple, acc) -> insert_updates(tuple, acc) end
-    )
+    Enum.reduce(changesets, Multi.new(), fn tuple, acc -> insert_updates(tuple, acc) end)
   end
 
-  #Insert address updates in the Ecto.Multi
+  # Insert address updates in the Ecto.Multi
   def insert_updates(
         {address, claim_changeset, history_changeset, address_changeset},
         acc
@@ -269,10 +276,11 @@ defmodule Neoscan.Addresses do
     |> Claims.add_claim_if_claim(name2, claim_changeset)
   end
 
-  #verify if DB transaction was sucessfull
+  # verify if DB transaction was sucessfull
   def check_repo_transaction_results({:ok, _any}) do
     {:ok, "all operations were succesfull"}
   end
+
   def check_repo_transaction_results({:error, error}) do
     Logger.error(inspect(error))
     raise "error updating addresses"
@@ -320,75 +328,76 @@ defmodule Neoscan.Addresses do
 
   """
   def check_if_exist(address) do
-    query = from e in Address,
-                 where: e.address == ^address,
-                 select: e.address
+    query =
+      from(
+        e in Address,
+        where: e.address == ^address,
+        select: e.address
+      )
 
     case Repo.all(query)
-         |> List.first do
+         |> List.first() do
       nil ->
         false
+
       :string ->
         true
     end
   end
 
-  #get all addresses involved in a transaction
+  # get all addresses involved in a transaction
   def get_transaction_addresses(vins, vouts, time, asset) do
+    lookups =
+      (Helpers.map_vins(vins) ++
+         Helpers.map_vouts(vouts) ++
+         [
+           asset["admin"]
+         ])
+      |> Enum.filter(fn address -> address != nil end)
+      |> Enum.uniq()
 
-    lookups = (
-                Helpers.map_vins(vins) ++ Helpers.map_vouts(vouts) ++ [
-                  asset["admin"]
-                ])
-              |> Enum.filter(fn address -> address != nil end)
-              |> Enum.uniq
-
-    query = from e in Address,
-                 where: e.address in ^lookups,
-                 select: struct(e, [:id, :address, :balance, :tx_count])
+    query =
+      from(
+        e in Address,
+        where: e.address in ^lookups,
+        select: struct(e, [:id, :address, :balance, :tx_count])
+      )
 
     Repo.all(query)
     |> fetch_missing(lookups, time)
     |> Helpers.gen_attrs()
   end
 
-  #get all addresses involved in a list of previous transactions
+  # get all addresses involved in a list of previous transactions
   def get_transactions_addresses(transactions) do
+    lookups =
+      Enum.reduce(transactions, [], fn %{:vin => vin, :vouts => vouts}, acc ->
+        acc ++ Helpers.map_vins(vin) ++ Helpers.map_vouts(vouts)
+      end)
+      |> Enum.uniq()
 
-    lookups = Enum.reduce(
-                transactions,
-                [],
-                fn (%{:vin => vin, :vouts => vouts}, acc) ->
-                  acc ++ Helpers.map_vins(vin) ++ Helpers.map_vouts(vouts) end
-              )
-              |> Enum.uniq
-
-    query = from e in Address,
-                 where: e.address in ^lookups,
-                 order_by: [
-                   desc: e.updated_at
-                 ],
-                 select: map(e, [:id, :address, :balance, :time, :tx_count]),
-                 limit: 5
+    query =
+      from(
+        e in Address,
+        where: e.address in ^lookups,
+        order_by: [
+          desc: e.updated_at
+        ],
+        select: map(e, [:id, :address, :balance, :time, :tx_count]),
+        limit: 5
+      )
 
     Repo.all(query)
   end
 
-  #create missing addresses
+  # create missing addresses
   def fetch_missing(address_list, lookups, time) do
-    (
-      lookups -- Enum.map(
-        address_list,
-        fn %{:address => address} -> address end
-      ))
-    |> Enum.map(
-         fn address -> create_address(%{"address" => address, "time" => time})
-         end
-       )
+    (lookups -- Enum.map(address_list, fn %{:address => address} -> address end))
+    |> Enum.map(fn address -> create_address(%{"address" => address, "time" => time}) end)
     |> Enum.concat(address_list)
   end
 
-  #Update vins and claims into addresses
+  # Update vins and claims into addresses
   def update_all_addresses(
         address_list,
         [],
@@ -401,6 +410,7 @@ defmodule Neoscan.Addresses do
     address_list
     |> insert_tx_in_addresses(txid, index, time)
   end
+
   def update_all_addresses(
         address_list,
         [],
@@ -413,6 +423,7 @@ defmodule Neoscan.Addresses do
     address_list
     |> Claims.separate_txids_and_insert_claims(claims, vouts, index, time)
   end
+
   def update_all_addresses(
         address_list,
         vins,
@@ -425,6 +436,7 @@ defmodule Neoscan.Addresses do
     address_list
     |> group_vins_by_address_and_update(vins, txid, index, time)
   end
+
   def update_all_addresses(
         address_list,
         vins,
@@ -439,54 +451,49 @@ defmodule Neoscan.Addresses do
     |> Claims.separate_txids_and_insert_claims(claims, vouts, index, time)
   end
 
-  #separate vins by address hash, insert vins and update the address
+  # separate vins by address hash, insert vins and update the address
   def group_vins_by_address_and_update(address_list, vins, txid, index, time) do
-    updates = Enum.group_by(vins, fn %{:address_hash => address} -> address end)
-              |> Map.to_list()
-              |> Helpers.populate_groups(address_list)
-              |> Enum.map(
-                   fn {address, vins} ->
-                     insert_vins_in_address(address, vins, txid, index, time)
-                   end
-                 )
+    updates =
+      Enum.group_by(vins, fn %{:address_hash => address} -> address end)
+      |> Map.to_list()
+      |> Helpers.populate_groups(address_list)
+      |> Enum.map(fn {address, vins} ->
+        insert_vins_in_address(address, vins, txid, index, time)
+      end)
 
-    Enum.map(
-      address_list,
-      fn {address, attrs} ->
-        Helpers.substitute_if_updated(address, attrs, updates)
-      end
-    )
+    Enum.map(address_list, fn {address, attrs} ->
+      Helpers.substitute_if_updated(address, attrs, updates)
+    end)
   end
 
-  #insert vins into address balance
+  # insert vins into address balance
   def insert_vins_in_address({address, attrs}, vins, txid, index, time) do
-    new_attrs = Map.merge(
-                  attrs,
-                  %{
-                    :balance => Helpers.check_if_attrs_balance_exists(
-                      attrs
-                    ) || address.balance,
-                    :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
-                  }
-                )
-                |> add_vins(vins, time)
-                |> BalanceHistories.add_tx_id(txid, index, time)
+    new_attrs =
+      Map.merge(attrs, %{
+        :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
+        :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
+      })
+      |> add_vins(vins, time)
+      |> BalanceHistories.add_tx_id(txid, index, time)
+
     {address, new_attrs}
   end
 
-  #add multiple vins
+  # add multiple vins
   def add_vins(attrs, vins, time) do
-    Enum.reduce(vins, attrs, fn (vin, acc) -> add_vin(acc, vin, time) end)
+    Enum.reduce(vins, attrs, fn vin, acc -> add_vin(acc, vin, time) end)
   end
 
-  #add a single vin into adress
+  # add a single vin into adress
   def add_vin(%{:balance => balance} = attrs, vin, time) do
     current_amount = balance[vin.asset]["amount"]
+
     new_balance = %{
       "asset" => vin.asset,
       "amount" => current_amount - vin.value,
-      "time" => time,
+      "time" => time
     }
+
     %{attrs | balance: Map.put(attrs.balance || %{}, vin.asset, new_balance)}
   end
 
@@ -496,16 +503,13 @@ defmodule Neoscan.Addresses do
   end
 
   def insert_tx_in_address({address, attrs}, txid, index, time) do
-    new_attrs = Map.merge(
-                  attrs,
-                  %{
-                    :balance => Helpers.check_if_attrs_balance_exists(
-                      attrs
-                    ) || address.balance,
-                    :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
-                  }
-                )
-                |> BalanceHistories.add_tx_id(txid, index, time)
+    new_attrs =
+      Map.merge(attrs, %{
+        :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
+        :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
+      })
+      |> BalanceHistories.add_tx_id(txid, index, time)
+
     {address, new_attrs}
   end
 end

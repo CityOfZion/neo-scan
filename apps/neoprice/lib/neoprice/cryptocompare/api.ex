@@ -10,6 +10,7 @@ defmodule Neoprice.Cryptocompare.Api do
     params = "fsym=#{from_symbol}&tsyms=#{to_symbol}"
     url = "https://" <> @url <> "/data/price?#{params}"
     {:ok, %{status_code: 200, body: body}} = get(url)
+
     case Poison.decode(body) do
       {:ok, map} -> map[to_symbol]
       _ -> nil
@@ -20,43 +21,48 @@ defmodule Neoprice.Cryptocompare.Api do
     params = "fsyms=#{from_symbol}&tsyms=#{to_symbol}"
     url = "https://" <> @url <> "/data/pricemultifull?#{params}"
     {:ok, %{status_code: 200, body: body}} = get(url)
+
     case Poison.decode(body) do
       {:ok, map} ->
         map["RAW"][from_symbol][to_symbol]
-      _ -> nil
+
+      _ ->
+        nil
     end
   end
 
   def get(url) do
     result = HTTPoison.get(url)
+
     case result do
       {:ok, _} ->
         result
+
       _ ->
         get(url)
     end
   end
 
-  def get_historical_price(:day, from_symbol, to_symbol, limit,
-        aggregate, to) do
+  def get_historical_price(:day, from_symbol, to_symbol, limit, aggregate, to) do
     params = "fsym=#{from_symbol}&tsym=#{to_symbol}&limit=#{limit}&toTs=#{to}"
     params = params <> "&aggregate=#{aggregate}&e=CCCAGG&extraParams=#{@app_name}"
+
     get("https://" <> @url <> "/data/histoday?" <> params)
     |> extract_data()
   end
 
-  def get_historical_price(:hour, from_symbol, to_symbol, limit,
-        aggregate, to) do
+  def get_historical_price(:hour, from_symbol, to_symbol, limit, aggregate, to) do
     params = "fsym=#{from_symbol}&tsym=#{to_symbol}&limit=#{limit}&toTs=#{to}"
     params = params <> "&aggregate=#{aggregate}&e=CCCAGG&extraParams=#{@app_name}"
+
     get("https://" <> @url <> "/data/histohour?" <> params)
     |> extract_data()
   end
 
-  def get_historical_price(:minute, from_symbol, to_symbol, limit,
-                                aggregate, to) do
+  def get_historical_price(:minute, from_symbol, to_symbol, limit, aggregate, to) do
     params = "fsym=#{from_symbol}&tsym=#{to_symbol}&limit=#{limit}&toTs=#{to}"
     params = params <> "&aggregate=#{aggregate}&extraParams=#{@app_name}"
+
     get("https://" <> @url <> "/data/histominute?" <> params)
     |> extract_data()
   end
@@ -64,13 +70,16 @@ defmodule Neoprice.Cryptocompare.Api do
   defp extract_data({:ok, %{status_code: 200, body: body}}) do
     case Poison.decode(body) do
       {:ok, %{"Data" => data}} ->
-        Enum.map(data, fn(%{"open" => value, "time" => time}) ->
+        Enum.map(data, fn %{"open" => value, "time" => time} ->
           {time, value}
         end)
-      _ -> Logger.warn fn ->
-        "Couldn't decode json #{body}"
-      end
-      []
+
+      _ ->
+        Logger.warn(fn ->
+          "Couldn't decode json #{body}"
+        end)
+
+        []
     end
   end
 

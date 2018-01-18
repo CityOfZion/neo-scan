@@ -24,11 +24,11 @@ defmodule Neoscan.Api do
   alias Neoscan.Claims.Unclaimed
   alias Neoscan.Stats
 
-  #sanitize struct
+  # sanitize struct
   defimpl Poison.Encoder, for: Any do
     def encode(%{__struct__: _} = struct, options) do
       struct
-      |> Map.from_struct
+      |> Map.from_struct()
       |> sanitize_map
       |> Poison.Encoder.Map.encode(options)
     end
@@ -65,29 +65,32 @@ defmodule Neoscan.Api do
 
   """
   def get_balance(hash) do
-    query = from e in Address,
-                 where: e.address == ^hash,
-                 select: %{
-                   :id => e.id,
-                   :address => e.address,
-                   :balance => e.balance,
-                 }
+    query =
+      from(
+        e in Address,
+        where: e.address == ^hash,
+        select: %{
+          :id => e.id,
+          :address => e.address,
+          :balance => e.balance
+        }
+      )
 
-    result = case Repo.all(query)
-                  |> List.first do
-      nil -> %{:address => "not found", :balance => nil, :unclaimed => 0}
+    result =
+      case Repo.all(query)
+           |> List.first() do
+        nil ->
+          %{:address => "not found", :balance => nil, :unclaimed => 0}
 
-      %{} = address ->
-        new_balance = filter_balance(address.address, address.balance)
-        Map.merge(
-          address,
-          %{
-            :balance => new_balance,
-            #:unclaimed => Unclaimed.calculate_bonus(address.id),
-          }
-        )
-        |> Map.delete(:id)
-    end
+        %{} = address ->
+          new_balance = filter_balance(address.address, address.balance)
+
+          Map.merge(address, %{
+            :balance => new_balance
+            # :unclaimed => Unclaimed.calculate_bonus(address.id),
+          })
+          |> Map.delete(:id)
+      end
 
     result
   end
@@ -105,19 +108,24 @@ defmodule Neoscan.Api do
 
   """
   def get_unclaimed(hash) do
-    query = from e in Address,
-                 where: e.address == ^hash,
-                 select: %{
-                   :id => e.id,
-                 }
+    query =
+      from(
+        e in Address,
+        where: e.address == ^hash,
+        select: %{
+          :id => e.id
+        }
+      )
 
-    result = case Repo.all(query)
-                  |> List.first do
-      nil -> %{:address => "not found", :unclaimed => 0}
+    result =
+      case Repo.all(query)
+           |> List.first() do
+        nil ->
+          %{:address => "not found", :unclaimed => 0}
 
-      %{} = address ->
-        %{:address => hash, :unclaimed => Unclaimed.calculate_bonus(address.id)}
-    end
+        %{} = address ->
+          %{:address => hash, :unclaimed => Unclaimed.calculate_bonus(address.id)}
+      end
 
     result
   end
@@ -147,20 +155,25 @@ defmodule Neoscan.Api do
 
   """
   def get_claimed(hash) do
-    query = from e in Address,
-                 where: e.address == ^hash,
-                 select: %{
-                   :address => e.address,
-                   :claimed => e.claimed
-                 }
+    query =
+      from(
+        e in Address,
+        where: e.address == ^hash,
+        select: %{
+          :address => e.address,
+          :claimed => e.claimed
+        }
+      )
 
-    result = case Repo.all(query)
-                  |> List.first do
-      nil -> %{:address => "not found", :claimed => nil}
+    result =
+      case Repo.all(query)
+           |> List.first() do
+        nil ->
+          %{:address => "not found", :claimed => nil}
 
-      %{} = address ->
-        address
-    end
+        %{} = address ->
+          address
+      end
 
     result
   end
@@ -189,140 +202,148 @@ defmodule Neoscan.Api do
 
   """
   def get_claimable(hash) do
-    query = from e in Address,
-                 where: e.address == ^hash,
-                 select: %{
-                   :address => e.address,
-                   :id => e.id
-                 }
+    query =
+      from(
+        e in Address,
+        where: e.address == ^hash,
+        select: %{
+          :address => e.address,
+          :id => e.id
+        }
+      )
 
-    result = case Repo.all(query)
-                  |> List.first do
-      nil -> %{:address => "not found", :claimable => nil}
+    result =
+      case Repo.all(query)
+           |> List.first() do
+        nil ->
+          %{:address => "not found", :claimable => nil}
 
-      %{} = address ->
-        Map.merge(
-          address,
-          %{
+        %{} = address ->
+          Map.merge(address, %{
             claimable: Unclaimed.calculate_vouts_bonus(address.id),
             unclaimed: Unclaimed.calculate_bonus(address.id)
-          }
-        )
-        |> Map.delete(:id)
-    end
+          })
+          |> Map.delete(:id)
+      end
 
     result
   end
 
-@doc """
-Returns the address model from its `hash_string`
+  @doc """
+  Returns the address model from its `hash_string`
 
-## Examples
-    /api/main_net/v1/get_address/{hash_string}
-    {
-      "txids": [
-        {
-          "txid": "tx_id_string",
-          "balance": "balance_object_snapshot"
-        },
-        ...
-      ],
-      "claimed": [
-        {
-          "txids": [
-            "tx_id_string",
-            "tx_id_string",
-            "tx_id_string",
-            ...
-          ],
-          "asset": "name_string",
-          "amount": "float",
-        },
-        ...
-      ],
-      "balance": [
-        {
-          "asset": "name_string",
-          "amount": float,
-          "unspent": [
-            {
-              "txid": "tx_id_string",
-              "value": float,
-              "n": integer
-            },
-            ..
-          ]
-        }
-        ...
-      ],
-      "address": "hash_string"
-    }
-"""
-def get_address(hash) do
-  his_query = from h in History,
-                   select: %{
-                     txid: h.txid,
-                     balance: h.balance,
-                     block_height: h.block_height,
-                   }
-  claim_query = from h in Claim,
-                     select: %{
-                       txids: h.txids
-                     }
-
-  query = from e in Address,
-               where: e.address == ^hash,
-               preload: [
-                 histories: ^his_query,
-                 claimed: ^claim_query,
-               ],
-               select: e
-
-  result = case Repo.all(query)
-                |> List.first do
-    nil ->
-      %{
-        :address => "not found",
-        :balance => nil,
-        :txids => nil,
-        :claimed => nil
-      }
-
-    %{} = address ->
-      new_balance = filter_balance(address.address, address.balance)
-
-      new_tx = Enum.map(
-        address.histories,
-        fn %{
-             :txid => txid,
-             :balance => balance,
-             :block_height => block_height
-           } ->
-          %{
-            :txid => txid,
-            :balance => filter_balance(balance),
-            :block_height => block_height
+  ## Examples
+      /api/main_net/v1/get_address/{hash_string}
+      {
+        "txids": [
+          {
+            "txid": "tx_id_string",
+            "balance": "balance_object_snapshot"
+          },
+          ...
+        ],
+        "claimed": [
+          {
+            "txids": [
+              "tx_id_string",
+              "tx_id_string",
+              "tx_id_string",
+              ...
+            ],
+            "asset": "name_string",
+            "amount": "float",
+          },
+          ...
+        ],
+        "balance": [
+          {
+            "asset": "name_string",
+            "amount": float,
+            "unspent": [
+              {
+                "txid": "tx_id_string",
+                "value": float,
+                "n": integer
+              },
+              ..
+            ]
           }
-        end
-      )
-
-      Map.merge(
-        address,
-        %{
-          :balance => new_balance,
-          :txids => new_tx,
-          :unclaimed => Unclaimed.calculate_bonus(address.id)
+          ...
+        ],
+        "address": "hash_string"
+      }
+  """
+  def get_address(hash) do
+    his_query =
+      from(
+        h in History,
+        select: %{
+          txid: h.txid,
+          balance: h.balance,
+          block_height: h.block_height
         }
       )
-      |> Map.delete(:inserted_at)
-      |> Map.delete(:histories)
-      |> Map.delete(:updated_at)
-      |> Map.delete(:vouts)
-      |> Map.delete(:id)
-  end
 
-  result
-end
+    claim_query =
+      from(
+        h in Claim,
+        select: %{
+          txids: h.txids
+        }
+      )
+
+    query =
+      from(
+        e in Address,
+        where: e.address == ^hash,
+        preload: [
+          histories: ^his_query,
+          claimed: ^claim_query
+        ],
+        select: e
+      )
+
+    result =
+      case Repo.all(query)
+           |> List.first() do
+        nil ->
+          %{
+            :address => "not found",
+            :balance => nil,
+            :txids => nil,
+            :claimed => nil
+          }
+
+        %{} = address ->
+          new_balance = filter_balance(address.address, address.balance)
+
+          new_tx =
+            Enum.map(address.histories, fn %{
+                                             :txid => txid,
+                                             :balance => balance,
+                                             :block_height => block_height
+                                           } ->
+              %{
+                :txid => txid,
+                :balance => filter_balance(balance),
+                :block_height => block_height
+              }
+            end)
+
+          Map.merge(address, %{
+            :balance => new_balance,
+            :txids => new_tx,
+            :unclaimed => Unclaimed.calculate_bonus(address.id)
+          })
+          |> Map.delete(:inserted_at)
+          |> Map.delete(:histories)
+          |> Map.delete(:updated_at)
+          |> Map.delete(:vouts)
+          |> Map.delete(:id)
+      end
+
+    result
+  end
 
   @doc """
   Returns the address model from its `hash_string`
@@ -371,58 +392,70 @@ end
 
   """
   def get_address_neon(hash) do
-    his_query = from h in History,
-                     select: %{
-                       txid: h.txid,
-                       balance: h.balance,
-                       block_height: h.block_height,
-                     }
-    claim_query = from h in Claim,
-                       select: %{
-                         txids: h.txids
-                       }
-
-    query = from e in Address,
-                 where: e.address == ^hash,
-                 preload: [
-                   histories: ^his_query,
-                   claimed: ^claim_query,
-                 ],
-                 select: e
-
-    result = case Repo.all(query)
-                  |> List.first do
-      nil ->
-        %{
-          :address => "not found",
-          :balance => nil,
-          :txids => nil,
-          :claimed => nil
+    his_query =
+      from(
+        h in History,
+        select: %{
+          txid: h.txid,
+          balance: h.balance,
+          block_height: h.block_height
         }
+      )
 
-      %{} = address ->
-        new_balance = filter_balance(address.address, address.balance)
+    claim_query =
+      from(
+        h in Claim,
+        select: %{
+          txids: h.txids
+        }
+      )
 
-        new_tx =
-          address.histories
-          |> Stream.with_index()
-          |> Enum.map(
-            fn {
-              %{
-                :txid => txid,
-                :balance => balance,
-                :block_height => block_height
-              },
-              index
-            } ->
+    query =
+      from(
+        e in Address,
+        where: e.address == ^hash,
+        preload: [
+          histories: ^his_query,
+          claimed: ^claim_query
+        ],
+        select: e
+      )
+
+    result =
+      case Repo.all(query)
+           |> List.first() do
+        nil ->
+          %{
+            :address => "not found",
+            :balance => nil,
+            :txids => nil,
+            :claimed => nil
+          }
+
+        %{} = address ->
+          new_balance = filter_balance(address.address, address.balance)
+
+          new_tx =
+            address.histories
+            |> Stream.with_index()
+            |> Enum.map(fn {
+                             %{
+                               :txid => txid,
+                               :balance => balance,
+                               :block_height => block_height
+                             },
+                             index
+                           } ->
               prev_tx =
                 case Enum.at(address.histories, index + 1) do
                   nil -> %{balance: nil}
                   map -> map
                 end
+
               {:ok, prev_balance} = Map.fetch(prev_tx, :balance)
               current_tx = Transactions.get_transaction_by_hash(txid)
               asset_moved = Map.get(current_tx, :asset_moved)
+
               %{
                 :txid => txid,
                 :balance => filter_balance(balance),
@@ -430,50 +463,41 @@ end
                 :asset_moved => asset_moved,
                 :amount_moved => calculate_amount_moved(asset_moved, balance, prev_balance)
               }
-            end
-          )
+            end)
 
-        Map.merge(
-          address,
-          %{
+          Map.merge(address, %{
             :balance => new_balance,
             :txids => new_tx
-          }
-        )
-        |> Map.delete(:inserted_at)
-        |> Map.delete(:histories)
-        |> Map.delete(:updated_at)
-        |> Map.delete(:vouts)
-        |> Map.delete(:id)
-    end
+          })
+          |> Map.delete(:inserted_at)
+          |> Map.delete(:histories)
+          |> Map.delete(:updated_at)
+          |> Map.delete(:vouts)
+          |> Map.delete(:id)
+      end
 
     result
   end
 
   defp filter_balance(address, balance) do
     Map.to_list(balance)
-    |> Enum.map(
-         fn {_as, %{"asset" => asset, "amount" => amount}} ->
-           %{
-             "asset" => ChainAssets.get_asset_name_by_hash(asset),
-             "amount" => Helpers.round_or_not(amount),
-             "unspent" =>
-               Vouts.get_unspent_vouts_for_address_by_asset(address, asset)
-           }
-         end
-       )
+    |> Enum.map(fn {_as, %{"asset" => asset, "amount" => amount}} ->
+      %{
+        "asset" => ChainAssets.get_asset_name_by_hash(asset),
+        "amount" => Helpers.round_or_not(amount),
+        "unspent" => Vouts.get_unspent_vouts_for_address_by_asset(address, asset)
+      }
+    end)
   end
 
   defp filter_balance(balance) do
     Map.to_list(balance)
-    |> Enum.map(
-         fn {_as, %{"asset" => asset, "amount" => amount}} ->
-           %{
-             "asset" => ChainAssets.get_asset_name_by_hash(asset),
-             "amount" => Helpers.round_or_not(amount)
-           }
-         end
-       )
+    |> Enum.map(fn {_as, %{"asset" => asset, "amount" => amount}} ->
+      %{
+        "asset" => ChainAssets.get_asset_name_by_hash(asset),
+        "amount" => Helpers.round_or_not(amount)
+      }
+    end)
   end
 
   defp calculate_amount_moved(asset_moved, balance, prev_balance) do
@@ -485,18 +509,17 @@ end
   defp get_sent_amounts(nil, _asset_moved) do
     0
   end
+
   defp get_sent_amounts(balance, asset_moved) do
     sent_amount =
       Map.to_list(balance)
-      |> Enum.filter(
-           fn {_as, %{"asset" => asset}} ->
-             asset == asset_moved
-           end
-         )
+      |> Enum.filter(fn {_as, %{"asset" => asset}} ->
+        asset == asset_moved
+      end)
 
     case sent_amount do
       [] -> 0
-      [{_, %{ "amount" => amount }}] -> amount
+      [{_, %{"amount" => amount}}] -> amount
     end
   end
 
@@ -528,14 +551,12 @@ end
 
   """
   def get_assets do
-    Api.get_assets
-    |> Enum.map(
-         fn x ->
-           Map.delete(x, :inserted_at)
-           |> Map.delete(:updated_at)
-           |> Map.delete(:id)
-         end
-       )
+    Api.get_assets()
+    |> Enum.map(fn x ->
+      Map.delete(x, :inserted_at)
+      |> Map.delete(:updated_at)
+      |> Map.delete(:id)
+    end)
   end
 
   @doc """
@@ -563,24 +584,25 @@ end
 
   """
   def get_asset(hash) do
-    query = from e in Asset,
-                 where: e.txid == ^hash
+    query = from(e in Asset, where: e.txid == ^hash)
 
-    result = case Repo.all(query)
-                  |> List.first do
-      nil ->
-        %{
-          :txid => "not found",
-          :admin => nil,
-          :amount => nil,
-          :name => nil,
-          :owner => nil,
-          :precision => nil,
-          :type => nil,
-        }
-      %{} = asset ->
-        asset
-    end
+    result =
+      case Repo.all(query)
+           |> List.first() do
+        nil ->
+          %{
+            :txid => "not found",
+            :admin => nil,
+            :amount => nil,
+            :name => nil,
+            :owner => nil,
+            :precision => nil,
+            :type => nil
+          }
+
+        %{} = asset ->
+          asset
+      end
 
     Map.delete(result, :inserted_at)
     |> Map.delete(:updated_at)
@@ -619,49 +641,56 @@ end
 
   """
   def get_block(hash_or_integer) do
-    tran_query = from t in Transaction,
-                      select: t.txid
+    tran_query = from(t in Transaction, select: t.txid)
 
-    query = try  do
-      String.to_integer(hash_or_integer)
-    rescue
-      ArgumentError ->
-        from e in Block,
-             where: e.hash == ^hash_or_integer,
-             preload: [
-               transactions: ^tran_query
-             ]
-    else
-      hash_or_integer ->
-        from e in Block,
-             where: e.index == ^hash_or_integer,
-             preload: [
-               transactions: ^tran_query
-             ]
-    end
+    query =
+      try do
+        String.to_integer(hash_or_integer)
+      rescue
+        ArgumentError ->
+          from(
+            e in Block,
+            where: e.hash == ^hash_or_integer,
+            preload: [
+              transactions: ^tran_query
+            ]
+          )
+      else
+        hash_or_integer ->
+          from(
+            e in Block,
+            where: e.index == ^hash_or_integer,
+            preload: [
+              transactions: ^tran_query
+            ]
+          )
+      end
 
-    result = case Repo.all(query)
-                  |> List.first do
-      nil ->
-        %{
-          :hash => "not found",
-          :confirmations => nil,
-          :index => nil,
-          :merkleroot => nil,
-          :nextblockhash => nil,
-          :nextconcensus => nil,
-          :nonce => nil,
-          :previousblockhash => nil,
-          :scrip => nil,
-          :size => nil,
-          :time => nil,
-          :version => nil,
-          :tx_count => nil,
-          :transactions => nil,
-        }
-      %{} = block ->
-        block
-    end
+    result =
+      case Repo.all(query)
+           |> List.first() do
+        nil ->
+          %{
+            :hash => "not found",
+            :confirmations => nil,
+            :index => nil,
+            :merkleroot => nil,
+            :nextblockhash => nil,
+            :nextconcensus => nil,
+            :nonce => nil,
+            :previousblockhash => nil,
+            :scrip => nil,
+            :size => nil,
+            :time => nil,
+            :version => nil,
+            :tx_count => nil,
+            :transactions => nil
+          }
+
+        %{} = block ->
+          block
+      end
+
     Map.delete(result, :inserted_at)
     |> Map.delete(:updated_at)
     |> Map.delete(:id)
@@ -701,27 +730,27 @@ end
 
   """
   def get_last_blocks do
-    tran_query = from t in Transaction,
-                      select: t.txid
+    tran_query = from(t in Transaction, select: t.txid)
 
-    query = from e in Block,
-                 where: e.index > 1_200_000,
-                 order_by: [
-                   desc: e.index
-                 ],
-                 preload: [
-                   transactions: ^tran_query
-                 ],
-                 limit: 20
+    query =
+      from(
+        e in Block,
+        where: e.index > 1_200_000,
+        order_by: [
+          desc: e.index
+        ],
+        preload: [
+          transactions: ^tran_query
+        ],
+        limit: 20
+      )
 
     Repo.all(query)
-    |> Enum.map(
-         fn x ->
-           Map.delete(x, :inserted_at)
-           |> Map.delete(:updated_at)
-           |> Map.delete(:id)
-         end
-       )
+    |> Enum.map(fn x ->
+      Map.delete(x, :inserted_at)
+      |> Map.delete(:updated_at)
+      |> Map.delete(:id)
+    end)
   end
 
   @doc """
@@ -755,21 +784,23 @@ end
 
   """
   def get_highest_block do
-    tran_query = from t in Transaction,
-                      select: t.txid
+    tran_query = from(t in Transaction, select: t.txid)
 
-    query = from e in Block,
-                 where: e.index > 1_200_000,
-                 order_by: [
-                   desc: e.index
-                 ],
-                 preload: [
-                   transactions: ^tran_query
-                 ],
-                 limit: 1
+    query =
+      from(
+        e in Block,
+        where: e.index > 1_200_000,
+        order_by: [
+          desc: e.index
+        ],
+        preload: [
+          transactions: ^tran_query
+        ],
+        limit: 1
+      )
 
     Repo.all(query)
-    |> List.first
+    |> List.first()
     |> Map.delete(:inserted_at)
     |> Map.delete(:updated_at)
     |> Map.delete(:id)
@@ -827,65 +858,71 @@ end
 
   """
   def get_transaction(hash) do
-    vout_query = from v in Vout,
-                      select: %{
-                        :asset => v.asset,
-                        :address => v.address_hash,
-                        :n => v.n,
-                        :value => v.value,
-                      }
-
-    query = from t in Transaction,
-                 where: t.txid == ^hash,
-                 preload: [
-                   vouts: ^vout_query
-                 ]
-
-    result = case Repo.all(query)
-                  |> List.first do
-      nil ->
-        %{
-          :txid => "not found",
-          :attributes => nil,
-          :net_fee => nil,
-          :scripts => nil,
-          :size => nil,
-          :sys_fee => nil,
-          :type => nil,
-          :version => nil,
-          :vin => nil,
-          :vouts => nil,
-          :time => nil,
-          :block_hash => nil,
-          :block_height => nil,
-          :nonce => nil,
-          :claims => nil,
-          :pubkey => nil,
-          :asset => nil,
-          :description => nil,
-          :contract => nil,
+    vout_query =
+      from(
+        v in Vout,
+        select: %{
+          :asset => v.asset,
+          :address => v.address_hash,
+          :n => v.n,
+          :value => v.value
         }
-      %{} = transaction ->
-        new_vouts = Enum.map(
-          transaction.vouts,
-          fn %{:asset => asset} = x ->
-            Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset))
-          end
-        )
-        new_vins = Enum.map(
-          transaction.vin,
-          fn %{"asset" => asset} = x ->
-            Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset))
-          end
-        )
-        Map.delete(transaction, :block)
-        |> Map.delete(:inserted_at)
-        |> Map.delete(:updated_at)
-        |> Map.delete(:block_id)
-        |> Map.delete(:id)
-        |> Map.put(:vouts, new_vouts)
-        |> Map.put(:vin, new_vins)
-    end
+      )
+
+    query =
+      from(
+        t in Transaction,
+        where: t.txid == ^hash,
+        preload: [
+          vouts: ^vout_query
+        ]
+      )
+
+    result =
+      case Repo.all(query)
+           |> List.first() do
+        nil ->
+          %{
+            :txid => "not found",
+            :attributes => nil,
+            :net_fee => nil,
+            :scripts => nil,
+            :size => nil,
+            :sys_fee => nil,
+            :type => nil,
+            :version => nil,
+            :vin => nil,
+            :vouts => nil,
+            :time => nil,
+            :block_hash => nil,
+            :block_height => nil,
+            :nonce => nil,
+            :claims => nil,
+            :pubkey => nil,
+            :asset => nil,
+            :description => nil,
+            :contract => nil
+          }
+
+        %{} = transaction ->
+          new_vouts =
+            Enum.map(transaction.vouts, fn %{:asset => asset} = x ->
+              Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset))
+            end)
+
+          new_vins =
+            Enum.map(transaction.vin, fn %{"asset" => asset} = x ->
+              Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset))
+            end)
+
+          Map.delete(transaction, :block)
+          |> Map.delete(:inserted_at)
+          |> Map.delete(:updated_at)
+          |> Map.delete(:block_id)
+          |> Map.delete(:id)
+          |> Map.put(:vouts, new_vouts)
+          |> Map.put(:vin, new_vins)
+      end
 
     result
   end
@@ -946,61 +983,64 @@ end
 
   """
   def get_last_transactions(type) do
-    vout_query = from v in Vout,
-                      select: %{
-                        :asset => v.asset,
-                        :address => v.address_hash,
-                        :n => v.n,
-                        :value => v.value,
-                      }
+    vout_query =
+      from(
+        v in Vout,
+        select: %{
+          :asset => v.asset,
+          :address => v.address_hash,
+          :n => v.n,
+          :value => v.value
+        }
+      )
 
-    query = if type == nil do
-      from t in Transaction,
-           where: t.inserted_at > ago(1, "hour"),
-           order_by: [
-             desc: t.inserted_at
-           ],
-           preload: [
-             vouts: ^vout_query
-           ],
-           limit: 20
-
-    else
-      from t in Transaction,
-           order_by: [
-             desc: t.inserted_at
-           ],
-           where: t.type == ^type and t.inserted_at > ago(1, "hour"),
-           preload: [
-             vouts: ^vout_query
-           ],
-           limit: 20
-    end
+    query =
+      if type == nil do
+        from(
+          t in Transaction,
+          where: t.inserted_at > ago(1, "hour"),
+          order_by: [
+            desc: t.inserted_at
+          ],
+          preload: [
+            vouts: ^vout_query
+          ],
+          limit: 20
+        )
+      else
+        from(
+          t in Transaction,
+          order_by: [
+            desc: t.inserted_at
+          ],
+          where: t.type == ^type and t.inserted_at > ago(1, "hour"),
+          preload: [
+            vouts: ^vout_query
+          ],
+          limit: 20
+        )
+      end
 
     Repo.all(query)
-    |> Enum.map(
-         fn %{:vouts => vouts, :vin => vin} = x ->
-           new_vouts = Enum.map(
-             vouts,
-             fn (x = %{:asset => asset}) ->
-               Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset))
-             end
-           )
-           new_vins = Enum.map(
-             vin,
-             fn (x = %{"asset" => asset}) ->
-               Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset))
-             end
-           )
-           Map.delete(x, :block)
-           |> Map.delete(:inserted_at)
-           |> Map.delete(:updated_at)
-           |> Map.delete(:block_id)
-           |> Map.delete(:id)
-           |> Map.put(:vouts, new_vouts)
-           |> Map.put(:vin, new_vins)
-         end
-       )
+    |> Enum.map(fn %{:vouts => vouts, :vin => vin} = x ->
+      new_vouts =
+        Enum.map(vouts, fn x = %{:asset => asset} ->
+          Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset))
+        end)
+
+      new_vins =
+        Enum.map(vin, fn x = %{"asset" => asset} ->
+          Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset))
+        end)
+
+      Map.delete(x, :block)
+      |> Map.delete(:inserted_at)
+      |> Map.delete(:updated_at)
+      |> Map.delete(:block_id)
+      |> Map.delete(:id)
+      |> Map.put(:vouts, new_vouts)
+      |> Map.put(:vin, new_vins)
+    end)
   end
 
   @doc """
@@ -1034,7 +1074,7 @@ end
 
   """
   def get_all_nodes do
-    Api.get_data
+    Api.get_data()
     |> Enum.map(fn {url, height} -> %{url: url, height: height} end)
   end
 
@@ -1053,7 +1093,7 @@ end
 
   """
   def get_nodes do
-    %{urls: Api.get_nodes}
+    %{urls: Api.get_nodes()}
   end
 
   @doc """
@@ -1069,7 +1109,7 @@ end
 
   """
   def get_height do
-    {:ok, height} = Api.get_height
+    {:ok, height} = Api.get_height()
     %{:height => height}
   end
 
@@ -1087,6 +1127,7 @@ end
   """
   def get_fees_in_range(height_string) do
     range = String.split(height_string, "-")
+
     if Enum.count(range) != 2 do
       "wrong input"
     else
@@ -1094,7 +1135,6 @@ end
       Blocks.get_fees_in_range(height1, height2)
     end
   end
-
 
   def repair_blocks do
     Unclaimed.repair_blocks()

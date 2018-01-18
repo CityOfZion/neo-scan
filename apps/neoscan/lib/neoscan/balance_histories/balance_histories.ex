@@ -21,7 +21,7 @@ defmodule Neoscan.BalanceHistories do
     History.changeset(history, address, attrs)
   end
 
-  #add a transaction history into an address
+  # add a transaction history into an address
   def add_tx_id(attrs, txid, index, time) do
     new_tx = %{
       :txid => txid,
@@ -29,6 +29,7 @@ defmodule Neoscan.BalanceHistories do
       :block_height => index,
       :time => time
     }
+
     %{attrs | tx_ids: new_tx}
   end
 
@@ -42,74 +43,80 @@ defmodule Neoscan.BalanceHistories do
 
   """
   def count_hist_for_address(address_hash) do
-    query = from h in History,
-                 where: h.address_hash == ^address_hash
+    query = from(h in History, where: h.address_hash == ^address_hash)
     Repo.aggregate(query, :count, :id)
   end
 
   def paginate_history_transactions(address_hash, pag) do
-    his_query = from h in History,
-                  where: h.address_hash == ^address_hash,
-                  order_by: [
-                    desc: h.id
-                  ],
-                  select: %{
-                    txid: h.txid
-                  },
-                  limit: 15
+    his_query =
+      from(
+        h in History,
+        where: h.address_hash == ^address_hash,
+        order_by: [
+          desc: h.id
+        ],
+        select: %{
+          txid: h.txid
+        },
+        limit: 15
+      )
 
-    histories = Repo.paginate(his_query, page: pag, page_size: 15)
-                |> Enum.map(fn %{:txid => txid} -> txid end)
+    histories =
+      Repo.paginate(his_query, page: pag, page_size: 15)
+      |> Enum.map(fn %{:txid => txid} -> txid end)
 
-    transaction_query = from e in Transaction,
-                             order_by: [
-                               desc: e.id
-                             ],
-                             where: e.txid in ^histories,
-                             select: %{
-                               :id => e.id,
-                               :type => e.type,
-                               :time => e.time,
-                               :txid => e.txid,
-                               :block_height => e.block_height,
-                               :block_hash => e.block_hash,
-                               :vin => e.vin,
-                               :claims => e.claims,
-                               :sys_fee => e.sys_fee,
-                               :net_fee => e.net_fee,
-                               :size => e.size,
-                               :asset => e.asset,
-                             }
+    transaction_query =
+      from(
+        e in Transaction,
+        order_by: [
+          desc: e.id
+        ],
+        where: e.txid in ^histories,
+        select: %{
+          :id => e.id,
+          :type => e.type,
+          :time => e.time,
+          :txid => e.txid,
+          :block_height => e.block_height,
+          :block_hash => e.block_hash,
+          :vin => e.vin,
+          :claims => e.claims,
+          :sys_fee => e.sys_fee,
+          :net_fee => e.net_fee,
+          :size => e.size,
+          :asset => e.asset
+        }
+      )
 
     transactions = Repo.all(transaction_query)
-    vouts = Enum.map(transactions, fn tx -> tx.id end)
-            |> Transactions.get_transactions_vouts
+
+    vouts =
+      Enum.map(transactions, fn tx -> tx.id end)
+      |> Transactions.get_transactions_vouts()
 
     transactions
-    |> Enum.map(
-         fn tx ->
-           Map.put(
-             tx,
-             :vouts,
-             Enum.filter(
-               vouts,
-               fn vout ->
-                 vout.transaction_id == tx.id
-               end
-             )
-           )
-         end
-       )
+    |> Enum.map(fn tx ->
+      Map.put(
+        tx,
+        :vouts,
+        Enum.filter(vouts, fn vout ->
+          vout.transaction_id == tx.id
+        end)
+      )
+    end)
   end
 
   def get_graph_data_for_address(address) do
-    query = from h in History,
-                 where: h.address_hash == ^address,
-                 order_by: [
-                   desc: h.id
-                 ],
-                 limit: 25,
-                 select: map(h, [:balance])
+    query =
+      from(
+        h in History,
+        where: h.address_hash == ^address,
+        order_by: [
+          desc: h.id
+        ],
+        limit: 25,
+        select: map(h, [:balance])
+      )
 
     Repo.all(query)
     |> check_result
@@ -118,6 +125,7 @@ defmodule Neoscan.BalanceHistories do
   defp check_result([]) do
     nil
   end
+
   defp check_result(list) do
     list
     |> Enum.map(fn %{:balance => b} -> filter_balance(b) end)
@@ -126,24 +134,24 @@ defmodule Neoscan.BalanceHistories do
   defp filter_balance(nil) do
     nil
   end
+
   defp filter_balance(balance) do
     balance
     |> Map.to_list()
-    |> Enum.reduce(
-         %{:time => 0, :assets => []},
-         fn ({asset_hash, %{"amount" => amount, "time" => time}}, %{
-           :assets => assets
-         }) ->
-           %{
-             :time => time,
-             :assets => [
-               %{
-                 ChainAssets.get_asset_name_by_hash(asset_hash) => amount
-               } | assets
-             ]
-           }
-         end
-       )
+    |> Enum.reduce(%{:time => 0, :assets => []}, fn {asset_hash,
+                                                     %{"amount" => amount, "time" => time}},
+                                                    %{
+                                                      :assets => assets
+                                                    } ->
+      %{
+        :time => time,
+        :assets => [
+          %{
+            ChainAssets.get_asset_name_by_hash(asset_hash) => amount
+          }
+          | assets
+        ]
+      }
+    end)
   end
-
 end

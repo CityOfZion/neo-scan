@@ -18,13 +18,15 @@ defmodule NeoscanWeb.BlockController do
     |> put_flash(:info, "Not Found in DB!")
     |> redirect(to: home_path(conn, :index))
   end
+
   def route(block, transactions, conn, page) do
-    clean_transactions = transactions
-                          |> Enum.map(fn transaction ->
-                            {:ok, result} = Morphix.atomorphiform(transaction)
-                            result
-                           end)
+    clean_transactions =
+      transactions
+      |> Enum.map(fn transaction ->
+        {:ok, result} = Morphix.atomorphiform(transaction)
+        result
+      end)
+
     render(conn, "block.html", block: block, transactions: clean_transactions, page: page)
   end
-
 end

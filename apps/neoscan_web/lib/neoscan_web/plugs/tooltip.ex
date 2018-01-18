@@ -15,8 +15,7 @@ defmodule NeoscanWeb.Plugs.Tooltip do
 
   defp extract_tooltip(conn) do
     with nil <- params_tooltip(conn),
-      nil <- session_tooltip(conn)
-    do
+         nil <- session_tooltip(conn) do
       "off"
     else
       tooltip -> validate(tooltip)

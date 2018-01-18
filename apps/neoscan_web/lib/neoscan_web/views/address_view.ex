@@ -7,39 +7,35 @@ defmodule NeoscanWeb.AddressView do
   def get_NEO_balance(nil) do
     0
   end
+
   def get_NEO_balance(balance) do
     balance
-    |> Map.to_list
-    |> Enum.filter(
-         fn {_asset, %{"asset" => asset}} ->
-           Api.get_asset_name(asset) == "NEO"
-         end
-       )
-    |> Enum.reduce(0, fn ({_asset, %{"amount" => amount}}, _acc) -> amount end)
-    |> Helpers.round_or_not
+    |> Map.to_list()
+    |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
+      Api.get_asset_name(asset) == "NEO"
+    end)
+    |> Enum.reduce(0, fn {_asset, %{"amount" => amount}}, _acc -> amount end)
+    |> Helpers.round_or_not()
     |> number_to_delimited()
   end
 
   def get_GAS_balance(nil) do
     raw('<p class="balance-amount">0<span>#{0}</span></p>')
   end
+
   def get_GAS_balance(balance) do
-    {int, div} = balance
-                 |> Map.to_list
-                 |> Enum.filter(
-                      fn {_asset, %{"asset" => asset}} ->
-                        Api.get_asset_name(asset) == "GAS"
-                      end
-                    )
-                 |> Enum.reduce(
-                      0.0,
-                      fn ({_asset, %{"amount" => amount}}, acc) ->
-                        amount + acc
-                      end
-                    )
-                 |> Float.round(8)
-                 |> Float.to_string
-                 |> Integer.parse
+    {int, div} =
+      balance
+      |> Map.to_list()
+      |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
+        Api.get_asset_name(asset) == "GAS"
+      end)
+      |> Enum.reduce(0.0, fn {_asset, %{"amount" => amount}}, acc ->
+        amount + acc
+      end)
+      |> Float.round(8)
+      |> Float.to_string()
+      |> Integer.parse()
 
     raw('<p class="balance-amount">#{number_to_delimited(int)}<span>#{div}</span></p>')
   end
@@ -48,18 +44,25 @@ defmodule NeoscanWeb.AddressView do
     cond do
       type == "ContractTransaction" ->
         'neo-transaction'
+
       type == "ClaimTransaction" ->
         'gas-transaction'
+
       type == "IssueTransaction" ->
         'issue-transaction'
+
       type == "RegisterTransaction" ->
         'register-transaction'
+
       type == "InvocationTransaction" ->
         'invocation-transaction'
+
       type == "EnrollmentTransaction" ->
         'invocation-transaction'
+
       type == "PublishTransaction" ->
         'publish-transaction'
+
       type == "MinerTransaction" ->
         'miner-transaction'
     end
@@ -86,36 +89,37 @@ defmodule NeoscanWeb.AddressView do
   end
 
   def get_previous_page(conn, address, page) do
-    int = page
-          |> String.to_integer
+    int =
+      page
+      |> String.to_integer()
 
-    num = int - 1
-          |> Integer.to_string
+    num =
+      (int - 1)
+      |> Integer.to_string()
 
     raw(
-      '<a href="#{
-        address_path(conn, :go_to_page, address, num)
-      }" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
+      '<a href="#{address_path(conn, :go_to_page, address, num)}" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
     )
   end
 
   def get_next_page(conn, address, page) do
-    int = page
-          |> String.to_integer
+    int =
+      page
+      |> String.to_integer()
 
-    num = int + 1
-          |> Integer.to_string
+    num =
+      (int + 1)
+      |> Integer.to_string()
 
     raw(
-      '<a href="#{
-        address_path(conn, :go_to_page, address, num)
-      }" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
+      '<a href="#{address_path(conn, :go_to_page, address, num)}" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
     )
   end
 
   def check_last(page, total) do
-    int = page
-          |> String.to_integer
+    int =
+      page
+      |> String.to_integer()
 
     if int * 15 < total do
       true
@@ -123,5 +127,4 @@ defmodule NeoscanWeb.AddressView do
       false
     end
   end
-
 end

@@ -6,8 +6,8 @@ defmodule NeoscanWeb.AssetsView do
   def get_supply(amount) when amount <= 0 do
     "Unlimited"
   end
+
   def get_supply(amount) when amount > 0 do
     number_to_delimited(amount)
   end
-
 end

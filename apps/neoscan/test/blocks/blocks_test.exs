@@ -28,23 +28,26 @@ defmodule Neoscan.BlocksTest do
       assert String.length(block.previousblockhash) > 64
       assert %{} = block.script
       assert block.size == 1526
-      assert block.time == 15154813
+      assert block.time == 15_154_813
       assert block.version == 2
     end
 
     test "update_block/2 with valid data updates the block" do
       block = insert(:block)
-      assert {:ok, block} = Blocks.update_block(
-               block,
-               %{
+
+      assert {:ok, block} =
+               Blocks.update_block(block, %{
                  "confirmations" => 57,
                  "hash" => "b33f6f3dfead7dddpo99846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
-                 "merkleroot" => "b33f6f3dfead7ddpe999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
-                 "nextblockhash" => "b33f6f3dfead7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
-                 "previousblockhash" => "b33f6f3dfpad7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
+                 "merkleroot" =>
+                   "b33f6f3dfead7ddpe999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
+                 "nextblockhash" =>
+                   "b33f6f3dfead7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
+                 "previousblockhash" =>
+                   "b33f6f3dfpad7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8",
                  "index" => 1
-               }
-             )
+               })
+
       assert block.confirmations == 57
     end
 

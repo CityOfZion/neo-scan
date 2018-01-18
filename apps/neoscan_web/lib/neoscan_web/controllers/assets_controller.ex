@@ -4,7 +4,7 @@ defmodule NeoscanWeb.AssetsController do
   alias NeoscanMonitor.Api
 
   def index(conn, _params) do
-    assets = Api.get_assets
+    assets = Api.get_assets()
     render(conn, "assets.html", assets: assets)
   end
 
@@ -15,5 +15,4 @@ defmodule NeoscanWeb.AssetsController do
       value
     end
   end
-
 end

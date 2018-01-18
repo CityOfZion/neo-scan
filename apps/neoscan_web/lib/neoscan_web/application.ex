@@ -9,7 +9,7 @@ defmodule NeoscanWeb.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(Endpoint, []),
+      supervisor(Endpoint, [])
       # Start your own worker by calling:
       # NeoscanWeb.Worker.start_link(arg1, arg2, arg3)
       # worker(NeoscanWeb.Worker, [arg1, arg2, arg3]),

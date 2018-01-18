@@ -2,17 +2,19 @@ defmodule NeoscanSync.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :neoscan_sync,
-     version: "0.1.0",
-     build_path: "../../_build",
-     config_path: "../../config/config.exs",
-     deps_path: "../../deps",
-     lockfile: "../../mix.lock",
-     elixir: "~> 1.4",
-     elixirc_paths: elixirc_paths(Mix.env),
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps()]
+    [
+      app: :neoscan_sync,
+      version: "0.1.0",
+      build_path: "../../_build",
+      config_path: "../../config/config.exs",
+      deps_path: "../../deps",
+      lockfile: "../../mix.lock",
+      elixir: "~> 1.4",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      deps: deps()
+    ]
   end
 
   # Configuration for the OTP application
@@ -20,8 +22,10 @@ defmodule NeoscanSync.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger, :httpoison, :neoscan_monitor],
-     mod: {NeoscanSync.Application, []}]
+    [
+      extra_applications: [:logger, :httpoison, :neoscan_monitor],
+      mod: {NeoscanSync.Application, []}
+    ]
   end
 
   # Specifies which paths to compile per environment.
@@ -46,7 +50,7 @@ defmodule NeoscanSync.Mixfile do
     [
       {:neoscan, in_umbrella: true},
       {:neoscan_monitor, in_umbrella: true},
-      {:gen_stage, "~> 0.11"},
+      {:gen_stage, "~> 0.11"}
     ]
   end
 end

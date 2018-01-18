@@ -102,5 +102,4 @@ defmodule NeoscanWeb.ApiController do
     result = Api.repair_block_counter()
     json(conn, result)
   end
-
 end

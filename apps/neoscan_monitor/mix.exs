@@ -2,17 +2,19 @@ defmodule NeoscanMonitor.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :neoscan_monitor,
-     version: "0.1.0",
-     build_path: "../../_build",
-     config_path: "../../config/config.exs",
-     deps_path: "../../deps",
-     lockfile: "../../mix.lock",
-     elixir: "~> 1.4",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     elixirc_paths: elixirc_paths(Mix.env),
-     deps: deps()]
+    [
+      app: :neoscan_monitor,
+      version: "0.1.0",
+      build_path: "../../_build",
+      config_path: "../../config/config.exs",
+      deps_path: "../../deps",
+      lockfile: "../../mix.lock",
+      elixir: "~> 1.4",
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
+      deps: deps()
+    ]
   end
 
   # Configuration for the OTP application
@@ -20,8 +22,7 @@ defmodule NeoscanMonitor.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger, :httpoison],
-     mod: {NeoscanMonitor.Application, []}]
+    [extra_applications: [:logger, :httpoison], mod: {NeoscanMonitor.Application, []}]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test"]
@@ -44,7 +45,7 @@ defmodule NeoscanMonitor.Mixfile do
   defp deps do
     [
       {:neoscan, in_umbrella: true},
-      {:neoprice, in_umbrella: true},
+      {:neoprice, in_umbrella: true}
     ]
   end
 end

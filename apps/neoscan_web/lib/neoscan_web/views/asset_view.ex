@@ -6,15 +6,12 @@ defmodule NeoscanWeb.AssetView do
   alias Neoscan.Helpers
 
   def compare_time_and_get_minutes(balance) do
-
-    unix_time = Map.to_list(balance)
-                |> Enum.reduce(
-                     [],
-                     fn ({_asset, %{"time" => time}}, acc) ->
-                       [time | acc]
-                     end
-                   )
-                |> Enum.max
+    unix_time =
+      Map.to_list(balance)
+      |> Enum.reduce([], fn {_asset, %{"time" => time}}, acc ->
+        [time | acc]
+      end)
+      |> Enum.max()
 
     ViewHelper.compare_time_and_get_minutes(unix_time)
   end
@@ -31,18 +28,25 @@ defmodule NeoscanWeb.AssetView do
     cond do
       type == "ContractTransaction" ->
         'neo-transaction'
+
       type == "ClaimTransaction" ->
         'gas-transaction'
+
       type == "IssueTransaction" ->
         'issue-transaction'
+
       type == "RegisterTransaction" ->
         'register-transaction'
+
       type == "InvocationTransaction" ->
         'invocation-transaction'
+
       type == "EnrollmentTransaction" ->
         'invocation-transaction'
+
       type == "PublishTransaction" ->
         'publish-transaction'
+
       type == "MinerTransaction" ->
         'miner-transaction'
     end
@@ -57,5 +61,4 @@ defmodule NeoscanWeb.AssetView do
       |> number_to_delimited()
     end
   end
-
 end

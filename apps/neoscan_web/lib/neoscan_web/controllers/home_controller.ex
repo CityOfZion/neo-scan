@@ -6,38 +6,35 @@ defmodule NeoscanWeb.HomeController do
   alias Neoscan.Transactions
   alias Neoscan.Addresses
 
-  #load last blocks and transactions from db
+  # load last blocks and transactions from db
   def index(conn, _params) do
-    render conn, "index.html"
+    render(conn, "index.html")
   end
 
-  #searches the database for the input value
-  def search(
-        conn,
-        %{
-          "search" => %{
-            "for" => value
-          }
+  # searches the database for the input value
+  def search(conn, %{
+        "search" => %{
+          "for" => value
         }
-      ) do
-    result = try  do
-      String.to_integer(value)
-    rescue
-      ArgumentError ->
-        Blocks.get_block_by_hash(value) || Transactions.get_transaction_by_hash(
-          value
-        ) || Addresses.get_address_by_hash(value)
-    else
-      value ->
-        Blocks.get_block_by_height(value)
-    end
+      }) do
+    result =
+      try do
+        String.to_integer(value)
+      rescue
+        ArgumentError ->
+          Blocks.get_block_by_hash(value) || Transactions.get_transaction_by_hash(value) ||
+            Addresses.get_address_by_hash(value)
+      else
+        value ->
+          Blocks.get_block_by_height(value)
+      end
 
     redirect_search_result(conn, result)
   end
 
-  #redirect search results to correct page
+  # redirect search results to correct page
   def redirect_search_result(conn, result) do
-    cond  do
+    cond do
       nil == result ->
         no_result(conn, [])
 
@@ -49,7 +46,6 @@ defmodule NeoscanWeb.HomeController do
 
       Map.has_key?(result, :address) ->
         redirect(conn, to: address_path(conn, :index, result.address))
-
     end
   end
 
@@ -58,5 +54,4 @@ defmodule NeoscanWeb.HomeController do
     |> put_flash(:info, "Not Found in DB!")
     |> redirect(to: home_path(conn, :index))
   end
-
 end

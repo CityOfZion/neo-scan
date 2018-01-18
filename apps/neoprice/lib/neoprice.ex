@@ -8,15 +8,14 @@ defmodule Neoprice do
   alias Neoprice.GasUsd
 
   def start(_type, _args) do
-
     import Supervisor.Spec, warn: false
 
     # Define workers and child supervisors to be supervised
     children = [
-      NeoBtc.worker,
-      NeoUsd.worker,
-      GasBtc.worker,
-      GasUsd.worker
+      NeoBtc.worker(),
+      NeoUsd.worker(),
+      GasBtc.worker(),
+      GasUsd.worker()
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

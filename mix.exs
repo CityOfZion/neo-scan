@@ -4,13 +4,13 @@ defmodule Neoscan.Umbrella.Mixfile do
   def project do
     [
       apps_path: "apps",
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
-
       name: "NeoScan",
       docs: [
-        main: "NeoScan", # The main page in the docs
+        # The main page in the docs
+        main: "NeoScan",
         extras: ["README.md"]
       ],
       aliases: aliases()
@@ -36,8 +36,7 @@ defmodule Neoscan.Umbrella.Mixfile do
       {:httpoison, "~> 0.13"},
       {:flow, "~> 0.11"},
       {:ex_machina, "~> 2.0", only: [:test, :travis]},
-      {:credo, "~> 0.8", only: [:dev, :travis]},
-      {:morphix, "~> 0.0.7"},
+      {:morphix, "~> 0.0.7"}
     ]
   end
 
@@ -45,7 +44,7 @@ defmodule Neoscan.Umbrella.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test": ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end

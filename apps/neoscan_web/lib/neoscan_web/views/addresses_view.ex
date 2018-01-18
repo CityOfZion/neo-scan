@@ -5,15 +5,14 @@ defmodule NeoscanWeb.AddressesView do
   alias NeoscanWeb.ViewHelper
 
   def compare_time_and_get_minutes(nil), do: nil
+
   def compare_time_and_get_minutes(balance) do
-    unix_time = Map.to_list(balance)
-                |> Enum.reduce(
-                     [],
-                     fn ({_asset, %{"time" => time}}, acc) ->
-                       [time | acc]
-                     end
-                   )
-                |> Enum.max
+    unix_time =
+      Map.to_list(balance)
+      |> Enum.reduce([], fn {_asset, %{"time" => time}}, acc ->
+        [time | acc]
+      end)
+      |> Enum.max()
 
     ViewHelper.compare_time_and_get_minutes(unix_time)
   end
@@ -21,12 +20,14 @@ defmodule NeoscanWeb.AddressesView do
   def get_NEO_balance(balance) do
     ViewHelper.get_NEO_balance(balance)
   end
+
   def get_GAS_balance(balance) do
     ViewHelper.get_GAS_balance(balance)
   end
 
   def get_current_min_qtd(page) do
-    %{:total_addresses => total} = Api.get_stats
+    %{:total_addresses => total} = Api.get_stats()
+
     if total < 15 do
       0
     else
@@ -35,51 +36,54 @@ defmodule NeoscanWeb.AddressesView do
   end
 
   def get_current_max_qtd(page) do
-    %{:total_addresses => total} = Api.get_stats
+    %{:total_addresses => total} = Api.get_stats()
 
     cond do
       total < 15 ->
         total
+
       String.to_integer(page) * 15 > total ->
         total
+
       true ->
         String.to_integer(page) * 15
     end
   end
 
   def get_previous_page(conn, page) do
-    int = page
-          |> String.to_integer
+    int =
+      page
+      |> String.to_integer()
 
-    num = int - 1
-          |> Integer.to_string
+    num =
+      (int - 1)
+      |> Integer.to_string()
 
     raw(
-      '<a href="#{
-        addresses_path(conn, :go_to_page, num)
-      }" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
+      '<a href="#{addresses_path(conn, :go_to_page, num)}" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
     )
   end
 
   def get_next_page(conn, page) do
-    int = page
-          |> String.to_integer
+    int =
+      page
+      |> String.to_integer()
 
-    num = int + 1
-          |> Integer.to_string
+    num =
+      (int + 1)
+      |> Integer.to_string()
 
     raw(
-      '<a href="#{
-        addresses_path(conn, :go_to_page, num)
-      }" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
+      '<a href="#{addresses_path(conn, :go_to_page, num)}" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
     )
   end
 
   def check_last(page) do
-    %{:total_addresses => total} = Api.get_stats
+    %{:total_addresses => total} = Api.get_stats()
 
-    int = page
-          |> String.to_integer
+    int =
+      page
+      |> String.to_integer()
 
     if int * 15 < total do
       true
@@ -89,8 +93,7 @@ defmodule NeoscanWeb.AddressesView do
   end
 
   def get_total do
-    %{:total_addresses => total} = Api.get_stats
+    %{:total_addresses => total} = Api.get_stats()
     total
   end
-
 end

@@ -14,9 +14,11 @@ defmodule NeoscanWeb.BlockView do
   def check_if_invocation({"invocation", _hash}) do
     true
   end
+
   def check_if_invocation({"verification", _hash}) do
     false
   end
+
   def check_if_invocation(nil) do
     true
   end
@@ -24,9 +26,11 @@ defmodule NeoscanWeb.BlockView do
   def check_if_verification({"verification", _hash}) do
     true
   end
+
   def check_if_verification({"invocation", _hash}) do
     false
   end
+
   def check_if_verification(nil) do
     true
   end
@@ -34,6 +38,7 @@ defmodule NeoscanWeb.BlockView do
   def parse_invocation(nil) do
     "No Invocation Script"
   end
+
   def parse_invocation({"invocation", inv}) do
     Disassembler.parse_script(inv)
   end
@@ -41,6 +46,7 @@ defmodule NeoscanWeb.BlockView do
   def parse_verification(nil) do
     "No Verification Script"
   end
+
   def parse_verification({"verification", ver}) do
     Disassembler.parse_script(ver)
   end
@@ -48,6 +54,7 @@ defmodule NeoscanWeb.BlockView do
   def get_inv(nil) do
     "No Invocation Script"
   end
+
   def get_inv({"invocation", inv}) do
     inv
   end
@@ -55,6 +62,7 @@ defmodule NeoscanWeb.BlockView do
   def get_ver(nil) do
     "No Verification Script"
   end
+
   def get_ver({"verification", ver}) do
     ver
   end
@@ -76,36 +84,37 @@ defmodule NeoscanWeb.BlockView do
   end
 
   def get_previous_page(conn, hash, page) do
-    int = page
-          |> String.to_integer
+    int =
+      page
+      |> String.to_integer()
 
-    num = int - 1
-          |> Integer.to_string
+    num =
+      (int - 1)
+      |> Integer.to_string()
 
     raw(
-      '<a href="#{
-        block_path(conn, :go_to_page, hash, num)
-      }" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
+      '<a href="#{block_path(conn, :go_to_page, hash, num)}" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
     )
   end
 
   def get_next_page(conn, hash, page) do
-    int = page
-          |> String.to_integer
+    int =
+      page
+      |> String.to_integer()
 
-    num = int + 1
-          |> Integer.to_string
+    num =
+      (int + 1)
+      |> Integer.to_string()
 
     raw(
-      '<a href="#{
-        block_path(conn, :go_to_page, hash, num)
-      }" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
+      '<a href="#{block_path(conn, :go_to_page, hash, num)}" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
     )
   end
 
   def check_last(page, total) do
-    int = page
-          |> String.to_integer
+    int =
+      page
+      |> String.to_integer()
 
     if int * 15 < total do
       true
@@ -118,18 +127,25 @@ defmodule NeoscanWeb.BlockView do
     cond do
       type == "ContractTransaction" ->
         'neo-transaction'
+
       type == "ClaimTransaction" ->
         'gas-transaction'
+
       type == "IssueTransaction" ->
         'issue-transaction'
+
       type == "RegisterTransaction" ->
         'register-transaction'
+
       type == "InvocationTransaction" ->
         'invocation-transaction'
+
       type == "EnrollmentTransaction" ->
         'invocation-transaction'
+
       type == "PublishTransaction" ->
         'publish-transaction'
+
       type == "MinerTransaction" ->
         'miner-transaction'
     end

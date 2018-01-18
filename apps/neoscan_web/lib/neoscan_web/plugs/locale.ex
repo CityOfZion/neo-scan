@@ -16,9 +16,8 @@ defmodule NeoscanWeb.Plugs.Locale do
 
   defp extract_locale(conn) do
     with nil <- params_locale(conn),
-      nil <- session_locale(conn),
-      nil <- req_header_locale(conn)
-    do
+         nil <- session_locale(conn),
+         nil <- req_header_locale(conn) do
       "en"
     else
       lang -> validate(lang)
@@ -36,10 +35,14 @@ defmodule NeoscanWeb.Plugs.Locale do
   defp req_header_locale(conn) do
     case Conn.get_req_header(conn, "accept-language") do
       [language | _] ->
-        splited = Regex.scan(~r/[a-z]/, language)
-                  |> List.flatten
-        Enum.find(splited, fn (x) -> x in @languages end)
-      _ -> "en"
+        splited =
+          Regex.scan(~r/[a-z]/, language)
+          |> List.flatten()
+
+        Enum.find(splited, fn x -> x in @languages end)
+
+      _ ->
+        "en"
     end
   end
 

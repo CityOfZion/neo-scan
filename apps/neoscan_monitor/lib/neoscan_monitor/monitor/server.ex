@@ -13,8 +13,14 @@ defmodule NeoscanMonitor.Server do
   end
 
   def init(:ok) do
-    :ets.new(:server, [:set, :named_table, :public, read_concurrency: true,
-                                             write_concurrency: true])
+    :ets.new(:server, [
+      :set,
+      :named_table,
+      :public,
+      read_concurrency: true,
+      write_concurrency: true
+    ])
+
     {:ok, nil}
   end
 
@@ -25,7 +31,7 @@ defmodule NeoscanMonitor.Server do
   def get(key) do
     case :ets.lookup(:server, key) do
       [{^key, result}] -> result
-       _ -> nil
+      _ -> nil
     end
   end
 
@@ -37,7 +43,8 @@ defmodule NeoscanMonitor.Server do
     set(:stats, new_state.stats)
     set(:addresses, new_state.addresses)
     set(:price, new_state.price)
-    Process.send_after(self(), :broadcast, 10_000) # In 10 seconds
+    # In 10 seconds
+    Process.send_after(self(), :broadcast, 10_000)
     {:noreply, nil}
   end
 
@@ -51,18 +58,19 @@ defmodule NeoscanMonitor.Server do
   end
 
   def handle_info(:broadcast, state) do
+    {blocks, _} =
+      get(:blocks)
+      |> Enum.split(5)
 
-    {blocks, _} = get(:blocks)
-                  |> Enum.split(5)
-
-    {transactions, _} = get(:transactions)
-                        |> Enum.split(5)
+    {transactions, _} =
+      get(:transactions)
+      |> Enum.split(5)
 
     payload = %{
       "blocks" => blocks,
       "transactions" => transactions,
       "price" => get(:price),
-      "stats" => get(:stats),
+      "stats" => get(:stats)
     }
 
     check_endpoint = function_exported?(NeoscanWeb.Endpoint, :broadcast, 3)
@@ -72,8 +80,8 @@ defmodule NeoscanMonitor.Server do
       broadcast.(payload)
     end
 
-    Process.send_after(self(), :broadcast, 1_000) # In 10 seconds
+    # In 10 seconds
+    Process.send_after(self(), :broadcast, 1_000)
     {:noreply, state}
   end
-
 end

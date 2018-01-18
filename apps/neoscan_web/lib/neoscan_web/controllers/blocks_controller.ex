@@ -5,7 +5,7 @@ defmodule NeoscanWeb.BlocksController do
   alias Neoscan.Blocks
 
   def index(conn, _params) do
-    blocks = Api.get_blocks
+    blocks = Api.get_blocks()
     render(conn, "blocks.html", blocks: blocks, page: "1")
   end
 
@@ -13,5 +13,4 @@ defmodule NeoscanWeb.BlocksController do
     blocks = Blocks.paginate_blocks(page)
     render(conn, "blocks.html", blocks: blocks, page: page)
   end
-
 end

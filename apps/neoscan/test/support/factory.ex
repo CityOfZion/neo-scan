@@ -9,7 +9,7 @@ defmodule Neoscan.Factory do
   alias Neoscan.Claims.Claim
   alias Neoscan.ChainAssets.Asset
 
-  #TODO: Sequence creating strings bigger than 64 should be sliced
+  # TODO: Sequence creating strings bigger than 64 should be sliced
   def block_factory do
     %Block{
       confirmations: 50,
@@ -19,12 +19,13 @@ defmodule Neoscan.Factory do
       nextblockhash: sequence("b33f6f3dfead7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8"),
       nextconsensus: sequence("b33f6f3dfead7ddde999846kf5dda8a6bbbc92cb57f161b5030ae608317c6fa8"),
       nonce: sequence("nonce"),
-      previousblockhash: sequence("b30f6f3dfead7ddde999846kf5dda8a6bbbc92cb57f161b5030ae608317c6fa8"),
+      previousblockhash:
+        sequence("b30f6f3dfead7ddde999846kf5dda8a6bbbc92cb57f161b5030ae608317c6fa8"),
       script: %{
         sequence("scripthash") => sequence("scripthashinner")
       },
       size: 1526,
-      time: 15154813,
+      time: 15_154_813,
       version: 2,
       tx_count: 5,
       total_sys_fee: 0,
@@ -44,7 +45,7 @@ defmodule Neoscan.Factory do
       type: "FactoryTransaction",
       version: 1,
       vin: [%{sequence("vinhash") => sequence("vininnerhash")}],
-      time: 1548656,
+      time: 1_548_656,
       nonce: 15155,
       claims: [%{sequence("claimhash") => sequence("claiminnerhash")}],
       pubkey: sequence("pubkeyhash"),
@@ -71,9 +72,9 @@ defmodule Neoscan.Factory do
         }
       },
       claimed: [insert(:claim)],
-      time: 154856,
+      time: 154_856,
       vouts: [insert(:vout)],
-      tx_count: 5,
+      tx_count: 5
     }
   end
 
@@ -108,7 +109,7 @@ defmodule Neoscan.Factory do
       asset: sequence("assethash"),
       amount: 0.5,
       block_height: 5,
-      time: 154856,
+      time: 154_856
     }
   end
 
@@ -122,8 +123,7 @@ defmodule Neoscan.Factory do
       precision: 1,
       type: sequence("typestring"),
       issued: 500.0,
-      time:  154856,
+      time: 154_856
     }
   end
-
 end

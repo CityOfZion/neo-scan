@@ -3,20 +3,19 @@ defmodule Neoscan.Repo.Migrations.Histories do
 
   def change do
     create table(:histories) do
-      add :address_hash, :string
-      add :balance, :map
-      add :block_height, :integer
-      add :txid, :string
-      add :time, :integer
+      add(:address_hash, :string)
+      add(:balance, :map)
+      add(:block_height, :integer)
+      add(:txid, :string)
+      add(:time, :integer)
 
-      add :address_id, references(:addresses, on_delete: :delete_all)
+      add(:address_id, references(:addresses, on_delete: :delete_all))
 
       timestamps()
     end
 
-    create index(:histories, [:address_hash])
-    create index(:histories, [:address_id])
-    create index(:histories, [:time])
-
+    create(index(:histories, [:address_hash]))
+    create(index(:histories, [:address_id]))
+    create(index(:histories, [:time]))
   end
 end

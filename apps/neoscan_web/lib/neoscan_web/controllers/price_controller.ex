@@ -14,7 +14,7 @@ defmodule NeoscanWeb.PriceController do
 
   def index(conn, %{"from" => from, "graph" => graph, "to" => to}) do
     map = get_graph(from, to, graph)
-    json conn, map
+    json(conn, map)
   end
 
   defp get_graph("neo", "usd", "1d"), do: NeoUsd.get_1_day()

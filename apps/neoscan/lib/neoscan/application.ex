@@ -14,7 +14,7 @@ defmodule Neoscan.Application do
 
     Supervisor.start_link(
       [
-        supervisor(Neoscan.Repo, []),
+        supervisor(Neoscan.Repo, [])
       ],
       strategy: :one_for_one,
       name: Neoscan.Supervisor

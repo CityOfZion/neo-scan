@@ -37,7 +37,7 @@ defmodule NeoscanMonitor.Api do
     Server.get(:assets)
     |> Enum.find(fn %{:txid => txid} -> txid == hash end)
     |> Map.get(:name)
-    |> ChainAssets.filter_name
+    |> ChainAssets.filter_name()
   end
 
   def check_asset(hash) do
@@ -77,5 +77,4 @@ defmodule NeoscanMonitor.Api do
   def add_transaction(transaction, vouts) do
     Worker.add_transaction(transaction, vouts)
   end
-
 end

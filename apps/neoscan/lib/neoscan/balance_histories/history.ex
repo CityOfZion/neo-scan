@@ -1,5 +1,5 @@
 defmodule Neoscan.BalanceHistories.History do
-  @moduledoc"""
+  @moduledoc """
   Represent a History of a transaction in Database.
   """
 
@@ -8,36 +8,27 @@ defmodule Neoscan.BalanceHistories.History do
   alias Neoscan.BalanceHistories.History
 
   schema "histories" do
-    field :address_hash, :string
-    field :txid, :string
-    field :balance, :map
-    field :block_height, :integer
-    field :time, :integer
+    field(:address_hash, :string)
+    field(:txid, :string)
+    field(:balance, :map)
+    field(:block_height, :integer)
+    field(:time, :integer)
 
-    belongs_to :address, Neoscan.Addresses.Address
+    belongs_to(:address, Neoscan.Addresses.Address)
     timestamps()
   end
 
   @doc false
   def changeset(%History{} = history, address, attrs) do
-
-    new_attrs = Map.merge(
-      attrs,
-      %{
+    new_attrs =
+      Map.merge(attrs, %{
         :address_id => address.id,
-        :address_hash => address.address,
-      }
-    )
+        :address_hash => address.address
+      })
 
     history
-    |> cast(
-         new_attrs,
-         [:address_hash, :balance, :txid, :block_height, :address_id, :time]
-       )
+    |> cast(new_attrs, [:address_hash, :balance, :txid, :block_height, :address_id, :time])
     |> assoc_constraint(:address, required: true)
-    |> validate_required(
-         [:address_hash, :txid, :block_height, :address_id, :time]
-       )
+    |> validate_required([:address_hash, :txid, :block_height, :address_id, :time])
   end
-
 end

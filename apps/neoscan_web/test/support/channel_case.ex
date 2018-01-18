@@ -27,10 +27,11 @@ defmodule NeoscanWeb.ChannelCase do
 
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Neoscan.Repo)
+
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(Neoscan.Repo, {:shared, self()})
     end
+
     :ok
   end
-
 end

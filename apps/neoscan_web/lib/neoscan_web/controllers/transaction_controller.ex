@@ -15,8 +15,8 @@ defmodule NeoscanWeb.TransactionController do
     Map.merge(tran, %{
       :vin => new_vin,
       :claims => new_claim,
-      :asset => new_asset,
-      })
+      :asset => new_asset
+    })
     |> route(conn)
   end
 
@@ -25,6 +25,7 @@ defmodule NeoscanWeb.TransactionController do
     |> put_flash(:info, "Not Found in DB!")
     |> redirect(to: home_path(conn, :index))
   end
+
   def route(transaction, conn) do
     render(conn, "transaction.html", transaction: transaction)
   end
@@ -32,6 +33,7 @@ defmodule NeoscanWeb.TransactionController do
   defp clean_list(nil) do
     nil
   end
+
   defp clean_list(list) do
     Enum.map(list, fn l ->
       {:ok, new_l} = Morphix.atomorphiform(l)
@@ -42,9 +44,9 @@ defmodule NeoscanWeb.TransactionController do
   defp clean_map(nil) do
     nil
   end
+
   defp clean_map(map) do
     {:ok, new_map} = Morphix.atomorphiform(map)
     new_map
   end
-
 end

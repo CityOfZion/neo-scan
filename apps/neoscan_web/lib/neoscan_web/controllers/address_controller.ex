@@ -19,17 +19,17 @@ defmodule NeoscanWeb.AddressController do
     |> put_flash(:info, "Not Found in DB!")
     |> redirect(to: home_path(conn, :index))
   end
+
   def route(address, conn, page) do
-    transactions = BalanceHistories.paginate_history_transactions(
-                     address.address,
-                     page
-                   )
-                   |> Enum.map(
-                        fn tr ->
-                          {:ok, result} = Morphix.atomorphiform(tr)
-                          result
-                        end
-                      )
+    transactions =
+      BalanceHistories.paginate_history_transactions(
+        address.address,
+        page
+      )
+      |> Enum.map(fn tr ->
+        {:ok, result} = Morphix.atomorphiform(tr)
+        result
+      end)
 
     graph_data = BalanceHistories.get_graph_data_for_address(address.address)
 

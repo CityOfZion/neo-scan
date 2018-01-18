@@ -47,19 +47,22 @@ defmodule Neoscan.Blocks do
 
   """
   def home_blocks do
-    block_query = from e in Block,
-                       where: e.index > -1,
-                       order_by: [
-                         desc: e.id
-                       ],
-                       select: %{
-                         :index => e.index,
-                         :time => e.time,
-                         :tx_count => e.tx_count,
-                         :hash => e.hash,
-                         :size => e.size
-                       },
-                       limit: 15
+    block_query =
+      from(
+        e in Block,
+        where: e.index > -1,
+        order_by: [
+          desc: e.id
+        ],
+        select: %{
+          :index => e.index,
+          :time => e.time,
+          :tx_count => e.tx_count,
+          :hash => e.hash,
+          :size => e.size
+        },
+        limit: 15
+      )
 
     Repo.all(block_query)
   end
@@ -74,19 +77,22 @@ defmodule Neoscan.Blocks do
 
   """
   def paginate_blocks(pag) do
-    block_query = from e in Block,
-                       where: e.index > -1,
-                       order_by: [
-                         desc: e.id
-                       ],
-                       select: %{
-                         :index => e.index,
-                         :time => e.time,
-                         :tx_count => e.tx_count,
-                         :hash => e.hash,
-                         :size => e.size
-                       },
-                       limit: 15
+    block_query =
+      from(
+        e in Block,
+        where: e.index > -1,
+        order_by: [
+          desc: e.id
+        ],
+        select: %{
+          :index => e.index,
+          :time => e.time,
+          :tx_count => e.tx_count,
+          :hash => e.hash,
+          :size => e.size
+        },
+        limit: 15
+      )
 
     Repo.paginate(block_query, page: pag, page_size: 15)
   end
@@ -120,11 +126,15 @@ defmodule Neoscan.Blocks do
 
   """
   def get_block_by_hash(hash) do
-    query = from e in Block,
-                 where: e.hash == ^hash,
-                 select: e
+    query =
+      from(
+        e in Block,
+        where: e.hash == ^hash,
+        select: e
+      )
+
     Repo.all(query)
-    |> List.first
+    |> List.first()
   end
 
   @doc """
@@ -140,19 +150,27 @@ defmodule Neoscan.Blocks do
 
   """
   def get_block_by_hash_for_view(hash) do
-    trans_query = from t in Transaction,
-                       select: %{
-                         type: t.type,
-                         txid: t.txid
-                       }
-    query = from e in Block,
-                 where: e.hash == ^hash,
-                 preload: [
-                   transactions: ^trans_query
-                 ],
-                 select: e
+    trans_query =
+      from(
+        t in Transaction,
+        select: %{
+          type: t.type,
+          txid: t.txid
+        }
+      )
+
+    query =
+      from(
+        e in Block,
+        where: e.hash == ^hash,
+        preload: [
+          transactions: ^trans_query
+        ],
+        select: e
+      )
+
     Repo.all(query)
-    |> List.first
+    |> List.first()
   end
 
   @doc """
@@ -168,12 +186,16 @@ defmodule Neoscan.Blocks do
 
   """
   def paginate_transactions(hash, page) do
-    query = from e in Block,
-                 where: e.hash == ^hash,
-                 select: e
+    query =
+      from(
+        e in Block,
+        where: e.hash == ^hash,
+        select: e
+      )
 
-    block = Repo.all(query)
-            |> List.first
+    block =
+      Repo.all(query)
+      |> List.first()
 
     transactions = Transactions.paginate_transactions_for_block(block.id, page)
 
@@ -193,11 +215,15 @@ defmodule Neoscan.Blocks do
 
   """
   def get_block_by_height(height) do
-    query = from e in Block,
-                 where: e.index == ^height,
-                 select: e
+    query =
+      from(
+        e in Block,
+        where: e.index == ^height,
+        select: e
+      )
+
     Repo.all(query)
-    |> List.first
+    |> List.first()
   end
 
   @doc """
@@ -218,6 +244,7 @@ defmodule Neoscan.Blocks do
     |> Repo.insert!()
     |> update_blocks_state
   end
+
   def update_blocks_state(block) do
     Api.add_block(block)
     Stats.add_block_to_table()
@@ -255,7 +282,7 @@ defmodule Neoscan.Blocks do
 
   """
   def delete_block(%Block{:updated_at => _time} = block) do
-    #Addresses.rollback_addresses(time) TODO
+    # Addresses.rollback_addresses(time) TODO
     Repo.delete!(block)
   end
 
@@ -282,18 +309,22 @@ defmodule Neoscan.Blocks do
 
   """
   def get_highest_block_in_db do
-    query = from e in Block,
-                 select: e.index,
-                 where: e.index > -1,
-                   #force postgres to use index
-                 order_by: [
-                   desc: e.index
-                 ],
-                 limit: 1
+    query =
+      from(
+        e in Block,
+        select: e.index,
+        where: e.index > -1,
+        # force postgres to use index
+        order_by: [
+          desc: e.index
+        ],
+        limit: 1
+      )
 
     case Repo.all(query) do
       [index] ->
         {:ok, index}
+
       [] ->
         {:ok, -1}
     end
@@ -309,9 +340,13 @@ defmodule Neoscan.Blocks do
 
   """
   def get_higher_than(index) do
-    query = from e in Block,
-                 where: e.index > ^index,
-                 select: e
+    query =
+      from(
+        e in Block,
+        where: e.index > ^index,
+        select: e
+      )
+
     Repo.all(query)
   end
 
@@ -324,8 +359,7 @@ defmodule Neoscan.Blocks do
       { :ok, "deleted"}
 
   """
-  def delete_blocks([block | tail]),
-      do: [delete_block(block) | delete_blocks(tail)]
+  def delete_blocks([block | tail]), do: [delete_block(block) | delete_blocks(tail)]
   def delete_blocks([]), do: {:ok, "Deleted"}
 
   @doc """
@@ -342,42 +376,43 @@ defmodule Neoscan.Blocks do
     |> delete_blocks
   end
 
-  #get the total of spent fees in the network between a height range
+  # get the total of spent fees in the network between a height range
   def get_fees_in_range(height1, height2) do
     value1 = String.to_integer(height1)
-    try  do
+
+    try do
       String.to_integer(height2)
     rescue
       ArgumentError ->
         "wrong input"
     else
       value2 ->
-
         range = [value1, value2]
 
         max = Enum.max(range)
         min = Enum.min(range)
 
-        query = from b in Block,
-                     where: b.index >= ^min and b.index <= ^max,
-                     select: %{
-                       :total_sys_fee => b.total_sys_fee,
-                       :total_net_fee => b.total_net_fee
-                     }
+        query =
+          from(
+            b in Block,
+            where: b.index >= ^min and b.index <= ^max,
+            select: %{
+              :total_sys_fee => b.total_sys_fee,
+              :total_net_fee => b.total_net_fee
+            }
+          )
 
         Repo.all(query)
-        |> Enum.reduce(
-             %{:total_sys_fee => 0, :total_net_fee => 0},
-             fn (%{
-               :total_sys_fee => sys_fee,
-               :total_net_fee => net_fee
-             }, acc) ->
-               %{
-                 :total_sys_fee => acc.total_sys_fee + sys_fee,
-                 :total_net_fee => acc.total_net_fee + net_fee
-               }
-             end
-           )
+        |> Enum.reduce(%{:total_sys_fee => 0, :total_net_fee => 0}, fn %{
+                                                                         :total_sys_fee => sys_fee,
+                                                                         :total_net_fee => net_fee
+                                                                       },
+                                                                       acc ->
+          %{
+            :total_sys_fee => acc.total_sys_fee + sys_fee,
+            :total_net_fee => acc.total_net_fee + net_fee
+          }
+        end)
     end
   rescue
     ArgumentError ->
@@ -385,25 +420,18 @@ defmodule Neoscan.Blocks do
   end
 
   def compute_fees(block) do
-    sys_fee = Enum.reduce(
-      block["tx"],
-      0,
-      fn (tx, acc) ->
+    sys_fee =
+      Enum.reduce(block["tx"], 0, fn tx, acc ->
         {num, _st} = Float.parse(tx["sys_fee"])
         acc + num
-      end
-    )
+      end)
 
-    net_fee = Enum.reduce(
-      block["tx"],
-      0,
-      fn (tx, acc) ->
+    net_fee =
+      Enum.reduce(block["tx"], 0, fn tx, acc ->
         {num, _st} = Float.parse(tx["net_fee"])
         acc + num
-      end
-    )
+      end)
 
     Map.merge(block, %{"total_sys_fee" => sys_fee, "total_net_fee" => net_fee})
   end
-
 end

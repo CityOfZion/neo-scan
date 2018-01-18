@@ -9,4 +9,4 @@ config :neoscan, Neoscan.Repo,
   pool_size: 30,
   timeout: 30_000
 
-#import_config "prod.secret.exs"
+# import_config "prod.secret.exs"

@@ -41,10 +41,10 @@ defmodule Neoscan.ChainAssets do
 
   """
   def get_asset_by_hash(hash) do
-    query = from e in Asset,
-                 where: e.txid == ^hash
+    query = from(e in Asset, where: e.txid == ^hash)
+
     Repo.all(query)
-    |> List.first
+    |> List.first()
   end
 
   @doc """
@@ -60,27 +60,36 @@ defmodule Neoscan.ChainAssets do
 
   """
   def get_asset_name_by_hash(hash) do
-    query = from e in Asset,
-                 where: e.txid == ^hash,
-                 select: e.name
+    query =
+      from(
+        e in Asset,
+        where: e.txid == ^hash,
+        select: e.name
+      )
+
     Repo.all(query)
-    |> List.first
+    |> List.first()
     |> filter_name
   end
 
   def filter_name(nil) do
     "Asset not Found"
   end
+
   def filter_name(asset) do
     case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
-      %{"name" => name} -> cond do
-                             name == "AntShare" ->
-                               "NEO"
-                             name == "AntCoin" ->
-                               "GAS"
-                             true ->
-                               name
-                           end
+      %{"name" => name} ->
+        cond do
+          name == "AntShare" ->
+            "NEO"
+
+          name == "AntCoin" ->
+            "GAS"
+
+          true ->
+            name
+        end
+
       nil ->
         %{"name" => name} = Enum.at(asset, 0)
         name
@@ -97,18 +106,22 @@ defmodule Neoscan.ChainAssets do
 
   """
   def list_assets do
-    query = from e in Asset,
-                 select: %{
-                   :txid => e.txid,
-                   :admin => e.admin,
-                   :amount => e.amount,
-                   :issued => e.issued,
-                   :type => e.type,
-                   :time => e.time,
-                   :name => e.name,
-                   :owner => e.owner,
-                   :precision => e.precision
-                 }
+    query =
+      from(
+        e in Asset,
+        select: %{
+          :txid => e.txid,
+          :admin => e.admin,
+          :amount => e.amount,
+          :issued => e.issued,
+          :type => e.type,
+          :time => e.time,
+          :name => e.name,
+          :owner => e.owner,
+          :precision => e.precision
+        }
+      )
+
     Repo.all(query)
   end
 
@@ -135,6 +148,7 @@ defmodule Neoscan.ChainAssets do
   """
   def add_issued_value(asset_hash, value) do
     result = get_asset_by_hash(asset_hash)
+
     if result == nil do
       Logger.error("Error issuing asset")
       {:error, "Non existant asset cant be issued!"}
@@ -147,12 +161,13 @@ defmodule Neoscan.ChainAssets do
   @doc """
   Create new assets
   """
-  #create new assets
+  # create new assets
   def create(%{"amount" => amount} = asset, txid, time) do
     {float, _} = Float.parse(amount)
     new_asset = Map.merge(asset, %{"amount" => float, "time" => time})
     create_asset(txid, new_asset)
   end
+
   def create(nil, _txid, _time) do
     nil
   end
@@ -161,14 +176,12 @@ defmodule Neoscan.ChainAssets do
   Issue assets
   """
   def issue("IssueTransaction", vouts) do
-    Enum.each(
-      vouts,
-      fn %{"asset" => asset_hash, "value" => value} ->
-        {float, _} = Float.parse(value)
-        add_issued_value(String.slice(to_string(asset_hash), -64..-1), float)
-      end
-    )
+    Enum.each(vouts, fn %{"asset" => asset_hash, "value" => value} ->
+      {float, _} = Float.parse(value)
+      add_issued_value(String.slice(to_string(asset_hash), -64..-1), float)
+    end)
   end
+
   def issue(_type, _vouts) do
     nil
   end
@@ -177,6 +190,7 @@ defmodule Neoscan.ChainAssets do
     case Api.check_asset(hash) do
       true ->
         hash
+
       false ->
         check_db(hash, time)
     end
@@ -186,6 +200,7 @@ defmodule Neoscan.ChainAssets do
     case get_asset_by_hash(hash) do
       %Asset{} ->
         hash
+
       nil ->
         get_new_asset(hash, time)
         |> Map.get(:txid)
@@ -198,6 +213,7 @@ defmodule Neoscan.ChainAssets do
     case asset do
       {:ok, result} ->
         create(result, hash, time)
+
       _ ->
         get_new_asset(hash, time)
     end
@@ -206,26 +222,21 @@ defmodule Neoscan.ChainAssets do
   def get_assets_stats do
     assets = list_assets()
 
-    asset_addresses = assets
-                      |> Enum.reduce(%{}, fn (%{:txid => txid}, acc) ->
-                        Map.put(acc,
-                                txid,
-                                Addresses.count_addresses_for_asset(txid)
-                                )
-                      end)
+    asset_addresses =
+      assets
+      |> Enum.reduce(%{}, fn %{:txid => txid}, acc ->
+        Map.put(acc, txid, Addresses.count_addresses_for_asset(txid))
+      end)
 
-    asset_transactions = assets
-                      |> Enum.reduce(%{}, fn (%{:txid => txid}, acc) ->
-                        Map.put(acc,
-                                txid,
-                                Stats.count_transactions_for_asset(txid)
-                                )
-                      end)
+    asset_transactions =
+      assets
+      |> Enum.reduce(%{}, fn %{:txid => txid}, acc ->
+        Map.put(acc, txid, Stats.count_transactions_for_asset(txid))
+      end)
 
     %{
-     :assets_addresses => asset_addresses,
-     :assets_transactions => asset_transactions,
+      :assets_addresses => asset_addresses,
+      :assets_transactions => asset_transactions
     }
   end
-
 end

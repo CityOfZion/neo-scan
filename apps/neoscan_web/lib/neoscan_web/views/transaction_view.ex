@@ -12,18 +12,25 @@ defmodule NeoscanWeb.TransactionView do
     cond do
       type == "MinerTransaction" ->
         'Miner'
+
       type == "ContractTransaction" ->
         'Contract'
+
       type == "ClaimTransaction" ->
         'GAS Claim'
+
       type == "IssueTransaction" ->
         'Asset Issue'
+
       type == "RegisterTransaction" ->
         'Asset Register'
+
       type == "InvocationTransaction" ->
         'Contract Invocation'
+
       type == "PublishTransaction" ->
         'Contract Publish'
+
       type == "EnrollmentTransaction" ->
         'Enrollment'
     end
@@ -33,18 +40,25 @@ defmodule NeoscanWeb.TransactionView do
     cond do
       type == "MinerTransaction" ->
         'fa-user-circle-o'
+
       type == "ContractTransaction" ->
         'fa-cube'
+
       type == "ClaimTransaction" ->
         'fa-cubes'
+
       type == "IssueTransaction" ->
         'fa-handshake-o'
+
       type == "RegisterTransaction" ->
         'fa-list-alt'
+
       type == "InvocationTransaction" ->
         'fa-paper-plane'
+
       type == "EnrollmentTransaction" ->
         'fa-paper-plane'
+
       type == "PublishTransaction" ->
         'Contract Publish'
     end
@@ -57,6 +71,7 @@ defmodule NeoscanWeb.TransactionView do
   def parse_invocation(nil) do
     "No Invocation Script"
   end
+
   def parse_invocation(script) do
     %{"invocation" => inv} = script
 
@@ -66,6 +81,7 @@ defmodule NeoscanWeb.TransactionView do
   def parse_verification(nil) do
     "No Verification Script"
   end
+
   def parse_verification(script) do
     %{"verification" => ver} = script
 
@@ -75,6 +91,7 @@ defmodule NeoscanWeb.TransactionView do
   def get_inv(nil) do
     "No Invocation Script"
   end
+
   def get_inv(%{"invocation" => inv}) do
     inv
   end
@@ -82,6 +99,7 @@ defmodule NeoscanWeb.TransactionView do
   def get_ver(nil) do
     "No Verification Script"
   end
+
   def get_ver(%{"verification" => ver}) do
     ver
   end

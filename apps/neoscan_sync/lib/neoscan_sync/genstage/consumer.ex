@@ -27,7 +27,7 @@ defmodule NeoscanSync.Consumer do
     {:noreply, [], state}
   end
 
-  #add block with transactions to the db
+  # add block with transactions to the db
   def add_block(%{"tx" => transactions, "index" => height} = block) do
     Map.put(block, "tx_count", Kernel.length(transactions))
     |> Blocks.compute_fees()
@@ -42,9 +42,9 @@ defmodule NeoscanSync.Consumer do
       Logger.info("Block #{height} stored")
     else
       Logger.info("Failed to create transactions")
+
       Blocks.get_block_by_height(height)
       |> Blocks.delete_block()
     end
   end
-
 end
