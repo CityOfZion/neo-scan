@@ -14,7 +14,7 @@ defmodule NeoscanMonitor.Utils do
       "http://seed4.cityofzion.io:8080",
       "http://seed5.cityofzion.io:8080",
       "http://api.otcgo.cn:10332",
-      "http://seed1.neo.org:10332",
+      "https://seed1.neo.org:10331",
       "http://seed2.neo.org:10332",
       "http://seed3.neo.org:10332",
       "http://seed4.neo.org:10332",

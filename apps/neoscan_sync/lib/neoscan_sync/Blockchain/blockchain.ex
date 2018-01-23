@@ -74,4 +74,17 @@ defmodule NeoscanSync.Blockchain do
     headers = [{"Content-Type", "application/json"}]
     HttpCalls.request(headers, data, url)
   end
+
+  def get_contract(url, hash) do
+    data =
+      Poison.encode!(%{
+        jsonrpc: "2.0",
+        method: "getcontractstate",
+        params: [hash],
+        id: 5
+      })
+
+    headers = [{"Content-Type", "application/json"}]
+    HttpCalls.request(headers, data, url)
+  end
 end

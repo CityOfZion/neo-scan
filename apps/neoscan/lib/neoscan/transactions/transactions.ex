@@ -630,7 +630,7 @@ defmodule Neoscan.Transactions do
   def create_transactions(block, transactions) do
     case Enum.each(transactions, fn transaction -> create_transaction(block, transaction) end) do
       :ok ->
-        {:ok, "Created"}
+        {:ok, "Created", block}
 
       _ ->
         {:error, "failed to create transactions"}

@@ -368,6 +368,20 @@ defmodule Neoscan.Addresses do
     |> Helpers.gen_attrs()
   end
 
+  # get all addresses involved in a transaction
+  def get_transfer_addresses(addresses, time) do
+    query =
+      from(
+        e in Address,
+        where: e.address in ^addresses,
+        select: struct(e, [:id, :address, :balance, :tx_count])
+      )
+
+    Repo.all(query)
+    |> fetch_missing(addresses, time)
+    |> Helpers.gen_attrs()
+  end
+
   # get all addresses involved in a list of previous transactions
   def get_transactions_addresses(transactions) do
     lookups =

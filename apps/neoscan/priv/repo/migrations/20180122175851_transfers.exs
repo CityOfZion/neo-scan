@@ -11,6 +11,8 @@ defmodule Neoscan.Repo.Migrations.Transfers do
       add(:contract, :string)
       add(:time, :integer)
 
+      add(:block_id, references(:blocks, on_delete: :delete_all))
+
       timestamps()
     end
 
@@ -18,5 +20,6 @@ defmodule Neoscan.Repo.Migrations.Transfers do
     create(index(:transfers, [:address_from]))
     create(index(:transfers, [:address_to]))
     create(index(:transfers, [:contract]))
+    create(index(:transfers, [:block_id]))
   end
 end

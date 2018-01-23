@@ -13,6 +13,8 @@ defmodule Neoscan.Transfers.Transfer do
     field(:contract, :string)
     field(:time, :integer)
 
+    belongs_to(:block, Neoscan.Blocks.Block)
+
     timestamps()
   end
 

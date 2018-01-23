@@ -33,6 +33,13 @@ defmodule NeoscanSync.HttpCalls do
     |> handle_response
   end
 
+  # Makes a request to the 'url' seed
+  def get(url) do
+    url
+    |> HTTPoison.get([], [ ssl: [{:versions, [:'tlsv1.2']}] ])
+    |> handle_response
+  end
+
   # Handles the response of an HTTP call
   defp handle_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
     Poison.decode!(body)
@@ -66,6 +73,10 @@ defmodule NeoscanSync.HttpCalls do
 
   # handles a sucessful response
   defp handle_body(%{"result" => result}) do
+    {:ok, result}
+  end
+
+  defp handle_body(%{"results" => result}) do
     {:ok, result}
   end
 

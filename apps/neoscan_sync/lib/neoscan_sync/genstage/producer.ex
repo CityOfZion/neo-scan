@@ -3,6 +3,7 @@ defmodule NeoscanSync.Producer do
   use GenStage
 
   alias NeoscanSync.Blockchain
+  alias NeoscanSync.Notifications
   alias NeoscanSync.HttpCalls
   alias NeoscanMonitor.Api
   alias Neoscan.Blocks
@@ -77,11 +78,11 @@ defmodule NeoscanSync.Producer do
       block_b = get_block_by_height(random2, height)
 
       if block_a == block_b do
-        block_a
+        add_notifications(block_a, height)
       else
         # cross_check(height)
         Logger.info("Blocks don't match!")
-        block_a
+        add_notifications(block_a, height)
       end
     else
       cross_check(height)
@@ -123,5 +124,12 @@ defmodule NeoscanSync.Producer do
   # get current height from monitor
   def get_current_height do
     Api.get_height()
+  end
+
+  defp add_notifications(block, height) do
+    transfers = Notifications.get_block_notifications(height)
+                |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
+
+    Map.merge(block, %{"transfers" => transfers})
   end
 end
