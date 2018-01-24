@@ -4,13 +4,45 @@ defmodule Neoscan.Transfers do
   alias Neoscan.Repo
   alias Neoscan.Transfers.Transfer
   alias Neoscan.Addresses
+  alias Neoscan.ChainAssets
 
   require Logger
 
 
-  def add_block_transfers({_block, transfers}, time) do
+  @doc """
+  Creates a transfer
+
+  ## Examples
+
+      iex> create_transfer(%{field: value})
+      {:ok, %Transfer{}}
+
+      iex> create_transfer(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_transfer(transfer, time, block_id) do
+    attrs = transfer
+            |> Map.merge(%{
+                            "txid" => transfer["tx"],
+                            "block_id" => block_id,
+                            "block_height" => transfer["block"],
+                            "address_from" => transfer["addr_from"],
+                            "address_to" => transfer["addr_to"],
+                            "time" => time,
+                          })
+
+    verified_asset = ChainAssets.verify_asset(transfer["contract"], time)
+
+    %Transfer{}
+    |> Transfer.changeset(attrs)
+    |> Repo.insert!()
+  end
+
+  def add_block_transfers({block, transfers}, time) do
 
     addresses = get_transfers_addresses(transfers, time)
+                |> Addresses.update_all_addresses(transfers,time, block.id)
 
     {:ok, "Created"}
   end

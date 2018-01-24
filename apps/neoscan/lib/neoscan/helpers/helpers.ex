@@ -128,4 +128,14 @@ defmodule Neoscan.Helpers do
       Float.round(value, 8)
     end
   end
+
+
+  def contract?(hash) do
+    cond do
+      String.length(hash) == 64 ->
+        false
+      true ->
+        true
+    end
+  end
 end

@@ -8,6 +8,7 @@ defmodule Neoscan.ChainAssets do
   alias NeoscanSync.Blockchain
   alias Neoscan.Addresses
   alias Neoscan.Stats
+  alias Neoscan.Helpers
 
   require Logger
 
@@ -208,14 +209,27 @@ defmodule Neoscan.ChainAssets do
   end
 
   def get_new_asset(hash, time) do
-    asset = Blockchain.get_asset(HttpCalls.url(1), hash)
+    case Helpers.contract?(hash) do
+      true ->
+        asset = Blockchain.get_contract(HttpCalls.url(1), hash)
 
-    case asset do
-      {:ok, result} ->
-        create(result, hash, time)
+        case asset do
+          {:ok, result} ->
+            create(result, hash, time)
 
-      _ ->
-        get_new_asset(hash, time)
+          _ ->
+            get_new_asset(hash, time)
+        end
+      false ->
+        asset = Blockchain.get_asset(HttpCalls.url(1), hash)
+
+        case asset do
+          {:ok, result} ->
+            create(result, hash, time)
+
+          _ ->
+            get_new_asset(hash, time)
+        end
     end
   end
 

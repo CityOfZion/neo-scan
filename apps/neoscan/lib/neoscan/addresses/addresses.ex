@@ -13,6 +13,7 @@ defmodule Neoscan.Addresses do
   alias Neoscan.BalanceHistories.History
   alias Neoscan.Claims
   alias Neoscan.Claims.Claim
+  alias Neoscan.Transfers
   alias Neoscan.Helpers
   alias Neoscan.Stats
   alias Ecto.Multi
@@ -465,6 +466,16 @@ defmodule Neoscan.Addresses do
     |> Claims.separate_txids_and_insert_claims(claims, vouts, index, time)
   end
 
+  def update_all_addresses(
+        address_list,
+        transfers,
+        time,
+        block_id
+      ) do
+    address_list
+    |> add_transfers_to_addresses(transfers, time, block_id)
+  end
+
   # separate vins by address hash, insert vins and update the address
   def group_vins_by_address_and_update(address_list, vins, txid, index, time) do
     updates =
@@ -525,5 +536,22 @@ defmodule Neoscan.Addresses do
       |> BalanceHistories.add_tx_id(txid, index, time)
 
     {address, new_attrs}
+  end
+
+  def add_transfers_to_addresses(addresses, [], _time, _block_id) do
+    addresses
+  end
+  def add_transfers_to_addresses(addresses, [head | tail], time, block_id) do
+    addresses
+    |> add_transfer(head, time, block_id)
+    |> add_transfers_to_addresses(tail, time, block_id)
+  end
+
+  def add_transfer(addresses, transfer, time, block_id) do
+    #TODO
+    transfer
+    |>Transfers.create_transfer(time, block_id)
+
+    addresses
   end
 end
