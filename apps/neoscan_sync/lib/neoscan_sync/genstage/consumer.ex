@@ -59,7 +59,6 @@ defmodule NeoscanSync.Consumer do
       Logger.info("Block #{height} stored")
     else
       Logger.info("Failed to create transactions")
-
       Blocks.get_block_by_height(height)
       |> Blocks.delete_block()
     end

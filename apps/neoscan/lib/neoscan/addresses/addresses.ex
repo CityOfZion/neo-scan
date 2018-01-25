@@ -470,10 +470,10 @@ defmodule Neoscan.Addresses do
         address_list,
         transfers,
         time,
-        block_id
+        block
       ) do
     address_list
-    |> add_transfers_to_addresses(transfers, time, block_id)
+    |> add_transfers_to_addresses(transfers, time, block)
   end
 
   # separate vins by address hash, insert vins and update the address
@@ -538,16 +538,16 @@ defmodule Neoscan.Addresses do
     {address, new_attrs}
   end
 
-  def add_transfers_to_addresses(addresses, [], _time, _block_id) do
+  def add_transfers_to_addresses(addresses, [], _time, _block) do
     addresses
   end
-  def add_transfers_to_addresses(addresses, [head | tail], time, block_id) do
+  def add_transfers_to_addresses(addresses, [head | tail], time, block) do
     addresses
-    |> add_transfer(head, time, block_id)
-    |> add_transfers_to_addresses(tail, time, block_id)
+    |> add_transfer(head, time, block)
+    |> add_transfers_to_addresses(tail, time, block)
   end
 
-  def add_transfer(addresses, transfer, time, block_id) do
+  def add_transfer(addresses, transfer, time, block) do
     update_from = Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_from"] end)
                   |> update_from_address(transfer, time)
 
@@ -555,7 +555,7 @@ defmodule Neoscan.Addresses do
                   |> update_to_address(transfer, time)
 
     transfer
-    |>Transfers.create_transfer(time, block_id)
+    |> Transfers.create_transfer(time, block)
 
     Enum.map(addresses, fn {address, attrs} ->
       Helpers.substitute_if_updated(address, attrs, [update_from, update_to])

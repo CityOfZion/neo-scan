@@ -2,7 +2,6 @@ defmodule Neoscan.Transfers.Transfer do
   @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
-  alias Neoscan.Transfers.Transfer
 
   schema "transfers" do
     field(:address_from, :string)
@@ -19,11 +18,11 @@ defmodule Neoscan.Transfers.Transfer do
   end
 
   @doc false
-  def changeset(transaction_id, attrs \\ %{}) do
-    new_attrs = Map.put(attrs, "txid", transaction_id)
-
-    %Transfer{}
-    |> cast(new_attrs, [:address_from, :address_to, :amount, :block_height, :txid, :contract, :type, :time])
+  def changeset(block, attrs \\ %{}) do
+    block
+    |> Ecto.build_assoc(:transfers)
+    |> cast(attrs, [:address_from, :address_to, :amount, :block_height, :txid, :contract, :type, :time])
+    |> assoc_constraint(:block, required: true)
     |> validate_required([:address_from, :address_to, :amount, :block_height, :txid, :contract, :type, :time])
   end
 

@@ -20,25 +20,27 @@ defmodule Neoscan.Transfers do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_transfer(transfer, time, block_id) do
+  def create_transfer(transfer, time, block) do
     attrs = transfer
             |> Map.merge(%{
                             "txid" => transfer["tx"],
-                            "block_id" => block_id,
                             "block_height" => transfer["block"],
                             "address_from" => transfer["addr_from"],
                             "address_to" => transfer["addr_to"],
                             "time" => time,
                           })
 
-    %Transfer{}
-    |> Transfer.changeset(attrs)
+    Transfer.changeset(block, attrs)
     |> Repo.insert!()
   end
 
+
+  def add_block_transfers({_block, []}, _time) do
+    {:ok, "all operations were succesfull"}
+  end
   def add_block_transfers({block, transfers}, time) do
     get_transfers_addresses(transfers, time)
-    |> Addresses.update_all_addresses(transfers,time, block.id)
+    |> Addresses.update_all_addresses(transfers, time, block)
     |> Addresses.update_multiple_addresses()
   end
 
