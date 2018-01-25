@@ -548,10 +548,68 @@ defmodule Neoscan.Addresses do
   end
 
   def add_transfer(addresses, transfer, time, block_id) do
-    #TODO
+    update_from = Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_from"] end)
+                  |> update_from_address(transfer, time)
+
+    update_to = Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_to"] end)
+                  |> update_to_address(transfer, time)
+
     transfer
     |>Transfers.create_transfer(time, block_id)
 
-    addresses
+    Enum.map(addresses, fn {address, attrs} ->
+      Helpers.substitute_if_updated(address, attrs, [update_from, update_to])
+    end)
   end
+
+  def update_from_address({address, attrs}, transfer, time) do
+    new_attrs =
+      Map.merge(attrs, %{
+        :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
+        :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
+      })
+      |> minus_transfer(transfer, time)
+      |> BalanceHistories.add_tx_id(transfer["tx"], transfer["block"], time)
+
+    {address, new_attrs}
+  end
+
+  def update_to_address({address, attrs}, transfer, time) do
+    new_attrs =
+      Map.merge(attrs, %{
+        :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
+        :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
+      })
+      |> plus_transfer(transfer, time)
+      |> BalanceHistories.add_tx_id(transfer["tx"], transfer["block"], time)
+
+    {address, new_attrs}
+  end
+
+  def plus_transfer(%{:balance => balance} = attrs, transfer, time) do
+    current_amount = balance[transfer["contract"]]["amount"]
+
+    new_balance = %{
+      "asset" => transfer["contract"],
+      "amount" => current_amount + transfer["amount"],
+      "time" => time
+    }
+
+    %{attrs | balance: Map.put(attrs.balance || %{}, transfer["contract"], new_balance)}
+  end
+
+  def minus_transfer(%{:balance => balance} = attrs, transfer, time) do
+    current_amount = balance[transfer["contract"]]["amount"]
+
+    new_balance = %{
+      "asset" => transfer["contract"],
+      "amount" => current_amount - transfer["amount"],
+      "time" => time
+    }
+
+    %{attrs | balance: Map.put(attrs.balance || %{}, transfer["contract"], new_balance)}
+  end
+
+
+
 end

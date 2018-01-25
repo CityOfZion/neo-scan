@@ -55,7 +55,7 @@ defmodule NeoscanSync.Consumer do
   end
 
   defp check_final(r, height) do
-    if {:ok, "Created"} == r or {:ok, "Deleted"} == r do
+    if {:ok, "all operations were succesfull"} == r do
       Logger.info("Block #{height} stored")
     else
       Logger.info("Failed to create transactions")

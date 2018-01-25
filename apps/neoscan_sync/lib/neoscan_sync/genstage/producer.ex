@@ -130,6 +130,8 @@ defmodule NeoscanSync.Producer do
     transfers = Notifications.get_block_notifications(height)
                 |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
 
+    #TODO handle register notifications            
+
     Map.merge(block, %{"transfers" => transfers})
   end
 end

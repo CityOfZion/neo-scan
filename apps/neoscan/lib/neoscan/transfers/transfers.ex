@@ -4,7 +4,6 @@ defmodule Neoscan.Transfers do
   alias Neoscan.Repo
   alias Neoscan.Transfers.Transfer
   alias Neoscan.Addresses
-  alias Neoscan.ChainAssets
 
   require Logger
 
@@ -32,19 +31,15 @@ defmodule Neoscan.Transfers do
                             "time" => time,
                           })
 
-    verified_asset = ChainAssets.verify_asset(transfer["contract"], time)
-
     %Transfer{}
     |> Transfer.changeset(attrs)
     |> Repo.insert!()
   end
 
   def add_block_transfers({block, transfers}, time) do
-
-    addresses = get_transfers_addresses(transfers, time)
-                |> Addresses.update_all_addresses(transfers,time, block.id)
-
-    {:ok, "Created"}
+    get_transfers_addresses(transfers, time)
+    |> Addresses.update_all_addresses(transfers,time, block.id)
+    |> Addresses.update_multiple_addresses()
   end
 
 
