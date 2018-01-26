@@ -48,6 +48,9 @@ export function getClass (type) {
   if (type === 'EnrollmentTransaction') {
     return 'invocation-transaction'
   }
+  if (type === 'StateTransaction') {
+    return 'invocation-transaction'
+  }
 }
 
 export function getName (type) {
@@ -75,6 +78,9 @@ export function getName (type) {
   if (type === 'EnrollmentTransaction') {
     return 'Enrollment'
   }
+  if (type === 'StateTransaction') {
+    return 'Enrollment'
+  }
 }
 
 export function getIcon (type) {
@@ -100,6 +106,9 @@ export function getIcon (type) {
     return 'fa-paper-plane'
   }
   if (type === 'EnrollmentTransaction') {
+    return 'fa-paper-plane'
+  }
+  if (type === 'StateTransaction') {
     return 'fa-paper-plane'
   }
 }
