@@ -62,6 +62,9 @@
           <%= if transaction.type == "EnrollmentTransaction" do %>
             <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Enrollment" %></p>
           <% end %>
+          <%= if transaction.type == "StateTransaction" do %>
+            <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "State" %></p>
+          <% end %>
           <%= if transaction.type == "IssueTransaction" do %>
             <p class="medium-detail-text col-2-width"><span class="fa fa-handshake-o"></span><%= gettext "Asset Issue" %></p>
           <% end %>

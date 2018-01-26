@@ -33,6 +33,9 @@ defmodule NeoscanWeb.TransactionView do
 
       type == "EnrollmentTransaction" ->
         'Enrollment'
+
+      type == "StateTransaction" ->
+        'State'
     end
   end
 
@@ -57,6 +60,9 @@ defmodule NeoscanWeb.TransactionView do
         'fa-paper-plane'
 
       type == "EnrollmentTransaction" ->
+        'fa-paper-plane'
+
+      type == "StateTransaction" ->
         'fa-paper-plane'
 
       type == "PublishTransaction" ->

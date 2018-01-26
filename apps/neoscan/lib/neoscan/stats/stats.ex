@@ -32,6 +32,7 @@ defmodule Neoscan.Stats do
       :claim_transactions => Transactions.count_transactions(["ClaimTransaction"]),
       :invocation_transactions => Transactions.count_transactions(["InvocationTransaction"]),
       :enrollment_transactions => Transactions.count_transactions(["EnrollmentTransaction"]),
+      :state_transactions => Transactions.count_transactions(["StateTransaction"]),
       :miner_transactions => Transactions.count_transactions(["MinerTransaction"]),
       :publish_transactions => Transactions.count_transactions(["PublishTransaction"]),
       :issue_transactions => Transactions.count_transactions(["IssueTransaction"]),
@@ -155,6 +156,12 @@ defmodule Neoscan.Stats do
           :enrollment_transactions => Map.get(counter, :enrollment_transactions) + 1
         }
 
+      "StateTransaction" ->
+        %{
+          :total_transactions => Map.get(counter, :total_transactions) + 1,
+          :state_transactions => Map.get(counter, :state_transactions) + 1
+        }
+
       "ClaimTransaction" ->
         %{
           :total_transactions => Map.get(counter, :total_transactions) + 1,
@@ -203,7 +210,8 @@ defmodule Neoscan.Stats do
         "PublishTransaction" => Map.get(counter, :publish_transactions),
         "IssueTransaction" => Map.get(counter, :issue_transactions),
         "RegisterTransaction" => Map.get(counter, :register_transactions),
-        "EnrollmentTransaction" => Map.get(counter, :enrollment_transactions)
+        "EnrollmentTransaction" => Map.get(counter, :enrollment_transactions),
+        "StateTransaction" => Map.get(counter, :state_transactions),
       },
       Map.get(counter, :total_transactions),
       Map.get(counter, :total_transfers)

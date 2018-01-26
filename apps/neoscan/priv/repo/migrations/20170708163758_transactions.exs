@@ -24,6 +24,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add(:asset, :map)
       add(:description, :text)
       add(:contract, :map)
+      add(:descriptors, {:array, :map})
 
       add(:asset_moved, :string)
 
