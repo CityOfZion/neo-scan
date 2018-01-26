@@ -4,8 +4,42 @@ defmodule Neoscan.Transfers do
   alias Neoscan.Repo
   alias Neoscan.Transfers.Transfer
   alias Neoscan.Addresses
+  alias Neoscan.Stats
+  alias NeoscanMonitor.Api
 
   require Logger
+
+  @doc """
+  Returns the list of transfers in the home page.
+
+  ## Examples
+
+      iex> home_transfers()
+      [%Transfer{}, ...]
+
+  """
+  def home_transfers do
+    transfer_query =
+      from(
+        transfer in Transfer,
+        order_by: [
+          desc: transfer.id
+        ],
+        select: %{
+          :id => transfer.id,
+          :address_from => transfer.address_from,
+          :address_to => transfer.address_to,
+          :amount => transfer.amount,
+          :block_height => transfer.block_height,
+          :txid => transfer.txid,
+          :contract => transfer.contract,
+          :time => transfer.time,
+        },
+        limit: 15
+      )
+
+    Repo.all(transfer_query)
+  end
 
 
   @doc """
@@ -32,6 +66,26 @@ defmodule Neoscan.Transfers do
 
     Transfer.changeset(block, attrs)
     |> Repo.insert!()
+    |> update_transfer_state
+  end
+
+  def update_transfer_state(transfer) do
+    Api.add_transfer(transfer)
+    Stats.add_transfer_to_table(transfer)
+    transfer
+  end
+
+  @doc """
+  Count total transfers in DB.
+
+  ## Examples
+
+      iex> count_transfers()
+      50
+
+  """
+  def count_transfers do
+    Repo.aggregate(Transfer, :count, :id)
   end
 
 

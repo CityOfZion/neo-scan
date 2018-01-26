@@ -5,6 +5,7 @@ defmodule Neoscan.Stats do
   alias Neoscan.Repo
   alias Neoscan.Blocks
   alias Neoscan.Transactions
+  alias Neoscan.Transfers
   alias Neoscan.Addresses
   alias Neoscan.ChainAssets
 
@@ -34,7 +35,8 @@ defmodule Neoscan.Stats do
       :miner_transactions => Transactions.count_transactions(["MinerTransaction"]),
       :publish_transactions => Transactions.count_transactions(["PublishTransaction"]),
       :issue_transactions => Transactions.count_transactions(["IssueTransaction"]),
-      :register_transactions => Transactions.count_transactions(["RegisterTransaction"])
+      :register_transactions => Transactions.count_transactions(["RegisterTransaction"]),
+      :total_transfers => Transfers.count_transfers(),
     }
     |> Map.merge(ChainAssets.get_assets_stats())
     |> Counter.changeset()
@@ -113,6 +115,26 @@ defmodule Neoscan.Stats do
     update_counter(counter, attrs)
   end
 
+  def add_transfer_to_table(transfer) do
+    counter = get_counter()
+    attrs = Map.get(counter, :total_transfers)
+
+    {_, new_map} = Map.get(counter, :assets_transactions)
+                   |> Map.get_and_update(transfer.contract, fn n ->
+                      case n do
+                        nil ->
+                          {n, 1}
+
+                        n ->
+                          {n, n + 1}
+                      end
+                    end)
+
+    Map.put(attrs, :assets_transactions, new_map)
+
+    update_counter(counter, attrs)
+  end
+
   def get_attrs_for_type(counter, transaction) do
     case Map.get(transaction, :type) do
       "ContractTransaction" ->
@@ -183,7 +205,8 @@ defmodule Neoscan.Stats do
         "RegisterTransaction" => Map.get(counter, :register_transactions),
         "EnrollmentTransaction" => Map.get(counter, :enrollment_transactions)
       },
-      Map.get(counter, :total_transactions)
+      Map.get(counter, :total_transactions),
+      Map.get(counter, :total_transfers)
     ]
   end
 
@@ -195,6 +218,11 @@ defmodule Neoscan.Stats do
   def count_blocks do
     get_counter()
     |> Map.get(:total_blocks)
+  end
+
+  def count_transfers do
+    get_counter()
+    |> Map.get(:total_transfers)
   end
 
   def count_transactions_for_asset(txid) do

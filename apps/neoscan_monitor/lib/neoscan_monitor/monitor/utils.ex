@@ -113,7 +113,8 @@ defmodule NeoscanMonitor.Utils do
     %{
       :total_blocks => Stats.count_blocks(),
       :total_transactions => Stats.count_transactions(),
-      :total_addresses => Stats.count_addresses()
+      :total_transfers => Stats.count_transfers(),
+      :total_addresses => Stats.count_addresses(),
     }
   end
 

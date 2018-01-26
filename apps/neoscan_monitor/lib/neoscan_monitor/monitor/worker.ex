@@ -9,6 +9,7 @@ defmodule NeoscanMonitor.Worker do
   alias NeoscanMonitor.Server
   alias Neoscan.Blocks
   alias Neoscan.Transactions
+  alias Neoscan.Transfers
   alias Neoscan.Addresses
   alias Neoscan.ChainAssets
   alias Neoprice.NeoBtc
@@ -31,6 +32,8 @@ defmodule NeoscanMonitor.Worker do
     transactions =
       Transactions.home_transactions()
       |> Utils.add_vouts()
+
+    transfers = Transfers.home_transfers()
 
     assets =
       ChainAssets.list_assets()
@@ -55,6 +58,7 @@ defmodule NeoscanMonitor.Worker do
       :monitor => monitor_nodes,
       :blocks => blocks,
       :transactions => transactions,
+      :transfers => transfers,
       :assets => assets,
       :stats => stats,
       :addresses => addresses,
@@ -128,6 +132,30 @@ defmodule NeoscanMonitor.Worker do
       |> Utils.cut_if_more(count)
 
     Server.set(:blocks, new_blocks)
+  end
+
+  # adds a transfer to the state
+  def add_transfer(transfer) do
+    currrent = Server.get(:transfers)
+    count = Enum.count(currrent)
+
+    new_transfers =
+      [
+        %{
+          :id => transfer.id,
+          :address_from => transfer.address_from,
+          :address_to => transfer.address_to,
+          :amount => transfer.amount,
+          :block_height => transfer.block_height,
+          :txid => transfer.txid,
+          :contract => transfer.contract,
+          :time => transfer.time,
+        }
+        | currrent
+      ]
+      |> Utils.cut_if_more(count)
+
+    Server.set(:transfers, new_transfers)
   end
 
   # adds a transaction to the state
