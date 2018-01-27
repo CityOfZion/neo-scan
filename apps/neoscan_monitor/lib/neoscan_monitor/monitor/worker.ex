@@ -149,7 +149,7 @@ defmodule NeoscanMonitor.Worker do
           :block_height => transfer.block_height,
           :txid => transfer.txid,
           :contract => transfer.contract,
-          :time => transfer.time,
+          :time => transfer.time
         }
         | currrent
       ]

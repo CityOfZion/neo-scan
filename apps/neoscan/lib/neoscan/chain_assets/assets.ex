@@ -28,6 +28,28 @@ defmodule Neoscan.ChainAssets do
     |> Repo.insert!()
   end
 
+  def add_token(token) do
+    #TODO parse token object correctly once api is ready
+    create_asset(token["contract"], token)
+  end
+
+  #Creates tokens.
+  def create_tokens(block, []) do
+    block
+  end
+  def create_tokens(block, tokens) do
+    Enum.each(tokens, fn token -> add_token(token) end)
+    |> check_tokens_creation(block)
+  end
+
+  def check_tokens_creation(:ok, block) do
+    block
+  end
+  def check_tokens_creation(_, _block) do
+    Logger.info("Error creating token")
+    raise "Error creating token"
+  end
+
   @doc """
   Gets asset  by its hash value
 
@@ -208,15 +230,15 @@ defmodule Neoscan.ChainAssets do
   end
 
   def get_new_asset(hash, time) do
-      asset = Blockchain.get_asset(HttpCalls.url(1), hash)
+    asset = Blockchain.get_asset(HttpCalls.url(1), hash)
 
-      case asset do
-        {:ok, result} ->
-          create(result, hash, time)
+    case asset do
+      {:ok, result} ->
+        create(result, hash, time)
 
-        _ ->
-          get_new_asset(hash, time)
-      end
+      _ ->
+        get_new_asset(hash, time)
+    end
   end
 
   def get_assets_stats do

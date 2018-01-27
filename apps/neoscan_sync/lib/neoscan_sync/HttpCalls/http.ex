@@ -36,7 +36,7 @@ defmodule NeoscanSync.HttpCalls do
   # Makes a request to the 'url' seed
   def get(url) do
     url
-    |> HTTPoison.get([], [ ssl: [{:versions, [:'tlsv1.2']}] ])
+    |> HTTPoison.get([], ssl: [{:versions, [:"tlsv1.2"]}])
     |> handle_response
   end
 

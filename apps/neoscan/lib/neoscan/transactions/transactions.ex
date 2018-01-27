@@ -25,7 +25,7 @@ defmodule Neoscan.Transactions do
     "RegisterTransaction",
     "EnrollmentTransaction",
     "ClaimTransaction",
-    "StateTransaction",
+    "StateTransaction"
   ]
 
   @doc """

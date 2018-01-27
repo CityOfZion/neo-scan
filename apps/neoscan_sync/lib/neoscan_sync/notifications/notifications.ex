@@ -8,7 +8,6 @@ defmodule NeoscanSync.Notifications do
   alias NeoscanSync.HttpCalls
   require Logger
 
-
   def get_block_notifications(height) do
     "http://notifications.neeeo.org/block/#{height}"
     |> HttpCalls.get()
@@ -18,9 +17,9 @@ defmodule NeoscanSync.Notifications do
   defp check({:ok, result}, _height) do
     result
   end
+
   defp check(_response, height) do
     Logger.info("error getting notifications for block #{height}")
     {:error, "error getting notifications"}
   end
-
 end

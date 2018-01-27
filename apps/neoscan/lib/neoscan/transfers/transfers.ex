@@ -33,7 +33,7 @@ defmodule Neoscan.Transfers do
           :block_height => transfer.block_height,
           :txid => transfer.txid,
           :contract => transfer.contract,
-          :time => transfer.time,
+          :time => transfer.time
         },
         limit: 15
       )
@@ -41,6 +41,37 @@ defmodule Neoscan.Transfers do
     Repo.all(transfer_query)
   end
 
+  @doc """
+  Returns the list of paginated transfers.
+
+  ## Examples
+
+      iex> paginate_transfers(page)
+      [%Transfer{}, ...]
+
+  """
+  def paginate_transfers(pag) do
+    transfer_query =
+      from(
+        transfer in Transfer,
+        order_by: [
+          desc: transfer.id
+        ],
+        select: %{
+          :id => transfer.id,
+          :address_from => transfer.address_from,
+          :address_to => transfer.address_to,
+          :amount => transfer.amount,
+          :block_height => transfer.block_height,
+          :txid => transfer.txid,
+          :contract => transfer.contract,
+          :time => transfer.time
+        },
+        limit: 15
+      )
+
+    Repo.paginate(transfer_query, page: pag, page_size: 15)
+  end
 
   @doc """
   Creates a transfer
@@ -55,14 +86,15 @@ defmodule Neoscan.Transfers do
 
   """
   def create_transfer(transfer, time, block) do
-    attrs = transfer
-            |> Map.merge(%{
-                            "txid" => transfer["tx"],
-                            "block_height" => transfer["block"],
-                            "address_from" => transfer["addr_from"],
-                            "address_to" => transfer["addr_to"],
-                            "time" => time,
-                          })
+    attrs =
+      transfer
+      |> Map.merge(%{
+        "txid" => transfer["tx"],
+        "block_height" => transfer["block"],
+        "address_from" => transfer["addr_from"],
+        "address_to" => transfer["addr_to"],
+        "time" => time
+      })
 
     Transfer.changeset(block, attrs)
     |> Repo.insert!()
@@ -88,21 +120,21 @@ defmodule Neoscan.Transfers do
     Repo.aggregate(Transfer, :count, :id)
   end
 
-
   def add_block_transfers({_block, []}, _time) do
     {:ok, "all operations were succesfull"}
   end
+
   def add_block_transfers({block, transfers}, time) do
     get_transfers_addresses(transfers, time)
     |> Addresses.update_all_addresses(transfers, time, block)
     |> Addresses.update_multiple_addresses()
   end
 
-
   def get_transfers_addresses(transfers, time) do
     transfers
-    |> Enum.reduce([], fn (%{"address_from" => from, "address_to" => to}, acc) ->  acc ++ [from, to] end)
+    |> Enum.reduce([], fn %{"address_from" => from, "address_to" => to}, acc ->
+      acc ++ [from, to]
+    end)
     |> Addresses.get_transfer_addresses(time)
   end
-
 end

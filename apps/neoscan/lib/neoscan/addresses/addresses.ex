@@ -541,6 +541,7 @@ defmodule Neoscan.Addresses do
   def add_transfers_to_addresses(addresses, [], _time, _block) do
     addresses
   end
+
   def add_transfers_to_addresses(addresses, [head | tail], time, block) do
     addresses
     |> add_transfer(head, time, block)
@@ -548,11 +549,13 @@ defmodule Neoscan.Addresses do
   end
 
   def add_transfer(addresses, transfer, time, block) do
-    update_from = Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_from"] end)
-                  |> update_from_address(transfer, time)
+    update_from =
+      Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_from"] end)
+      |> update_from_address(transfer, time)
 
-    update_to = Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_to"] end)
-                  |> update_to_address(transfer, time)
+    update_to =
+      Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_to"] end)
+      |> update_to_address(transfer, time)
 
     transfer
     |> Transfers.create_transfer(time, block)
@@ -609,7 +612,4 @@ defmodule Neoscan.Addresses do
 
     %{attrs | balance: Map.put(attrs.balance || %{}, transfer["contract"], new_balance)}
   end
-
-
-
 end

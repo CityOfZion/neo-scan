@@ -129,11 +129,11 @@ defmodule Neoscan.Helpers do
     end
   end
 
-
   def contract?(hash) do
     cond do
       String.length(hash) == 64 ->
         false
+
       true ->
         true
     end

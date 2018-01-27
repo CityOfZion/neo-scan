@@ -33,6 +33,8 @@ defmodule NeoscanWeb.Router do
     get("/address/:address/:page", AddressController, :go_to_page)
     get("/transactions/1", TransactionsController, :index)
     get("/transactions/:page", TransactionsController, :go_to_page)
+    get("/transfers/1", TransfersController, :index)
+    get("/transfers/:page", TransfersController, :go_to_page)
     get("/transactions/type/:type/:page", TransactionsController, :filtered_transactions)
     get("/transaction/:txid", TransactionController, :index)
     get("/blocks/1", BlocksController, :index)
