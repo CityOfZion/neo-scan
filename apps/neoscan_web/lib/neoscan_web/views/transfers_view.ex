@@ -2,6 +2,7 @@ defmodule NeoscanWeb.TransfersView do
   use NeoscanWeb, :view
   import Number.Delimit
   alias NeoscanMonitor.Api
+  alias Neoscan.Helpers
 
   def get_current_min_qtd(page) do
     %{:total_transfers => total} = Api.get_stats()
