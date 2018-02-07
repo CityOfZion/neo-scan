@@ -7,7 +7,7 @@ defmodule NeoscanMonitor.Utils do
 
   # blockchain api nodes
   def seeds do
-    broadcast = Application.fetch_env!(:neoscan_monitor, :seeds)
+    Application.fetch_env!(:neoscan_monitor, :seeds)
   end
 
   # function to load nodes state
