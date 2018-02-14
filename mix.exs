@@ -33,7 +33,7 @@ defmodule Neoscan.Umbrella.Mixfile do
     [
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
       {:poison, "~> 3.1"},
-      {:httpoison, "~> 0.13"},
+      {:httpoison, git: "https://github.com/timloh-gtoken/httpoison.git", branch: "tim-update-hackney-1.11.0", override: true},
       {:flow, "~> 0.11"},
       {:ex_machina, "~> 2.0", only: [:test, :travis]},
       {:morphix, "~> 0.0.7"}
