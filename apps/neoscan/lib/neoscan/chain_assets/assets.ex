@@ -3,11 +3,14 @@ defmodule Neoscan.ChainAssets do
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.ChainAssets.Asset
+  alias Neoscan.Blocks
   alias NeoscanMonitor.Api
   alias NeoscanSync.HttpCalls
   alias NeoscanSync.Blockchain
+  alias NeoscanSync.Notifications
   alias Neoscan.Addresses
   alias Neoscan.Stats
+
 
   require Logger
 
@@ -28,24 +31,35 @@ defmodule Neoscan.ChainAssets do
     |> Repo.insert!()
   end
 
-  def add_token(token) do
-    #TODO parse token object correctly once api is ready
-    create_asset(token["contract"], token)
+  def add_token(%{"token" => token} = response) do
+    new_token = %{
+      "admin" => token["contract_address"],
+      "name" => [%{"lang" => "en", "name" => token["name"]}],
+      "owner" => token["contract_address"],
+      "precision" => token["decimals"],
+      "type" => "Token",
+      "amount" => 0,
+      "issued" => 0,
+      "time" => Blocks.get_block_time(response["block"])
+    }
+    create_asset(String.slice(to_string(token["script_hash"]), -40..-1), new_token)
   end
 
   #Creates tokens.
-  def create_tokens(block, []) do
-    block
+  def create_tokens([]) do
+    []
   end
-  def create_tokens(block, tokens) do
-    Enum.each(tokens, fn token -> add_token(token) end)
-    |> check_tokens_creation(block)
+  def create_tokens(tokens) do
+    tokens
+    |> Enum.filter(fn %{"token" => token} -> get_asset_by_hash(String.slice(to_string(token["script_hash"]), -40..-1)) == nil end)
+    |> Enum.each(fn token -> add_token(token) end)
+    |> check_tokens_creation(tokens)
   end
 
-  def check_tokens_creation(:ok, block) do
-    block
+  def check_tokens_creation(:ok, tokens) do
+    tokens
   end
-  def check_tokens_creation(_, _block) do
+  def check_tokens_creation(_) do
     Logger.info("Error creating token")
     raise "Error creating token"
   end
@@ -230,11 +244,20 @@ defmodule Neoscan.ChainAssets do
   end
 
   def get_new_asset(hash, time) do
-    asset = Blockchain.get_asset(HttpCalls.url(1), hash)
+    asset = cond do
+              String.length(hash) == 64 ->
+                Blockchain.get_asset(HttpCalls.url(1), hash)
+              true ->
+                Notifications.get_token_notifications
+                |> Enum.find(fn %{"token" => token} -> token["script_hash"] == hash end)
+            end
 
     case asset do
       {:ok, result} ->
         create(result, hash, time)
+
+      %{} ->
+        add_token(asset)
 
       _ ->
         get_new_asset(hash, time)

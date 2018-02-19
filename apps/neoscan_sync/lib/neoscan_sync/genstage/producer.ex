@@ -133,12 +133,6 @@ defmodule NeoscanSync.Producer do
       notifications
       |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
 
-    token_registry =
-      notifications
-      |> Enum.filter(fn %{"notify_type" => t} -> t == "token_registry" end)
-
-    # TODO handle register notifications once api is ready
-
-    Map.merge(block, %{"transfers" => transfers, "token_registry" => token_registry})
+    Map.merge(block, %{"transfers" => transfers})
   end
 end

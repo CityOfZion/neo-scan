@@ -4,6 +4,8 @@ defmodule NeoscanMonitor.Utils do
   alias Neoscan.Transactions
   alias Neoscan.Addresses
   alias Neoscan.Stats
+  alias Neoscan.ChainAssets
+  alias NeoscanSync.Notifications
 
   # blockchain api nodes
   def seeds do
@@ -133,5 +135,10 @@ defmodule NeoscanMonitor.Utils do
         end)
       )
     end)
+  end
+
+  def add_new_tokens(old_list \\ []) do
+    Notifications.get_token_notifications -- old_list
+    |> ChainAssets.create_tokens
   end
 end

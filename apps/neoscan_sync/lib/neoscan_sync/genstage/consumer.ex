@@ -4,7 +4,6 @@ defmodule NeoscanSync.Consumer do
   alias Neoscan.Blocks
   alias Neoscan.Transactions
   alias Neoscan.Transfers
-  alias Neoscan.ChainAssets
 
   require Logger
 
@@ -36,7 +35,6 @@ defmodule NeoscanSync.Consumer do
           "index" => height,
           "time" => time,
           "transfers" => tf,
-          "token_registry" => tokens
         } = block
       ) do
     Map.put(block, "tx_count", Kernel.length(transactions))
@@ -44,7 +42,6 @@ defmodule NeoscanSync.Consumer do
     |> Map.delete("tx")
     |> Map.delete("transfers")
     |> Blocks.create_block()
-    |> ChainAssets.create_tokens(tokens)
     |> Transactions.create_transactions(transactions)
     |> check(tf, height)
     |> Transfers.add_block_transfers(time)
