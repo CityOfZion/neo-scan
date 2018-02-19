@@ -108,6 +108,30 @@ defmodule Neoscan.ChainAssets do
     |> filter_name
   end
 
+  @doc """
+  Gets asset precision by its hash value
+
+  ## Examples
+
+      iex> get_asset_precision_by_hash(hash)
+      8
+
+      iex> get_asset_precision_by_hash(bad_hash)
+      nil
+
+  """
+  def get_asset_precision_by_hash(hash) do
+    query =
+      from(
+        e in Asset,
+        where: e.txid == ^hash,
+        select: e.precision
+      )
+
+    Repo.all(query)
+    |> List.first()
+  end
+
   def filter_name(nil) do
     "Asset not Found"
   end

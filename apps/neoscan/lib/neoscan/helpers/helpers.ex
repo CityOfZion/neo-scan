@@ -138,4 +138,18 @@ defmodule Neoscan.Helpers do
         true
     end
   end
+
+  def apply_precision(integer, hash, precision) when length(hash) == 40 do
+   {int, _} = integer / :math.pow(10, precision)
+              |> Float.floor
+              |> to_string
+              |> Integer.parse
+
+   div = (integer - 10 * int)/:math.pow(10, precision)
+
+   "#{int+div}"
+  end
+  def apply_precision(integer, _hash, _precision)  do
+   "#{integer}"
+  end
 end
