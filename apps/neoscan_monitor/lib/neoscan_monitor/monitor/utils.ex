@@ -138,7 +138,16 @@ defmodule NeoscanMonitor.Utils do
   end
 
   def add_new_tokens(old_list \\ []) do
-    Notifications.get_token_notifications -- old_list
+    get_token_notifications() -- old_list
     |> ChainAssets.create_tokens
+  end
+
+  defp get_token_notifications do
+    case Notifications.get_token_notifications do
+      {:error, _} ->
+        get_token_notifications()
+      result ->
+        result
+    end
   end
 end

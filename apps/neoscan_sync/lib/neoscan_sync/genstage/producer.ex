@@ -111,7 +111,6 @@ defmodule NeoscanSync.Producer do
     [url] = check_if_nodes(1)
     get_block_by_height(url, height)
   end
-
   defp get_block_by_height(random, height) do
     case Blockchain.get_block_by_height(random, height) do
       {:ok, block} ->
@@ -129,12 +128,21 @@ defmodule NeoscanSync.Producer do
   end
 
   defp add_notifications(block, height) do
-    notifications = Notifications.get_block_notifications(height)
+    notifications = get_notifications(height)
 
     transfers =
       notifications
       |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
 
     Map.merge(block, %{"transfers" => transfers})
+  end
+
+  defp get_notifications(height) do
+    case Notifications.get_block_notifications(height) do
+      {:error, _} ->
+        get_notifications(height)
+      result ->
+        result
+    end
   end
 end
