@@ -108,7 +108,8 @@ defmodule NeoscanSync.Producer do
 
   # handles error when fetching block from chain
   defp get_block_by_height(nil, height) do
-    get_block_by_height(check_if_nodes(1), height)
+    [url] = check_if_nodes(1)
+    get_block_by_height(url, height)
   end
 
   defp get_block_by_height(random, height) do
@@ -117,7 +118,8 @@ defmodule NeoscanSync.Producer do
         block
 
       {:error, _reason} ->
-        get_block_by_height(check_if_nodes(1), height)
+        [url] = check_if_nodes(1)
+        get_block_by_height(url, height)
     end
   end
 
