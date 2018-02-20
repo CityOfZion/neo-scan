@@ -43,7 +43,7 @@ defmodule Neoscan.ChainAssets do
       "time" => Blocks.get_block_time(response["block"]),
       "contract" => String.slice(to_string(token["script_hash"]), -40..-1),
     }
-    create_asset(String.slice(to_string(response["tx"]), -40..-1), new_token)
+    create_asset(String.slice(to_string(response["tx"]), -64..-1), new_token)
   end
 
   #Creates tokens.
