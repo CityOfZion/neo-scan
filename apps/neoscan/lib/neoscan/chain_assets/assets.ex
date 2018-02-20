@@ -40,9 +40,10 @@ defmodule Neoscan.ChainAssets do
       "type" => "Token",
       "amount" => 0,
       "issued" => 0,
-      "time" => Blocks.get_block_time(response["block"])
+      "time" => Blocks.get_block_time(response["block"]),
+      "contract" => String.slice(to_string(token["script_hash"]), -40..-1),
     }
-    create_asset(String.slice(to_string(token["script_hash"]), -40..-1), new_token)
+    create_asset(String.slice(to_string(response["tx"]), -40..-1), new_token)
   end
 
   #Creates tokens.
@@ -51,7 +52,7 @@ defmodule Neoscan.ChainAssets do
   end
   def create_tokens(tokens) do
     tokens
-    |> Enum.filter(fn %{"token" => token} -> get_asset_by_hash(String.slice(to_string(token["script_hash"]), -40..-1)) == nil end)
+    |> Enum.filter(fn %{"token" => token} -> get_token_by_contract(String.slice(to_string(token["script_hash"]), -40..-1)) == nil end)
     |> Enum.each(fn token -> add_token(token) end)
     |> check_tokens_creation(tokens)
   end
@@ -84,6 +85,25 @@ defmodule Neoscan.ChainAssets do
   end
 
   @doc """
+  Gets token  by its contract value
+
+  ## Examples
+
+      iex> get_token_by_contract(hash)
+      "NEO"
+
+      iex> get_token_by_contract(hash)
+      "not found"
+
+  """
+  def get_token_by_contract(hash) do
+    query = from(e in Asset, where: e.contract == ^hash)
+
+    Repo.all(query)
+    |> List.first()
+  end
+
+  @doc """
   Gets asset name by its hash value
 
   ## Examples
@@ -95,11 +115,23 @@ defmodule Neoscan.ChainAssets do
       "not found"
 
   """
-  def get_asset_name_by_hash(hash) do
+  def get_asset_name_by_hash(hash) when length(hash) > 40 do
     query =
       from(
         e in Asset,
         where: e.txid == ^hash,
+        select: e.name
+      )
+
+    Repo.all(query)
+    |> List.first()
+    |> filter_name
+  end
+  def get_asset_name_by_hash(hash) do
+    query =
+      from(
+        e in Asset,
+        where: e.contract == ^hash,
         select: e.name
       )
 
@@ -178,7 +210,8 @@ defmodule Neoscan.ChainAssets do
           :time => e.time,
           :name => e.name,
           :owner => e.owner,
-          :precision => e.precision
+          :precision => e.precision,
+          :contract => e.contract
         }
       )
 
@@ -293,14 +326,24 @@ defmodule Neoscan.ChainAssets do
 
     asset_addresses =
       assets
-      |> Enum.reduce(%{}, fn %{:txid => txid}, acc ->
-        Map.put(acc, txid, Addresses.count_addresses_for_asset(txid))
+      |> Enum.reduce(%{}, fn %{:txid => txid, :contract => contract}, acc ->
+        case contract do
+          nil ->
+            Map.put(acc, txid, Addresses.count_addresses_for_asset(txid))
+          _ ->
+            Map.put(acc, txid, Addresses.count_addresses_for_asset(contract))
+        end
       end)
 
     asset_transactions =
       assets
-      |> Enum.reduce(%{}, fn %{:txid => txid}, acc ->
-        Map.put(acc, txid, Stats.count_transactions_for_asset(txid))
+      |> Enum.reduce(%{}, fn %{:txid => txid, :contract => contract}, acc ->
+        case contract do
+          nil ->
+            Map.put(acc, txid, Stats.count_transactions_for_asset(txid))
+          _ ->
+            Map.put(acc, txid, Stats.count_transactions_for_asset(contract))
+        end
       end)
 
     %{

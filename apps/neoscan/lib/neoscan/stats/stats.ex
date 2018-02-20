@@ -244,7 +244,6 @@ defmodule Neoscan.Stats do
   def check_if_nil(nil) do
     0
   end
-
   def check_if_nil(result) do
     result
   end

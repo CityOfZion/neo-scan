@@ -12,10 +12,12 @@ defmodule Neoscan.Repo.Migrations.Assets do
       add(:type, :string)
       add(:issued, :float)
       add(:time, :integer)
+      add(:contract, :string)
 
       timestamps()
     end
 
     create(unique_index(:assets, [:txid, :name]))
+    create(unique_index(:assets, [:contract]))
   end
 end

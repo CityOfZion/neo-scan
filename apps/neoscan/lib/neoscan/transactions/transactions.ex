@@ -125,10 +125,10 @@ defmodule Neoscan.Transactions do
     transaction_query =
       from(
         e in Transaction,
+        where: e.asset_moved == ^hash and e.type != "MinerTransaction",
         order_by: [
           desc: e.id
         ],
-        where: e.asset_moved == ^hash and e.type != "MinerTransaction",
         select: %{
           :id => e.id,
           :type => e.type,

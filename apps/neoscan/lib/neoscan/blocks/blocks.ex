@@ -241,10 +241,14 @@ defmodule Neoscan.Blocks do
 
   """
   def get_block_time(height) do
-    {:ok, block} = HttpCalls.url(1)
-                   |> Blockchain.get_block_by_height(height)
+    url = HttpCalls.url(1)
 
-    Map.get(block, "time")
+    case Blockchain.get_block_by_height(url, height) do
+      {:ok, block} ->
+        Map.get(block, "time")
+      _ ->
+        get_block_time(height)
+    end
   end
 
   @doc """
