@@ -551,10 +551,12 @@ defmodule Neoscan.Addresses do
   def add_transfer(addresses, transfer, time, block) do
     update_from =
       Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_from"] end)
+      |> List.first
       |> update_from_address(transfer, time)
 
     update_to =
       Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_to"] end)
+      |> List.first
       |> update_to_address(transfer, time)
 
     transfer
