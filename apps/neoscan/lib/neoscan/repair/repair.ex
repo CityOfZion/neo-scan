@@ -212,7 +212,7 @@ defmodule Neoscan.Repair do
   end
 
   # adds missing vouts after verifying missing blocks and transactions
-  def add_missing_vouts(list, tuples) when list == [{:ok, "Created"}] do
+  def add_missing_vouts([{:ok, "Created", _blocks}], tuples) do
     Enum.filter(tuples, fn {key, _tuple} -> key == :vouts_missing end)
     |> Enum.map(fn {_key, {db_transaction, vouts}} -> {db_transaction, vouts} end)
     |> Enum.group_by(fn {db_transaction, _transaction} -> db_transaction end)
