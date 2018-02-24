@@ -135,6 +135,7 @@ defmodule Neoscan.Transfers do
     |> Enum.reduce([], fn %{"addr_from" => from, "addr_to" => to}, acc ->
       acc ++ [from, to]
     end)
+    |> IO.inspect
     |> Addresses.get_transfer_addresses(time)
   end
 end
