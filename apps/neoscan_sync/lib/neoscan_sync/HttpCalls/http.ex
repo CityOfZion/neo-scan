@@ -28,25 +28,31 @@ defmodule NeoscanSync.HttpCalls do
 
   # Makes a request to the 'url' seed
   def request(headers, data, url) do
-    case is_binary(url) do
-      true ->
-        url
+    try do
+      to_string(url)
+    rescue
+      ArgumentError ->
+        Logger.error("Error in url #{url}")
+    else
+      value ->
+        value
         |> HTTPoison.post(data, headers, ssl: [{:versions, [:"tlsv1.2"]}])
         |> handle_response
-      false ->
-       Logger.error("Error in url #{url}")
     end
   end
 
   # Makes a request to the 'url' seed
   def get(url) do
-    case is_binary(url) do
-      true ->
-        url
+    try do
+      to_string(url)
+    rescue
+      ArgumentError ->
+        Logger.error("Error in url #{url}")
+    else
+      value ->
+        value
         |> HTTPoison.get([], ssl: [{:versions, [:"tlsv1.2"]}])
         |> handle_response
-      false ->
-       Logger.error("Error in url #{url}")
     end
   end
 
