@@ -233,8 +233,8 @@ defmodule Neoscan.Repair do
     end)
   end
 
-  def add_missing_vouts(_, _tuples) do
-    raise "error fetching and adding missing transactions"
+  def add_missing_vouts(result, _tuples) do
+    raise "error fetching and adding missing transactions #{result}"
   end
 
   # filter the content from the tuples
