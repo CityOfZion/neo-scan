@@ -25,6 +25,7 @@ defmodule Neoscan.Addresses.Address do
 
     address
     |> cast(new_attrs, [:address, :balance, :time, :tx_count])
+    |> unique_constraint(:address)
     |> validate_required([:address, :time, :tx_count])
   end
 
