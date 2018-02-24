@@ -592,7 +592,7 @@ defmodule Neoscan.Addresses do
   end
 
   def plus_transfer(%{:balance => balance} = attrs, transfer, time) do
-    current_amount = balance[transfer["contract"]]["amount"]
+    current_amount = balance[transfer["contract"]]["amount"] || 0
 
     new_balance = %{
       "asset" => transfer["contract"],
@@ -604,7 +604,7 @@ defmodule Neoscan.Addresses do
   end
 
   def minus_transfer(%{:balance => balance} = attrs, transfer, time) do
-    current_amount = balance[transfer["contract"]]["amount"]
+    current_amount = balance[transfer["contract"]]["amount"] || 0
 
     new_balance = %{
       "asset" => transfer["contract"],
