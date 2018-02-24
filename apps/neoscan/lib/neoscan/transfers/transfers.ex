@@ -132,7 +132,7 @@ defmodule Neoscan.Transfers do
 
   def get_transfers_addresses(transfers, time) do
     transfers
-    |> Enum.reduce([], fn %{"address_from" => from, "address_to" => to}, acc ->
+    |> Enum.reduce([], fn %{"addr_from" => from, "addr_to" => to}, acc ->
       acc ++ [from, to]
     end)
     |> Addresses.get_transfer_addresses(time)
