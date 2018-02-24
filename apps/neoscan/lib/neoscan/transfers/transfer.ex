@@ -28,7 +28,6 @@ defmodule Neoscan.Transfers.Transfer do
       :block_height,
       :txid,
       :contract,
-      :type,
       :time
     ])
     |> assoc_constraint(:block, required: true)
@@ -39,7 +38,6 @@ defmodule Neoscan.Transfers.Transfer do
       :block_height,
       :txid,
       :contract,
-      :type,
       :time
     ])
   end
