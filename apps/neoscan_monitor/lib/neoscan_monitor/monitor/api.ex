@@ -37,9 +37,16 @@ defmodule NeoscanMonitor.Api do
     |> Enum.find(fn %{:txid => txid} -> txid == hash end)
   end
 
-  def get_asset_name(hash) do
+  def get_asset_name(hash) when length(hash) > 40 do
     Server.get(:assets)
     |> Enum.find(fn %{:txid => txid} -> txid == hash end)
+    |> Map.get(:name)
+    |> ChainAssets.filter_name()
+  end
+
+  def get_asset_name(hash) do
+    Server.get(:assets)
+    |> Enum.find(fn %{:contract => contract} -> contract == hash end)
     |> Map.get(:name)
     |> ChainAssets.filter_name()
   end
