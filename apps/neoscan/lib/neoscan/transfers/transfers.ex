@@ -93,7 +93,8 @@ defmodule Neoscan.Transfers do
         "block_height" => transfer["block"],
         "address_from" => transfer["addr_from"],
         "address_to" => transfer["addr_to"],
-        "time" => time
+        "time" => time,
+        "contract" => String.slice(to_string(transfer["contract"]), -40..-1),
       })
 
     Transfer.changeset(block, attrs)
