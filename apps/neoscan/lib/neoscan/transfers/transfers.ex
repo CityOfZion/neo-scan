@@ -89,7 +89,7 @@ defmodule Neoscan.Transfers do
     attrs =
       transfer
       |> Map.merge(%{
-        "txid" => transfer["tx"],
+        "txid" => String.slice(to_string(transfer["tx"]), -64..-1),
         "block_height" => transfer["block"],
         "address_from" => transfer["addr_from"],
         "address_to" => transfer["addr_to"],
