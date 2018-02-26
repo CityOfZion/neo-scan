@@ -20,7 +20,17 @@ defmodule NeoscanMonitor.Utils do
       "http://seed2.neo.org:10332",
       "http://seed3.neo.org:10332",
       "http://seed4.neo.org:10332",
-      "http://seed5.neo.org:10332"
+      "http://seed5.neo.org:10332",
+      "http://seed0.bridgeprotocol.io:10332",
+      "http://seed1.bridgeprotocol.io:10332",
+      "http://seed2.bridgeprotocol.io:10332",
+      "http://seed3.bridgeprotocol.io:10332",
+      "http://seed4.bridgeprotocol.io:10332",
+      "http://seed5.bridgeprotocol.io:10332",
+      "http://seed6.bridgeprotocol.io:10332",
+      "http://seed7.bridgeprotocol.io:10332",
+      "http://seed8.bridgeprotocol.io:10332",
+      "http://seed9.bridgeprotocol.io:10332",
     ]
   end
 
