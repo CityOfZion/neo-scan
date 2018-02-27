@@ -73,6 +73,16 @@ defmodule NeoscanWeb.ApiController do
     json(conn, transactions)
   end
 
+  def get_last_transactions_by_address(conn, %{"hash" => hash}) do
+    transactions = Api.get_last_transactions_by_address(hash, 1)
+    json(conn, transactions)
+  end
+
+  def get_last_transactions_by_address(conn, %{"hash" => hash, "page" => page}) do
+    transactions = Api.get_last_transactions_by_address(hash, page)
+    json(conn, transactions)
+  end
+
   def get_all_nodes(conn, %{}) do
     nodes = Api.get_all_nodes()
     json(conn, nodes)
