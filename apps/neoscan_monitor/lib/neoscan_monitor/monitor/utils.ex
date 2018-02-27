@@ -31,6 +31,14 @@ defmodule NeoscanMonitor.Utils do
       "http://seed7.bridgeprotocol.io:10332",
       "http://seed8.bridgeprotocol.io:10332",
       "http://seed9.bridgeprotocol.io:10332",
+      "http://seed1.redpulse.com:10332",
+      "http://seed2.redpulse.com:10332",
+      "http://seed1.treatail.com:10332",
+      "http://seed2.treatail.com:10332",
+      "http://seed3.treatail.com:10332",
+      "http://seed4.treatail.com:10332",
+      # "http://pyrpc1.redpulse.com:10332",
+      # "http://pyrpc2.redpulse.com:10332",
     ]
   end
 
