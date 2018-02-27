@@ -215,6 +215,16 @@ If no <code class="inline">type</code> is provided, returns all types</p>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#get_last_transactions_by_address/1">get_last_transactions_by_address(hash_string, page)</a>
+  </div>
+
+    <div class="summary-synopsis"><p>Returns the last 15 transaction models in the chain for the selected address from its <code class="inline">hash_string</code>. 
+If no <code class="inline">page</code> is provided, returns page 1 (latest transactions).</p>
+</div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#get_nodes/0">get_nodes()</a>
   </div>
 
@@ -790,6 +800,77 @@ If no <code class="inline">type</code> is provided, returns all types</p>
 
 <pre><code class="elixir">/api/main_net/v1/get_last_transactions/{type}
 /api/main_net/v1/get_last_transactions
+[{
+    &quot;vouts&quot;: [
+      {
+        &quot;value&quot;: float,
+        &quot;n&quot;: integer,
+        &quot;asset&quot;: &quot;name_string&quot;,
+        &quot;address&quot;: &quot;hash_string&quot;
+      },
+      ...
+    ],
+    &quot;vin&quot;: [
+      {
+        &quot;value&quot;: float,
+        &quot;txid&quot;: &quot;tx_id_string&quot;,
+        &quot;n&quot;: integer,
+        &quot;asset&quot;: &quot;name_string&quot;,
+        &quot;address_hash&quot;: &quot;hash_string&quot;
+      },
+      ...
+    ],
+    &quot;version&quot;: integer,
+    &quot;type&quot;: &quot;type_string&quot;,
+    &quot;txid&quot;: &quot;tx_id_string&quot;,
+    &quot;time&quot;: unix_time,
+    &quot;sys_fee&quot;: &quot;string&quot;,
+    &quot;size&quot;: integer,
+    &quot;scripts&quot;: [
+      {
+        &quot;verification&quot;: &quot;hash_string&quot;,
+        &quot;invocation&quot;: &quot;hash_string&quot;
+      }
+    ],
+    &quot;pubkey&quot;: hash_string,
+    &quot;nonce&quot;: integer,
+    &quot;net_fee&quot;: &quot;string&quot;,
+    &quot;description&quot;: string,
+    &quot;contract&quot;: array,
+    &quot;claims&quot;: array,
+    &quot;block_height&quot;: integer,
+    &quot;block_hash&quot;: &quot;hash_string&quot;,
+    &quot;attributes&quot;: array,
+    &quot;asset&quot;: array
+  },
+  ...
+]</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="get_last_transactions_by_address/1">
+
+
+  <div class="detail-header">
+    <a href="#get_last_transactions_by_address/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">get_last_transactions_by_address(hash_string, page)</span>
+
+
+
+  </div>
+  <section class="docstring">
+    <p>Returns the last 15 transaction models in the chain for the selected address from its <code class="inline">hash_string</code>.
+If no <code class="inline">page</code> is provided, returns page 1 (latest transactions)</p>
+<h2 id="get_last_transactions_by_address/1-examples" class="section-heading">
+  <a href="#get_last_transactions_by_address/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+
+<pre><code class="elixir">/api/main_net/v1/get_last_transactions_by_address/{hash_string}/{page}
+/api/main_net/v1/get_last_transactions_by_address/{hash_string}
 [{
     &quot;vouts&quot;: [
       {

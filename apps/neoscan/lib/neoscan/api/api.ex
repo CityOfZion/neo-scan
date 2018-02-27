@@ -14,6 +14,7 @@ defmodule Neoscan.Api do
   alias Neoscan.Transactions.Transaction
   alias Neoscan.ChainAssets
   alias Neoscan.ChainAssets.Asset
+  alias Neoscan.BalanceHistories
   alias Neoscan.Blocks.Block
   alias Neoscan.Blocks
   alias Neoscan.Vouts
@@ -1041,6 +1042,71 @@ defmodule Neoscan.Api do
       |> Map.put(:vouts, new_vouts)
       |> Map.put(:vin, new_vins)
     end)
+  end
+
+  @doc """
+  Returns the last 15 transaction models in the chain for the selected address
+  from its hash_string, paginated.
+
+  ## Examples
+
+      /api/main_net/v1/get_last_transactions_by_address/{hash_string}/{page}
+      [{
+          "vouts": [
+            {
+              "value": float,
+              "n": integer,
+              "asset": "name_string",
+              "address": "hash_string"
+            },
+            ...
+          ],
+          "vin": [
+            {
+              "value": float,
+              "txid": "tx_id_string",
+              "n": integer,
+              "asset": "name_string",
+              "address_hash": "hash_string"
+            },
+            ...
+          ],
+          "version": integer,
+          "type": "type_string",
+          "txid": "tx_id_string",
+          "time": unix_time,
+          "sys_fee": "string",
+          "size": integer,
+          "scripts": [
+            {
+              "verification": "hash_string",
+              "invocation": "hash_string"
+            }
+          ],
+          "pubkey": hash_string,
+          "nonce": integer,
+          "net_fee": "string",
+          "description": string,
+          "contract": array,
+          "claims": array,
+          "block_height": integer,
+          "block_hash": "hash_string",
+          "attributes": array,
+          "asset": array
+        },
+        ...
+      ]
+
+  """
+  def get_last_transactions_by_address(hash_string, page) do
+
+    transactions =
+      BalanceHistories.paginate_history_transactions(
+        hash_string,
+        page || 1
+      )
+
+    transactions
   end
 
   @doc """
