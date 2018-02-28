@@ -1639,8 +1639,8 @@ a:hover {
   height: 26px;
   margin-top: -19px;
 }
-#footer .footer-link-wrapper .coz-slack:after {
-	background: url("../images/ICON_Slack.svg") 0 0 no-repeat;
+#footer .footer-link-wrapper .coz-discord:after {
+	background: url("../images/discord.png") 0 0 no-repeat;
   margin-left: 71px;
 }
 #footer .footer-link-wrapper .coz-github:after {
@@ -2546,7 +2546,7 @@ MOBILE MEDIA QUERIES (MAX-WIDTH: 660PX)
 	#footer .footer-link-wrapper a:after {
 	  margin-top: -19px;
 	}
-	#footer .footer-link-wrapper .coz-slack:after {
+	#footer .footer-link-wrapper .coz-discord:after {
 	  margin-left: 150px;
 	  display: inline-block;
 	}

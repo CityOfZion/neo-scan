@@ -122,7 +122,7 @@
 
 				<div class="right-footer-information">
 					<div class="footer-link-wrapper">
-						<a href="http://slack.cityofzion.io/" alt="<%= gettext "NEO Slack"%>" title="<%= gettext "NEO Slack"%>" class="coz-slack"><%= gettext "NEO Slack" %></a>
+						<a href="https://discord.gg/Md676aR" alt="<%= gettext "NEO Discord"%>" title="<%= gettext "NEO Discord"%>" class="coz-discord"><%= gettext "NEO Discord" %></a>
 					</div>
 					<div class="footer-link-wrapper">
 						<a href="https://github.com/CityOfZion" alt="<%= gettext "City of Zion Github" %>" title="<%= gettext "City of Zion Github" %>" class="coz-github"><%= gettext "City of Zion Github" %></a>
