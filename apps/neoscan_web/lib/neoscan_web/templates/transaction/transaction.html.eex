@@ -54,32 +54,6 @@
     </div>
 	</div>
 
-  <!-- Transfers panel -->
-  <%= if @transaction.transfers != [] do %>
-    <p class="large-detail-text">
-      <span class="bold-text"><%= gettext "Transfers" %></span>
-    </p>
-    <%= for transfer <- @transaction.transfers do %>
-      <div class="transaction-panel">
-        <div class="sent-from-wrapper">
-          <p class="large-detail-text"><%= gettext "Sent from" %></p>
-          <div class="individual-transaction">
-            <a href="<%= address_path(@conn, :index, transfer.address_from)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_from %></a>
-            <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= Api.get_asset_name(transfer.contract) %></p>
-          </div>
-        </div>
-        <img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" class="transaction-sent-arrow" />
-        <div class="sent-to-wrapper">
-          <p class="large-detail-text"><%= gettext "Sent to" %></p>
-          <div class="individual-transaction">
-            <a href="<%= address_path(@conn, :index, transfer.address_to)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_to %></a>
-            <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= Api.get_asset_name(transfer.contract) %></p>
-          </div>
-        </div>
-      </div>
-    <% end %>
-  <% end %>
-
 	<!-- Extra information list -->
 	<ul id="extra-information">
 		<li class="border-right border-bottom border-right-smaller min-height-97px remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
@@ -109,6 +83,35 @@
 	</ul>
 
 </section>
+
+
+<!-- Transfers panel -->
+<%= if @transaction.transfers != [] do %>
+  <section id="asset-information" class="corner-box bar-left-transactions">
+    <p class="large-detail-text">
+      <span class="bold-text"><%= gettext "Transfers" %></span>
+    </p>
+    <%= for transfer <- @transaction.transfers do %>
+      <div class="transaction-panel">
+        <div class="sent-from-wrapper">
+          <p class="large-detail-text"><%= gettext "Sent from" %></p>
+          <div class="individual-transaction">
+            <a href="<%= address_path(@conn, :index, transfer.address_from)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_from %></a>
+            <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= Api.get_asset_name(transfer.contract) %></p>
+          </div>
+        </div>
+        <img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" class="transaction-sent-arrow" />
+        <div class="sent-to-wrapper">
+          <p class="large-detail-text"><%= gettext "Sent to" %></p>
+          <div class="individual-transaction">
+            <a href="<%= address_path(@conn, :index, transfer.address_to)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_to %></a>
+            <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= Api.get_asset_name(transfer.contract) %></p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </section>
+<% end %>
 
 <ul id="bytecode-invocation-list">
   <%= if @transaction.contract != nil do %>
