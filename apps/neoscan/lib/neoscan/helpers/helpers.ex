@@ -142,14 +142,9 @@ defmodule Neoscan.Helpers do
   def apply_precision(integer, hash, precision) do
     cond do
       String.length(hash) == 40 ->
-        {int, _} = integer / :math.pow(10, precision)
-                   |> Float.floor
-                   |> to_string
-                   |> Integer.parse
-
-        div = (integer - 10 * int)/:math.pow(10, precision)
-
-        "#{int+div}"
+        num = integer / :math.pow(10, precision)
+        
+        "#{num}"
       true ->
         "#{integer}"
     end
