@@ -60,7 +60,6 @@ defmodule NeoscanWeb.AddressView do
       |> Map.get("amount")
       |> Helpers.apply_precision(token["asset"], precision)
       |> Integer.parse()
-      |> IO.inspect
 
     raw('<p class="balance-amount">#{number_to_delimited(int)}<span>#{div}</span></p>')
   end
