@@ -87,10 +87,10 @@
 
 <!-- Transfers panel -->
 <%= if @transaction.transfers != [] do %>
+  <p class="large-detail-text">
+    <span class="bold-text"><%= gettext "Transfers" %></span>
+  </p>
   <section id="asset-information" class="corner-box bar-left-transactions">
-    <p class="large-detail-text">
-      <span class="bold-text"><%= gettext "Transfers" %></span>
-    </p>
     <%= for transfer <- @transaction.transfers do %>
       <div class="transaction-panel">
         <div class="sent-from-wrapper">
