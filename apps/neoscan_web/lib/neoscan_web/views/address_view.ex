@@ -154,4 +154,11 @@ defmodule NeoscanWeb.AddressView do
       false
     end
   end
+
+  def apply_precision(asset, amount) do
+    precision = ChainAssets.get_asset_precision_by_hash(asset)
+
+    amount
+    |> Helpers.apply_precision(asset, precision)
+  end
 end

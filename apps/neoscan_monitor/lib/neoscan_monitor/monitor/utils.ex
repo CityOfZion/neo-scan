@@ -156,7 +156,9 @@ defmodule NeoscanMonitor.Utils do
   end
 
   def add_new_tokens(old_list \\ []) do
-    get_token_notifications() -- old_list
+    Enum.filter(get_token_notifications(), fn %{"token" => token} ->
+      Enum.all?(old_list, fn %{"token" => old_token} -> token["script_hash"] != old_token["script_hash"] end)
+    end)
     |> ChainAssets.create_tokens
   end
 

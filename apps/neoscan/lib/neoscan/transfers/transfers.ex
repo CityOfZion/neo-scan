@@ -74,6 +74,39 @@ defmodule Neoscan.Transfers do
   end
 
   @doc """
+  Returns the list of paginated transfers for an address.
+
+  ## Examples
+
+      iex> paginate_transfers(page)
+      [%Transfer{}, ...]
+
+  """
+  def paginate_address_transfers(hash, pag) do
+    transfer_query =
+      from(
+        transfer in Transfer,
+        where: transfer.address_to == ^hash or transfer.address_to == ^hash,
+        order_by: [
+          desc: transfer.id
+        ],
+        select: %{
+          :id => transfer.id,
+          :address_from => transfer.address_from,
+          :address_to => transfer.address_to,
+          :amount => transfer.amount,
+          :block_height => transfer.block_height,
+          :txid => transfer.txid,
+          :contract => transfer.contract,
+          :time => transfer.time
+        },
+        limit: 15
+      )
+
+    Repo.paginate(transfer_query, page: pag, page_size: 15)
+  end
+
+  @doc """
   Creates a transfer
 
   ## Examples

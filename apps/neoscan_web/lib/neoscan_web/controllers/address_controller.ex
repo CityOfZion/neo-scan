@@ -3,6 +3,7 @@ defmodule NeoscanWeb.AddressController do
 
   alias Neoscan.Addresses
   alias Neoscan.BalanceHistories
+  alias Neoscan.Transfers
 
   def index(conn, %{"address" => address_hash}) do
     Addresses.get_address_by_hash_for_view(address_hash)
@@ -31,6 +32,8 @@ defmodule NeoscanWeb.AddressController do
         result
       end)
 
+    transfers = Transfers.paginate_address_transfers(address.address, page)
+
     graph_data = BalanceHistories.get_graph_data_for_address(address.address)
 
     render(
@@ -39,7 +42,8 @@ defmodule NeoscanWeb.AddressController do
       address: address,
       transactions: transactions,
       page: page,
-      graph_data: graph_data
+      graph_data: graph_data,
+      transfers: transfers
     )
   end
 end

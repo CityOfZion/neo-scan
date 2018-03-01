@@ -76,7 +76,7 @@ defmodule NeoscanMonitor.Worker do
 
   # update nodes and stats information
   def handle_info(:update_nodes, state) do
-    Utils.add_new_tokens()
+    tokens = Utils.add_new_tokens(state.tokens)
     new_state =
       Map.merge(state, %{
         :monitor => Utils.load(),
@@ -95,7 +95,7 @@ defmodule NeoscanMonitor.Worker do
             usd: GasUsd.last_price_full()
           }
         },
-        :tokens => Utils.add_new_tokens(state.tokens)
+        :tokens => tokens
       })
 
     # In 5s
