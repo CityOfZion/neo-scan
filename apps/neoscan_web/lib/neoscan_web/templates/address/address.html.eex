@@ -157,7 +157,7 @@
     <div class="transactions-list">
 
       <%= for transaction <- @transfers do %>
-        <div class="full-width-bar <%= get_class(transaction.type)%>">
+        <div class="full-width-bar invocation-transaction">
           <div class="information-wrapper">
             <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Invocation" %></p>
             <div class="secondary-info-wrapper">
