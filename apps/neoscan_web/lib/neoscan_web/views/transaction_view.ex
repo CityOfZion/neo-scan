@@ -7,6 +7,7 @@ defmodule NeoscanWeb.TransactionView do
   alias Neoscan.Helpers
   alias Neoscan.Explanations
   alias NeoscanWeb.ViewHelper
+  alias Neoscan.ChainAssets
 
   def get_type(type) do
     cond do
@@ -116,5 +117,12 @@ defmodule NeoscanWeb.TransactionView do
 
   def get_tooltips(conn) do
     ViewHelper.get_tooltips(conn)
+  end
+
+  def apply_precision(asset, amount) do
+    precision = ChainAssets.get_asset_precision_by_hash(asset)
+
+    amount
+    |> Helpers.apply_precision(asset, precision)
   end
 end
