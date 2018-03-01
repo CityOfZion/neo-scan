@@ -81,7 +81,9 @@ defmodule NeoscanWeb.TransfersView do
   def apply_precision(asset, amount) do
     precision = ChainAssets.get_asset_precision_by_hash(asset)
 
-    amount
-    |> Helpers.apply_precision(asset, precision)
+    {num, _} =  amount
+                |> Helpers.apply_precision(asset, precision)
+                |> Float.parse
+    num
   end
 end
