@@ -153,12 +153,20 @@ defmodule Neoscan.ChainAssets do
 
   """
   def get_asset_precision_by_hash(hash) do
-    query =
-      from(
-        e in Asset,
-        where: e.txid == ^hash,
-        select: e.precision
-      )
+    query = cond do
+              String.length(hash) == 40 ->
+                from(
+                  e in Asset,
+                  where: e.contract == ^hash,
+                  select: e.precision
+                )
+              true ->
+                from(
+                  e in Asset,
+                  where: e.txid == ^hash,
+                  select: e.precision
+                )
+            end
 
     Repo.all(query)
     |> List.first()
