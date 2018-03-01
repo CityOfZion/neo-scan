@@ -15,7 +15,7 @@ defmodule NeoscanSync.Consumer do
     {
       :consumer,
       state,
-      subscribe_to: [{NeoscanSync.Producer, max_demand: 500, min_demand: 300}]
+      subscribe_to: [{NeoscanSync.Producer, max_demand: 150, min_demand: 75}]
     }
   end
 

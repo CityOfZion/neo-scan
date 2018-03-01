@@ -592,26 +592,26 @@ defmodule Neoscan.Addresses do
   end
 
   def plus_transfer(%{:balance => balance} = attrs, transfer, time) do
-    current_amount = balance[transfer["contract"]]["amount"] || 0
+    current_amount = balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
 
     new_balance = %{
-      "asset" => transfer["contract"],
+      "asset" => String.slice(to_string(transfer["contract"]), -40..-1),
       "amount" => current_amount + transfer["amount"],
       "time" => time
     }
 
-    %{attrs | balance: Map.put(attrs.balance || %{}, transfer["contract"], new_balance)}
+    %{attrs | balance: Map.put(attrs.balance || %{}, String.slice(to_string(transfer["contract"]), -40..-1), new_balance)}
   end
 
   def minus_transfer(%{:balance => balance} = attrs, transfer, time) do
-    current_amount = balance[transfer["contract"]]["amount"] || 0
+    current_amount = balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
 
     new_balance = %{
-      "asset" => transfer["contract"],
+      "asset" => String.slice(to_string(transfer["contract"]), -40..-1),
       "amount" => current_amount - transfer["amount"],
       "time" => time
     }
 
-    %{attrs | balance: Map.put(attrs.balance || %{}, transfer["contract"], new_balance)}
+    %{attrs | balance: Map.put(attrs.balance || %{}, String.slice(to_string(transfer["contract"]), -40..-1), new_balance)}
   end
 end
