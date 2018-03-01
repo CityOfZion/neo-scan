@@ -3,6 +3,7 @@ defmodule NeoscanWeb.TransfersView do
   import Number.Delimit
   alias NeoscanMonitor.Api
   alias Neoscan.Helpers
+  alias Neoscan.ChainAssets
 
   def get_current_min_qtd(page) do
     %{:total_transfers => total} = Api.get_stats()
@@ -75,5 +76,12 @@ defmodule NeoscanWeb.TransfersView do
     %{:total_transfers => total} = Api.get_stats()
 
     total
+  end
+
+  def apply_precision(asset, amount) do
+    precision = ChainAssets.get_asset_precision_by_hash(asset)
+
+    amount
+    |> Helpers.apply_precision(asset, precision)
   end
 end
