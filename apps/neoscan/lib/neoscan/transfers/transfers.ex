@@ -173,6 +173,29 @@ defmodule Neoscan.Transfers do
     |> Addresses.get_transfer_addresses(time)
   end
 
+  def get_transactions_transfers(txid_list) do
+    transfer_query =
+      from(
+        transfer in Transfer,
+        where: transfer.txid in ^txid_list,
+        order_by: [
+          desc: transfer.id
+        ],
+        select: %{
+          :id => transfer.id,
+          :address_from => transfer.address_from,
+          :address_to => transfer.address_to,
+          :amount => transfer.amount,
+          :block_height => transfer.block_height,
+          :txid => transfer.txid,
+          :contract => transfer.contract,
+          :time => transfer.time
+        }
+      )
+
+    Repo.all(transfer_query)
+  end
+
   def get_transaction_transfers(hash) do
     transfer_query =
       from(

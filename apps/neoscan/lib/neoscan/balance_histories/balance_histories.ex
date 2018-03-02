@@ -7,6 +7,7 @@ defmodule Neoscan.BalanceHistories do
   alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
   alias Neoscan.ChainAssets
+  alias Neoscan.Transfers
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking address history changes.
@@ -94,15 +95,23 @@ defmodule Neoscan.BalanceHistories do
       Enum.map(transactions, fn tx -> tx.id end)
       |> Transactions.get_transactions_vouts()
 
+    transfers =
+      Enum.map(transactions, fn tx -> tx.txid end)
+      |> Transfers.get_transactions_transfers()
+
     transactions
     |> Enum.map(fn tx ->
-      Map.put(
-        tx,
-        :vouts,
-        Enum.filter(vouts, fn vout ->
-          vout.transaction_id == tx.id
-        end)
-      )
+      Map.merge(tx,
+        %{
+          :vouts =>
+            Enum.filter(vouts, fn vout ->
+              vout.transaction_id == tx.id
+            end),
+          :transfers =>
+            Enum.filter(transfers, fn transfer ->
+              transfer.txid == tx.txid
+            end)
+        })
     end)
   end
 
