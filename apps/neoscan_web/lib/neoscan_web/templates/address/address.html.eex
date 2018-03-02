@@ -109,13 +109,13 @@
                     <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vin.value) %> <%= Api.get_asset_name(vin.asset) %></p>
                   </div>
                 <% end %>
-                <%= if transaction.transfers != [] do %>
-                  <%= for transfer <- transaction.transfers do %>
-                    <div class="individual-transaction">
-                      <a href='<%= address_path(@conn, :index, transfer.address_from)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_from %></a>
-                      <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= Api.get_asset_name(transfer.contract) %></p>
-                    </div>
-                  <% end %>
+              <% end %>
+              <%= if transaction.transfers != [] do %>
+                <%= for transfer <- transaction.transfers do %>
+                  <div class="individual-transaction">
+                    <a href='<%= address_path(@conn, :index, transfer.address_from)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_from %></a>
+                    <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= Api.get_asset_name(transfer.contract) %></p>
+                  </div>
                 <% end %>
               <% end %>
               <%= if transaction.type == "ClaimTransaction" do %>

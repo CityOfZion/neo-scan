@@ -3,6 +3,7 @@ defmodule NeoscanWeb.TransactionsController do
 
   alias NeoscanMonitor.Api
   alias Neoscan.Transactions
+  alias Neoscan.Transfers
 
   def index(conn, _params) do
     transactions =
@@ -11,6 +12,21 @@ defmodule NeoscanWeb.TransactionsController do
         {:ok, result} = Morphix.atomorphiform(transaction)
         result
       end)
+
+    transfers =
+      Enum.map(transactions, fn tx -> tx.txid end)
+      |> Transfers.get_transactions_transfers()
+
+    transactions = transactions
+                  |> Enum.map(fn tx ->
+                    Map.merge(tx,
+                      %{
+                        :transfers =>
+                          Enum.filter(transfers, fn transfer ->
+                            transfer.txid == tx.txid
+                          end) || []
+                      })
+                  end)
 
     render(conn, "transactions.html", transactions: transactions, page: "1", type: nil)
   end
@@ -33,6 +49,21 @@ defmodule NeoscanWeb.TransactionsController do
         {:ok, result} = Morphix.atomorphiform(transaction)
         result
       end)
+
+    transfers =
+      Enum.map(transactions, fn tx -> tx.txid end)
+      |> Transfers.get_transactions_transfers()
+
+    transactions = transactions
+                  |> Enum.map(fn tx ->
+                    Map.merge(tx,
+                      %{
+                        :transfers =>
+                          Enum.filter(transfers, fn transfer ->
+                            transfer.txid == tx.txid
+                          end) || []
+                      })
+                  end)
 
     render(conn, "transactions.html", transactions: transactions, page: page, type: type)
   end
