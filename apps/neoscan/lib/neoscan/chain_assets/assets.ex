@@ -115,29 +115,31 @@ defmodule Neoscan.ChainAssets do
       "not found"
 
   """
-  def get_asset_name_by_hash(hash) when length(hash) > 40 do
-    query =
-      from(
-        e in Asset,
-        where: e.txid == ^hash,
-        select: e.name
-      )
-
-    Repo.all(query)
-    |> List.first()
-    |> filter_name
-  end
   def get_asset_name_by_hash(hash) do
-    query =
-      from(
-        e in Asset,
-        where: e.contract == ^hash,
-        select: e.name
-      )
+    cond do
+      String.length(hash) > 40 ->
+        query =
+          from(
+            e in Asset,
+            where: e.txid == ^hash,
+            select: e.name
+          )
 
-    Repo.all(query)
-    |> List.first()
-    |> filter_name
+        Repo.all(query)
+        |> List.first()
+        |> filter_name
+      true ->
+        query =
+          from(
+            e in Asset,
+            where: e.contract == ^hash,
+            select: e.name
+          )
+
+        Repo.all(query)
+        |> List.first()
+        |> filter_name
+    end
   end
 
   @doc """
