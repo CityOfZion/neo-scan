@@ -574,7 +574,7 @@ defmodule Neoscan.Addresses do
         :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
       })
       |> minus_transfer(transfer, time)
-      |> BalanceHistories.add_tx_id(transfer["tx"], transfer["block"], time)
+      |> BalanceHistories.add_tx_id(String.slice(to_string(transfer["tx"]), -64..-1), transfer["block"], time)
 
     {address, new_attrs}
   end
@@ -586,7 +586,7 @@ defmodule Neoscan.Addresses do
         :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
       })
       |> plus_transfer(transfer, time)
-      |> BalanceHistories.add_tx_id(transfer["tx"], transfer["block"], time)
+      |> BalanceHistories.add_tx_id(String.slice(to_string(transfer["tx"]), -64..-1), transfer["block"], time)
 
     {address, new_attrs}
   end
