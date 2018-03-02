@@ -79,9 +79,9 @@
 					<li>
 						<a href="<%= transactions_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_transactions_path(@conn), do: " active" %>"><%= gettext "Transactions" %></a>
 					</li>
-					<li>
+					<!-- <li>
 						<a href="<%= transfers_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_transfers_path(@conn), do: " active" %>"><%= gettext "Transfers" %></a>
-					</li>
+					</li> -->
 					<li>
 						<a href="<%= addresses_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_addresses_path(@conn), do: " active" %>"><%= gettext "Wallet Addresses" %></a>
 					</li>
