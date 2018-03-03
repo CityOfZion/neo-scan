@@ -122,12 +122,12 @@ defmodule NeoscanMonitor.Utils do
   def get_stats(assets) do
     Enum.map(assets, fn asset ->
       cond do
-        assets.contract == nil ->
+        asset.contract == nil ->
           Map.put(asset, :stats, %{
             :addresses => Addresses.count_addresses_for_asset(asset.txid),
             :transactions => Stats.count_transactions_for_asset(asset.txid)
           })
-        assets.contract != nil ->
+        asset.contract != nil ->
           Map.put(asset, :stats, %{
             :addresses => Addresses.count_addresses_for_asset(asset.contract),
             :transactions => Stats.count_transactions_for_asset(asset.contract)
