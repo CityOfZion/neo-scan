@@ -213,7 +213,7 @@ defmodule Neoscan.Repair do
 
   # adds missing vouts after verifying missing blocks and transactions
   def add_missing_vouts(list, tuples) do
-    case Enum.any?(list, fn {atom, _string, _list} -> atom != :ok end) do
+    case Enum.any?(list, fn {atom, _string} -> atom != :ok end) do
       true ->
         raise "error fetching and adding missing transactions"
       false ->
