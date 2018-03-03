@@ -121,10 +121,18 @@ defmodule NeoscanMonitor.Utils do
   # function to get DB asset stats
   def get_stats(assets) do
     Enum.map(assets, fn asset ->
-      Map.put(asset, :stats, %{
-        :addresses => Addresses.count_addresses_for_asset(asset.txid),
-        :transactions => Stats.count_transactions_for_asset(asset.txid)
-      })
+      cond do
+        assets.contract == nil ->
+          Map.put(asset, :stats, %{
+            :addresses => Addresses.count_addresses_for_asset(asset.txid),
+            :transactions => Stats.count_transactions_for_asset(asset.txid)
+          })
+        assets.contract != nil ->
+          Map.put(asset, :stats, %{
+            :addresses => Addresses.count_addresses_for_asset(asset.contract),
+            :transactions => Stats.count_transactions_for_asset(asset.contract)
+          })
+      end
     end)
   end
 
