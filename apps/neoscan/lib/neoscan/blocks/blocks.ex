@@ -10,6 +10,8 @@ defmodule Neoscan.Blocks do
   alias Neoscan.Transactions.Transaction
   alias NeoscanMonitor.Api
   alias Neoscan.Stats
+  alias NeoscanSync.HttpCalls
+  alias NeoscanSync.Blockchain
 
   @doc """
   Returns the list of blocks.
@@ -224,6 +226,29 @@ defmodule Neoscan.Blocks do
 
     Repo.all(query)
     |> List.first()
+  end
+
+  @doc """
+  Get the block time by its heigh value
+
+  ## Examples
+
+      iex> get_block_time(123)
+      12518982
+
+      iex> get_block_time(456)
+      nill
+
+  """
+  def get_block_time(height) do
+    url = HttpCalls.url(1)
+
+    case Blockchain.get_block_by_height(url, height) do
+      {:ok, block} ->
+        Map.get(block, "time")
+      _ ->
+        get_block_time(height)
+    end
   end
 
   @doc """

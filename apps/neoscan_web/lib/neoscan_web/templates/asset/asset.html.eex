@@ -1,6 +1,10 @@
 
   <h1 class="content-title"><%= gettext "Asset Information" %> - <%=Api.get_asset_name(@asset.txid) %></h1>
-  <p class="large-detail-text"><span class="fa fa-id-card"></span><span class="bold-text"><%= gettext "Asset Hash" %></span> <span class="blue-bar">|</span> <span class="eggshell-blue-text hash"><%= @asset.txid %></span></p>
+  <%= if @asset.contract != nil do %>
+    <p class="large-detail-text"><span class="fa fa-id-card"></span><span class="bold-text"><%= gettext "Contract Hash" %></span> <span class="blue-bar">|</span> <span class="eggshell-blue-text hash"><%= @asset.contract %></span></p>
+  <% else %>
+    <p class="large-detail-text"><span class="fa fa-id-card"></span><span class="bold-text"><%= gettext "Asset Hash" %></span> <span class="blue-bar">|</span> <span class="eggshell-blue-text hash"><%= @asset.txid %></span></p>
+  <% end %>
   <a href="<%= assets_path(@conn, :index) %>" alt="<%= gettext "Back to all transactions"%>" title="<%= gettext "Back to all transactions"%>" class="back-link"><%= gettext "Back to all assets"%></a>
 
   <!-- Asset information -->
@@ -147,6 +151,9 @@
               <% end %>
               <%= if transaction.type == "EnrollmentTransaction" do %>
                 <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Enrollment" %></p>
+              <% end %>
+              <%= if transaction.type == "StateTransaction" do %>
+                <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "State" %></p>
               <% end %>
               <%= if transaction.type == "IssueTransaction" do %>
                 <p class="medium-detail-text col-2-width"><span class="fa fa-handshake-o"></span><%= gettext "Asset Issue" %></p>

@@ -5,9 +5,10 @@
 
   <div class="detail-bar">
     <p class="detail-type detail-type-first-4-col"><%= gettext "Height" %></p>
-    <p class="detail-type col-3-width"><%= gettext "Size" %></p>
-    <p class="detail-type col-3-width"><%= gettext "Transactions" %></p>
-    <p class="detail-type col-2-width"><%= gettext "Created on" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Size" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Transactions" %></p>
+    <p class="detail-type col-3-width"><%= gettext "Created on" %></p>
+    <p class="detail-type col-1-width"><%= gettext "Block Time" %></p>
     <p class="detail-type tablet-full-width"><%= gettext "All block information"%></p>
   </div>
 
@@ -26,15 +27,15 @@
               <%=number_to_delimited(block.index)%>
             </a>
             <div class="secondary-info-wrapper">
-              <p class="medium-detail-text col-3-width">
+              <p class="medium-detail-text col-2-width">
                 <span class="tablet-detail-text"><%= gettext "Size"%>: </span>
                 <%=block.size%> <%= gettext "bytes" %>
               </p>
-              <p class="medium-detail-text col-3-width">
+              <p class="medium-detail-text col-2-width">
                 <span class="tablet-detail-text"><%= gettext "Transactions"%>: </span>
                 <%=block.tx_count%>
               </p>
-              <p class="medium-detail-text col-2-width">
+              <p class="medium-detail-text col-3-width">
                 <span class="tablet-detail-text"><%= gettext "Created"%>: </span>
                 <%=
                   {:ok, date_time} = DateTime.from_unix(block.time, :second)
@@ -44,6 +45,10 @@
                   {:ok, date_time} = DateTime.from_unix(block.time, :second)
                   DateTime.to_time(date_time)
                 %>
+              </p>
+              <p class="medium-detail-text col-1-width">
+                <span class="tablet-detail-text"><%= gettext "Block Time"%>: </span>
+                <%= get_block_time(block, @blocks) %>
               </p>
             </div>
           </div>

@@ -14,13 +14,13 @@ msgid "Transactions"
 msgstr "Транзакции"
 
 msgid "Claimed"
-msgstr "Утверждено"
+msgstr "Подтверждено"
 
 msgid "Balance"
 msgstr "Баланс"
 
 msgid "Unclaimed"
-msgstr "Не Утверждено"
+msgstr "Не подтверждено"
 
 msgid "Address ID"
 msgstr "Адрес ID"
@@ -35,7 +35,7 @@ msgid "Tokens"
 msgstr "Токены"
 
 msgid "minutes ago"
-msgstr "минут назад"
+msgstr "мин. назад"
 
 msgid "Name"
 msgstr "Имя"
@@ -56,7 +56,7 @@ msgid "Supply"
 msgstr "Снабжение"
 
 msgid "Precision"
-msgstr "Чёткость"
+msgstr "Точность"
 
 msgid "Transaction"
 msgstr "Транзакция"
@@ -83,7 +83,7 @@ msgid "Contract"
 msgstr "Контракт"
 
 msgid "Gas Claim"
-msgstr "Утвердить Gas"
+msgstr "Подтвердить Gas"
 
 msgid "Invocation"
 msgstr "Вызов"
@@ -95,7 +95,7 @@ msgid "Asset Register"
 msgstr "Регистр Актива"
 
 msgid "Contract Publish"
-msgstr "Публиковать Контракт"
+msgstr "Опубликовать контракт"
 
 msgid "Sent from"
 msgstr "Отправлено от"
@@ -116,10 +116,10 @@ msgid "Registered on"
 msgstr "Зарегистрировано"
 
 msgid "More details"
-msgstr "Больше деталей"
+msgstr "Подробнее"
 
 msgid "Block index"
-msgstr "Индекс Блока"
+msgstr "Номер Блока"
 
 msgid "Hash"
 msgstr "Хэш"
@@ -140,7 +140,7 @@ msgid "Miner"
 msgstr "Майнер"
 
 msgid "Network Fee"
-msgstr "Сетевой сбор"
+msgstr "Комиссия сети"
 
 msgid "Opcode Verification Script"
 msgstr "Opcode Верификационный Скрипт"

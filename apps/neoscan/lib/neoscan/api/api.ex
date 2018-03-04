@@ -11,6 +11,7 @@ defmodule Neoscan.Api do
   alias Neoscan.Addresses.Address
   alias Neoscan.BalanceHistories.History
   alias Neoscan.Transactions
+  alias Neoscan.Transfers.Transfer
   alias Neoscan.Transactions.Transaction
   alias Neoscan.ChainAssets
   alias Neoscan.ChainAssets.Asset
@@ -156,14 +157,23 @@ defmodule Neoscan.Api do
 
   """
   def get_claimed(hash) do
+
+    claim_query =
+      from(
+        h in Claim,
+        select: %{
+          txids: h.txids
+        }
+      )
+
     query =
       from(
         e in Address,
         where: e.address == ^hash,
-        select: %{
-          :address => e.address,
-          :claimed => e.claimed
-        }
+        preload: [
+          claimed: ^claim_query
+        ],
+        select: e
       )
 
     result =
@@ -172,8 +182,8 @@ defmodule Neoscan.Api do
         nil ->
           %{:address => "not found", :claimed => nil}
 
-        %{} = address ->
-          address
+        %{:address => hash, :claimed => claimed} ->
+          %{:address => hash, :claimed => claimed}
       end
 
     result
@@ -643,6 +653,7 @@ defmodule Neoscan.Api do
   """
   def get_block(hash_or_integer) do
     tran_query = from(t in Transaction, select: t.txid)
+    trans_query = from(t in Transfer, select: t.txid)
 
     query =
       try do
@@ -653,7 +664,8 @@ defmodule Neoscan.Api do
             e in Block,
             where: e.hash == ^hash_or_integer,
             preload: [
-              transactions: ^tran_query
+              transactions: ^tran_query,
+              transfers: ^trans_query
             ]
           )
       else
@@ -662,7 +674,8 @@ defmodule Neoscan.Api do
             e in Block,
             where: e.index == ^hash_or_integer,
             preload: [
-              transactions: ^tran_query
+              transactions: ^tran_query,
+              transfers: ^trans_query
             ]
           )
       end
@@ -732,16 +745,17 @@ defmodule Neoscan.Api do
   """
   def get_last_blocks do
     tran_query = from(t in Transaction, select: t.txid)
+    trans_query = from(t in Transfer, select: t.txid)
 
     query =
       from(
         e in Block,
-        where: e.index > 1_200_000,
         order_by: [
           desc: e.index
         ],
         preload: [
-          transactions: ^tran_query
+          transactions: ^tran_query,
+          transfers: ^trans_query
         ],
         limit: 20
       )
@@ -786,16 +800,17 @@ defmodule Neoscan.Api do
   """
   def get_highest_block do
     tran_query = from(t in Transaction, select: t.txid)
+    trans_query = from(t in Transfer, select: t.txid)
 
     query =
       from(
         e in Block,
-        where: e.index > 1_200_000,
         order_by: [
           desc: e.index
         ],
         preload: [
-          transactions: ^tran_query
+          transactions: ^tran_query,
+          transfers: ^trans_query
         ],
         limit: 1
       )

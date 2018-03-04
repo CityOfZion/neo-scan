@@ -9,6 +9,7 @@ defmodule NeoscanMonitor.Worker do
   alias NeoscanMonitor.Server
   alias Neoscan.Blocks
   alias Neoscan.Transactions
+  alias Neoscan.Transfers
   alias Neoscan.Addresses
   alias Neoscan.ChainAssets
   alias Neoprice.NeoBtc
@@ -31,6 +32,8 @@ defmodule NeoscanMonitor.Worker do
     transactions =
       Transactions.home_transactions()
       |> Utils.add_vouts()
+
+    transfers = Transfers.home_transfers()
 
     assets =
       ChainAssets.list_assets()
@@ -55,10 +58,12 @@ defmodule NeoscanMonitor.Worker do
       :monitor => monitor_nodes,
       :blocks => blocks,
       :transactions => transactions,
+      :transfers => transfers,
       :assets => assets,
       :stats => stats,
       :addresses => addresses,
-      :price => price
+      :price => price,
+      :tokens => [],
     }
 
     Process.send(NeoscanMonitor.Server, {:first_state_update, new_state}, [])
@@ -71,6 +76,7 @@ defmodule NeoscanMonitor.Worker do
 
   # update nodes and stats information
   def handle_info(:update_nodes, state) do
+    tokens = Utils.add_new_tokens(state.tokens)
     new_state =
       Map.merge(state, %{
         :monitor => Utils.load(),
@@ -88,7 +94,8 @@ defmodule NeoscanMonitor.Worker do
             btc: GasBtc.last_price_full(),
             usd: GasUsd.last_price_full()
           }
-        }
+        },
+        :tokens => tokens
       })
 
     # In 5s
@@ -128,6 +135,30 @@ defmodule NeoscanMonitor.Worker do
       |> Utils.cut_if_more(count)
 
     Server.set(:blocks, new_blocks)
+  end
+
+  # adds a transfer to the state
+  def add_transfer(transfer) do
+    currrent = Server.get(:transfers)
+    count = Enum.count(currrent)
+
+    new_transfers =
+      [
+        %{
+          :id => transfer.id,
+          :address_from => transfer.address_from,
+          :address_to => transfer.address_to,
+          :amount => transfer.amount,
+          :block_height => transfer.block_height,
+          :txid => transfer.txid,
+          :contract => transfer.contract,
+          :time => transfer.time
+        }
+        | currrent
+      ]
+      |> Utils.cut_if_more(count)
+
+    Server.set(:transfers, new_transfers)
   end
 
   # adds a transaction to the state

@@ -24,7 +24,8 @@ defmodule Neoscan.Transactions do
     "IssueTransaction",
     "RegisterTransaction",
     "EnrollmentTransaction",
-    "ClaimTransaction"
+    "ClaimTransaction",
+    "StateTransaction"
   ]
 
   @doc """
@@ -124,10 +125,10 @@ defmodule Neoscan.Transactions do
     transaction_query =
       from(
         e in Transaction,
+        where: e.asset_moved == ^hash and e.type != "MinerTransaction",
         order_by: [
           desc: e.id
         ],
-        where: e.asset_moved == ^hash and e.type != "MinerTransaction",
         select: %{
           :id => e.id,
           :type => e.type,
@@ -630,7 +631,7 @@ defmodule Neoscan.Transactions do
   def create_transactions(block, transactions) do
     case Enum.each(transactions, fn transaction -> create_transaction(block, transaction) end) do
       :ok ->
-        {:ok, "Created"}
+        {:ok, "Created", block}
 
       _ ->
         {:error, "failed to create transactions"}

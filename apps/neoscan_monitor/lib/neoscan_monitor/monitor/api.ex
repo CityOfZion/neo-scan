@@ -20,6 +20,10 @@ defmodule NeoscanMonitor.Api do
     Server.get(:blocks)
   end
 
+  def get_transfers do
+    Server.get(:transfers)
+  end
+
   def get_transactions do
     Server.get(:transactions)
   end
@@ -34,10 +38,18 @@ defmodule NeoscanMonitor.Api do
   end
 
   def get_asset_name(hash) do
-    Server.get(:assets)
-    |> Enum.find(fn %{:txid => txid} -> txid == hash end)
-    |> Map.get(:name)
-    |> ChainAssets.filter_name()
+    cond do
+      String.length(hash) == 40 ->
+        Server.get(:assets)
+        |> Enum.find(fn %{:contract => contract} -> contract == hash end)
+        |> Map.get(:name)
+        |> ChainAssets.filter_name()
+      true ->
+        Server.get(:assets)
+        |> Enum.find(fn %{:txid => txid} -> txid == hash end)
+        |> Map.get(:name)
+        |> ChainAssets.filter_name()
+    end
   end
 
   def check_asset(hash) do
@@ -72,6 +84,10 @@ defmodule NeoscanMonitor.Api do
 
   def add_block(block) do
     Worker.add_block(block)
+  end
+
+  def add_transfer(transfer) do
+    Worker.add_transfer(transfer)
   end
 
   def add_transaction(transaction, vouts) do

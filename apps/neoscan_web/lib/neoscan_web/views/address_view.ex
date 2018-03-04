@@ -3,6 +3,7 @@ defmodule NeoscanWeb.AddressView do
   import Number.Delimit
   alias NeoscanMonitor.Api
   alias Neoscan.Helpers
+  alias Neoscan.ChainAssets
 
   def get_NEO_balance(nil) do
     0
@@ -17,6 +18,17 @@ defmodule NeoscanWeb.AddressView do
     |> Enum.reduce(0, fn {_asset, %{"amount" => amount}}, _acc -> amount end)
     |> Helpers.round_or_not()
     |> number_to_delimited()
+  end
+
+  def get_tokens(balance) do
+    balance
+    |> Map.to_list()
+    |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
+      Api.get_asset_name(asset) != "NEO"
+    end)
+    |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
+      Api.get_asset_name(asset) != "GAS"
+    end)
   end
 
   def get_GAS_balance(nil) do
@@ -40,6 +52,18 @@ defmodule NeoscanWeb.AddressView do
     raw('<p class="balance-amount">#{number_to_delimited(int)}<span>#{div}</span></p>')
   end
 
+  def get_token_balance(token) do
+    precision = ChainAssets.get_asset_precision_by_hash(token["asset"])
+
+    {int, div} =
+      token
+      |> Map.get("amount")
+      |> Helpers.apply_precision(token["asset"], precision)
+      |> Integer.parse()
+
+    raw('<p class="balance-amount">#{number_to_delimited(int)}<span>#{div}</span></p>')
+  end
+
   def get_class(type) do
     cond do
       type == "ContractTransaction" ->
@@ -58,6 +82,9 @@ defmodule NeoscanWeb.AddressView do
         'invocation-transaction'
 
       type == "EnrollmentTransaction" ->
+        'invocation-transaction'
+
+      type == "StateTransaction" ->
         'invocation-transaction'
 
       type == "PublishTransaction" ->
@@ -126,5 +153,12 @@ defmodule NeoscanWeb.AddressView do
     else
       false
     end
+  end
+
+  def apply_precision(asset, amount) do
+    precision = ChainAssets.get_asset_precision_by_hash(asset)
+
+    amount
+    |> Helpers.apply_precision(asset, precision)
   end
 end

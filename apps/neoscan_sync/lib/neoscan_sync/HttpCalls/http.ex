@@ -28,9 +28,32 @@ defmodule NeoscanSync.HttpCalls do
 
   # Makes a request to the 'url' seed
   def request(headers, data, url) do
-    url
-    |> HTTPoison.post(data, headers, ssl: [{:versions, [:"tlsv1.2"]}])
-    |> handle_response
+    try do
+      to_string(url)
+    rescue
+      ArgumentError ->
+        Logger.error("Error in url #{url}")
+    else
+      value ->
+        value
+        |> HTTPoison.post(data, headers, ssl: [{:versions, [:"tlsv1.2"]}])
+        |> handle_response
+    end
+  end
+
+  # Makes a request to the 'url' seed
+  def get(url) do
+    try do
+      to_string(url)
+    rescue
+      ArgumentError ->
+        Logger.error("Error in url #{url}")
+    else
+      value ->
+        value
+        |> HTTPoison.get([], ssl: [{:versions, [:"tlsv1.2"]}])
+        |> handle_response
+    end
   end
 
   # Handles the response of an HTTP call
@@ -66,6 +89,10 @@ defmodule NeoscanSync.HttpCalls do
 
   # handles a sucessful response
   defp handle_body(%{"result" => result}) do
+    {:ok, result}
+  end
+
+  defp handle_body(%{"results" => result}) do
     {:ok, result}
   end
 

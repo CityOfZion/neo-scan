@@ -1,0 +1,72 @@
+<h1 class="transactions-content-title"><%= gettext "Transfers"%></h1>
+
+<!-- All transactions content -->
+<section id="all-transactions-wrapper">
+
+  <div class="detail-bar">
+    <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
+    <p class="detail-type col-6-width"><%= gettext "Transaction ID" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
+    <p class="detail-type tablet-full-width"><%= gettext "All transaction information"%></p>
+  </div>
+
+  <!-- Transactions -->
+  <section id="transactions-wrapper">
+
+    <div class="transactions-list">
+
+      <%= for transaction <- @transfers do %>
+        <div class="full-width-bar invocation-transaction">
+          <div class="information-wrapper">
+            <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Transfer" %></p>
+            <div class="secondary-info-wrapper">
+              <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="<%= gettext "View transaction"%>" title="<%= gettext "View transaction"%>" class="large-blue-link col-6-width"><%=transaction.txid%>&#8230;</a>
+              <p class="medium-detail-text col-2-width remove-550px">
+                <%=
+                  {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
+                  DateTime.to_date(date_time)
+                %> |
+                <%=
+                  {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
+                  DateTime.to_time(date_time)
+                %>
+              </p>
+            </div>
+          </div>
+          <button class="btn-accordion"><img src="<%= static_path(@conn, "/images/ICON_DownArrow.svg") %>" class="accordion-down-arrow" width="13px" height="8px" /></button>
+          <div class="transaction-panel">
+            <div class="sent-from-wrapper">
+                <p class="large-detail-text"><%= gettext "Sent from" %></p>
+                <div class="individual-transaction">
+                  <a href='<%= address_path(@conn, :index, transaction.address_from)%>' alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transaction.address_from %></a>
+                  <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transaction.contract,transaction.amount)) %> <%= Api.get_asset_name(transaction.contract) %></p>
+                </div>
+            </div>
+            <img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" class="transaction-sent-arrow" />
+            <div class="sent-to-wrapper">
+              <p class="large-detail-text"><%= gettext "Sent to" %></p>
+              <div class="individual-transaction">
+                <a href='<%= address_path(@conn, :index, transaction.address_to)%>' alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transaction.address_to %></a>
+                <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transaction.contract,transaction.amount)) %> <%= Api.get_asset_name(transaction.contract) %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <%end%>
+
+    </div>
+
+  </section>
+
+  <p  class="number-counter"><%= gettext "Transfers"%> <%= get_current_min_qtd(@page) %> <%= gettext "to"%> <%= get_current_max_qtd(@page) %> <%= gettext "of"%> <%= number_to_delimited(get_total()) %></p>
+  <div class="see-all-button-container">
+    <div class="btn-group">
+      <%= if @page != "1" do %>
+        <%= get_previous_page(@conn, @page) %>
+      <% end %>
+      <%= if check_last(@page) do %>
+        <%= get_next_page(@conn, @page) %>
+      <% end %>
+    </div>
+  </div>
+</section>

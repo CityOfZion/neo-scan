@@ -3,6 +3,7 @@ defmodule NeoscanSync.Producer do
   use GenStage
 
   alias NeoscanSync.Blockchain
+  alias NeoscanSync.Notifications
   alias NeoscanSync.HttpCalls
   alias NeoscanMonitor.Api
   alias Neoscan.Blocks
@@ -77,11 +78,11 @@ defmodule NeoscanSync.Producer do
       block_b = get_block_by_height(random2, height)
 
       if block_a == block_b do
-        block_a
+        add_notifications(block_a, height)
       else
         # cross_check(height)
         Logger.info("Blocks don't match!")
-        block_a
+        add_notifications(block_a, height)
       end
     else
       cross_check(height)
@@ -107,21 +108,41 @@ defmodule NeoscanSync.Producer do
 
   # handles error when fetching block from chain
   defp get_block_by_height(nil, height) do
-    get_block_by_height(check_if_nodes(1), height)
+    [url] = check_if_nodes(1)
+    get_block_by_height(url, height)
   end
-
   defp get_block_by_height(random, height) do
     case Blockchain.get_block_by_height(random, height) do
       {:ok, block} ->
         block
 
       {:error, _reason} ->
-        get_block_by_height(check_if_nodes(1), height)
+        [url] = check_if_nodes(1)
+        get_block_by_height(url, height)
     end
   end
 
   # get current height from monitor
   def get_current_height do
     Api.get_height()
+  end
+
+  defp add_notifications(block, height) do
+    notifications = get_notifications(height)
+
+    transfers =
+      notifications
+      |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
+
+    Map.merge(block, %{"transfers" => transfers})
+  end
+
+  defp get_notifications(height) do
+    case Notifications.get_block_notifications(height) do
+      {:error, _} ->
+        get_notifications(height)
+      result ->
+        result
+    end
   end
 end

@@ -14,6 +14,7 @@ defmodule Neoscan.ChainAssets.Asset do
     field(:precision, :integer)
     field(:type, :string)
     field(:issued, :float)
+    field(:contract, :string)
 
     field(:time, :integer)
 
@@ -25,8 +26,9 @@ defmodule Neoscan.ChainAssets.Asset do
     new_attrs = Map.put(attrs, "txid", transaction_id)
 
     %Asset{}
-    |> cast(new_attrs, [:txid, :admin, :amount, :name, :owner, :precision, :type, :issued, :time])
-    |> unique_constraint(:txid)
+    |> cast(new_attrs, [:txid, :admin, :amount, :name, :owner, :precision, :type, :issued, :time, :contract])
+    |> unique_constraint(:txid, name: :assets_txid_name_index)
+    |> unique_constraint(:contract)
     |> validate_required([:txid, :admin, :amount, :name, :owner, :precision, :type, :time])
   end
 

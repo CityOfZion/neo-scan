@@ -17,6 +17,8 @@ defmodule NeoscanWeb.HomeController do
           "for" => value
         }
       }) do
+    value = String.slice(value, -64..-1)
+
     result =
       try do
         String.to_integer(value)

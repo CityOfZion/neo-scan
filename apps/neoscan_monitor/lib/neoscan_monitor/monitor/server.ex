@@ -39,12 +39,13 @@ defmodule NeoscanMonitor.Server do
     set(:monitor, new_state.monitor)
     set(:blocks, new_state.blocks)
     set(:transactions, new_state.transactions)
+    set(:transfers, new_state.transfers)
     set(:assets, new_state.assets)
     set(:stats, new_state.stats)
     set(:addresses, new_state.addresses)
     set(:price, new_state.price)
     # In 10 seconds
-    Process.send_after(self(), :broadcast, 10_000)
+    Process.send_after(self(), :broadcast, 30_000)
     {:noreply, nil}
   end
 
@@ -66,9 +67,14 @@ defmodule NeoscanMonitor.Server do
       get(:transactions)
       |> Enum.split(5)
 
+    {transfers, _} =
+      get(:transfers)
+      |> Enum.split(5)
+
     payload = %{
       "blocks" => blocks,
       "transactions" => transactions,
+      "transfers" => transfers,
       "price" => get(:price),
       "stats" => get(:stats)
     }

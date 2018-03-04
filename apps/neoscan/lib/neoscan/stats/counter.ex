@@ -16,8 +16,10 @@ defmodule Neoscan.Stats.Counter do
     field(:issue_transactions, :integer)
     field(:register_transactions, :integer)
     field(:enrollment_transactions, :integer)
+    field(:state_transactions, :integer)
     field(:assets_transactions, {:map, :integer})
     field(:assets_addresses, {:map, :integer})
+    field(:total_transfers, :integer)
 
     timestamps()
   end
@@ -37,8 +39,10 @@ defmodule Neoscan.Stats.Counter do
       :issue_transactions,
       :register_transactions,
       :enrollment_transactions,
+      :state_transactions,
       :assets_transactions,
-      :assets_addresses
+      :assets_addresses,
+      :total_transfers
     ])
   end
 
@@ -56,8 +60,10 @@ defmodule Neoscan.Stats.Counter do
       :issue_transactions,
       :register_transactions,
       :enrollment_transactions,
+      :state_transactions,
       :assets_transactions,
-      :assets_addresses
+      :assets_addresses,
+      :total_transfers
     ])
   end
 end

@@ -79,6 +79,9 @@
 					<li>
 						<a href="<%= transactions_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_transactions_path(@conn), do: " active" %>"><%= gettext "Transactions" %></a>
 					</li>
+					<!-- <li>
+						<a href="<%= transfers_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_transfers_path(@conn), do: " active" %>"><%= gettext "Transfers" %></a>
+					</li> -->
 					<li>
 						<a href="<%= addresses_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_addresses_path(@conn), do: " active" %>"><%= gettext "Wallet Addresses" %></a>
 					</li>
@@ -119,7 +122,7 @@
 
 				<div class="right-footer-information">
 					<div class="footer-link-wrapper">
-						<a href="http://slack.cityofzion.io/" alt="<%= gettext "NEO Slack"%>" title="<%= gettext "NEO Slack"%>" class="coz-slack"><%= gettext "NEO Slack" %></a>
+						<a href="https://discord.gg/Md676aR" alt="<%= gettext "NEO Discord"%>" title="<%= gettext "NEO Discord"%>" class="coz-discord"><%= gettext "NEO Discord" %></a>
 					</div>
 					<div class="footer-link-wrapper">
 						<a href="https://github.com/CityOfZion" alt="<%= gettext "City of Zion Github" %>" title="<%= gettext "City of Zion Github" %>" class="coz-github"><%= gettext "City of Zion Github" %></a>

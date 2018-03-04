@@ -5,6 +5,7 @@ defmodule Neoscan.Stats do
   alias Neoscan.Repo
   alias Neoscan.Blocks
   alias Neoscan.Transactions
+  alias Neoscan.Transfers
   alias Neoscan.Addresses
   alias Neoscan.ChainAssets
 
@@ -31,10 +32,12 @@ defmodule Neoscan.Stats do
       :claim_transactions => Transactions.count_transactions(["ClaimTransaction"]),
       :invocation_transactions => Transactions.count_transactions(["InvocationTransaction"]),
       :enrollment_transactions => Transactions.count_transactions(["EnrollmentTransaction"]),
+      :state_transactions => Transactions.count_transactions(["StateTransaction"]),
       :miner_transactions => Transactions.count_transactions(["MinerTransaction"]),
       :publish_transactions => Transactions.count_transactions(["PublishTransaction"]),
       :issue_transactions => Transactions.count_transactions(["IssueTransaction"]),
-      :register_transactions => Transactions.count_transactions(["RegisterTransaction"])
+      :register_transactions => Transactions.count_transactions(["RegisterTransaction"]),
+      :total_transfers => Transfers.count_transfers()
     }
     |> Map.merge(ChainAssets.get_assets_stats())
     |> Counter.changeset()
@@ -113,6 +116,27 @@ defmodule Neoscan.Stats do
     update_counter(counter, attrs)
   end
 
+  def add_transfer_to_table(transfer) do
+    counter = get_counter()
+    attrs = %{:total_transfers => Map.get(counter, :total_transfers) + 1 }
+
+    {_, new_map} =
+      Map.get(counter, :assets_transactions)
+      |> Map.get_and_update(transfer.contract, fn n ->
+        case n do
+          nil ->
+            {n, 1}
+
+          n ->
+            {n, n + 1}
+        end
+      end)
+
+    attrs = Map.put(attrs, :assets_transactions, new_map)
+
+    update_counter(counter, attrs)
+  end
+
   def get_attrs_for_type(counter, transaction) do
     case Map.get(transaction, :type) do
       "ContractTransaction" ->
@@ -131,6 +155,12 @@ defmodule Neoscan.Stats do
         %{
           :total_transactions => Map.get(counter, :total_transactions) + 1,
           :enrollment_transactions => Map.get(counter, :enrollment_transactions) + 1
+        }
+
+      "StateTransaction" ->
+        %{
+          :total_transactions => Map.get(counter, :total_transactions) + 1,
+          :state_transactions => Map.get(counter, :state_transactions) + 1
         }
 
       "ClaimTransaction" ->
@@ -181,9 +211,11 @@ defmodule Neoscan.Stats do
         "PublishTransaction" => Map.get(counter, :publish_transactions),
         "IssueTransaction" => Map.get(counter, :issue_transactions),
         "RegisterTransaction" => Map.get(counter, :register_transactions),
-        "EnrollmentTransaction" => Map.get(counter, :enrollment_transactions)
+        "EnrollmentTransaction" => Map.get(counter, :enrollment_transactions),
+        "StateTransaction" => Map.get(counter, :state_transactions)
       },
-      Map.get(counter, :total_transactions)
+      Map.get(counter, :total_transactions),
+      Map.get(counter, :total_transfers)
     ]
   end
 
@@ -197,6 +229,11 @@ defmodule Neoscan.Stats do
     |> Map.get(:total_blocks)
   end
 
+  def count_transfers do
+    get_counter()
+    |> Map.get(:total_transfers)
+  end
+
   def count_transactions_for_asset(txid) do
     get_counter()
     |> Map.get(:assets_transactions)
@@ -207,7 +244,6 @@ defmodule Neoscan.Stats do
   def check_if_nil(nil) do
     0
   end
-
   def check_if_nil(result) do
     result
   end

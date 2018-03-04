@@ -13,6 +13,7 @@ defmodule Neoscan.Addresses do
   alias Neoscan.BalanceHistories.History
   alias Neoscan.Claims
   alias Neoscan.Claims.Claim
+  alias Neoscan.Transfers
   alias Neoscan.Helpers
   alias Neoscan.Stats
   alias Ecto.Multi
@@ -368,6 +369,20 @@ defmodule Neoscan.Addresses do
     |> Helpers.gen_attrs()
   end
 
+  # get all addresses involved in a transaction
+  def get_transfer_addresses(addresses, time) do
+    query =
+      from(
+        e in Address,
+        where: e.address in ^addresses,
+        select: struct(e, [:id, :address, :balance, :tx_count])
+      )
+
+    Repo.all(query)
+    |> fetch_missing(addresses, time)
+    |> Helpers.gen_attrs()
+  end
+
   # get all addresses involved in a list of previous transactions
   def get_transactions_addresses(transactions) do
     lookups =
@@ -451,6 +466,16 @@ defmodule Neoscan.Addresses do
     |> Claims.separate_txids_and_insert_claims(claims, vouts, index, time)
   end
 
+  def update_all_addresses(
+        address_list,
+        transfers,
+        time,
+        block
+      ) do
+    address_list
+    |> add_transfers_to_addresses(transfers, time, block)
+  end
+
   # separate vins by address hash, insert vins and update the address
   def group_vins_by_address_and_update(address_list, vins, txid, index, time) do
     updates =
@@ -511,5 +536,82 @@ defmodule Neoscan.Addresses do
       |> BalanceHistories.add_tx_id(txid, index, time)
 
     {address, new_attrs}
+  end
+
+  def add_transfers_to_addresses(addresses, [], _time, _block) do
+    addresses
+  end
+
+  def add_transfers_to_addresses(addresses, [head | tail], time, block) do
+    addresses
+    |> add_transfer(head, time, block)
+    |> add_transfers_to_addresses(tail, time, block)
+  end
+
+  def add_transfer(addresses, transfer, time, block) do
+    update_from =
+      Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_from"] end)
+      |> List.first
+      |> update_from_address(transfer, time)
+
+    update_to =
+      Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_to"] end)
+      |> List.first
+      |> update_to_address(transfer, time)
+
+    transfer
+    |> Transfers.create_transfer(time, block)
+
+    Enum.map(addresses, fn {address, attrs} ->
+      Helpers.substitute_if_updated(address, attrs, [update_from, update_to])
+    end)
+  end
+
+  def update_from_address({address, attrs}, transfer, time) do
+    new_attrs =
+      Map.merge(attrs, %{
+        :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
+        :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
+      })
+      |> minus_transfer(transfer, time)
+      |> BalanceHistories.add_tx_id(String.slice(to_string(transfer["tx"]), -64..-1), transfer["block"], time)
+
+    {address, new_attrs}
+  end
+
+  def update_to_address({address, attrs}, transfer, time) do
+    new_attrs =
+      Map.merge(attrs, %{
+        :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
+        :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
+      })
+      |> plus_transfer(transfer, time)
+      |> BalanceHistories.add_tx_id(String.slice(to_string(transfer["tx"]), -64..-1), transfer["block"], time)
+
+    {address, new_attrs}
+  end
+
+  def plus_transfer(%{:balance => balance} = attrs, transfer, time) do
+    current_amount = balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
+
+    new_balance = %{
+      "asset" => String.slice(to_string(transfer["contract"]), -40..-1),
+      "amount" => current_amount + transfer["amount"],
+      "time" => time
+    }
+
+    %{attrs | balance: Map.put(attrs.balance || %{}, String.slice(to_string(transfer["contract"]), -40..-1), new_balance)}
+  end
+
+  def minus_transfer(%{:balance => balance} = attrs, transfer, time) do
+    current_amount = balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
+
+    new_balance = %{
+      "asset" => String.slice(to_string(transfer["contract"]), -40..-1),
+      "amount" => current_amount - transfer["amount"],
+      "time" => time
+    }
+
+    %{attrs | balance: Map.put(attrs.balance || %{}, String.slice(to_string(transfer["contract"]), -40..-1), new_balance)}
   end
 end

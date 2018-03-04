@@ -5,6 +5,7 @@ defmodule Neoscan.Repo.Migrations.Counters do
     create table(:counters) do
       add(:total_blocks, :integer)
       add(:total_transactions, :integer)
+      add(:total_transfers, :integer)
       add(:total_addresses, :integer)
       add(:contract_transactions, :integer)
       add(:invocation_transactions, :integer)
@@ -14,6 +15,7 @@ defmodule Neoscan.Repo.Migrations.Counters do
       add(:issue_transactions, :integer)
       add(:register_transactions, :integer)
       add(:enrollment_transactions, :integer)
+      add(:state_transactions, :integer)
       add(:assets_transactions, {:map, :integer})
       add(:assets_addresses, {:map, :integer})
 

@@ -128,4 +128,25 @@ defmodule Neoscan.Helpers do
       Float.round(value, 8)
     end
   end
+
+  def contract?(hash) do
+    cond do
+      String.length(hash) == 64 ->
+        false
+
+      true ->
+        true
+    end
+  end
+
+  def apply_precision(integer, hash, precision) do
+    cond do
+      String.length(hash) == 40 ->
+        num = integer / :math.pow(10, precision)
+        
+        "#{num}"
+      true ->
+        "#{integer}"
+    end
+  end
 end

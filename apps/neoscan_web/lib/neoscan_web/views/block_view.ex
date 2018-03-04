@@ -143,6 +143,9 @@ defmodule NeoscanWeb.BlockView do
       type == "EnrollmentTransaction" ->
         'invocation-transaction'
 
+      type == "StateTransaction" ->
+        'invocation-transaction'
+
       type == "PublishTransaction" ->
         'publish-transaction'
 
