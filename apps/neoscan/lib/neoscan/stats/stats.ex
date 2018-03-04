@@ -132,7 +132,7 @@ defmodule Neoscan.Stats do
         end
       end)
 
-    Map.put(attrs, :assets_transactions, new_map)
+    attrs = Map.put(attrs, :assets_transactions, new_map)
 
     update_counter(counter, attrs)
   end
