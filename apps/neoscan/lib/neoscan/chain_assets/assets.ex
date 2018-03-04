@@ -341,7 +341,7 @@ defmodule Neoscan.ChainAssets do
           nil ->
             Map.put(acc, txid, Addresses.count_addresses_for_asset(txid))
           _ ->
-            Map.put(acc, txid, Addresses.count_addresses_for_asset(contract))
+            Map.put(acc, contract, Addresses.count_addresses_for_asset(contract))
         end
       end)
 
@@ -352,7 +352,7 @@ defmodule Neoscan.ChainAssets do
           nil ->
             Map.put(acc, txid, Stats.count_transactions_for_asset(txid))
           _ ->
-            Map.put(acc, txid, Stats.count_transactions_for_asset(contract))
+            Map.put(acc, contract, Stats.count_transactions_for_asset(contract))
         end
       end)
 
