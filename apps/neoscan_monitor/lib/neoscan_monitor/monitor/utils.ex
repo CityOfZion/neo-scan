@@ -9,37 +9,7 @@ defmodule NeoscanMonitor.Utils do
 
   # blockchain api nodes
   def seeds do
-    [
-      "http://seed1.cityofzion.io:8080",
-      "http://seed2.cityofzion.io:8080",
-      "http://seed3.cityofzion.io:8080",
-      "http://seed4.cityofzion.io:8080",
-      "http://seed5.cityofzion.io:8080",
-      "http://api.otcgo.cn:10332",
-      "https://seed1.neo.org:10331",
-      "http://seed2.neo.org:10332",
-      "http://seed3.neo.org:10332",
-      "http://seed4.neo.org:10332",
-      "http://seed5.neo.org:10332",
-      "http://seed0.bridgeprotocol.io:10332",
-      "http://seed1.bridgeprotocol.io:10332",
-      "http://seed2.bridgeprotocol.io:10332",
-      "http://seed3.bridgeprotocol.io:10332",
-      "http://seed4.bridgeprotocol.io:10332",
-      "http://seed5.bridgeprotocol.io:10332",
-      "http://seed6.bridgeprotocol.io:10332",
-      "http://seed7.bridgeprotocol.io:10332",
-      "http://seed8.bridgeprotocol.io:10332",
-      "http://seed9.bridgeprotocol.io:10332",
-      "http://seed1.redpulse.com:10332",
-      "http://seed2.redpulse.com:10332",
-      "http://seed1.treatail.com:10332",
-      "http://seed2.treatail.com:10332",
-      "http://seed3.treatail.com:10332",
-      "http://seed4.treatail.com:10332",
-      # "http://pyrpc1.redpulse.com:10332",
-      # "http://pyrpc2.redpulse.com:10332",
-    ]
+    Application.fetch_env!(:neoscan_monitor, :seeds)
   end
 
   # function to load nodes state

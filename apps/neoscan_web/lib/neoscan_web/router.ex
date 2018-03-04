@@ -63,6 +63,8 @@ defmodule NeoscanWeb.Router do
     get("/get_highest_block", ApiController, :get_highest_block)
     get("/get_last_transactions", ApiController, :get_last_transactions)
     get("/get_last_transactions/:type", ApiController, :get_last_transactions)
+    get("/get_last_transactions_by_address/:hash", ApiController, :get_last_transactions_by_address)
+    get("/get_last_transactions_by_address/:hash/:page", ApiController, :get_last_transactions_by_address)
     get("/get_transaction/:hash", ApiController, :get_transaction)
     get("/get_all_nodes", ApiController, :get_all_nodes)
     get("/get_height", ApiController, :get_height)
