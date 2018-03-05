@@ -11,14 +11,19 @@ Using docker you can start the project with:
 - `cd /data`
 
 # Development
-- Please run `mix credo` after any changes and apply the suggestions
+- Please run `mix credo` after any changes and apply the suggestions and run the test's
 
 To run, first install Elixir and Phoenix at:
 
 * https://elixir-lang.org/install.html
 * https://github.com/phoenixframework/phoenix
 
-Then, to start your Phoenix server:
+To run the tests:
+ * Install dependencies with `mix deps.get --only test`
+ * Create and migrate your database with `MIX_ENV=test mix ecto.create && mix ecto.migrate`
+ * Run `mix test`
+
+To start your The Application/Phoenix server:
 
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
