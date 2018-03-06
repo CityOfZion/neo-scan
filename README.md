@@ -11,7 +11,7 @@ Using docker you can start the project with:
 - `cd /data`
 
 # Development
-- Please run `mix credo` after any changes and apply the suggestions and run the test's
+- Please run the tests after any changes 
 
 To run, first install Elixir and Phoenix at:
 
