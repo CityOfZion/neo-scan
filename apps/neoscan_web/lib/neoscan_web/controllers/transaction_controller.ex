@@ -7,21 +7,26 @@ defmodule NeoscanWeb.TransactionController do
   def index(conn, %{"txid" => transaction_hash}) do
     tran = Transactions.get_transaction_by_hash_for_view(transaction_hash)
 
-    new_vin = clean_list(tran.vin)
+    case tran do
+      nil ->
+        route(nil, conn)
+      _ ->
+        new_vin = clean_list(tran.vin)
 
-    new_claim = clean_list(tran.claims)
+        new_claim = clean_list(tran.claims)
 
-    new_asset = clean_map(tran.asset)
+        new_asset = clean_map(tran.asset)
 
-    transfers = Transfers.get_transaction_transfers(transaction_hash)
+        transfers = Transfers.get_transaction_transfers(transaction_hash)
 
-    Map.merge(tran, %{
-      :vin => new_vin,
-      :claims => new_claim,
-      :asset => new_asset,
-      :transfers => transfers,
-    })
-    |> route(conn)
+        Map.merge(tran, %{
+          :vin => new_vin,
+          :claims => new_claim,
+          :asset => new_asset,
+          :transfers => transfers,
+        })
+        |> route(conn)
+    end
   end
 
   def route(nil, conn) do

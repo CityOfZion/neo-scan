@@ -27,12 +27,17 @@ defmodule NeoscanSync.Notifications do
     Logger.info("error getting notifications for tokens")
     {:error, "error getting notifications"}
   end
-  defp check({:ok, result}, _height) do
-    result
+  defp check({:ok, result}, height) do
+    cond do
+      result["current_height"] < height ->
+        get_block_notifications(height)
+      result["current_height"] >= height ->
+        result
+    end
   end
   defp check(_response, height) do
     Logger.info("error getting notifications for block #{height}")
     {:error, "error getting notifications"}
   end
-  
+
 end
