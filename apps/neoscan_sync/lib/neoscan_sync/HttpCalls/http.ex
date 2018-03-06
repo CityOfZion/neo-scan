@@ -91,7 +91,9 @@ defmodule NeoscanSync.HttpCalls do
   defp handle_body(%{"result" => result}) do
     {:ok, result}
   end
-
+  defp handle_body(%{"results" => result, "current_height" => current_height}) do
+    {:ok, result, current_height}
+  end
   defp handle_body(%{"results" => result}) do
     {:ok, result}
   end
