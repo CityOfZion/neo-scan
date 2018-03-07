@@ -25,6 +25,7 @@ defmodule Neoscan.Api do
   alias Neoscan.Claims.Claim
   alias Neoscan.Claims.Unclaimed
   alias Neoscan.Stats
+  alias Neoscan.Repair
 
   # sanitize struct
   defimpl Poison.Encoder, for: Any do
@@ -1224,5 +1225,9 @@ defmodule Neoscan.Api do
   def repair_block_counter do
     Blocks.count_blocks()
     |> Stats.set_blocks()
+  end
+
+  def repair_trasfers() do
+    Repair.repair_transfers()
   end
 end

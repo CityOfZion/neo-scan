@@ -11,6 +11,7 @@ defmodule Neoscan.Transfers.Transfer do
     field(:txid, :string)
     field(:contract, :string)
     field(:time, :integer)
+    field(:check_hash, :string)
 
     belongs_to(:block, Neoscan.Blocks.Block)
 
@@ -19,9 +20,12 @@ defmodule Neoscan.Transfers.Transfer do
 
   @doc false
   def changeset(block, attrs \\ %{}) do
+    check_hash = "#{attrs["txid"]}#{attrs["address_from"]}#{attrs["address_to"]}"
+    new_attrs = Map.put(attrs, :check_hash, check_hash)
+
     block
     |> Ecto.build_assoc(:transfers)
-    |> cast(attrs, [
+    |> cast(new_attrs, [
       :address_from,
       :address_to,
       :amount,
@@ -38,7 +42,8 @@ defmodule Neoscan.Transfers.Transfer do
       :block_height,
       :txid,
       :contract,
-      :time
+      :time,
+      :check_hash
     ])
   end
 end

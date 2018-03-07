@@ -218,4 +218,28 @@ defmodule Neoscan.Transfers do
 
     Repo.all(transfer_query)
   end
+
+
+  def check_if_transfer_exist(check_hash) do
+    case get_transfer(check_hash) do
+      %Transfer{} ->
+        true
+
+      nil ->
+        false
+
+    end
+  end
+
+  def get_transfer(check_hash) do
+    transfer_query =
+      from(
+        transfer in Transfer,
+        where: transfer.check_hash == ^check_hash,
+        select: transfer
+      )
+
+    Repo.all(transfer_query)
+    |> List.first
+  end
 end

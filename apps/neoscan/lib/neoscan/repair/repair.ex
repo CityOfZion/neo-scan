@@ -4,7 +4,9 @@ defmodule Neoscan.Repair do
   alias Neoscan.Repo
   alias Neoscan.Addresses
   alias Neoscan.Transactions
+  alias Neoscan.Transfers
   alias Neoscan.Transactions.Transaction
+  alias Neoscan.Blocks
   alias Neoscan.Blocks.Block
   alias Neoscan.Vouts
   alias Neoscan.Vouts.Vout
@@ -12,6 +14,7 @@ defmodule Neoscan.Repair do
   alias NeoscanSync.HttpCalls
   alias NeoscanSync.Consumer
   alias NeoscanSync.Producer
+  alias NeoscanSync.Notifications
 
   # trigger repair if information is missing
   def repair_missing([], root) do
@@ -244,5 +247,28 @@ defmodule Neoscan.Repair do
   # filter the content from the tuples
   def filter_tuples(tuples) do
     Enum.map(tuples, fn {_block, content} -> content end)
+  end
+
+  def repair_transfers() do
+    {:ok, index} = Blocks.get_highest_block_in_db()
+    0..index
+    |> Enum.each(fn index -> check_transfers_for_block(index) end)
+  end
+
+  def check_transfers_for_block(index) do
+    Notifications.get_block_notifications(index)
+    |> Enum.map(fn transfer -> check_transfer(transfer) end)
+  end
+
+  def check_transfer(transfer) do
+    check_hash = "#{transfer["txid"]}#{transfer["address_from"]}#{transfer["address_to"]}"
+
+    case Transfers.check_if_transfer_exist(check_hash) do
+      true ->
+        "ok"
+      false ->
+        block = Blocks.get_block_by_height(transfer["block"])
+        Transfers.add_block_transfers(block, block.time)
+    end
   end
 end
