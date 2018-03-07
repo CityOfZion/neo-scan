@@ -127,7 +127,7 @@ defmodule NeoscanSync.Producer do
     Api.get_height()
   end
 
-  defp add_notifications(block, height) do
+  def add_notifications(block, height) do
     notifications = get_notifications(height)
 
     transfers =
@@ -137,7 +137,7 @@ defmodule NeoscanSync.Producer do
     Map.merge(block, %{"transfers" => transfers})
   end
 
-  defp get_notifications(height) do
+  def get_notifications(height) do
     case Notifications.get_block_notifications(height) do
       {:error, _} ->
         get_notifications(height)
