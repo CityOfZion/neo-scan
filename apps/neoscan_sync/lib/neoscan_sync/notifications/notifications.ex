@@ -9,15 +9,20 @@ defmodule NeoscanSync.Notifications do
   require Logger
 
   def get_block_notifications(height) do
-    "http://notifications.neeeo.org/block/#{height}"
+    "#{get_url()}/v1/notifications/block/#{height}"
     |> HttpCalls.get()
     |> check(height)
   end
 
   def get_token_notifications do
-    "http://notifications.neeeo.org/tokens"
+    "#{get_url()}/v1/notifications/tokens"
     |> HttpCalls.get()
     |> check_token()
+  end
+
+  def get_url() do
+    Application.fetch_env!(:neoscan_sync, :notification_seeds)
+    |> Enum.random()
   end
 
   defp check_token({:ok, result, _current_height}) do
@@ -30,9 +35,9 @@ defmodule NeoscanSync.Notifications do
 
   defp check({:ok, result, current_height}, height) do
     cond do
-      current_height < height ->
+      current_height-1 < height ->
         get_block_notifications(height)
-      current_height >= height ->
+      current_height-1 >= height ->
         result
     end
   end
