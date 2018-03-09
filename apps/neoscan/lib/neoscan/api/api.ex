@@ -1087,6 +1087,18 @@ defmodule Neoscan.Api do
             },
             ...
           ],
+          "transfers": [
+            {
+              "address_from": "hash_string",
+              "address_to": "hash_string",
+              "amount": "integer",
+              "block_height": "integer",
+              "txid": "tx_id_string",
+              "contract": "token_contract_string",
+              "time": "integer",
+            },
+            ...
+          ],
           "version": integer,
           "type": "type_string",
           "txid": "tx_id_string",
@@ -1138,9 +1150,9 @@ defmodule Neoscan.Api do
   http://seed5.cityofzion.io:8080
   http://api.otcgo.cn:10332
   http://seed1.neo.org:10332
-    http://seed2.neo.org:10332
-    http://seed3.neo.org:10332
-    http://seed4.neo.org:10332
+  http://seed2.neo.org:10332
+  http://seed3.neo.org:10332
+  http://seed4.neo.org:10332
   http://seed5.neo.org:10332
 
   ## Examples

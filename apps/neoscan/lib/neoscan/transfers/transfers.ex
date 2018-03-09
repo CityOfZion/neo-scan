@@ -182,7 +182,6 @@ defmodule Neoscan.Transfers do
           desc: transfer.id
         ],
         select: %{
-          :id => transfer.id,
           :address_from => transfer.address_from,
           :address_to => transfer.address_to,
           :amount => transfer.amount,
