@@ -7,7 +7,7 @@ config :logger, :console,
   metadata: [:request_id]
 
 config :neoscan_sync, notification_seeds: [
-  "http://notifications.neeeo.org",
-  # "https://pyrpc2.redpulse.com",
-  # "https://pyrpc2.redpulse.com",
+  "http://notifications.neeeo.org/v1",
+  # "https://pyrpc2.redpulse.com/v1",
+  # "https://pyrpc2.redpulse.com/v1",
 ]

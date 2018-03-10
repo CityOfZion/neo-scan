@@ -14,6 +14,7 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Addresses
   alias Neoscan.Vouts
   alias Neoscan.Stats
+  alias Neoscan.TxAbstracts
 
   require Logger
 
@@ -499,7 +500,12 @@ defmodule Neoscan.Transactions do
         "block_height" => height
       })
       |> set_transaction_asset(vouts)
-      |> Map.delete("vout")
+
+
+    TxAbstracts.create_abstracts_from_tx(transaction)
+
+    transaction = transaction
+                  |> Map.delete("vout")
 
     Transaction.changeset_with_block(block, transaction)
     |> Repo.insert!()

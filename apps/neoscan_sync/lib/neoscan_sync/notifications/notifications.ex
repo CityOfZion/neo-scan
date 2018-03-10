@@ -9,13 +9,13 @@ defmodule NeoscanSync.Notifications do
   require Logger
 
   def get_block_notifications(height) do
-    "#{get_url()}/v1/notifications/block/#{height}"
+    "#{get_url()}/notifications/block/#{height}"
     |> HttpCalls.get()
     |> check(height)
   end
 
   def get_token_notifications do
-    "#{get_url()}/v1/notifications/tokens"
+    "#{get_url()}/tokens"
     |> HttpCalls.get()
     |> check_token()
   end

@@ -6,6 +6,7 @@ defmodule Neoscan.Transfers do
   alias Neoscan.Addresses
   alias Neoscan.Stats
   alias NeoscanMonitor.Api
+  alias Neoscan.TxAbstracts
 
   require Logger
 
@@ -129,6 +130,8 @@ defmodule Neoscan.Transfers do
         "time" => time,
         "contract" => String.slice(to_string(transfer["contract"]), -40..-1),
       })
+
+    TxAbstracts.create_abstract_from_transfer(attrs)
 
     Transfer.changeset(block, attrs)
     |> Repo.insert!()
