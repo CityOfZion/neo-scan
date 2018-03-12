@@ -45,6 +45,7 @@
         </div>
 				<ul class="language-dropdown-options">
           <li value="en" class="<%= if get_language(@conn) == "en" do %>active-lang<% end %>">English</li>
+          <li value="nl" class="<%= if get_language(@conn) == "nl" do %>active-lang<% end %>">Nederlands</li>
           <li value="de" class="<%= if get_language(@conn) == "de" do %>active-lang<% end %>">Deutsch</li>
           <li value="fr" class="<%= if get_language(@conn) == "fr" do %>active-lang<% end %>">Français</li>
           <li value="it" class="<%= if get_language(@conn) == "it" do %>active-lang<% end %>">Italiano</li>
