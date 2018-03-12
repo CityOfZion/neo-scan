@@ -21,7 +21,7 @@ defmodule Neoscan.Transfers.Transfer do
   @doc false
   def changeset(block, attrs \\ %{}) do
     check_hash = "#{attrs["txid"]}#{attrs["address_from"]}#{attrs["address_to"]}"
-    new_attrs = Map.put(attrs, :check_hash, check_hash)
+    new_attrs = Map.put(attrs, "check_hash", check_hash)
 
     block
     |> Ecto.build_assoc(:transfers)
