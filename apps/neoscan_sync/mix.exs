@@ -50,7 +50,8 @@ defmodule NeoscanSync.Mixfile do
     [
       {:neoscan, in_umbrella: true},
       {:neoscan_monitor, in_umbrella: true},
-      {:gen_stage, "~> 0.11"}
+      {:gen_stage, "~> 0.11"},
+      {:hackney, "~> 1.11", override: true}
     ]
   end
 end
