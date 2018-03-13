@@ -26,6 +26,7 @@ defmodule Neoscan.Api do
   alias Neoscan.Claims.Unclaimed
   alias Neoscan.Stats
   alias Neoscan.Repair
+  alias Neoscan.TxAbstracts
 
   # sanitize struct
   defimpl Poison.Encoder, for: Any do
@@ -1139,21 +1140,48 @@ defmodule Neoscan.Api do
 
   @doc """
   Returns all working nodes and their respective heights.
-  Information is updated each 5 minutes.
+  Information is updated each minute.
 
   Currrent tested nodes are:
 
-  http://seed1.cityofzion.io:8080
-  http://seed2.cityofzion.io:8080
-  http://seed3.cityofzion.io:8080
-  http://seed4.cityofzion.io:8080
-  http://seed5.cityofzion.io:8080
-  http://api.otcgo.cn:10332
-  http://seed1.neo.org:10332
-  http://seed2.neo.org:10332
-  http://seed3.neo.org:10332
-  http://seed4.neo.org:10332
-  http://seed5.neo.org:10332
+  "http://seed1.cityofzion.io:8080",
+  "http://seed2.cityofzion.io:8080",
+  "http://seed3.cityofzion.io:8080",
+  "http://seed4.cityofzion.io:8080",
+  "http://seed5.cityofzion.io:8080",
+  "http://api.otcgo.cn:10332",
+  "https://seed1.neo.org:10331",
+  "http://seed2.neo.org:10332",
+  "http://seed3.neo.org:10332",
+  "http://seed4.neo.org:10332",
+  "http://seed5.neo.org:10332",
+  "http://seed0.bridgeprotocol.io:10332",
+  "http://seed1.bridgeprotocol.io:10332",
+  "http://seed2.bridgeprotocol.io:10332",
+  "http://seed3.bridgeprotocol.io:10332",
+  "http://seed4.bridgeprotocol.io:10332",
+  "http://seed5.bridgeprotocol.io:10332",
+  "http://seed6.bridgeprotocol.io:10332",
+  "http://seed7.bridgeprotocol.io:10332",
+  "http://seed8.bridgeprotocol.io:10332",
+  "http://seed9.bridgeprotocol.io:10332",
+  "http://seed1.redpulse.com:10332",
+  "http://seed2.redpulse.com:10332",
+  "https://seed1.redpulse.com:10331",
+  "https://seed2.redpulse.com:10331",
+  "http://seed1.treatail.com:10332",
+  "http://seed2.treatail.com:10332",
+  "http://seed3.treatail.com:10332",
+  "http://seed4.treatail.com:10332",
+  "http://seed1.o3node.org:10332",
+  "http://seed2.o3node.org:10332",
+  "http://54.66.154.140:10332",
+  "http://seed1.eu-central-1.fiatpeg.com:10332",
+  "http://seed1.eu-west-2.fiatpeg.com:10332",
+  "http://seed1.aphelion.org:10332",
+  "http://seed2.aphelion.org:10332",
+  "http://seed3.aphelion.org:10332",
+  "http://seed4.aphelion.org:10332",
 
   ## Examples
 
@@ -1242,4 +1270,53 @@ defmodule Neoscan.Api do
   def repair_trasfers() do
     Repair.repair_transfers()
   end
+
+  @doc """
+  Returns abstract models for an address from its `hash_string`, paginated
+
+  ## Examples
+
+      /api/main_net/v1/get_address_abstracts/{hash_string}/{page}
+      [
+        {
+          "address_from": "hash_string",
+          "address_to": "hash_string",
+          "amount": string,
+          "block_height": integer,
+          "txid": "tx_id_string",
+          "asset": "asset_id_string",
+          "time": integer,
+        },
+        ...
+      ]
+
+  """
+  def get_address_abstracts(hash, page) do
+    TxAbstracts.get_address_abstracts(hash,page)
+  end
+
+  @doc """
+  Returns abstract models for an address, to an address from their `hash_string`, paginated
+
+  ## Examples
+
+      /api/main_net/v1/get_address_to_address_abstracts/{hash_string}/{hash_string}/{page}
+      [
+        {
+          "address_from": "hash_string",
+          "address_to": "hash_string",
+          "amount": string,
+          "block_height": integer,
+          "txid": "tx_id_string",
+          "asset": "asset_id_string",
+          "time": integer,
+        },
+        ...
+      ]
+
+  """
+  def get_address_to_address_abstracts(hash1, hash2, page) do
+    TxAbstracts.get_address_to_address_abstracts(hash1, hash2, page)
+  end
+
 end

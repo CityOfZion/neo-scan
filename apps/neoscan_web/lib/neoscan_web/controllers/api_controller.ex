@@ -33,6 +33,16 @@ defmodule NeoscanWeb.ApiController do
     json(conn, address)
   end
 
+  def get_address_abstracts(conn, %{"hash" => hash, "page" => page}) do
+    abstracts = Api.get_address_abstracts(hash, page)
+    json(conn, abstracts)
+  end
+
+  def get_address_to_address_abstracts(conn, %{"hash1" => hash1, "hash2" => hash2, "page" => page}) do
+    abstracts = Api.get_address_to_address_abstracts(hash1, hash2, page)
+    json(conn, abstracts)
+  end
+
   def get_assets(conn, _params) do
     assets = Api.get_assets()
     json(conn, assets)

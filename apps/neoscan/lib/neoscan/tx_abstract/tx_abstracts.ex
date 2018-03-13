@@ -163,4 +163,50 @@ defmodule Neoscan.TxAbstracts do
     |> Enum.filter(fn result -> result != nil end)
   end
 
+  def get_address_abstracts(hash, page) do
+    abstract_query =
+      from(
+        abstract in TxAbstract,
+        where: like(abstract.check_hash, ^("%#{hash}%")),
+        order_by: [
+          desc: abstract.id
+        ],
+        select: %{
+          :id => abstract.id,
+          :address_from => abstract.address_from,
+          :address_to => abstract.address_to,
+          :amount => abstract.amount,
+          :block_height => abstract.block_height,
+          :txid => abstract.txid,
+          :asset => abstract.asset,
+          :time => abstract.time
+        }
+      )
+
+    Repo.paginate(abstract_query, page: page, page_size: 15)
+  end
+
+  def get_address_to_address_abstracts(hash1, hash2, page) do
+    abstract_query =
+      from(
+        abstract in TxAbstract,
+        where: like(abstract.check_hash, ^("%#{hash1}%")) and like(abstract.check_hash, ^("%#{hash2}%")),
+        order_by: [
+          desc: abstract.id
+        ],
+        select: %{
+          :id => abstract.id,
+          :address_from => abstract.address_from,
+          :address_to => abstract.address_to,
+          :amount => abstract.amount,
+          :block_height => abstract.block_height,
+          :txid => abstract.txid,
+          :asset => abstract.asset,
+          :time => abstract.time
+        }
+      )
+
+    Repo.paginate(abstract_query, page: page, page_size: 15)
+  end
+
 end

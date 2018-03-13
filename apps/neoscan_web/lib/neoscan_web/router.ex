@@ -72,6 +72,8 @@ defmodule NeoscanWeb.Router do
     get("/get_fees_in_range/:range", ApiController, :get_fees_in_range)
     get("/repair_blocks", ApiController, :repair_blocks)
     get("/repair_block_counter", ApiController, :repair_block_counter)
+    get("/get_address_abstracts/:hash/:page", ApiController, :get_address_abstracts)
+    get("/get_address_to_address_abstracts/:hash1/:hash2/:page", ApiController, :get_address_to_address_abstracts)
   end
 
   # Other scopes may use custom stacks.
