@@ -11,6 +11,13 @@ defmodule Neoscan.Mixfile do
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        "coveralls": :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -40,6 +47,7 @@ defmodule Neoscan.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
       {:ex_machina, "~> 2.0", only: [:test, :travis]},
+      {:excoveralls, "~> 0.8", only: :test},
       {:scrivener_ecto, "~> 1.0"}
     ]
   end
