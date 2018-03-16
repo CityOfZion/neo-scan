@@ -10,7 +10,7 @@ defmodule Neoscan.Addresses.Address do
     field(:address, :string)
     field(:balance, :map)
     field(:time, :integer)
-    field(:tx_count, :integer)
+    field(:tx_count, :integer, default: 0)
 
     has_many(:claimed, Neoscan.Claims.Claim)
     has_many(:vouts, Neoscan.Vouts.Vout)
@@ -21,10 +21,8 @@ defmodule Neoscan.Addresses.Address do
 
   @doc false
   def changeset(%Address{} = address, attrs) do
-    new_attrs = Map.put(attrs, "tx_count", 0)
-
     address
-    |> cast(new_attrs, [:address, :balance, :time, :tx_count])
+    |> cast(attrs, [:address, :balance, :time])
     |> unique_constraint(:address)
     |> validate_required([:address, :time, :tx_count])
   end
