@@ -13,7 +13,9 @@ defmodule Neoscan.Addresses.AddressTest do
 
   describe "changeset/2" do
     test "returns invalid changeset when attrs are missing" do
-      changeset = Address.changeset(%Address{}, %{})
+      missing_params = %{}
+
+      changeset = Address.changeset(%Address{}, missing_params)
 
       refute changeset.valid?
       assert %{address: ["can't be blank"]} = errors_on(changeset)
@@ -22,8 +24,8 @@ defmodule Neoscan.Addresses.AddressTest do
 
     test "returns invalid changeset when attrs are invalid" do
       cast_fields = [:address, :balance, :time]
-      attrs = cast_fields |> Enum.map(fn field -> {field, :invalid} end) |> Map.new()
-      changeset = Address.changeset(%Address{}, attrs)
+      invalid_attrs = cast_fields |> Enum.map(fn field -> {field, :invalid} end) |> Map.new()
+      changeset = Address.changeset(%Address{}, invalid_attrs)
 
       refute changeset.valid?
 
@@ -51,6 +53,57 @@ defmodule Neoscan.Addresses.AddressTest do
       assert changeset.valid?
       # make sure `:tx_count` is ignored
       refute Map.has_key?(changeset.changes, :tx_count)
+    end
+  end
+
+  describe "update_changeset/2" do
+    test "returns invalid changeset when attrs are invalid" do
+      invalid_attrs = %{balance: :invalid}
+
+      changeset = Address.update_changeset(%Address{}, invalid_attrs)
+
+      refute changeset.valid?
+      assert %{balance: ["is invalid"]} == errors_on(changeset)
+    end
+
+    test "returns changeset where existing tx_count is incremented by 1" do
+      initial_tx_count = 20
+      address = %Address{tx_count: initial_tx_count}
+      ignored_attrs = %{tx_count: 5000}
+
+      changeset = Address.update_changeset(address, ignored_attrs)
+
+      assert changeset.changes.tx_count == initial_tx_count + 1
+    end
+
+    test "returns changeset ignoring expected input attrs" do
+      attrs_to_ignore = %{
+        address: "different address",
+        time: DateTime.utc_now() |> DateTime.to_unix()
+      }
+
+      changeset = Address.update_changeset(%Address{}, attrs_to_ignore)
+
+      attrs_to_ignore
+      |> Map.keys()
+      |> Enum.each(fn field ->
+        refute Map.has_key?(changeset.changes, field)
+      end)
+    end
+
+    test "returns valid changeset when attrs are valid" do
+      balance = %{
+        amount: 100,
+        asset: "abcd",
+        time: 1476769053
+      }
+
+      valid_attrs = %{balance: balance}
+
+      changeset = Address.update_changeset(%Address{}, valid_attrs)
+
+      assert changeset.valid?
+      assert changeset.changes.balance == balance
     end
   end
 end
