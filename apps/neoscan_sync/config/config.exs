@@ -8,6 +8,10 @@ config :logger, :console,
 
 config :neoscan_sync, notification_seeds: [
   "http://notifications.neeeo.org/v1",
-  # "https://pyrpc2.redpulse.com/v1",
-  # "https://pyrpc2.redpulse.com/v1",
+  "https://pyrest1.redpulse.com/v1",
+  "https://pyrest2.redpulse.com/v1",
+  "https://pyrest1.narrative.network/v1",
+  "https://pyrest2.narrative.network/v1",
+  "https://pyrest3.narrative.network/v1",
+  "https://pyrest4.narrative.network/v1",
 ]
