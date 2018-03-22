@@ -16,6 +16,7 @@ defmodule NeoscanMonitor.Worker do
   alias Neoprice.NeoUsd
   alias Neoprice.GasBtc
   alias Neoprice.GasUsd
+  alias Neoscan.Claims.Unclaimed
 
   # starts the genserver
   def start_link do
@@ -42,6 +43,8 @@ defmodule NeoscanMonitor.Worker do
     stats = Utils.get_general_stats()
 
     addresses = Addresses.list_latest()
+
+    Unclaimed.repair_blocks()
 
     price = %{
       neo: %{
