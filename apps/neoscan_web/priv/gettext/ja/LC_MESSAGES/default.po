@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Language: jp\n"
+"Language: ja\n"
 
 msgid "Transactions"
 msgstr "取引"
