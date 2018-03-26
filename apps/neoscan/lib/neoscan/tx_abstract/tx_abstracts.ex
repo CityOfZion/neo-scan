@@ -46,6 +46,7 @@ defmodule Neoscan.TxAbstracts do
       :asset => transfer["contract"],
       :time => transfer["time"]
     }
+    |> create_abstract()
   end
 
   def create_abstract(attrs) do
@@ -167,7 +168,7 @@ defmodule Neoscan.TxAbstracts do
     abstract_query =
       from(
         abstract in TxAbstract,
-        where: like(abstract.check_hash, ^("%#{hash}%")),
+        where: abstract.address_from == ^hash or abstract.address_to == ^hash,
         order_by: [
           desc: abstract.id
         ],
@@ -190,7 +191,7 @@ defmodule Neoscan.TxAbstracts do
     abstract_query =
       from(
         abstract in TxAbstract,
-        where: like(abstract.check_hash, ^("%#{hash1}%")) and like(abstract.check_hash, ^("%#{hash2}%")),
+        where: (abstract.address_from == ^hash1 and abstract.address_to == ^hash2) or (abstract.address_from == ^hash2 and abstract.address_to == ^hash1),
         order_by: [
           desc: abstract.id
         ],

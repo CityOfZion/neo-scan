@@ -6,6 +6,7 @@ defmodule NeoscanWeb.BlockView do
   alias Neoscan.Helpers
   alias Neoscan.Explanations
   alias NeoscanWeb.ViewHelper
+  alias Neoscan.ChainAssets
 
   def compare_time_and_get_minutes(unix_time) do
     ViewHelper.compare_time_and_get_minutes(unix_time)
@@ -160,5 +161,12 @@ defmodule NeoscanWeb.BlockView do
 
   def get_tooltips(conn) do
     ViewHelper.get_tooltips(conn)
+  end
+
+  def apply_precision(asset, amount) do
+    precision = ChainAssets.get_asset_precision_by_hash(asset)
+
+    amount
+    |> Helpers.apply_precision(asset, precision)
   end
 end

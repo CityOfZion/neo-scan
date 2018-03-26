@@ -511,7 +511,13 @@ defmodule Neoscan.Addresses do
 
   # add a single vin into adress
   def add_vin(%{:balance => balance} = attrs, vin, time) do
-    current_amount = balance[vin.asset]["amount"] || vin.value #if balance isn't found, assume that it is missing from the DB
+    current_amount = case balance[vin.asset]["amount"] do
+                       nil ->
+                         Logger.info("CORRUPTION - Vin not found in address balance")
+                         vin.value
+                       value ->
+                         value
+                     end  #if balance isn't found, assume that it is missing from the DB
 
     new_balance = %{
       "asset" => vin.asset,

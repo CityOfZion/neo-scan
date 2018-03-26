@@ -140,6 +140,7 @@ defmodule NeoscanSync.Producer do
   def get_notifications(height) do
     case Notifications.get_block_notifications(height) do
       {:error, _} ->
+        Process.sleep(5000)
         get_notifications(height)
       result ->
         result

@@ -1,6 +1,6 @@
 <h1 class="transactions-content-title"><%= gettext "Transactions"%></h1>
 
-<div class="transactions-dropdown-wrapper">
+<!-- <div class="transactions-dropdown-wrapper">
   <div id="transactions-dropdown">
     <div class="selected-transaction-text"><%= if @type, do: String.capitalize(@type), else: gettext "Any" %></div>
   </div>
@@ -15,7 +15,7 @@
     <li value="enrollment" class="<%= if @type == "enrollment" do %>active-trans<% end %>"><%= gettext "Enrollment" %></li>
     <li value="state" class="<%= if @type == "state" do %>active-trans<% end %>"><%= gettext "State" %></li>
   </ul>
-</div>
+</div> -->
 
 <!-- All transactions content -->
 <section id="all-transactions-wrapper">
