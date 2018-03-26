@@ -49,11 +49,11 @@
           <li value="de" class="<%= if get_language(@conn) == "de" do %>active-lang<% end %>">Deutsch</li>
           <li value="fr" class="<%= if get_language(@conn) == "fr" do %>active-lang<% end %>">Français</li>
           <li value="it" class="<%= if get_language(@conn) == "it" do %>active-lang<% end %>">Italiano</li>
-          <li value="pt_BR" class="<%= if get_language(@conn) == "pt-br" do %>active-lang<% end %>">Português</li>
+          <li value="pt_BR" class="<%= if get_language(@conn) == "pt_BR" do %>active-lang<% end %>">Português</li>
           <li value="ro" class="<%= if get_language(@conn) == "ro" do %>active-lang<% end %>">Română</li>
           <li value="ru" class="<%= if get_language(@conn) == "ru" do %>active-lang<% end %>">Русский</li>
           <li value="zh" class="<%= if get_language(@conn) == "zh" do %>active-lang<% end %>">中文</li>
-          <li value="ja" class="<%= if get_language(@conn) == "jp" do %>active-lang<% end %>">日本語</li>
+          <li value="ja" class="<%= if get_language(@conn) == "ja" do %>active-lang<% end %>">日本語</li>
 				</ul>
 			</div>
 
