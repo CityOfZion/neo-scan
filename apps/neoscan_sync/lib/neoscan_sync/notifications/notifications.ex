@@ -55,8 +55,7 @@ defmodule NeoscanSync.Notifications do
         result
     end
   end
-  defp check(response, height, urls_tried) do
-    IO.inspect(response)
+  defp check(_response, height, urls_tried) do
     Logger.info("error getting notifications for block #{height}")
     get_block_notifications(height, urls_tried)
   end

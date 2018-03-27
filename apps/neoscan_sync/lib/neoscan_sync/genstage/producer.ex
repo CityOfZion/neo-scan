@@ -128,11 +128,15 @@ defmodule NeoscanSync.Producer do
   end
 
   def add_notifications(block, height) do
-    notifications = get_notifications(height)
+    limit_height =  Application.fetch_env!(:neoscan_sync, :start_notifications) #Disable notification checks for less than first ever nep5 token issue block height
 
-    transfers =
-      notifications
-      |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
+    transfers = cond do
+                  height > limit_height ->
+                    get_notifications(height)
+                    |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
+                  height <= limit_height ->
+                    []
+                end
 
     Map.merge(block, %{"transfers" => transfers})
   end
