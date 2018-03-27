@@ -8,21 +8,35 @@ defmodule NeoscanSync.Notifications do
   alias NeoscanSync.HttpCalls
   require Logger
 
-  def get_block_notifications(height) do
-    "#{get_url()}/notifications/block/#{height}"
-    |> HttpCalls.get()
-    |> check(height)
+  def get_block_notifications(height, urls_tried \\ []) do
+    url = get_url(urls_tried)
+    case url do
+      nil ->
+        Logger.info("tried all endpoints")
+        {:error, "no working rpc endpoint"}
+      _ ->
+        "#{url}/notifications/block/#{height}"
+        |> HttpCalls.get()
+        |> check(height, [url | urls_tried])
+    end
   end
 
-  def get_token_notifications do
-    "#{get_url()}/tokens"
+  def get_token_notifications(urls_tried \\ []) do
+    "#{get_url(urls_tried)}/tokens"
     |> HttpCalls.get()
     |> check_token()
   end
 
-  def get_url() do
-    Application.fetch_env!(:neoscan_sync, :notification_seeds)
-    |> Enum.random()
+  def get_url(urls_tried) do
+    list = Application.fetch_env!(:neoscan_sync, :notification_seeds) -- urls_tried
+
+    case list do
+      [] ->
+        nil
+      not_empty_list ->
+        not_empty_list
+        |> Enum.random()
+    end
   end
 
   defp check_token({:ok, result, _current_height}) do
@@ -33,7 +47,7 @@ defmodule NeoscanSync.Notifications do
     {:error, "error getting notifications"}
   end
 
-  defp check({:ok, result, current_height}, height) do
+  defp check({:ok, result, current_height}, height, _url) do
     cond do
       current_height-1 < height ->
         get_block_notifications(height)
@@ -41,9 +55,10 @@ defmodule NeoscanSync.Notifications do
         result
     end
   end
-  defp check(_response, height) do
+  defp check(response, height, urls_tried) do
+    IO.inspect(response)
     Logger.info("error getting notifications for block #{height}")
-    {:error, "error getting notifications"}
+    get_block_notifications(height, urls_tried)
   end
 
 end
