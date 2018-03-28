@@ -16,4 +16,4 @@ config :neoscan_sync, notification_seeds: [
   "https://pyrest4.narrative.network/v1",
 ]
 
-config :neoscan_sync, start_notifications: 1800000 #Block height to start notifications check
+config :neoscan_sync, start_notifications: 1444800 #Block height to start notifications check
