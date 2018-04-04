@@ -13,6 +13,7 @@ config :neoscan_web,
 # Configures the endpoint
 config :neoscan_web, NeoscanWeb.Endpoint,
   url: [host: "localhost"],
+  http: [compress: true],
   render_errors: [view: NeoscanWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: NeoscanWeb.PubSub, adapter: Phoenix.PubSub.PG2]
 

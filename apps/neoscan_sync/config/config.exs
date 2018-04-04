@@ -7,13 +7,10 @@ config :logger, :console,
   metadata: [:request_id]
 
 config :neoscan_sync, notification_seeds: [
-  "http://notifications.neeeo.org/v1",
-  "https://pyrest1.redpulse.com/v1",
-  "https://pyrest2.redpulse.com/v1",
-  "https://pyrest1.narrative.network/v1",
-  "https://pyrest2.narrative.network/v1",
-  "https://pyrest3.narrative.network/v1",
-  "https://pyrest4.narrative.network/v1",
+  "http://notifications1.neeeo.org/v1",
+  "http://notifications2.neeeo.org/v1",
+  "http://notifications3.neeeo.org/v1",
+  "http://notifications4.neeeo.org/v1",
 ]
 
 config :neoscan_sync, start_notifications: 1444800 #Block height to start notifications check
