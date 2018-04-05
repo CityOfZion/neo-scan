@@ -68,7 +68,7 @@ defmodule NeoscanMonitor.Worker do
     }
 
     Process.send(NeoscanMonitor.Server, {:first_state_update, new_state}, [])
-    Process.send(self(), :repair)
+    Process.send(self(), :repair, [])
     # In 1s
     Process.send_after(self(), :update, 1_000)
     # In 1s
