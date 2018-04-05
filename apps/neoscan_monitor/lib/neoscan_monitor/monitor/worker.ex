@@ -44,8 +44,6 @@ defmodule NeoscanMonitor.Worker do
 
     addresses = Addresses.list_latest()
 
-    Unclaimed.repair_blocks()
-
     price = %{
       neo: %{
         btc: NeoBtc.last_price_full(),
@@ -70,6 +68,7 @@ defmodule NeoscanMonitor.Worker do
     }
 
     Process.send(NeoscanMonitor.Server, {:first_state_update, new_state}, [])
+    Process.send(self(), :repair)
     # In 1s
     Process.send_after(self(), :update, 1_000)
     # In 1s
@@ -104,6 +103,12 @@ defmodule NeoscanMonitor.Worker do
     # In 5s
     Process.send_after(self(), :update_nodes, 5_000)
     {:noreply, new_state}
+  end
+
+  # repair blocks on startup
+  def handle_info(:repair, state) do
+    Unclaimed.repair_blocks()
+    {:noreply, state}
   end
 
   # updates the state in the server module
