@@ -7,6 +7,7 @@ defmodule Neoscan.Claims.Unclaimed do
   alias NeoscanMonitor.Api
   alias Neoscan.Blocks.Block
   alias Neoscan.Blocks
+  alias Neoscan.BlockGasGeneration
 
   require Logger
 
@@ -37,7 +38,10 @@ defmodule Neoscan.Claims.Unclaimed do
       get_unclaimed_block_range(unclaimed)
       |> get_blocks_gas
 
-    Enum.reduce(unclaimed, 0, fn vout, acc -> acc + compute_vout_bonus(vout, blocks_with_gas) end)
+    Enum.reduce(unclaimed, 0, fn vout, acc ->
+      %{:claim => c, :sys_fee => s} = compute_vout_bonus(vout, blocks_with_gas)
+      acc + c + s
+    end)
   end
 
   # proceed calculus if there are unclaimed results, otherwise return 0
@@ -51,8 +55,11 @@ defmodule Neoscan.Claims.Unclaimed do
       |> verified_blocks()
 
     Enum.map(unclaimed, fn %{:value => value} = vout ->
+      %{:claim => claim, :sys_fee => sys} = compute_vout_bonus(vout, blocks)
       Map.merge(vout, %{
-        :unclaimed => compute_vout_bonus(vout, blocks),
+        :unclaimed => claim + sys,
+        :generated => claim,
+        :sys_fee => sys,
         :value => round(value)
       })
     end)
@@ -71,9 +78,11 @@ defmodule Neoscan.Claims.Unclaimed do
       Enum.filter(blocks_with_gas, fn %{:index => index} ->
         index > start_height && index <= end_height
       end)
-      |> Enum.reduce(0, fn %{:gas => gas}, acc -> acc + gas end)
+      |> Enum.reduce(%{:claimable => 0, :sys_fee => 0}, fn %{:claim => claim, :sys => sys}, acc -> %{:claimable => claim + acc.claimable, :sys_fee => sys + acc.sys_fee} end)
 
-    round(value) * total_gas / total_neo()
+    %{:claim => round(value) * total_gas.claimable / total_neo(),
+      :sys_fee => round(value) * total_gas.sys_fee / total_neo(),
+     }
   end
 
   # get all unclaimed transaction vouts
@@ -136,12 +145,12 @@ defmodule Neoscan.Claims.Unclaimed do
       from(
         b in Block,
         where: b.index >= ^min and b.index <= ^max,
-        select: map(b, [:index, :total_sys_fee, :gas_generated])
+        select: map(b, [:index, :total_sys_fee])
       )
 
     Repo.all(query)
-    |> Enum.map(fn %{:index => index, :total_sys_fee => sys, :gas_generated => gen} ->
-      %{:index => index, :gas => sys + gen}
+    |> Enum.map(fn %{:index => index, :total_sys_fee => sys} ->
+      %{:index => index, :claim => BlockGasGeneration.get_amount_generate_in_block(index), :sys => sys}
     end)
   end
 
@@ -171,6 +180,7 @@ defmodule Neoscan.Claims.Unclaimed do
         repair_blocks()
 
       _ ->
+        Logger.info("Blocks Repaired")
         "Ok"
     end
   end
