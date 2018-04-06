@@ -76,9 +76,18 @@ defmodule Neoscan.Claims.Unclaimed do
       ) do
     total_gas =
       Enum.filter(blocks_with_gas, fn %{:index => index} ->
-        index > start_height && index <= end_height
+        index >= start_height && index <= end_height
       end)
-      |> Enum.reduce(%{:claimable => 0, :sys_fee => 0}, fn %{:claim => claim, :sys => sys}, acc -> %{:claimable => claim + acc.claimable, :sys_fee => sys + acc.sys_fee} end)
+      |> Enum.reduce(%{:claimable => 0, :sys_fee => 0}, fn %{:index => index, :claim => claim, :sys => sys}, acc ->
+           cond do
+             index == start_height ->
+               %{:claimable => acc.claimable, :sys_fee => sys + acc.sys_fee}
+             index == end_height ->
+               %{:claimable => claim + acc.claimable, :sys_fee => sys}
+             true ->
+               %{:claimable => claim + acc.claimable, :sys_fee => sys + acc.sys_fee}
+           end
+         end)
 
     %{:claim => round(value) * total_gas.claimable / total_neo(),
       :sys_fee => round(value) * total_gas.sys_fee / total_neo(),

@@ -13,15 +13,19 @@ defmodule Neoscan.BlockGasGeneration do
   """
   def get_amount_generate_in_block(nil), do: nil
 
+
+  def get_amount_generate_in_block(index) when index == 0 do
+    Enum.at(generation_amount(), 0)
+  end
   def get_amount_generate_in_block(index) do
     interval = decrement_interval()
     lenght = generation_length()
     amount = generation_amount()
 
-    if Integer.floor_div(index, interval) > lenght do
+    if Integer.floor_div(index - 1, interval) > lenght do
       0
     else
-      position = Integer.floor_div(index, interval)
+      position = Integer.floor_div(index - 1, interval)
       Enum.at(amount, position)
     end
   end
