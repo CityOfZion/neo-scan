@@ -83,7 +83,7 @@ defmodule Neoscan.Claims.Unclaimed do
              index == start_height ->
                %{:claimable => acc.claimable, :sys_fee => sys + acc.sys_fee}
              index == end_height ->
-               %{:claimable => claim + acc.claimable, :sys_fee => sys}
+               %{:claimable => claim + acc.claimable, :sys_fee => acc.sys_fee}
              true ->
                %{:claimable => claim + acc.claimable, :sys_fee => sys + acc.sys_fee}
            end

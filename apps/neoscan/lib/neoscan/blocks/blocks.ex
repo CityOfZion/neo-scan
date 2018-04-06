@@ -420,7 +420,7 @@ defmodule Neoscan.Blocks do
         query =
           from(
             b in Block,
-            where: b.index >= ^min and b.index <= ^max,
+            where: b.index >= ^min and b.index < ^max,
             select: %{
               :total_sys_fee => b.total_sys_fee,
               :total_net_fee => b.total_net_fee
