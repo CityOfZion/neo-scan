@@ -19,7 +19,7 @@ defmodule NeoscanSync.Blockchain do
         "id" => 5
       })
 
-    headers = [{"Content-Type", "application/json"}]
+    headers = [{"Content-Type", "application/json"}, {"Accept-Encoding", "gzip"}]
     HttpCalls.request(headers, data, url)
   end
 
@@ -32,7 +32,7 @@ defmodule NeoscanSync.Blockchain do
         "id" => 5
       })
 
-    headers = [{"Content-Type", "application/json"}]
+    headers = [{"Content-Type", "application/json"}, {"Accept-Encoding", "gzip"}]
     HttpCalls.request(headers, data, url)
   end
 
@@ -45,7 +45,7 @@ defmodule NeoscanSync.Blockchain do
         id: 5
       })
 
-    headers = [{"Content-Type", "application/json"}]
+    headers = [{"Content-Type", "application/json"}, {"Accept-Encoding", "gzip"}]
     HttpCalls.request(headers, data, url)
   end
 
@@ -58,7 +58,7 @@ defmodule NeoscanSync.Blockchain do
         id: 5
       })
 
-    headers = [{"Content-Type", "application/json"}]
+    headers = [{"Content-Type", "application/json"}, {"Accept-Encoding", "gzip"}]
     HttpCalls.request(headers, data, url)
   end
 
@@ -71,7 +71,7 @@ defmodule NeoscanSync.Blockchain do
         id: 5
       })
 
-    headers = [{"Content-Type", "application/json"}]
+    headers = [{"Content-Type", "application/json"}, {"Accept-Encoding", "gzip"}]
     HttpCalls.request(headers, data, url)
   end
 
@@ -84,7 +84,7 @@ defmodule NeoscanSync.Blockchain do
         id: 5
       })
 
-    headers = [{"Content-Type", "application/json"}]
+    headers = [{"Content-Type", "application/json"}, {"Accept-Encoding", "gzip"}]
     HttpCalls.request(headers, data, url)
   end
 end
