@@ -1211,29 +1211,26 @@ a:hover {
 	width: 100%;
 	overflow: hidden;
 	border-bottom: 1px solid #3d3d79;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 .individual-wallet-box {
-  float: left;
-  display: inline-block;
-  width: 50%;
-  text-align: center;
-  box-sizing: border-box;
-  padding: 30px 0;
-}
-.gas-balance {
-	border-right: 1px solid #3d3d79;
-	border-left: 1px solid #3d3d79;
+    width: 100%;
+    padding: 20px 20px;
+    border-bottom: 1px solid #3F3F7C;
 }
 .loading-gas, .unclaimed-GAS {
 	font-size: 13px;
 	color: #94A0D1;
-	margin-top: 3px;
-}
-.individual-wallet-box.last {
-  	border-right: none;
+	margin-top: 5px;
 }
 .individual-wallet-box .fa {
 	margin-right: 5px;
+}
+
+.total-gas-balance {
+    float: right;
 }
 
 .wallet-label-icon {
@@ -1242,11 +1239,16 @@ a:hover {
 .balance-label {
   	font-size: 20px;
   	font-weight: 600;
-	margin-bottom: 10px;
+    float: left;
+}
+
+.gas-balance-label {
+    margin-top: 5px;
 }
 .balance-amount {
-  	font-size: 30px;
+  	font-size: 20px;
   	font-weight: 600; /* Semibold */
+    float: right;
 }
 .balance-amount span {
   	font-size: 17px;
@@ -1584,14 +1586,8 @@ a:hover {
 .add-hover:hover .tooltiptext {
     visibility: visible;
 }
-.tooltip-btn {
-  margin-right: 35px;
-}
-.tooltip-btn:hover {
+#coz-tooltip:hover {
   cursor: pointer;
-}
-.tooltip-eye {
-  margin-left: 5px;
 }
 
 /******************************************
@@ -1838,7 +1834,7 @@ MEDIA QUERIES (MAX-WIDTH: 1160PX)
 
 ******************************************************************/
 
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1180px) {
 
 	/* NAVIGATION */
 	/* Navigation search */
@@ -1946,9 +1942,6 @@ MEDIA QUERIES (MAX-WIDTH: 1040PX)
 	.balance-label {
 		font-size: 18px;
 		margin-bottom: 0;
-	}
-	.balance-amount {
-		font-size: 27px;
 	}
 	.balance-amount span {
 		font-size: 17px;
@@ -2729,12 +2722,12 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 555PX)
 ******************************************************************/
 
 @media screen and (max-width: 555px) {
-  .tooltip-btn {
-    display: none;
+
+  #chart-controls {
+    flex-direction: column;
   }
-  .zoom-wrapper {
-    text-align: center;
-    float: none;
+  #zoom-out-chart {
+    margin-top: 0;
   }
 
 	/* GENERAL */
@@ -2842,6 +2835,11 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 480PX)
 		float: none;
 		text-align: center;
 	}
+    
+    .total-gas-balance {
+        float: none;
+        text-align: center;
+    }
 
 	/* NAVIGATION */
 	/* Logo wrapper */

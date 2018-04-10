@@ -11,6 +11,6 @@ config :neoscan_sync, notification_seeds: [
   "http://notifications2.neeeo.org/v1",
   "http://notifications3.neeeo.org/v1",
   "http://notifications4.neeeo.org/v1",
-]
-
-config :neoscan_sync, start_notifications: 1444800 #Block height to start notifications check
+],
+start_notifications: 1444800, #Block height to start notifications check
+demand_size: 150   #genstage demand size

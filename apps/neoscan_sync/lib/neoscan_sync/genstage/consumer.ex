@@ -12,10 +12,11 @@ defmodule NeoscanSync.Consumer do
   end
 
   def init(state) do
+    demand = Application.fetch_env!(:neoscan_sync, :demand_size)
     {
       :consumer,
       state,
-      subscribe_to: [{NeoscanSync.Producer, max_demand: 150, min_demand: 75}]
+      subscribe_to: [{NeoscanSync.Producer, max_demand: demand, min_demand: round(demand/2)}]
     }
   end
 

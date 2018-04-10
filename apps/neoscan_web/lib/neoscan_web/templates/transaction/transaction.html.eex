@@ -65,7 +65,7 @@
 		</li>
 		<li class="border-right border-bottom min-height-97px tooltip">
 			<p class="small-detail-text"><%= gettext "Network Fee" %></p>
-			<p class="large-detail-text"><%= number_to_delimited(@transaction.net_fee) %></p>
+			<p class="large-detail-text"><%= @transaction.net_fee %></p>
       <span class="tooltiptext"><%= get_explanation("transaction_network_fees") %></span>
 		</li>
 		<li class="border-bottom border-right-smaller min-height-97px remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
