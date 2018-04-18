@@ -32,9 +32,10 @@ defmodule Neoscan.ChainAssets do
   end
 
   def add_token(%{"token" => token} = response) do
+    filtered_name = String.replace(token["name"], "\u0000", "")
     new_token = %{
       "admin" => token["contract_address"],
-      "name" => [%{"lang" => "en", "name" => token["name"]}],
+      "name" => [%{"lang" => "en", "name" => filtered_name}],
       "owner" => token["contract_address"],
       "precision" => token["decimals"],
       "type" => "Token",
