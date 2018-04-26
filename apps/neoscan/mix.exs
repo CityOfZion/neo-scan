@@ -10,6 +10,7 @@ defmodule Neoscan.Mixfile do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
+      elixirc_options: [],
       elixirc_paths: elixirc_paths(Mix.env()),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
@@ -48,6 +49,7 @@ defmodule Neoscan.Mixfile do
       {:ecto, "~> 2.1"},
       {:ex_machina, "~> 2.0", only: [:test, :travis]},
       {:excoveralls, "~> 0.8", only: :test},
+      {:poison, "~> 3.1"},
       {:scrivener_ecto, "~> 1.0"}
     ]
   end

@@ -406,7 +406,7 @@ defmodule Neoscan.Addresses do
   end
 
   # create missing addresses
-  def fetch_missing(address_list, lookups, time) do
+  defp fetch_missing(address_list, lookups, time) do
     (lookups -- Enum.map(address_list, fn %{:address => address} -> address end))
     |> Enum.map(fn address -> create_address(%{"address" => address, "time" => time}) end)
     |> Enum.concat(address_list)
@@ -477,7 +477,7 @@ defmodule Neoscan.Addresses do
   end
 
   # separate vins by address hash, insert vins and update the address
-  def group_vins_by_address_and_update(address_list, vins, txid, index, time) do
+  defp group_vins_by_address_and_update(address_list, vins, txid, index, time) do
     updates =
       Enum.group_by(vins, fn %{:address_hash => address} -> address end)
       |> Map.to_list()
@@ -492,7 +492,7 @@ defmodule Neoscan.Addresses do
   end
 
   # insert vins into address balance
-  def insert_vins_in_address({address, attrs}, vins, txid, index, time) do
+  defp insert_vins_in_address({address, attrs}, vins, txid, index, time) do
     new_attrs =
       Map.merge(attrs, %{
         :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
@@ -505,12 +505,12 @@ defmodule Neoscan.Addresses do
   end
 
   # add multiple vins
-  def add_vins(attrs, vins, time) do
+  defp add_vins(attrs, vins, time) do
     Enum.reduce(vins, attrs, fn vin, acc -> add_vin(acc, vin, time) end)
   end
 
   # add a single vin into adress
-  def add_vin(%{:balance => balance} = attrs, vin, time) do
+  defp add_vin(%{:balance => balance} = attrs, vin, time) do
     current_amount = case balance[vin.asset]["amount"] do
                        nil ->
                          Logger.info("CORRUPTION - Vin not found in address balance")
@@ -528,12 +528,12 @@ defmodule Neoscan.Addresses do
     %{attrs | balance: Map.put(attrs.balance || %{}, vin.asset, new_balance)}
   end
 
-  def insert_tx_in_addresses(address_list, txid, index, time) do
+  defp insert_tx_in_addresses(address_list, txid, index, time) do
     address_list
     |> Enum.map(fn tuple -> insert_tx_in_address(tuple, txid, index, time) end)
   end
 
-  def insert_tx_in_address({address, attrs}, txid, index, time) do
+  defp insert_tx_in_address({address, attrs}, txid, index, time) do
     new_attrs =
       Map.merge(attrs, %{
         :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
@@ -544,17 +544,17 @@ defmodule Neoscan.Addresses do
     {address, new_attrs}
   end
 
-  def add_transfers_to_addresses(addresses, [], _time, _block) do
+  defp add_transfers_to_addresses(addresses, [], _time, _block) do
     addresses
   end
 
-  def add_transfers_to_addresses(addresses, [head | tail], time, block) do
+  defp add_transfers_to_addresses(addresses, [head | tail], time, block) do
     addresses
     |> add_transfer(head, time, block)
     |> add_transfers_to_addresses(tail, time, block)
   end
 
-  def add_transfer(addresses, transfer, time, block) do
+  defp add_transfer(addresses, transfer, time, block) do
     update_from =
       Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_from"] end)
       |> List.first
@@ -573,7 +573,7 @@ defmodule Neoscan.Addresses do
     end)
   end
 
-  def update_from_address({address, attrs}, transfer, time) do
+  defp update_from_address({address, attrs}, transfer, time) do
     new_attrs =
       Map.merge(attrs, %{
         :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
@@ -585,7 +585,7 @@ defmodule Neoscan.Addresses do
     {address, new_attrs}
   end
 
-  def update_to_address({address, attrs}, transfer, time) do
+  defp update_to_address({address, attrs}, transfer, time) do
     new_attrs =
       Map.merge(attrs, %{
         :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
@@ -597,7 +597,7 @@ defmodule Neoscan.Addresses do
     {address, new_attrs}
   end
 
-  def plus_transfer(%{:balance => balance} = attrs, transfer, time) do
+  defp plus_transfer(%{:balance => balance} = attrs, transfer, time) do
     current_amount = balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
 
     new_balance = %{
@@ -609,7 +609,7 @@ defmodule Neoscan.Addresses do
     %{attrs | balance: Map.put(attrs.balance || %{}, String.slice(to_string(transfer["contract"]), -40..-1), new_balance)}
   end
 
-  def minus_transfer(%{:balance => balance} = attrs, transfer, time) do
+  defp minus_transfer(%{:balance => balance} = attrs, transfer, time) do
     current_amount = balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
 
     new_balance = %{
