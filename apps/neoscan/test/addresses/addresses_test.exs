@@ -148,12 +148,6 @@ defmodule Neoscan.AddressesTest do
     end
 
 #    test "update_all_addresses/7 returns ..." do
-#      block = insert(:block)
-#      transaction = insert(:transaction)
-#
-#      attrs = %{"vout" => [], "vin" => [], "txid" => transaction.txid, "type" => "FactoryTransaction"}
-#
-#      IO.inspect Addresses.create_transaction(block, attrs)
 #    end
   end
 end

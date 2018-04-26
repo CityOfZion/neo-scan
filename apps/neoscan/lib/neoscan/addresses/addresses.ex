@@ -236,7 +236,7 @@ defmodule Neoscan.Addresses do
   end
 
   # verify if there was claim operations for the address
-  def verify_if_claim_and_call_changesets(
+  defp verify_if_claim_and_call_changesets(
         address,
         %{:claimed => claim} = attrs
       ) do
@@ -248,7 +248,7 @@ defmodule Neoscan.Addresses do
     }
   end
 
-  def verify_if_claim_and_call_changesets(address, attrs) do
+  defp verify_if_claim_and_call_changesets(address, attrs) do
     {
       address,
       nil,
@@ -258,12 +258,12 @@ defmodule Neoscan.Addresses do
   end
 
   # creates new Ecto.Multi sequence for single DB transaction
-  def create_multi(changesets) do
+  defp create_multi(changesets) do
     Enum.reduce(changesets, Multi.new(), fn tuple, acc -> insert_updates(tuple, acc) end)
   end
 
   # Insert address updates in the Ecto.Multi
-  def insert_updates(
+  defp insert_updates(
         {address, claim_changeset, history_changeset, address_changeset},
         acc
       ) do
@@ -278,11 +278,11 @@ defmodule Neoscan.Addresses do
   end
 
   # verify if DB transaction was sucessfull
-  def check_repo_transaction_results({:ok, _any}) do
+  defp check_repo_transaction_results({:ok, _any}) do
     {:ok, "all operations were succesfull"}
   end
 
-  def check_repo_transaction_results({:error, error}) do
+  defp check_repo_transaction_results({:error, error}) do
     Logger.error(inspect(error))
     raise "error updating addresses"
   end
