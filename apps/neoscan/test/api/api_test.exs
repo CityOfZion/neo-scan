@@ -37,7 +37,7 @@ defmodule Neoscan.Api.ApiTest do
   end
 
   test "get_address_neon/1" do
-    address = insert(:address)
+    _address = insert(:address)
     assert %{address: "not found", balance: nil, txids: nil, claimed: nil} == Api.get_address_neon("notexisting")
     #Api.get_address_neon(address.address)
   end
