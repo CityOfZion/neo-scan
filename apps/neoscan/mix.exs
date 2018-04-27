@@ -48,7 +48,7 @@ defmodule Neoscan.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
       {:ex_machina, "~> 2.0", only: [:test, :travis]},
-      {:excoveralls, "~> 0.8", only: :test},
+      {:excoveralls, "~> 0.8", only: [:test, :travis]},
       {:poison, "~> 3.1"},
       {:scrivener_ecto, "~> 1.0"}
     ]

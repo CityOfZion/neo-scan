@@ -13,6 +13,15 @@ defmodule Neoscan.Umbrella.Mixfile do
         main: "NeoScan",
         extras: ["README.md"]
       ],
+      test_coverage: [
+        tool: ExCoveralls
+      ],
+      preferred_cli_env: [
+        "coveralls": :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       aliases: aliases()
     ]
   end
@@ -36,6 +45,7 @@ defmodule Neoscan.Umbrella.Mixfile do
       {:httpoison, "~> 0.13"},
       {:flow, "~> 0.11"},
       {:ex_machina, "~> 2.0", only: [:test, :travis]},
+      {:excoveralls, "~> 0.8", only: [:test, :travis]},
       {:morphix, "~> 0.0.7"}
     ]
   end
