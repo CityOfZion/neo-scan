@@ -14,7 +14,7 @@ defmodule Neoscan.Factory do
     %Block{
       confirmations: 50,
       hash: sequence("blockhash"),
-      index: 05,
+      index: sequence(5, &(&1)),
       merkleroot: sequence("b33f6f3dfead7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6faP"),
       nextblockhash: sequence("b33f6f3dfead7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8"),
       nextconsensus: sequence("b33f6f3dfead7ddde999846kf5dda8a6bbbc92cb57f161b5030ae608317c6fa8"),
@@ -44,7 +44,7 @@ defmodule Neoscan.Factory do
       txid: sequence("txhash"),
       type: "FactoryTransaction",
       version: 1,
-      vin: [%{sequence("vinhash") => sequence("vininnerhash")}],
+      vin: [%{"asset" => sequence("vininnerhash")}],
       time: 1_548_656,
       nonce: 15155,
       claims: [%{sequence("claimhash") => sequence("claiminnerhash")}],
