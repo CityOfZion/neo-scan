@@ -13,10 +13,11 @@ defmodule NeoscanSync.Consumer do
 
   def init(state) do
     demand = Application.fetch_env!(:neoscan_sync, :demand_size)
+
     {
       :consumer,
       state,
-      subscribe_to: [{NeoscanSync.Producer, max_demand: demand, min_demand: round(demand/2)}]
+      subscribe_to: [{NeoscanSync.Producer, max_demand: demand, min_demand: round(demand / 2)}]
     }
   end
 
@@ -35,7 +36,7 @@ defmodule NeoscanSync.Consumer do
           "tx" => transactions,
           "index" => height,
           "time" => time,
-          "transfers" => tf,
+          "transfers" => tf
         } = block
       ) do
     Map.put(block, "tx_count", Kernel.length(transactions))

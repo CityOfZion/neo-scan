@@ -23,7 +23,6 @@ defmodule Neoscan.TxAbstracts.TxAbstract do
 
     new_attrs = Map.merge(attrs, %{:check_hash => check_hash, :amount => to_string(attrs.amount)})
 
-
     %TxAbstract{}
     |> cast(new_attrs, [
       :address_from,
@@ -33,7 +32,7 @@ defmodule Neoscan.TxAbstracts.TxAbstract do
       :txid,
       :asset,
       :time,
-      :check_hash,
+      :check_hash
     ])
     |> validate_required([
       :address_from,

@@ -11,16 +11,16 @@ defmodule NeoscanWeb.BlockController do
       Enum.map(transactions, fn tx -> tx.txid end)
       |> Transfers.get_transactions_transfers()
 
-    transactions = transactions
-                  |> Enum.map(fn tx ->
-                    Map.merge(tx,
-                      %{
-                        :transfers =>
-                          Enum.filter(transfers, fn transfer ->
-                            transfer.txid == tx.txid
-                          end) || []
-                      })
-                  end)
+    transactions =
+      transactions
+      |> Enum.map(fn tx ->
+        Map.merge(tx, %{
+          :transfers =>
+            Enum.filter(transfers, fn transfer ->
+              transfer.txid == tx.txid
+            end) || []
+        })
+      end)
 
     route(block, transactions, conn, "1")
   end
@@ -32,16 +32,16 @@ defmodule NeoscanWeb.BlockController do
       Enum.map(transactions, fn tx -> tx.txid end)
       |> Transfers.get_transactions_transfers()
 
-    transactions = transactions
-                  |> Enum.map(fn tx ->
-                    Map.merge(tx,
-                      %{
-                        :transfers =>
-                          Enum.filter(transfers, fn transfer ->
-                            transfer.txid == tx.txid
-                          end) || []
-                      })
-                  end)
+    transactions =
+      transactions
+      |> Enum.map(fn tx ->
+        Map.merge(tx, %{
+          :transfers =>
+            Enum.filter(transfers, fn transfer ->
+              transfer.txid == tx.txid
+            end) || []
+        })
+      end)
 
     route(block, transactions, conn, page)
   end

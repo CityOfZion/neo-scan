@@ -26,7 +26,18 @@ defmodule Neoscan.ChainAssets.Asset do
     new_attrs = Map.put(attrs, "txid", transaction_id)
 
     %Asset{}
-    |> cast(new_attrs, [:txid, :admin, :amount, :name, :owner, :precision, :type, :issued, :time, :contract])
+    |> cast(new_attrs, [
+      :txid,
+      :admin,
+      :amount,
+      :name,
+      :owner,
+      :precision,
+      :type,
+      :issued,
+      :time,
+      :contract
+    ])
     |> unique_constraint(:txid, name: :assets_txid_name_index)
     |> unique_constraint(:contract)
     |> validate_required([:txid, :admin, :amount, :name, :owner, :precision, :type, :time])

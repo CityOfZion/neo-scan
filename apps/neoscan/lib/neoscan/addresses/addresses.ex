@@ -237,9 +237,9 @@ defmodule Neoscan.Addresses do
 
   # verify if there was claim operations for the address
   defp verify_if_claim_and_call_changesets(
-        address,
-        %{:claimed => claim} = attrs
-      ) do
+         address,
+         %{:claimed => claim} = attrs
+       ) do
     {
       address,
       Claims.change_claim(%Claim{}, address, claim),
@@ -264,9 +264,9 @@ defmodule Neoscan.Addresses do
 
   # Insert address updates in the Ecto.Multi
   defp insert_updates(
-        {address, claim_changeset, history_changeset, address_changeset},
-        acc
-      ) do
+         {address, claim_changeset, history_changeset, address_changeset},
+         acc
+       ) do
     name = String.to_atom(address.address)
     name1 = String.to_atom("#{address.address}_history")
     name2 = String.to_atom("#{address.address}_claim")
@@ -511,13 +511,17 @@ defmodule Neoscan.Addresses do
 
   # add a single vin into adress
   defp add_vin(%{:balance => balance} = attrs, vin, time) do
-    current_amount = case balance[vin.asset]["amount"] do
-                       nil ->
-                         Logger.info("CORRUPTION - Vin not found in address balance")
-                         vin.value
-                       value ->
-                         value
-                     end  #if balance isn't found, assume that it is missing from the DB
+    current_amount =
+      case balance[vin.asset]["amount"] do
+        nil ->
+          Logger.info("CORRUPTION - Vin not found in address balance")
+          vin.value
+
+        value ->
+          value
+      end
+
+    # if balance isn't found, assume that it is missing from the DB
 
     new_balance = %{
       "asset" => vin.asset,
@@ -557,12 +561,12 @@ defmodule Neoscan.Addresses do
   defp add_transfer(addresses, transfer, time, block) do
     update_from =
       Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_from"] end)
-      |> List.first
+      |> List.first()
       |> update_from_address(transfer, time)
 
     update_to =
       Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_to"] end)
-      |> List.first
+      |> List.first()
       |> update_to_address(transfer, time)
 
     transfer
@@ -580,7 +584,11 @@ defmodule Neoscan.Addresses do
         :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
       })
       |> minus_transfer(transfer, time)
-      |> BalanceHistories.add_tx_id(String.slice(to_string(transfer["tx"]), -64..-1), transfer["block"], time)
+      |> BalanceHistories.add_tx_id(
+        String.slice(to_string(transfer["tx"]), -64..-1),
+        transfer["block"],
+        time
+      )
 
     {address, new_attrs}
   end
@@ -592,13 +600,18 @@ defmodule Neoscan.Addresses do
         :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
       })
       |> plus_transfer(transfer, time)
-      |> BalanceHistories.add_tx_id(String.slice(to_string(transfer["tx"]), -64..-1), transfer["block"], time)
+      |> BalanceHistories.add_tx_id(
+        String.slice(to_string(transfer["tx"]), -64..-1),
+        transfer["block"],
+        time
+      )
 
     {address, new_attrs}
   end
 
   defp plus_transfer(%{:balance => balance} = attrs, transfer, time) do
-    current_amount = balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
+    current_amount =
+      balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
 
     new_balance = %{
       "asset" => String.slice(to_string(transfer["contract"]), -40..-1),
@@ -606,11 +619,20 @@ defmodule Neoscan.Addresses do
       "time" => time
     }
 
-    %{attrs | balance: Map.put(attrs.balance || %{}, String.slice(to_string(transfer["contract"]), -40..-1), new_balance)}
+    %{
+      attrs
+      | balance:
+          Map.put(
+            attrs.balance || %{},
+            String.slice(to_string(transfer["contract"]), -40..-1),
+            new_balance
+          )
+    }
   end
 
   defp minus_transfer(%{:balance => balance} = attrs, transfer, time) do
-    current_amount = balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
+    current_amount =
+      balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
 
     new_balance = %{
       "asset" => String.slice(to_string(transfer["contract"]), -40..-1),
@@ -618,6 +640,14 @@ defmodule Neoscan.Addresses do
       "time" => time
     }
 
-    %{attrs | balance: Map.put(attrs.balance || %{}, String.slice(to_string(transfer["contract"]), -40..-1), new_balance)}
+    %{
+      attrs
+      | balance:
+          Map.put(
+            attrs.balance || %{},
+            String.slice(to_string(transfer["contract"]), -40..-1),
+            new_balance
+          )
+    }
   end
 end

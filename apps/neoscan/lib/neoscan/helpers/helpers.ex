@@ -143,8 +143,9 @@ defmodule Neoscan.Helpers do
     cond do
       String.length(hash) == 40 ->
         num = integer / :math.pow(10, precision)
-        
+
         "#{num}"
+
       true ->
         "#{integer}"
     end

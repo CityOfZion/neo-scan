@@ -44,6 +44,7 @@ defmodule NeoscanMonitor.Api do
         |> Enum.find(fn %{:contract => contract} -> contract == hash end)
         |> Map.get(:name)
         |> ChainAssets.filter_name()
+
       true ->
         Server.get(:assets)
         |> Enum.find(fn %{:txid => txid} -> txid == hash end)

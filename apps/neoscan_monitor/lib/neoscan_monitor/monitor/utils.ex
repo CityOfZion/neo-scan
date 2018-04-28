@@ -97,6 +97,7 @@ defmodule NeoscanMonitor.Utils do
             :addresses => Addresses.count_addresses_for_asset(asset.txid),
             :transactions => Stats.count_transactions_for_asset(asset.txid)
           })
+
         asset.contract != nil ->
           Map.put(asset, :stats, %{
             :addresses => Addresses.count_addresses_for_asset(asset.contract),
@@ -135,15 +136,18 @@ defmodule NeoscanMonitor.Utils do
 
   def add_new_tokens(old_list \\ []) do
     Enum.filter(get_token_notifications(), fn %{"token" => token} ->
-      Enum.all?(old_list, fn %{"token" => old_token} -> token["script_hash"] != old_token["script_hash"] end)
+      Enum.all?(old_list, fn %{"token" => old_token} ->
+        token["script_hash"] != old_token["script_hash"]
+      end)
     end)
-    |> ChainAssets.create_tokens
+    |> ChainAssets.create_tokens()
   end
 
   defp get_token_notifications do
-    case Notifications.get_token_notifications do
+    case Notifications.get_token_notifications() do
       {:error, _} ->
         get_token_notifications()
+
       result ->
         result
     end

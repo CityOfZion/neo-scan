@@ -8,6 +8,7 @@ defmodule Neoscan.AddressesTest do
 
     test "list_addresses/0 returns all addresses" do
       address = insert(:address)
+
       assert Addresses.list_addresses()
              |> List.first()
              |> Map.get(:id) == address.id
@@ -15,6 +16,7 @@ defmodule Neoscan.AddressesTest do
 
     test "get_address!/1 returns the address with given id" do
       address = insert(:address)
+
       assert Addresses.get_address!(address.id)
              |> List.first()
              |> Map.get(:id) == address.id
@@ -48,7 +50,7 @@ defmodule Neoscan.AddressesTest do
     test "list_latest/0 returns latest addresses" do
       _address1 = insert(:address)
       address2 = insert(:address)
-      [address, _] = Addresses.list_latest
+      [address, _] = Addresses.list_latest()
 
       assert address2.address == address.address
       assert address2.balance == address.balance
@@ -72,7 +74,7 @@ defmodule Neoscan.AddressesTest do
 
     test "count_addresses_for_asset/1 returns number of address having assets" do
       %{balance: balance} = insert(:address)
-      [{asset, _}] = Enum.map(balance, &(&1))
+      [{asset, _}] = Enum.map(balance, & &1)
       assert 1 == Addresses.count_addresses_for_asset(asset)
       assert 0 == Addresses.count_addresses_for_asset("random")
     end
@@ -93,7 +95,8 @@ defmodule Neoscan.AddressesTest do
     end
 
     test "create_address/1 returns address from attributes" do
-      assert %{address: "123", time: 1234} = Addresses.create_address(%{address: "123", time: 1234})
+      assert %{address: "123", time: 1234} =
+               Addresses.create_address(%{address: "123", time: 1234})
     end
 
     #    test "update_multiple_addresses/1 " do
@@ -115,7 +118,7 @@ defmodule Neoscan.AddressesTest do
     test "check_if_exist/1 returns boolean" do
       _address = insert(:address)
       # TODO weird behavior here, should return true but does not work.
-      #assert Addresses.check_if_exist(address.address)
+      # assert Addresses.check_if_exist(address.address)
       assert not Addresses.check_if_exist("random")
     end
 
@@ -142,12 +145,15 @@ defmodule Neoscan.AddressesTest do
       address2 = insert(:address)
       _address3 = insert(:address)
 
-      transaction = %{vin: [%{address_hash: address1.address}], vouts: [%{address_hash: address2.address}]}
+      transaction = %{
+        vin: [%{address_hash: address1.address}],
+        vouts: [%{address_hash: address2.address}]
+      }
 
       assert 2 == Enum.count(Addresses.get_transactions_addresses([transaction]))
     end
 
-#    test "update_all_addresses/7 returns ..." do
-#    end
+    #    test "update_all_addresses/7 returns ..." do
+    #    end
   end
 end

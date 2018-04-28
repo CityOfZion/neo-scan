@@ -24,21 +24,21 @@ defmodule Neoscan.BalanceHistories.HistoryTest do
 
     test "returns invalid changeset when attrs are invalid" do
       cast_fields = [:block_height, :time, :txid]
-      invalid_attrs = cast_fields
-                      |> Enum.map(fn field -> {field, :invalid} end)
-                      |> Map.new()
+
+      invalid_attrs =
+        cast_fields
+        |> Enum.map(fn field -> {field, :invalid} end)
+        |> Map.new()
+
       changeset = History.changeset(%History{}, %{id: 124, address: "dsfj"}, invalid_attrs)
 
       refute changeset.valid?
 
       errors = errors_on(changeset)
 
-      Enum.each(
-        cast_fields,
-        fn field ->
-          assert Map.get(errors, field) == ["is invalid"]
-        end
-      )
+      Enum.each(cast_fields, fn field ->
+        assert Map.get(errors, field) == ["is invalid"]
+      end)
     end
 
     test "returns valid changeset when attrs are valid" do
@@ -48,7 +48,7 @@ defmodule Neoscan.BalanceHistories.HistoryTest do
         txid: "239832"
       }
 
-      changeset = History.changeset(%History{}, %{id: 124, address: "dsfj"},valid_attrs)
+      changeset = History.changeset(%History{}, %{id: 124, address: "dsfj"}, valid_attrs)
 
       assert changeset.valid?
     end

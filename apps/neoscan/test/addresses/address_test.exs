@@ -42,7 +42,7 @@ defmodule Neoscan.Addresses.AddressTest do
         balance: %{
           amount: 100,
           asset: "abcd",
-          time: 1476769053
+          time: 1_476_769_053
         },
         time: 0,
         tx_count: 100
@@ -95,7 +95,7 @@ defmodule Neoscan.Addresses.AddressTest do
       balance = %{
         amount: 100,
         asset: "abcd",
-        time: 1476769053
+        time: 1_476_769_053
       }
 
       valid_attrs = %{balance: balance}

@@ -4,15 +4,13 @@ defmodule Neoscan.TxAbstracts do
   alias Neoscan.Repo
   alias Neoscan.TxAbstracts.TxAbstract
 
-
   require Logger
-
 
   def create_abstracts_from_tx(transaction) do
     vin_count = count_addresses_in_vins(transaction["vin"])
+
     cond do
       vin_count > 1 ->
-
         build_list_for_multiple_vins(transaction)
         |> Enum.each(fn abstract -> create_abstract(abstract) end)
 
@@ -29,8 +27,8 @@ defmodule Neoscan.TxAbstracts do
           true ->
             "ok"
         end
-      vin_count == 1 ->
 
+      vin_count == 1 ->
         build_list_for_vouts(transaction)
         |> Enum.each(fn abstract -> create_abstract(abstract) end)
     end
@@ -55,25 +53,25 @@ defmodule Neoscan.TxAbstracts do
   end
 
   def count_addresses_in_vins(vin_list) do
-    {c , _list} = vin_list
-                  |> Enum.reduce({0, []}, fn (%{:address_hash => hash}, {counter, address_list}) ->
-                    case Enum.any?(address_list, fn address ->
-                         hash == address
-                         end) do
-                      true ->
-                        {counter, address_list}
+    {c, _list} =
+      vin_list
+      |> Enum.reduce({0, []}, fn %{:address_hash => hash}, {counter, address_list} ->
+        case Enum.any?(address_list, fn address ->
+               hash == address
+             end) do
+          true ->
+            {counter, address_list}
 
-                      false ->
-                        {counter + 1 , [hash] ++ address_list}
-                    end
-                  end)
+          false ->
+            {counter + 1, [hash] ++ address_list}
+        end
+      end)
 
     c
   end
 
   def get_amount_for_address(hash, list) do
-
-    Enum.reduce(list, 0, fn (%{"address" => address, "value" => amount}, total) ->
+    Enum.reduce(list, 0, fn %{"address" => address, "value" => amount}, total ->
       case address == hash do
         true ->
           total + amount
@@ -82,33 +80,42 @@ defmodule Neoscan.TxAbstracts do
           amount
       end
     end)
-
   end
 
   def build_list_for_multiple_vins(transaction) do
-    list1 = Enum.map(transaction["vin"], fn %{:address_hash => address, :value => amount, :asset => asset} ->
-              %{
-                :address_from => address,
-                :address_to => transaction["txid"],
-                :amount => amount,
-                :block_height => transaction["block_height"],
-                :txid => transaction["txid"],
-                :asset => String.slice(to_string(asset), -64..-1),
-                :time => transaction["time"]
-              }
-            end)
+    list1 =
+      Enum.map(transaction["vin"], fn %{
+                                        :address_hash => address,
+                                        :value => amount,
+                                        :asset => asset
+                                      } ->
+        %{
+          :address_from => address,
+          :address_to => transaction["txid"],
+          :amount => amount,
+          :block_height => transaction["block_height"],
+          :txid => transaction["txid"],
+          :asset => String.slice(to_string(asset), -64..-1),
+          :time => transaction["time"]
+        }
+      end)
 
-    list2 =  Enum.map(transaction["vout"], fn %{"address" => address, "value" => amount, "asset" => asset} ->
-              %{
-                :address_from => transaction["txid"],
-                :address_to => address,
-                :amount => amount,
-                :block_height => transaction["block_height"],
-                :txid => transaction["txid"],
-                :asset => String.slice(to_string(asset), -64..-1),
-                :time => transaction["time"]
-              }
-            end)
+    list2 =
+      Enum.map(transaction["vout"], fn %{
+                                         "address" => address,
+                                         "value" => amount,
+                                         "asset" => asset
+                                       } ->
+        %{
+          :address_from => transaction["txid"],
+          :address_to => address,
+          :amount => amount,
+          :block_height => transaction["block_height"],
+          :txid => transaction["txid"],
+          :asset => String.slice(to_string(asset), -64..-1),
+          :time => transaction["time"]
+        }
+      end)
 
     list1 ++ list2
   end
@@ -142,8 +149,9 @@ defmodule Neoscan.TxAbstracts do
   end
 
   def build_list_for_vouts(transaction) do
-    %{:address_hash => address_from, :asset => asset} = transaction["vin"]
-                                                   |> List.first
+    %{:address_hash => address_from, :asset => asset} =
+      transaction["vin"]
+      |> List.first()
 
     Enum.map(transaction["vout"], fn %{"address" => address, "value" => amount} ->
       cond do
@@ -157,6 +165,7 @@ defmodule Neoscan.TxAbstracts do
             :asset => String.slice(to_string(asset), -64..-1),
             :time => transaction["time"]
           }
+
         true ->
           nil
       end
@@ -191,7 +200,9 @@ defmodule Neoscan.TxAbstracts do
     abstract_query =
       from(
         abstract in TxAbstract,
-        where: (abstract.address_from == ^hash1 and abstract.address_to == ^hash2) or (abstract.address_from == ^hash2 and abstract.address_to == ^hash1),
+        where:
+          (abstract.address_from == ^hash1 and abstract.address_to == ^hash2) or
+            (abstract.address_from == ^hash2 and abstract.address_to == ^hash1),
         order_by: [
           desc: abstract.id
         ],
@@ -209,5 +220,4 @@ defmodule Neoscan.TxAbstracts do
 
     Repo.paginate(abstract_query, page: page, page_size: 15)
   end
-
 end

@@ -11,7 +11,6 @@ defmodule Neoscan.ChainAssets do
   alias Neoscan.Addresses
   alias Neoscan.Stats
 
-
   require Logger
 
   @doc """
@@ -33,6 +32,7 @@ defmodule Neoscan.ChainAssets do
 
   def add_token(%{"token" => token} = response) do
     filtered_name = String.replace(token["name"], "\u0000", "")
+
     new_token = %{
       "admin" => token["contract_address"],
       "name" => [%{"lang" => "en", "name" => filtered_name}],
@@ -42,18 +42,22 @@ defmodule Neoscan.ChainAssets do
       "amount" => 0,
       "issued" => 0,
       "time" => Blocks.get_block_time(response["block"]),
-      "contract" => String.slice(to_string(token["script_hash"]), -40..-1),
+      "contract" => String.slice(to_string(token["script_hash"]), -40..-1)
     }
+
     create_asset(String.slice(to_string(response["tx"]), -64..-1), new_token)
   end
 
-  #Creates tokens.
+  # Creates tokens.
   def create_tokens([]) do
     []
   end
+
   def create_tokens(tokens) do
     tokens
-    |> Enum.filter(fn %{"token" => token} -> get_token_by_contract(String.slice(to_string(token["script_hash"]), -40..-1)) == nil end)
+    |> Enum.filter(fn %{"token" => token} ->
+      get_token_by_contract(String.slice(to_string(token["script_hash"]), -40..-1)) == nil
+    end)
     |> Enum.each(fn token -> add_token(token) end)
     |> check_tokens_creation(tokens)
   end
@@ -61,6 +65,7 @@ defmodule Neoscan.ChainAssets do
   def check_tokens_creation(:ok, tokens) do
     tokens
   end
+
   def check_tokens_creation(_) do
     Logger.info("Error creating token")
     raise "Error creating token"
@@ -129,6 +134,7 @@ defmodule Neoscan.ChainAssets do
         Repo.all(query)
         |> List.first()
         |> filter_name
+
       true ->
         query =
           from(
@@ -156,20 +162,22 @@ defmodule Neoscan.ChainAssets do
 
   """
   def get_asset_precision_by_hash(hash) do
-    query = cond do
-              String.length(hash) == 40 ->
-                from(
-                  e in Asset,
-                  where: e.contract == ^hash,
-                  select: e.precision
-                )
-              true ->
-                from(
-                  e in Asset,
-                  where: e.txid == ^hash,
-                  select: e.precision
-                )
-            end
+    query =
+      cond do
+        String.length(hash) == 40 ->
+          from(
+            e in Asset,
+            where: e.contract == ^hash,
+            select: e.precision
+          )
+
+        true ->
+          from(
+            e in Asset,
+            where: e.txid == ^hash,
+            select: e.precision
+          )
+      end
 
     Repo.all(query)
     |> List.first()
@@ -312,13 +320,15 @@ defmodule Neoscan.ChainAssets do
   end
 
   def get_new_asset(hash, time) do
-    asset = cond do
-              String.length(hash) == 64 ->
-                Blockchain.get_asset(HttpCalls.url(1), hash)
-              true ->
-                Notifications.get_token_notifications
-                |> Enum.find(fn %{"token" => token} -> token["script_hash"] == hash end)
-            end
+    asset =
+      cond do
+        String.length(hash) == 64 ->
+          Blockchain.get_asset(HttpCalls.url(1), hash)
+
+        true ->
+          Notifications.get_token_notifications()
+          |> Enum.find(fn %{"token" => token} -> token["script_hash"] == hash end)
+      end
 
     case asset do
       {:ok, result} ->
@@ -341,6 +351,7 @@ defmodule Neoscan.ChainAssets do
         case contract do
           nil ->
             Map.put(acc, txid, Addresses.count_addresses_for_asset(txid))
+
           _ ->
             Map.put(acc, contract, Addresses.count_addresses_for_asset(contract))
         end
@@ -352,6 +363,7 @@ defmodule Neoscan.ChainAssets do
         case contract do
           nil ->
             Map.put(acc, txid, Stats.count_transactions_for_asset(txid))
+
           _ ->
             Map.put(acc, contract, Stats.count_transactions_for_asset(contract))
         end

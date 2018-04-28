@@ -63,8 +63,19 @@ defmodule NeoscanWeb.Router do
     get("/get_highest_block", ApiController, :get_highest_block)
     get("/get_last_transactions", ApiController, :get_last_transactions)
     get("/get_last_transactions/:type", ApiController, :get_last_transactions)
-    get("/get_last_transactions_by_address/:hash", ApiController, :get_last_transactions_by_address)
-    get("/get_last_transactions_by_address/:hash/:page", ApiController, :get_last_transactions_by_address)
+
+    get(
+      "/get_last_transactions_by_address/:hash",
+      ApiController,
+      :get_last_transactions_by_address
+    )
+
+    get(
+      "/get_last_transactions_by_address/:hash/:page",
+      ApiController,
+      :get_last_transactions_by_address
+    )
+
     get("/get_transaction/:hash", ApiController, :get_transaction)
     get("/get_all_nodes", ApiController, :get_all_nodes)
     get("/get_height", ApiController, :get_height)
@@ -73,7 +84,12 @@ defmodule NeoscanWeb.Router do
     get("/repair_blocks", ApiController, :repair_blocks)
     get("/repair_block_counter", ApiController, :repair_block_counter)
     get("/get_address_abstracts/:hash/:page", ApiController, :get_address_abstracts)
-    get("/get_address_to_address_abstracts/:hash1/:hash2/:page", ApiController, :get_address_to_address_abstracts)
+
+    get(
+      "/get_address_to_address_abstracts/:hash1/:hash2/:page",
+      ApiController,
+      :get_address_to_address_abstracts
+    )
   end
 
   # Other scopes may use custom stacks.
