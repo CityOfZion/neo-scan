@@ -1,8 +1,6 @@
 language: elixir
 elixir:
   - 1.6.4
-otp_release:
-  - 20.1
 script:
   - "mix local.rebar --force"
   - "mix local.hex --force"
