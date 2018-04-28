@@ -37,6 +37,7 @@ defmodule Neoprice.Mixfile do
     [
       {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
       {:poison, "~> 2.0 or ~> 3.1"},
+      {:mock, "~> 0.3.0", only: [:test, :travis]},
       {:excoveralls, "~> 0.8", only: [:test, :travis]}
     ]
   end
