@@ -246,6 +246,7 @@ defmodule Neoscan.Blocks do
     case Blockchain.get_block_by_height(url, height) do
       {:ok, block} ->
         Map.get(block, "time")
+
       _ ->
         get_block_time(height)
     end
@@ -429,7 +430,8 @@ defmodule Neoscan.Blocks do
 
         Repo.all(query)
         |> Enum.reduce(%{:total_sys_fee => 0, :total_net_fee => 0}, fn %{
-                                                                         :total_sys_fee => sys_fee,
+                                                                         :total_sys_fee =>
+                                                                           sys_fee,
                                                                          :total_net_fee => net_fee
                                                                        },
                                                                        acc ->
@@ -450,6 +452,7 @@ defmodule Neoscan.Blocks do
         case Float.parse(tx["sys_fee"]) do
           {num, _st} ->
             acc + num
+
           :error ->
             acc + 0
         end
@@ -460,6 +463,7 @@ defmodule Neoscan.Blocks do
         case Float.parse(tx["net_fee"]) do
           {num, _st} ->
             acc + num
+
           :error ->
             acc + 0
         end

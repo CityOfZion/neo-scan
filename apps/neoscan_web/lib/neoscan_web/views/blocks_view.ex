@@ -73,9 +73,11 @@ defmodule NeoscanWeb.BlocksView do
 
   def get_block_time(block, blocks) do
     previous_block = Enum.find(blocks, fn %{:index => index} -> index == block.index - 1 end)
+
     case previous_block do
       nil ->
         "no data"
+
       map ->
         to_string(block.time - Map.get(map, :time)) <> " seconds"
     end

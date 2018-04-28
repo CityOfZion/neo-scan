@@ -128,7 +128,7 @@ defmodule Neoscan.Transfers do
         "address_from" => transfer["addr_from"],
         "address_to" => transfer["addr_to"],
         "time" => time,
-        "contract" => String.slice(to_string(transfer["contract"]), -40..-1),
+        "contract" => String.slice(to_string(transfer["contract"]), -40..-1)
       })
 
     TxAbstracts.create_abstract_from_transfer(attrs)
@@ -172,7 +172,7 @@ defmodule Neoscan.Transfers do
     |> Enum.reduce([], fn %{"addr_from" => from, "addr_to" => to}, acc ->
       acc ++ [from, to]
     end)
-    |> Enum.uniq
+    |> Enum.uniq()
     |> Addresses.get_transfer_addresses(time)
   end
 
@@ -221,7 +221,6 @@ defmodule Neoscan.Transfers do
     Repo.all(transfer_query)
   end
 
-
   def check_if_transfer_exist(check_hash) do
     case get_transfer(check_hash) do
       %Transfer{} ->
@@ -229,7 +228,6 @@ defmodule Neoscan.Transfers do
 
       nil ->
         false
-
     end
   end
 
@@ -242,6 +240,6 @@ defmodule Neoscan.Transfers do
       )
 
     Repo.all(transfer_query)
-    |> List.first
+    |> List.first()
   end
 end

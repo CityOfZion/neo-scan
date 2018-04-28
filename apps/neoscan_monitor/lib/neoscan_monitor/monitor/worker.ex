@@ -64,7 +64,7 @@ defmodule NeoscanMonitor.Worker do
       :stats => stats,
       :addresses => addresses,
       :price => price,
-      :tokens => [],
+      :tokens => []
     }
 
     Process.send(NeoscanMonitor.Server, {:first_state_update, new_state}, [])
@@ -79,6 +79,7 @@ defmodule NeoscanMonitor.Worker do
   # update nodes and stats information
   def handle_info(:update_nodes, state) do
     tokens = Utils.add_new_tokens(state.tokens)
+
     new_state =
       Map.merge(state, %{
         :monitor => Utils.load(),

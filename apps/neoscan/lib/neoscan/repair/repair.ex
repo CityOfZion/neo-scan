@@ -222,6 +222,7 @@ defmodule Neoscan.Repair do
     case Enum.any?(list, fn {atom, _string, _list} -> atom != :ok end) do
       true ->
         raise "error fetching and adding missing transactions"
+
       false ->
         Enum.filter(tuples, fn {key, _tuple} -> key == :vouts_missing end)
         |> Enum.map(fn {_key, {db_transaction, vouts}} -> {db_transaction, vouts} end)
@@ -251,6 +252,7 @@ defmodule Neoscan.Repair do
 
   def repair_transfers() do
     {:ok, index} = Blocks.get_highest_block_in_db()
+
     0..index
     |> Enum.each(fn index -> check_transfers_for_block(index) end)
   end
@@ -266,6 +268,7 @@ defmodule Neoscan.Repair do
     case Transfers.check_if_transfer_exist(check_hash) do
       true ->
         "ok"
+
       false ->
         block = Blocks.get_block_by_height(transfer["block"])
         Transfers.add_block_transfers(block, block.time)

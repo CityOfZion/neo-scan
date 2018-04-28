@@ -118,7 +118,7 @@ defmodule Neoscan.Stats do
 
   def add_transfer_to_table(transfer) do
     counter = get_counter()
-    attrs = %{:total_transfers => Map.get(counter, :total_transfers) + 1 }
+    attrs = %{:total_transfers => Map.get(counter, :total_transfers) + 1}
 
     {_, new_map} =
       Map.get(counter, :assets_transactions)
@@ -244,6 +244,7 @@ defmodule Neoscan.Stats do
   def check_if_nil(nil) do
     0
   end
+
   def check_if_nil(result) do
     result
   end

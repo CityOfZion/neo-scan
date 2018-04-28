@@ -501,11 +501,11 @@ defmodule Neoscan.Transactions do
       })
       |> set_transaction_asset(vouts)
 
-
     TxAbstracts.create_abstracts_from_tx(transaction)
 
-    transaction = transaction
-                  |> Map.delete("vout")
+    transaction =
+      transaction
+      |> Map.delete("vout")
 
     Transaction.changeset_with_block(block, transaction)
     |> Repo.insert!()

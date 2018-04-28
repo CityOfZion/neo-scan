@@ -10,6 +10,7 @@ defmodule NeoscanWeb.TransactionController do
     case tran do
       nil ->
         route(nil, conn)
+
       _ ->
         new_vin = clean_list(tran.vin)
 
@@ -23,7 +24,7 @@ defmodule NeoscanWeb.TransactionController do
           :vin => new_vin,
           :claims => new_claim,
           :asset => new_asset,
-          :transfers => transfers,
+          :transfers => transfers
         })
         |> route(conn)
     end

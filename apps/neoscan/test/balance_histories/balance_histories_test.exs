@@ -10,6 +10,7 @@ defmodule Neoscan.BalanceHistories.BalanceHistoriesTest do
       time: 0,
       txid: "239832"
     }
+
     BalanceHistories.change_history(%History{}, %{id: 124, address: "dsfj"}, valid_attrs)
   end
 end

@@ -57,17 +57,19 @@ defmodule NeoscanSync.HttpCalls do
   end
 
   # Handles the response of an HTTP call
-  defp handle_response({:ok, %HTTPoison.Response{status_code: 200, body: body}= res}) do
-    gzipped = Enum.any?(res.headers, fn (kv) ->
-      case kv do
-        {"Content-Encoding", "gzip"} -> true
-        {"Content-Encoding", "x-gzip"} -> true
-        _ -> false
-      end
-    end)
+  defp handle_response({:ok, %HTTPoison.Response{status_code: 200, body: body} = res}) do
+    gzipped =
+      Enum.any?(res.headers, fn kv ->
+        case kv do
+          {"Content-Encoding", "gzip"} -> true
+          {"Content-Encoding", "x-gzip"} -> true
+          _ -> false
+        end
+      end)
 
     # body is an Elixir string
-    body = if gzipped do
+    body =
+      if gzipped do
         :zlib.gunzip(body)
       else
         body
@@ -106,9 +108,11 @@ defmodule NeoscanSync.HttpCalls do
   defp handle_body(%{"result" => result}) do
     {:ok, result}
   end
+
   defp handle_body(%{"results" => result, "current_height" => current_height}) do
     {:ok, result, current_height}
   end
+
   defp handle_body(%{"results" => result}) do
     {:ok, result}
   end

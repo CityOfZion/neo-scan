@@ -101,17 +101,16 @@ defmodule Neoscan.BalanceHistories do
 
     transactions
     |> Enum.map(fn tx ->
-      Map.merge(tx,
-        %{
-          :vouts =>
-            Enum.filter(vouts, fn vout ->
-              vout.transaction_id == tx.id
-            end),
-          :transfers =>
-            Enum.filter(transfers, fn transfer ->
-              transfer.txid == tx.txid
-            end)
-        })
+      Map.merge(tx, %{
+        :vouts =>
+          Enum.filter(vouts, fn vout ->
+            vout.transaction_id == tx.id
+          end),
+        :transfers =>
+          Enum.filter(transfers, fn transfer ->
+            transfer.txid == tx.txid
+          end)
+      })
     end)
   end
 

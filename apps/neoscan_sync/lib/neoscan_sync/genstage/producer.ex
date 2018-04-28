@@ -111,6 +111,7 @@ defmodule NeoscanSync.Producer do
     [url] = check_if_nodes(1)
     get_block_by_height(url, height)
   end
+
   defp get_block_by_height(random, height) do
     case Blockchain.get_block_by_height(random, height) do
       {:ok, block} ->
@@ -128,15 +129,18 @@ defmodule NeoscanSync.Producer do
   end
 
   def add_notifications(block, height) do
-    limit_height =  Application.fetch_env!(:neoscan_sync, :start_notifications) #Disable notification checks for less than first ever nep5 token issue block height
+    # Disable notification checks for less than first ever nep5 token issue block height
+    limit_height = Application.fetch_env!(:neoscan_sync, :start_notifications)
 
-    transfers = cond do
-                  height > limit_height ->
-                    get_notifications(height)
-                    |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
-                  height <= limit_height ->
-                    []
-                end
+    transfers =
+      cond do
+        height > limit_height ->
+          get_notifications(height)
+          |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
+
+        height <= limit_height ->
+          []
+      end
 
     Map.merge(block, %{"transfers" => transfers})
   end
@@ -145,6 +149,7 @@ defmodule NeoscanSync.Producer do
     case Notifications.get_block_notifications(height) do
       {:error, _} ->
         get_notifications(height)
+
       result ->
         result
     end

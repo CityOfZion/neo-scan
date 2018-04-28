@@ -17,13 +17,13 @@ defmodule NeoscanWeb.HomeController do
           "for" => value
         }
       }) do
-
     result =
       try do
         String.to_integer(value)
       rescue
         ArgumentError ->
-          Blocks.get_block_by_hash(String.slice(value, -64..-1)) || Transactions.get_transaction_by_hash(String.slice(value, -64..-1)) ||
+          Blocks.get_block_by_hash(String.slice(value, -64..-1)) ||
+            Transactions.get_transaction_by_hash(String.slice(value, -64..-1)) ||
             Addresses.get_address_by_hash(value)
       else
         value ->
