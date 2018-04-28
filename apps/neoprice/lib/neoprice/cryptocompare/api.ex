@@ -2,8 +2,7 @@ defmodule Neoprice.Cryptocompare.Api do
   @moduledoc false
   require Logger
 
-  @url "min-api.cryptocompare.com"
-
+  @url Application.get_env(:neo_price, :crypto_compare_url)
   @app_name Application.get_env(:neo_price, :app_name, "neoscan")
 
   def last_price(from_symbol, to_symbol) do
@@ -31,13 +30,10 @@ defmodule Neoprice.Cryptocompare.Api do
     end
   end
 
-  def get(url) do
-    result = HTTPoison.get(url)
-
-    case result do
-      {:ok, _} ->
+  defp get(url) do
+    case HTTPoison.get(url) do
+      {:ok, _} = result ->
         result
-
       _ ->
         get(url)
     end

@@ -22,6 +22,10 @@ defmodule Neoprice.Cryptocompare.ApiTest do
   end
 
   test "last" do
-    assert Api.last_price("NEO", "BTC") != nil
+    assert is_number(Api.last_price("NEO", "BTC"))
+  end
+
+  test "last_price_full/2" do
+    assert is_map(Api.last_price_full("NEO", "BTC"))
   end
 end

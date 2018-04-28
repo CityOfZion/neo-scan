@@ -3,6 +3,14 @@ defmodule NeoPrice.CryptoCompareTest do
   use ExUnit.Case
   alias Neoprice.Cryptocompare
 
+  test "last_price/2" do
+    assert is_number(Cryptocompare.last_price("NEO", "BTC"))
+  end
+
+  test "last_price_full/2" do
+    assert is_map(Cryptocompare.last_price_full("NEO", "BTC"))
+  end
+
   test "minute prices" do
     now = DateTime.utc_now() |> DateTime.to_unix()
     from = now - 3600 * 24

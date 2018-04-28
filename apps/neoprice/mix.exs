@@ -11,6 +11,15 @@ defmodule Neoprice.Mixfile do
       lockfile: "../../mix.lock",
       elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
+      test_coverage: [
+        tool: ExCoveralls
+      ],
+      preferred_cli_env: [
+        "coveralls": :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       deps: deps()
     ]
   end
@@ -27,7 +36,8 @@ defmodule Neoprice.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
-      {:poison, "~> 2.0 or ~> 3.1"}
+      {:poison, "~> 2.0 or ~> 3.1"},
+      {:excoveralls, "~> 0.8", only: [:test, :travis]}
     ]
   end
 end
