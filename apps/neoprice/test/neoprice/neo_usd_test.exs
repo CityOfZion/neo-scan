@@ -61,6 +61,6 @@ defmodule NeoPrice.NeoUsdTest do
   end
 
   test "start_day/0" do
-    assert 1500000000 == NeoUsd.start_day()
+    assert 1_500_000_000 == NeoUsd.start_day()
   end
 end

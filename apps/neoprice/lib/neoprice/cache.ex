@@ -57,12 +57,9 @@ defmodule Neoprice.Cache do
   end
 
   def init(state) do
-    Enum.each(
-      state.module.config,
-      fn cache ->
-        :ets.new(cache.cache_name, [:public, :ordered_set, :named_table, {:read_concurrency, true}])
-      end
-    )
+    Enum.each(state.module.config, fn cache ->
+      :ets.new(cache.cache_name, [:public, :ordered_set, :named_table, {:read_concurrency, true}])
+    end)
 
     Process.send_after(self(), :sync, 0)
     {:ok, state}
@@ -83,12 +80,9 @@ defmodule Neoprice.Cache do
   end
 
   def sync(state) do
-    Enum.each(
-      state.module.config,
-      fn cache ->
-        sync_cache(cache, state.module)
-      end
-    )
+    Enum.each(state.module.config, fn cache ->
+      sync_cache(cache, state.module)
+    end)
   end
 
   defp sync_cache(
@@ -104,14 +98,16 @@ defmodule Neoprice.Cache do
 
     if next_value(definition, last_time, aggregation) < now() do
       Logger.debug(fn -> "Syncing #{cache_name}" end)
-      elements = Cryptocompare.get_price(
-        definition,
-        last_time + 1,
-        now(),
-        module.from_symbol,
-        module.to_symbol,
-        aggregation
-      )
+
+      elements =
+        Cryptocompare.get_price(
+          definition,
+          last_time + 1,
+          now(),
+          module.from_symbol,
+          module.to_symbol,
+          aggregation
+        )
 
       :ets.insert(cache_name, elements)
       delete_old_values(config, module, cache)
@@ -128,19 +124,15 @@ defmodule Neoprice.Cache do
   defp delete_old_values(config, module, cache) do
     {from, _} = time_frame(module, config)
 
-    Enum.reduce_while(
-      cache,
-      nil,
-      fn {k, _}, _ ->
-        if k < from do
-          :ets.delete(config.cache_name, k)
-          Logger.debug(fn -> "Deleteting #{k}" end)
-          {:cont, nil}
-        else
-          {:halt, nil}
-        end
+    Enum.reduce_while(cache, nil, fn {k, _}, _ ->
+      if k < from do
+        :ets.delete(config.cache_name, k)
+        Logger.debug(fn -> "Deleteting #{k}" end)
+        {:cont, nil}
+      else
+        {:halt, nil}
       end
-    )
+    end)
   end
 
   defp next_value(:day, time, aggregation), do: time + @day * aggregation
@@ -148,6 +140,7 @@ defmodule Neoprice.Cache do
   defp next_value(:minute, time, aggregation), do: time + @minute * aggregation
 
   defp now,
-       do: DateTime.utc_now()
-           |> DateTime.to_unix()
+    do:
+      DateTime.utc_now()
+      |> DateTime.to_unix()
 end

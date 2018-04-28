@@ -9,6 +9,6 @@ defmodule NeoPrice.CacheTest do
   end
 
   test "start_day/0" do
-    assert StartDateTest.start_day == 1234
+    assert StartDateTest.start_day() == 1234
   end
 end
