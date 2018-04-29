@@ -159,6 +159,7 @@ defmodule Neoscan.Api do
 
   """
   def get_claimed(hash) do
+
     claim_query =
       from(
         h in Claim,
@@ -231,9 +232,11 @@ defmodule Neoscan.Api do
           %{:address => "not found", :claimable => nil}
 
         %{} = address ->
+          claimable = Unclaimed.calculate_vouts_bonus(address.id)
+
           Map.merge(address, %{
-            claimable: Unclaimed.calculate_vouts_bonus(address.id),
-            unclaimed: Unclaimed.calculate_bonus(address.id)
+            claimable: claimable,
+            unclaimed: Enum.reduce(claimable, 0, fn (%{:unclaimed => amount}, acc) -> amount + acc end)
           })
           |> Map.delete(:id)
       end
@@ -1127,6 +1130,7 @@ defmodule Neoscan.Api do
 
   """
   def get_last_transactions_by_address(hash_string, page) do
+
     transactions =
       BalanceHistories.paginate_history_transactions(
         hash_string,
@@ -1290,7 +1294,7 @@ defmodule Neoscan.Api do
 
   """
   def get_address_abstracts(hash, page) do
-    TxAbstracts.get_address_abstracts(hash, page)
+    TxAbstracts.get_address_abstracts(hash,page)
   end
 
   @doc """
@@ -1316,4 +1320,5 @@ defmodule Neoscan.Api do
   def get_address_to_address_abstracts(hash1, hash2, page) do
     TxAbstracts.get_address_to_address_abstracts(hash1, hash2, page)
   end
+
 end
