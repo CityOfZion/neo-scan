@@ -1,5 +1,7 @@
 [
   inputs: [
-    "apps/**/lib/**/*.{ex,exs}", "apps/**/test/**/*.{ex,exs}", "apps/**/mix.exs"
+    "apps/*/{lib,config,test}/**/*.{ex,exs}",
+    "apps/*/mix.exs",
+    "mix.exs"
   ]
 ]

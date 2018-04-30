@@ -13,6 +13,7 @@ Using docker you can start the project with:
 
 # Development
 - Please run the tests after any changes 
+- Please run the formatter after any changes `mix format` (you can use precommit hook: https://github.com/jasongoodwin/elixir-mix-format-pre-commit-hook)
 
 To run, first install Elixir and Phoenix at:
 
