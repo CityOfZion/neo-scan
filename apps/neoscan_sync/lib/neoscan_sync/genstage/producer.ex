@@ -45,28 +45,21 @@ defmodule NeoscanSync.Producer do
   end
 
   # evaluate number of process, current block count, and start async functions
-  defp evaluate(result, n, count) do
-    case result do
-      {:ok, height} when height > count ->
-        if height - count >= n do
-          Enum.to_list(count..(count + n - 1))
-          |> Enum.map(&Task.async(fn -> cross_check(&1) end))
-          |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
-          |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
-        else
-          Enum.to_list(count..height)
-          |> Enum.map(&Task.async(fn -> cross_check(&1) end))
-          |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
-          |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
-        end
-
-      {:ok, height} when height == count ->
-        []
-
-      {:ok, height} when height < count ->
-        []
-    end
+  defp evaluate({:ok, height}, n, count) when height > count and height - count >= n do
+    Enum.to_list(count..(count + n - 1))
+    |> Enum.map(&Task.async(fn -> cross_check(&1) end))
+    |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
+    |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
   end
+
+  defp evaluate({:ok, height}, _, count) when height > count do
+    Enum.to_list(count..height)
+    |> Enum.map(&Task.async(fn -> cross_check(&1) end))
+    |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
+    |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
+  end
+
+  defp evaluate({:ok, height}, _, count) when height <= count, do: []
 
   # cross check block hash between different seeds
   defp cross_check(height) do
