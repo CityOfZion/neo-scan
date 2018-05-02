@@ -313,19 +313,6 @@ defmodule Neoscan.Blocks do
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking block changes.
-
-  ## Examples
-
-      iex> change_block(block)
-      %Ecto.Changeset{source: %Block{}}
-
-  """
-  def change_block(%Block{} = block) do
-    Block.changeset(block, %{})
-  end
-
-  @doc """
   Returns the heighest block in the database
 
   ## Examples
@@ -386,7 +373,7 @@ defmodule Neoscan.Blocks do
 
   """
   def delete_blocks([block | tail]), do: [delete_block(block) | delete_blocks(tail)]
-  def delete_blocks([]), do: {:ok, "Deleted"}
+  def delete_blocks([]), do: []
 
   @doc """
   delete all blocks heigher than `height`
