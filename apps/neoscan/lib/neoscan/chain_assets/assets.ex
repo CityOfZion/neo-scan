@@ -94,7 +94,7 @@ defmodule Neoscan.ChainAssets do
       "not found"
 
   """
-  defp get_token_by_contract(hash) do
+  def get_token_by_contract(hash) do
     query = from(e in Asset, where: e.contract == ^hash)
 
     Repo.all(query)
