@@ -59,7 +59,7 @@ defmodule NeoscanSync.Producer do
     |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
   end
 
-  defp evaluate({:ok, height}, _, count) when height <= count, do: []
+  defp evaluate({:ok, _}, _, _), do: []
 
   # cross check block hash between different seeds
   defp cross_check(height) do
