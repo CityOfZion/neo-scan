@@ -29,6 +29,29 @@ defmodule Neoscan.BlocksTest do
       assert Blocks.get_block!(block.id) == block
     end
 
+    test "get_block_by_hash/1" do
+      block = insert(:block)
+      assert block.id == Blocks.get_block_by_hash(block.hash).id
+    end
+
+    test "get_block_by_hash_for_view/1" do
+      block = insert(:block)
+      assert block.id == Blocks.get_block_by_hash_for_view(block.hash).id
+    end
+
+    test "paginate_transactions/2" do
+      block = insert(:block)
+      insert(:transaction, %{block_id: block.id})
+      {_, transactions} = Blocks.paginate_transactions(block.hash, 1)
+      assert 1 == Enum.count(transactions)
+    end
+
+    test "get_block_by_height/1" do
+      block = insert(:block)
+      assert block.id == Blocks.get_block_by_height(block.index).id
+      assert is_nil(Blocks.get_block_by_height(12355))
+    end
+
     test "create_block/1 with valid data creates a block" do
       block = insert(:block)
       assert block.confirmations == 50
@@ -42,6 +65,27 @@ defmodule Neoscan.BlocksTest do
       assert block.size == 1526
       assert block.time == 15_154_813
       assert block.version == 2
+    end
+
+    test "get_higher_than/1" do
+      block1 = insert(:block)
+      %{id: block_id} = insert(:block)
+      assert [%{id: ^block_id}] = Blocks.get_higher_than(block1.index)
+    end
+
+    test "delete_higher_than/1" do
+      block1 = insert(:block)
+      %{id: block_id} = insert(:block)
+      assert [] == Blocks.delete_higher_than(block_id)
+      assert [%{id: ^block_id}] = Blocks.get_higher_than(block1.index)
+
+      assert block_id ==
+               block1.index
+               |> Blocks.delete_higher_than()
+               |> List.first()
+               |> Map.get(:id)
+
+      assert [] = Blocks.get_higher_than(block1.index)
     end
 
     test "update_block/2 with valid data updates the block" do
@@ -73,6 +117,18 @@ defmodule Neoscan.BlocksTest do
       block = insert(:block)
       assert %Block{} = Blocks.delete_block(block)
       assert_raise Ecto.NoResultsError, fn -> Blocks.get_block!(block.id) end
+    end
+
+    test "compute_fees/1" do
+      block = %{
+        "tx" => [
+          %{"sys_fee" => "123.4", "net_fee" => "error"},
+          %{"sys_fee" => "error", "net_fee" => "567.8"}
+        ]
+      }
+
+      assert %{"total_sys_fee" => 123.4, "total_net_fee" => 567.8, "tx" => block["tx"]} ==
+               Blocks.compute_fees(block)
     end
   end
 end

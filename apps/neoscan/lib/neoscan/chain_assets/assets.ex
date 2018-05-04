@@ -59,16 +59,8 @@ defmodule Neoscan.ChainAssets do
       get_token_by_contract(String.slice(to_string(token["script_hash"]), -40..-1)) == nil
     end)
     |> Enum.each(fn token -> add_token(token) end)
-    |> check_tokens_creation(tokens)
-  end
 
-  def check_tokens_creation(:ok, tokens) do
     tokens
-  end
-
-  def check_tokens_creation(_) do
-    Logger.info("Error creating token")
-    raise "Error creating token"
   end
 
   @doc """
@@ -122,31 +114,16 @@ defmodule Neoscan.ChainAssets do
 
   """
   def get_asset_name_by_hash(hash) do
-    cond do
-      String.length(hash) > 40 ->
-        query =
-          from(
-            e in Asset,
-            where: e.txid == ^hash,
-            select: e.name
-          )
+    query =
+      if String.length(hash) > 40 do
+        from(e in Asset, where: e.txid == ^hash, select: e.name)
+      else
+        from(e in Asset, where: e.contract == ^hash, select: e.name)
+      end
 
-        Repo.all(query)
-        |> List.first()
-        |> filter_name
-
-      true ->
-        query =
-          from(
-            e in Asset,
-            where: e.contract == ^hash,
-            select: e.name
-          )
-
-        Repo.all(query)
-        |> List.first()
-        |> filter_name
-    end
+    Repo.all(query)
+    |> List.first()
+    |> filter_name
   end
 
   @doc """
@@ -163,43 +140,28 @@ defmodule Neoscan.ChainAssets do
   """
   def get_asset_precision_by_hash(hash) do
     query =
-      cond do
-        String.length(hash) == 40 ->
-          from(
-            e in Asset,
-            where: e.contract == ^hash,
-            select: e.precision
-          )
-
-        true ->
-          from(
-            e in Asset,
-            where: e.txid == ^hash,
-            select: e.precision
-          )
+      if String.length(hash) == 40 do
+        from(e in Asset, where: e.contract == ^hash, select: e.precision)
+      else
+        from(e in Asset, where: e.txid == ^hash, select: e.precision)
       end
 
     Repo.all(query)
     |> List.first()
   end
 
-  def filter_name(nil) do
-    "Asset not Found"
-  end
+  def filter_name(nil), do: "Asset not Found"
 
   def filter_name(asset) do
     case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
+      %{"name" => "AntShare"} ->
+        "NEO"
+
+      %{"name" => "AntCoin"} ->
+        "GAS"
+
       %{"name" => name} ->
-        cond do
-          name == "AntShare" ->
-            "NEO"
-
-          name == "AntCoin" ->
-            "GAS"
-
-          true ->
-            name
-        end
+        name
 
       nil ->
         %{"name" => name} = Enum.at(asset, 0)
@@ -280,9 +242,7 @@ defmodule Neoscan.ChainAssets do
     create_asset(txid, new_asset)
   end
 
-  def create(nil, _txid, _time) do
-    nil
-  end
+  def create(nil, _txid, _time), do: nil
 
   @doc """
   Issue assets
@@ -294,9 +254,7 @@ defmodule Neoscan.ChainAssets do
     end)
   end
 
-  def issue(_type, _vouts) do
-    nil
-  end
+  def issue(_type, _vouts), do: nil
 
   def verify_asset(hash, time) do
     case Api.check_asset(hash) do

@@ -129,25 +129,14 @@ defmodule Neoscan.Helpers do
     end
   end
 
-  def contract?(hash) do
-    cond do
-      String.length(hash) == 64 ->
-        false
-
-      true ->
-        true
-    end
-  end
+  def contract?(hash), do: String.length(hash) != 64
 
   def apply_precision(integer, hash, precision) do
-    cond do
-      String.length(hash) == 40 ->
-        num = integer / :math.pow(10, precision)
-
-        "#{num}"
-
-      true ->
-        "#{integer}"
+    if String.length(hash) == 40 do
+      num = integer / :math.pow(10, precision)
+      "#{num}"
+    else
+      "#{integer}"
     end
   end
 end
