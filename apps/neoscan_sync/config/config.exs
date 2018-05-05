@@ -17,3 +17,5 @@ config :neoscan_sync,
   start_notifications: 1_444_800,
   # genstage demand size
   demand_size: 150
+
+config :neoscan_sync, should_start: Mix.env() not in [:travis, :test]
