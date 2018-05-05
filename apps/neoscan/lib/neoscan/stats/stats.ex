@@ -137,61 +137,56 @@ defmodule Neoscan.Stats do
     update_counter(counter, attrs)
   end
 
-  def get_attrs_for_type(counter, transaction) do
-    case Map.get(transaction, :type) do
-      "ContractTransaction" ->
-        %{
-          :total_transactions => Map.get(counter, :total_transactions) + 1,
-          :contract_transactions => Map.get(counter, :contract_transactions) + 1
-        }
+  def get_attrs_for_type(%{total_transactions: t, contract_transactions: c}, %{
+        type: "ContractTransaction"
+      }) do
+    %{total_transactions: t + 1, contract_transactions: c + 1}
+  end
 
-      "InvocationTransaction" ->
-        %{
-          :total_transactions => Map.get(counter, :total_transactions) + 1,
-          :invocation_transactions => Map.get(counter, :invocation_transactions) + 1
-        }
+  def get_attrs_for_type(%{total_transactions: t, invocation_transactions: c}, %{
+        type: "InvocationTransaction"
+      }) do
+    %{total_transactions: t + 1, invocation_transactions: c + 1}
+  end
 
-      "EnrollmentTransaction" ->
-        %{
-          :total_transactions => Map.get(counter, :total_transactions) + 1,
-          :enrollment_transactions => Map.get(counter, :enrollment_transactions) + 1
-        }
+  def get_attrs_for_type(%{total_transactions: t, enrollment_transactions: c}, %{
+        type: "EnrollmentTransaction"
+      }) do
+    %{total_transactions: t + 1, enrollment_transactions: c + 1}
+  end
 
-      "StateTransaction" ->
-        %{
-          :total_transactions => Map.get(counter, :total_transactions) + 1,
-          :state_transactions => Map.get(counter, :state_transactions) + 1
-        }
+  def get_attrs_for_type(%{total_transactions: t, state_transactions: c}, %{
+        type: "StateTransaction"
+      }) do
+    %{total_transactions: t + 1, state_transactions: c + 1}
+  end
 
-      "ClaimTransaction" ->
-        %{
-          :total_transactions => Map.get(counter, :total_transactions) + 1,
-          :claim_transactions => Map.get(counter, :claim_transactions) + 1
-        }
+  def get_attrs_for_type(%{total_transactions: t, claim_transactions: c}, %{
+        type: "ClaimTransaction"
+      }) do
+    %{total_transactions: t + 1, claim_transactions: c + 1}
+  end
 
-      "PublishTransaction" ->
-        %{
-          :total_transactions => Map.get(counter, :total_transactions) + 1,
-          :publish_transactions => Map.get(counter, :publish_transactions) + 1
-        }
+  def get_attrs_for_type(%{total_transactions: t, publish_transactions: c}, %{
+        type: "PublishTransaction"
+      }) do
+    %{total_transactions: t + 1, publish_transactions: c + 1}
+  end
 
-      "RegisterTransaction" ->
-        %{
-          :total_transactions => Map.get(counter, :total_transactions) + 1,
-          :register_transactions => Map.get(counter, :register_transactions) + 1
-        }
+  def get_attrs_for_type(%{total_transactions: t, register_transactions: c}, %{
+        type: "RegisterTransaction"
+      }) do
+    %{total_transactions: t + 1, register_transactions: c + 1}
+  end
 
-      "IssueTransaction" ->
-        %{
-          :total_transactions => Map.get(counter, :total_transactions) + 1,
-          :issue_transactions => Map.get(counter, :issue_transactions) + 1
-        }
+  def get_attrs_for_type(%{total_transactions: t, issue_transactions: c}, %{
+        type: "IssueTransaction"
+      }) do
+    %{total_transactions: t + 1, issue_transactions: c + 1}
+  end
 
-      "MinerTransaction" ->
-        %{
-          :miner_transactions => Map.get(counter, :miner_transactions) + 1
-        }
-    end
+  def get_attrs_for_type(%{miner_transactions: c}, %{type: "MinerTransaction"}) do
+    %{miner_transactions: c + 1}
   end
 
   def add_address_to_table do
