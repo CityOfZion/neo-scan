@@ -14,11 +14,8 @@ defmodule Neoscan.Vouts do
 
   ## Examples
 
-      iex> create_transaction(%{field: value})
-      {:ok, %Transaction{}}
-
-      iex> create_transaction(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
+      iex> create_vout(%Transaction{}, %{})
+      %Vout{}
 
   """
   def create_vout(transaction, attrs \\ %{}) do
