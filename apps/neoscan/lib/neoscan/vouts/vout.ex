@@ -4,7 +4,6 @@ defmodule Neoscan.Vouts.Vout do
   import Ecto.Changeset
   alias Neoscan.Vouts.Vout
   alias Neoscan.ChainAssets
-  import Mock
 
   schema "vouts" do
     field(:asset, :string)

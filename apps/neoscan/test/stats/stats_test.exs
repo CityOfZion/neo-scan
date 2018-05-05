@@ -30,9 +30,9 @@ defmodule Neoscan.Stats.StatsTest do
     assert counter1.invocation_transactions + 1 == counter2.invocation_transactions
     assert counter1.total_transactions + 1 == counter2.total_transactions
 
-    Stats.add_transaction_to_table(%{type: "InvocationTransaction", asset_moved: true})
+    Stats.add_transaction_to_table(%{type: "InvocationTransaction", asset_moved: "281d812"})
     counter3 = Stats.get_counter()
-    assert %{"true" => 1} == counter3.assets_transactions
+    assert %{"281d812" => 1} == counter3.assets_transactions
   end
 
   test "add_transfer_to_table/1" do

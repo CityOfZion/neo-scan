@@ -10,6 +10,78 @@ defmodule Neoscan.TransactionsTest do
       insert(:transaction)
     end
 
+    test "count_transactions_for_asset/1" do
+      assert 0 == Transactions.count_transactions_for_asset("randomstuff")
+      insert(:transaction, %{asset_moved: "12345678"})
+      assert 1 == Transactions.count_transactions_for_asset("12345678")
+    end
+
+    test "home_transactions/0" do
+      insert(:transaction, %{type: "MinerTransaction"})
+      transaction = insert(:transaction)
+      assert [transaction1] = Transactions.home_transactions()
+      assert transaction.txid == transaction1.txid
+    end
+
+    test "get_last_transactions_for_asset/1" do
+      transaction = insert(:transaction, %{asset_moved: "12345678"})
+      vout = insert(:vout, %{transaction_id: transaction.id})
+
+      assert [%{vouts: [vout2]} = transaction2] =
+               Transactions.get_last_transactions_for_asset("12345678")
+
+      assert transaction2.id == transaction.id
+      assert vout.address_hash == vout2.address_hash
+    end
+
+    test "paginate_transactions/2" do
+      transaction1 = insert(:transaction, %{type: "InvocationTransaction"})
+      _transaction2 = insert(:transaction, %{type: "IssueTransaction"})
+      _transaction3 = insert(:transaction, %{type: "RegisterTransaction"})
+      _vout = insert(:vout, %{transaction_id: transaction1.id})
+      assert 3 == Enum.count(Transactions.paginate_transactions(1))
+
+      assert 2 ==
+               Enum.count(
+                 Transactions.paginate_transactions(1, ["IssueTransaction", "RegisterTransaction"])
+               )
+
+      # TODO this looks like a hack, it probably needs to be refactored.
+      assert 1 == Enum.count(Transactions.paginate_transactions(1, ["issue"]))
+      assert 0 == Enum.count(Transactions.paginate_transactions(1, ["IssueTransaction"]))
+    end
+
+    test "paginate_transactions_for_block/2" do
+      block = insert(:block)
+      transaction1 = insert(:transaction, %{type: "InvocationTransaction", block_id: block.id})
+      insert(:vout, %{transaction_id: transaction1.id})
+
+      assert 1 ==
+               Enum.count(Transactions.paginate_transactions_for_block(transaction1.block_id, 1))
+    end
+
+    test "get_transaction_vouts/1" do
+      transaction1 = insert(:transaction, %{type: "InvocationTransaction"})
+      insert(:vout, %{transaction_id: transaction1.id})
+      assert [_] = Transactions.get_transaction_vouts(transaction1.id)
+    end
+
+    test "list_contracts/0" do
+      insert(:transaction, %{type: "PublishTransaction"})
+      insert(:transaction, %{type: "InvocationTransaction"})
+      insert(:transaction, %{type: "IssueTransaction"})
+
+      assert [_, _] = Transactions.list_contracts()
+    end
+
+    test "get_transaction_by_hash_for_view/1" do
+      transaction = insert(:transaction, %{type: "PublishTransaction"})
+      insert(:vout, %{transaction_id: transaction.id})
+
+      assert %Transaction{vouts: [_]} =
+               Transactions.get_transaction_by_hash_for_view(transaction.txid)
+    end
+
     test "list_transactions/0 returns all transaction" do
       transaction = insert(:transaction)
       assert Transactions.list_transactions() == [transaction]
@@ -19,6 +91,23 @@ defmodule Neoscan.TransactionsTest do
       transaction = insert(:transaction)
       assert Transactions.get_transaction!(transaction.id) == transaction
     end
+
+    #    test "create_transaction/2" do
+    #      block = insert(:block)
+    #      attrs = %{
+    #        "attributes" => [],
+    #        "net_fee" => "124",
+    #        "scripts" => [],
+    #        "size" => 23,
+    #        "sys_fee" => "23.23",
+    #        "version" => 12,
+    #        "vout" => [],
+    #        "vin" => [],
+    #        "txid" => "24jn2jk1nj424jn2jk1nj424jn2jk1nj424jn2jk1nj424jn2jk1nj424jn2jk1n",
+    #        "type" => "IssueTransaction"
+    #      }
+    #      Transactions.create_transaction(block, attrs)
+    #    end
 
     test "create_transaction/1 with valid data creates a transaction" do
       transaction = insert(:transaction)
