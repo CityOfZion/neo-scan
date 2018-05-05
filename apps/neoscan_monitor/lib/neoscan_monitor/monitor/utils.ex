@@ -16,11 +16,20 @@ defmodule NeoscanMonitor.Utils do
   def load do
     data =
       seeds()
-      |> Enum.map(fn url -> {url, Blockchain.get_current_height(url)} end)
-      |> Enum.filter(fn {url, result} -> evaluate_result(url, result) end)
-      |> Enum.map(fn {url, {:ok, height}} -> {url, height} end)
+      |> pmap(fn url ->
+        current_height = Blockchain.get_current_height(url)
+        {url, current_height, evaluate_result(url, current_height)}
+      end)
+      |> Enum.filter(fn {_, _, keep} -> keep end)
+      |> Enum.map(fn {url, {:ok, height}, _} -> {url, height} end)
 
     set_state(data)
+  end
+
+  def pmap(collection, func) do
+    collection
+    |> Enum.map(&Task.async(fn -> func.(&1) end))
+    |> Enum.map(&Task.await(&1, 15_000))
   end
 
   # handler for nil data
