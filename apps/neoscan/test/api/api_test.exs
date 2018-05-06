@@ -1,5 +1,5 @@
 defmodule Neoscan.Api.ApiTest do
-  use Neoscan.DataCase, async: true
+  use Neoscan.DataCase
   import Neoscan.Factory
   alias Neoscan.Api
 

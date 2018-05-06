@@ -1,5 +1,5 @@
 defmodule Neoscan.BalanceHistories.HistoryTest do
-  use Neoscan.DataCase, async: true
+  use Neoscan.DataCase
 
   alias Neoscan.BalanceHistories.History
 

@@ -1,5 +1,5 @@
 defmodule Neoscan.Addresses.AddressTest do
-  use Neoscan.DataCase, async: true
+  use Neoscan.DataCase
 
   alias Neoscan.Addresses.Address
 
