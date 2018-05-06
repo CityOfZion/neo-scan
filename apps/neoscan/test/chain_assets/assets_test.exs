@@ -1,5 +1,6 @@
 defmodule Neoscan.ChainAssets.AssetsTest do
   use Neoscan.DataCase
+  alias Neoscan.Stats
   alias Neoscan.ChainAssets
   alias Neoscan.ChainAssets.Asset
   import Neoscan.Factory
@@ -177,6 +178,9 @@ defmodule Neoscan.ChainAssets.AssetsTest do
   #  end
 
   test "get_assets_stats/0" do
+    # TODO we need to initialize stats counter before inserting insert otherwise there is an infinite loop
+    # , potentially a bug ?
+    Stats.initialize_counter()
     insert(:asset)
     assert %{assets_addresses: _, assets_transactions: _} = ChainAssets.get_assets_stats()
   end

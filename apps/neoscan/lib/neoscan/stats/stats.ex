@@ -24,8 +24,6 @@ defmodule Neoscan.Stats do
 
   """
   def initialize_counter do
-    IO.inspect({:initialize_counter_called})
-
     %{
       :total_blocks => Blocks.count_blocks(),
       :total_transactions => Transactions.count_transactions(),
@@ -44,7 +42,6 @@ defmodule Neoscan.Stats do
     |> Map.merge(ChainAssets.get_assets_stats())
     |> Counter.changeset()
     |> Repo.insert!()
-    |> IO.inspect()
   end
 
   @doc """
@@ -66,8 +63,6 @@ defmodule Neoscan.Stats do
   end
 
   def get_counter do
-    IO.inspect({:get_counter_called})
-
     Repo.all(Counter)
     |> List.first()
     |> create_if_doesnt_exists()
