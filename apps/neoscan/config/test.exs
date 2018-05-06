@@ -7,4 +7,5 @@ config :neoscan, Neoscan.Repo,
   password: "postgres",
   database: "neoscan_test",
   hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
+  pool: Ecto.Adapters.SQL.Sandbox,
+  ownership_timeout: 60_000
