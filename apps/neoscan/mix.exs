@@ -37,7 +37,6 @@ defmodule Neoscan.Mixfile do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(:travis), do: ["lib", "test"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
@@ -47,9 +46,9 @@ defmodule Neoscan.Mixfile do
     [
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
-      {:ex_machina, "~> 2.0", only: [:test, :travis]},
-      {:excoveralls, "~> 0.8", only: [:test, :travis]},
-      {:mock, "~> 0.3.0", only: [:test, :travis]},
+      {:ex_machina, "~> 2.0", only: :test},
+      {:excoveralls, "~> 0.8", only: :test},
+      {:mock, "~> 0.3.0", only: :test},
       {:poison, "~> 3.1"},
       {:scrivener_ecto, "~> 1.0"}
     ]

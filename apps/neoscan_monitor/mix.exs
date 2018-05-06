@@ -26,7 +26,6 @@ defmodule NeoscanMonitor.Mixfile do
   end
 
   defp elixirc_paths(:test), do: ["lib", "test"]
-  defp elixirc_paths(:travis), do: ["lib", "test"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Dependencies can be Hex packages:

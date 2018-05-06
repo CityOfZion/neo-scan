@@ -58,3 +58,5 @@ config :neoscan_monitor,
     "http://seed8.concierge.io:10332",
     "http://seed9.concierge.io:10332"
   ]
+
+config :neoscan_monitor, should_start: Mix.env() not in [:test]
