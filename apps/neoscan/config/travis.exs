@@ -4,7 +4,7 @@ use Mix.Config
 config :neoscan, Neoscan.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
-  password: "",
+  password: "postgres",
   database: "neoscan_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox,
