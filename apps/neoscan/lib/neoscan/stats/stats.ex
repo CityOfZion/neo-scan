@@ -24,6 +24,8 @@ defmodule Neoscan.Stats do
 
   """
   def initialize_counter do
+    IO.inspect({:initialize_counter_called})
+
     %{
       :total_blocks => Blocks.count_blocks(),
       :total_transactions => Transactions.count_transactions(),
