@@ -301,7 +301,10 @@ defmodule Neoscan.ChainAssets do
   end
 
   def get_assets_stats do
+    IO.inspect({:get_assets_stats})
     assets = list_assets()
+
+    IO.inspect({:list_assets})
 
     asset_addresses =
       assets
@@ -315,6 +318,8 @@ defmodule Neoscan.ChainAssets do
         end
       end)
 
+    IO.inspect({:asset_addresses})
+
     asset_transactions =
       assets
       |> Enum.reduce(%{}, fn %{:txid => txid, :contract => contract}, acc ->
@@ -326,6 +331,8 @@ defmodule Neoscan.ChainAssets do
             Map.put(acc, contract, Stats.count_transactions_for_asset(contract))
         end
       end)
+
+    IO.inspect({:asset_transactions})
 
     %{
       :assets_addresses => asset_addresses,

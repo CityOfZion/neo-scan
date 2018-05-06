@@ -8,7 +8,7 @@ script:
   - "mix local.hex --force"
   - "mix deps.get"
   - "mix format --check-formatted"
-  - "MIX_ENV=travis mix coveralls.travis -u"
+  - "mix coveralls.travis -u"
 services:
   - postgresql
 addons:
