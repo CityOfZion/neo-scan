@@ -8,6 +8,9 @@ defmodule Neoscan.Umbrella.Mixfile do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       name: "NeoScan",
+      elixirc_options: [
+        warnings_as_errors: true
+      ],
       docs: [
         # The main page in the docs
         main: "NeoScan",

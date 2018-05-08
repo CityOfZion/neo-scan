@@ -11,6 +11,15 @@ defmodule NeoscanSync.Mixfile do
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_coverage: [
+        tool: ExCoveralls
+      ],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -49,8 +58,10 @@ defmodule NeoscanSync.Mixfile do
     [
       {:neoscan, in_umbrella: true},
       {:neoscan_monitor, in_umbrella: true},
+      {:neoscan_node, in_umbrella: true},
       {:gen_stage, "~> 0.11"},
-      {:hackney, "~> 1.11", override: true}
+      {:hackney, "~> 1.11", override: true},
+      {:excoveralls, "~> 0.8", only: :test}
     ]
   end
 end

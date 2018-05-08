@@ -5,9 +5,9 @@ defmodule Neoscan.ChainAssets do
   alias Neoscan.ChainAssets.Asset
   alias Neoscan.Blocks
   alias NeoscanMonitor.Api
-  alias NeoscanSync.HttpCalls
-  alias NeoscanSync.Blockchain
-  alias NeoscanSync.Notifications
+  alias NeoscanNode.HttpCalls
+  alias NeoscanNode.Blockchain
+  alias NeoscanNode.Notifications
   alias Neoscan.Addresses
   alias Neoscan.Stats
 
@@ -281,7 +281,7 @@ defmodule Neoscan.ChainAssets do
     asset =
       cond do
         String.length(hash) == 64 ->
-          Blockchain.get_asset(HttpCalls.url(1), hash)
+          Blockchain.get_asset(HttpCalls.url(Api.get_nodes(), 1), hash)
 
         true ->
           Notifications.get_token_notifications()

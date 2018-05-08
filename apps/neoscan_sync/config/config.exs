@@ -7,12 +7,6 @@ config :logger, :console,
   metadata: [:request_id]
 
 config :neoscan_sync,
-  notification_seeds: [
-    "http://notifications1.neeeo.org/v1",
-    "http://notifications2.neeeo.org/v1",
-    "http://notifications3.neeeo.org/v1",
-    "http://notifications4.neeeo.org/v1"
-  ],
   # Block height to start notifications check
   start_notifications: 1_444_800,
   # genstage demand size

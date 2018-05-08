@@ -1,11 +1,11 @@
-defmodule NeoscanSync.Notifications do
+defmodule NeoscanNode.Notifications do
   use HTTPoison.Base
 
   @moduledoc """
   The boundary for the notification requests.
   """
 
-  alias NeoscanSync.HttpCalls
+  alias NeoscanNode.HttpCalls
   require Logger
 
   def get_block_notifications(height, urls_tried \\ []) do
@@ -30,7 +30,7 @@ defmodule NeoscanSync.Notifications do
   end
 
   def get_url(urls_tried) do
-    list = Application.fetch_env!(:neoscan_sync, :notification_seeds) -- urls_tried
+    list = Application.fetch_env!(:neoscan_node, :notification_seeds) -- urls_tried
 
     case list do
       [] ->

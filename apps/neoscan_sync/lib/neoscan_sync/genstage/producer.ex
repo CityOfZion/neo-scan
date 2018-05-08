@@ -2,9 +2,9 @@ defmodule NeoscanSync.Producer do
   @moduledoc false
   use GenStage
 
-  alias NeoscanSync.Blockchain
-  alias NeoscanSync.Notifications
-  alias NeoscanSync.HttpCalls
+  alias NeoscanNode.Blockchain
+  alias NeoscanNode.Notifications
+  alias NeoscanNode.HttpCalls
   alias NeoscanMonitor.Api
   alias Neoscan.Blocks
 
@@ -83,7 +83,7 @@ defmodule NeoscanSync.Producer do
   end
 
   defp check_if_nodes(n) do
-    nodes = HttpCalls.url(n)
+    nodes = HttpCalls.url(NeoscanMonitor.Api.get_nodes(), n)
 
     if Enum.count(nodes) == n do
       nodes

@@ -1,15 +1,16 @@
-defmodule NeoscanMonitor.Mixfile do
+defmodule NeoscanNode.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :neoscan_monitor,
+      app: :neoscan_node,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
+      elixirc_paths: elixirc_paths(Mix.env()),
       test_coverage: [
         tool: ExCoveralls
       ],
@@ -21,7 +22,6 @@ defmodule NeoscanMonitor.Mixfile do
       ],
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
-      elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps()
     ]
   end
@@ -31,9 +31,13 @@ defmodule NeoscanMonitor.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger, :httpoison], mod: {NeoscanMonitor.Application, []}]
+    [
+      extra_applications: [:logger, :httpoison],
+      mod: {NeoscanNode.Application, []}
+    ]
   end
 
+  # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test"]
   defp elixirc_paths(_), do: ["lib"]
 
@@ -52,9 +56,9 @@ defmodule NeoscanMonitor.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:morphix, "~> 0.0.7"},
-      {:neoscan, in_umbrella: true},
-      {:neoprice, in_umbrella: true},
+      {:hackney, "~> 1.11", override: true},
+      {:poison, "~> 3.1"},
+      {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
       {:excoveralls, "~> 0.8", only: :test}
     ]
   end

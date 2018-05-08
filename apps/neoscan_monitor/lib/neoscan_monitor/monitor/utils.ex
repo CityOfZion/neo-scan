@@ -1,11 +1,11 @@
 defmodule NeoscanMonitor.Utils do
   @moduledoc false
-  alias NeoscanSync.Blockchain
   alias Neoscan.Transactions
   alias Neoscan.Addresses
   alias Neoscan.Stats
   alias Neoscan.ChainAssets
-  alias NeoscanSync.Notifications
+  alias NeoscanNode.Notifications
+  alias NeoscanNode.Blockchain
 
   # blockchain api nodes
   def seeds do

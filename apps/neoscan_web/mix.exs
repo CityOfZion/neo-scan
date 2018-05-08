@@ -56,6 +56,7 @@ defmodule NeoscanWeb.Mixfile do
       {:neoprice, in_umbrella: true},
       {:neoscan_monitor, in_umbrella: true},
       {:neoscan_sync, in_umbrella: true},
+      {:neoscan_node, in_umbrella: true},
       {:excoveralls, "~> 0.8", only: :test},
       {:cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.2"},
