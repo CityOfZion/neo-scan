@@ -5,6 +5,7 @@ defmodule NeoscanNode.Worker do
   """
 
   @servers Application.fetch_env!(:neoscan_node, :seeds)
+  @update_interval 10_000
 
   alias NeoscanNode.Blockchain
 
@@ -36,6 +37,13 @@ defmodule NeoscanNode.Worker do
 
     set_state(data)
   end
+
+  defp evaluate_result(url, {:ok, height}) do
+    {type, _} = Blockchain.get_block_by_height(url, height - 1)
+    type == :ok
+  end
+
+  defp evaluate_result(_url, {:error, _height}), do: false
 
   def pmap(collection, func) do
     collection
@@ -74,21 +82,6 @@ defmodule NeoscanNode.Worker do
     height
   end
 
-  # handler to filter errors
-  defp evaluate_result(url, {:ok, height}) do
-    test_get_block(url, height)
-  end
-
-  defp evaluate_result(_url, {:error, _height}) do
-    false
-  end
-
-  # test node api
-  defp test_get_block(url, height) do
-    {type, _} = Blockchain.get_block_by_height(url, height - 1)
-    type == :ok
-  end
-
   def set(key, value) do
     :ets.insert(__MODULE__, {key, value})
   end
@@ -100,7 +93,10 @@ defmodule NeoscanNode.Worker do
     end
   end
 
+  def handle_info(:update_nodes, _), do: {:noreply, sync()}
+
   def sync() do
+    Process.send_after(self(), :update_nodes, @update_interval)
     set(:monitor, load())
   end
 
