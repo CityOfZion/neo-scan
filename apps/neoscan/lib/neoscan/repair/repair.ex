@@ -12,7 +12,6 @@ defmodule Neoscan.Repair do
   alias Neoscan.Vouts.Vout
   alias NeoscanNode.Blockchain
   alias NeoscanNode.HttpCalls
-  alias NeoscanSync.Consumer
   alias NeoscanSync.Producer
   alias NeoscanNode.Notifications
 
@@ -173,7 +172,7 @@ defmodule Neoscan.Repair do
     case Blockchain.get_block_by_hash(HttpCalls.get_url(1), hash) do
       {:ok, block} ->
         Producer.add_notifications(block, block["index"])
-        |> Consumer.add_block()
+        |> Blocks.add_block()
 
       _ ->
         get_and_add_missing_block(hash)
@@ -185,7 +184,7 @@ defmodule Neoscan.Repair do
     case Blockchain.get_block_by_height(HttpCalls.get_url(1), height) do
       {:ok, block} ->
         Producer.add_notifications(block, height)
-        |> Consumer.add_block()
+        |> Blocks.add_block()
 
       _ ->
         get_and_add_missing_block_from_height(height)

@@ -11,7 +11,7 @@ defmodule Neoscan.Mixfile do
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
       elixirc_paths: elixirc_paths(Mix.env()),
-      elixirc_options: [warnings_as_errors: true, ignore_module_conflict: true],
+      # elixirc_options: [warnings_as_errors: true, ignore_module_conflict: true],
       test_coverage: [
         tool: ExCoveralls
       ],
