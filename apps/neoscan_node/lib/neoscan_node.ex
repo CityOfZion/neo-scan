@@ -9,4 +9,8 @@ defmodule NeoscanNode do
   def get_height do
     Worker.get_height()
   end
+
+  def get_data do
+    Worker.get_data()
+  end
 end

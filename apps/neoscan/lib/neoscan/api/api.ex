@@ -20,7 +20,6 @@ defmodule Neoscan.Api do
   alias Neoscan.Blocks
   alias Neoscan.Vouts
   alias Neoscan.Vouts.Vout
-  alias NeoscanMonitor.Api, as: MonitorApi
   alias Neoscan.Helpers
   alias Neoscan.Claims.Claim
   alias Neoscan.Claims.Unclaimed
@@ -536,42 +535,6 @@ defmodule Neoscan.Api do
       [] -> 0
       [{_, %{"amount" => amount}}] -> amount
     end
-  end
-
-  @doc """
-  Returns registered assets in the chain
-
-  ## Examples
-
-      /api/main_net/v1/get_assets
-      [
-        {
-          "type": "type_string",
-          "txid": "tx_id_string",
-          "precision": integer,
-          "owner": "hash_string",
-          "name": [
-            {
-              "name": "name_string",
-              "lang": "language_code_string"
-            },
-            ...
-          ],
-          "issued": float,
-          "amount": float,
-          "admin": "hash_string"
-        },
-        ...
-      ]
-
-  """
-  def get_assets do
-    MonitorApi.get_assets()
-    |> Enum.map(fn x ->
-      Map.delete(x, :inserted_at)
-      |> Map.delete(:updated_at)
-      |> Map.delete(:id)
-    end)
   end
 
   @doc """
@@ -1197,7 +1160,7 @@ defmodule Neoscan.Api do
 
   """
   def get_all_nodes do
-    MonitorApi.get_data()
+    NeoscanNode.get_data()
     |> Enum.map(fn {url, height} -> %{url: url, height: height} end)
   end
 

@@ -24,6 +24,10 @@ defmodule NeoscanNode.Worker do
     Map.get(get(:monitor), :height)
   end
 
+  def get_data do
+    Map.get(get(:monitor), :data)
+  end
+
   # function to load nodes state
   def load do
     data =

@@ -2,6 +2,7 @@ defmodule NeoscanWeb.ApiController do
   use NeoscanWeb, :controller
 
   alias Neoscan.Api
+  alias NeoscanMonitor.Api, as: MonitorApi
 
   def get_balance(conn, %{"hash" => hash}) do
     balance = Api.get_balance(hash)
@@ -44,7 +45,14 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_assets(conn, _params) do
-    assets = Api.get_assets()
+    assets =
+      MonitorApi.get_assets()
+      |> Enum.map(fn x ->
+        Map.delete(x, :inserted_at)
+        |> Map.delete(:updated_at)
+        |> Map.delete(:id)
+      end)
+
     json(conn, assets)
   end
 

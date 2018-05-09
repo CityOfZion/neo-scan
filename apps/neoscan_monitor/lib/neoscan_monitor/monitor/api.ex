@@ -55,11 +55,6 @@ defmodule NeoscanMonitor.Api do
     Server.get(:contracts)
   end
 
-  def get_data do
-    Server.get(:monitor)
-    |> Map.get(:data)
-  end
-
   def get_price do
     Server.get(:price)
   end

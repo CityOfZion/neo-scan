@@ -4,7 +4,6 @@ defmodule Neoscan.ChainAssets do
   alias Neoscan.Repo
   alias Neoscan.ChainAssets.Asset
   alias Neoscan.Blocks
-  alias NeoscanMonitor.Api, as: MonitorApi
   alias NeoscanNode.HttpCalls
   alias NeoscanNode.Blockchain
   alias NeoscanNode.Notifications
@@ -257,16 +256,6 @@ defmodule Neoscan.ChainAssets do
   def issue(_type, _vouts), do: nil
 
   def verify_asset(hash, time) do
-    case MonitorApi.check_asset(hash) do
-      true ->
-        hash
-
-      false ->
-        check_db(hash, time)
-    end
-  end
-
-  def check_db(hash, time) do
     case get_asset_by_hash(hash) do
       %Asset{} ->
         hash
