@@ -18,4 +18,9 @@ defmodule NeoscanNode do
   def add_notifications(block, height) do
     Notifications.add_notifications(block, height)
   end
+
+  def restart do
+    Supervisor.terminate_child(NeoscanNode.Supervisor, NeoscanNode.Worker)
+    Supervisor.restart_child(NeoscanNode.Supervisor, NeoscanNode.Worker)
+  end
 end

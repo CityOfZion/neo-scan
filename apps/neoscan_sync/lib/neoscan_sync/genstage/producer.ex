@@ -86,12 +86,7 @@ defmodule NeoscanSync.Producer do
     if Enum.count(nodes) == n do
       nodes
     else
-      Supervisor.terminate_child(
-        NeoscanMonitor.Supervisor,
-        NeoscanMonitor.Worker
-      )
-
-      Supervisor.restart_child(NeoscanMonitor.Supervisor, NeoscanMonitor.Worker)
+      NeoscanNode.restart()
       Process.sleep(5000)
       nil
     end
