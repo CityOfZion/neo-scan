@@ -65,4 +65,31 @@ defmodule NeoscanNode.Notifications do
     Logger.info("error getting notifications for block #{height}")
     get_block_notifications(height, urls_tried)
   end
+
+  def add_notifications(block, height) do
+    # Disable notification checks for less than first ever nep5 token issue block height
+    limit_height = Application.fetch_env!(:neoscan_node, :start_notifications)
+
+    transfers =
+      cond do
+        height > limit_height ->
+          get_notifications(height)
+          |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
+
+        height <= limit_height ->
+          []
+      end
+
+    Map.merge(block, %{"transfers" => transfers})
+  end
+
+  def get_notifications(height) do
+    case get_block_notifications(height) do
+      {:error, _} ->
+        get_notifications(height)
+
+      result ->
+        result
+    end
+  end
 end

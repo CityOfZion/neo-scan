@@ -3,7 +3,6 @@ defmodule NeoscanSync.Producer do
   use GenStage
 
   alias NeoscanNode.Blockchain
-  alias NeoscanNode.Notifications
   alias NeoscanNode.HttpCalls
   alias Neoscan.Blocks
 
@@ -70,11 +69,11 @@ defmodule NeoscanSync.Producer do
       block_b = get_block_by_height(random2, height)
 
       if block_a == block_b do
-        add_notifications(block_a, height)
+        NeoscanNode.add_notifications(block_a, height)
       else
         # cross_check(height)
         Logger.info("Blocks don't match!")
-        add_notifications(block_a, height)
+        NeoscanNode.add_notifications(block_a, height)
       end
     else
       cross_check(height)
@@ -118,32 +117,5 @@ defmodule NeoscanSync.Producer do
   # get current height from monitor
   def get_current_height do
     NeoscanNode.get_height()
-  end
-
-  def add_notifications(block, height) do
-    # Disable notification checks for less than first ever nep5 token issue block height
-    limit_height = Application.fetch_env!(:neoscan_sync, :start_notifications)
-
-    transfers =
-      cond do
-        height > limit_height ->
-          get_notifications(height)
-          |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
-
-        height <= limit_height ->
-          []
-      end
-
-    Map.merge(block, %{"transfers" => transfers})
-  end
-
-  def get_notifications(height) do
-    case Notifications.get_block_notifications(height) do
-      {:error, _} ->
-        get_notifications(height)
-
-      result ->
-        result
-    end
   end
 end

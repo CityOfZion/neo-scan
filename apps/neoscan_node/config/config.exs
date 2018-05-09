@@ -8,6 +8,8 @@ config :neoscan_node,
     "http://notifications4.neeeo.org/v1"
   ]
 
+config :neoscan_node, start_notifications: 1_444_800
+
 config :neoscan_node,
   seeds: [
     "http://seed1.cityofzion.io:8080",

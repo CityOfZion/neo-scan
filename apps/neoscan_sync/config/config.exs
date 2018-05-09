@@ -8,7 +8,6 @@ config :logger, :console,
 
 config :neoscan_sync,
   # Block height to start notifications check
-  start_notifications: 1_444_800,
   # genstage demand size
   demand_size: 150
 
