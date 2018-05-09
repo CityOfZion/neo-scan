@@ -65,14 +65,14 @@ defmodule NeoscanSync.Consumer do
     |> Blocks.delete_block()
   end
 
-  defp check_final(r, height) do
-    if {:ok, "all operations were succesfull"} == r do
-      Logger.info("Block #{height} stored")
-    else
-      Logger.info("Failed to create transactions")
+  defp check_final({:ok, "all operations were succesfull"}, height) do
+    Logger.info("Block #{height} stored")
+  end
 
-      Blocks.get_block_by_height(height)
-      |> Blocks.delete_block()
-    end
+  defp check_final(_, height) do
+    Logger.info("Failed to create transactions")
+
+    Blocks.get_block_by_height(height)
+    |> Blocks.delete_block()
   end
 end

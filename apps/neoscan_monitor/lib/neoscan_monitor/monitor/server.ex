@@ -21,6 +21,8 @@ defmodule NeoscanMonitor.Server do
       write_concurrency: true
     ])
 
+    Process.send_after(self(), :broadcast, 30_000)
+
     {:ok, nil}
   end
 
@@ -35,20 +37,10 @@ defmodule NeoscanMonitor.Server do
     end
   end
 
-  def handle_info({:first_state_update, new_state}, _state) do
+  def handle_info({:state_update, new_state}, _state) do
     set(:blocks, new_state.blocks)
     set(:transactions, new_state.transactions)
     set(:transfers, new_state.transfers)
-    set(:assets, new_state.assets)
-    set(:stats, new_state.stats)
-    set(:addresses, new_state.addresses)
-    set(:price, new_state.price)
-    # In 10 seconds
-    Process.send_after(self(), :broadcast, 30_000)
-    {:noreply, nil}
-  end
-
-  def handle_info({:state_update, new_state}, _state) do
     set(:assets, new_state.assets)
     set(:stats, new_state.stats)
     set(:addresses, new_state.addresses)

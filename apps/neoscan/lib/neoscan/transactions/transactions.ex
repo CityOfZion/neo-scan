@@ -7,7 +7,6 @@ defmodule Neoscan.Transactions do
 
   import Ecto.Query, warn: false
   alias Neoscan.Repo
-  alias NeoscanMonitor.Api, as: MonitorApi
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Vouts.Vout
   alias Neoscan.ChainAssets
@@ -524,9 +523,8 @@ defmodule Neoscan.Transactions do
   end
 
   # add transaction to monitor cache
-  def update_transaction_state(%{:type => type} = transaction, vouts)
+  def update_transaction_state(%{:type => type} = transaction, _vouts)
       when type != "MinerTransaction" do
-    MonitorApi.add_transaction(transaction, vouts)
     Stats.add_transaction_to_table(transaction)
     transaction
   end

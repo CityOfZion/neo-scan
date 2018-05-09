@@ -3,7 +3,6 @@ defmodule NeoscanMonitor.Api do
   Interface between server and worker to communicate with external modules
   """
   alias NeoscanMonitor.Server
-  alias NeoscanMonitor.Worker
   alias Neoscan.ChainAssets
 
   def get_blocks do
@@ -67,17 +66,5 @@ defmodule NeoscanMonitor.Api do
 
   def get_stats do
     Server.get(:stats)
-  end
-
-  def add_block(block) do
-    Worker.add_block(block)
-  end
-
-  def add_transfer(transfer) do
-    Worker.add_transfer(transfer)
-  end
-
-  def add_transaction(transaction, vouts) do
-    Worker.add_transaction(transaction, vouts)
   end
 end

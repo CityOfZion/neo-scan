@@ -8,7 +8,6 @@ defmodule Neoscan.Blocks do
   alias Neoscan.Blocks.Block
   alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
-  alias NeoscanMonitor.Api, as: MonitorApi
   alias Neoscan.Stats
   alias NeoscanNode.HttpCalls
   alias NeoscanNode.Blockchain
@@ -271,8 +270,7 @@ defmodule Neoscan.Blocks do
     |> update_blocks_state
   end
 
-  def update_blocks_state(block) do
-    MonitorApi.add_block(block)
+  defp update_blocks_state(block) do
     Stats.add_block_to_table()
     block
   end
