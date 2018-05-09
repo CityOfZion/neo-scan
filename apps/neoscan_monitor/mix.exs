@@ -10,6 +10,7 @@ defmodule NeoscanMonitor.Mixfile do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
+      elixirc_options: [warnings_as_errors: true],
       test_coverage: [
         tool: ExCoveralls
       ],

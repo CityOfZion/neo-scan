@@ -5,7 +5,7 @@ defmodule Neoscan.Transfers do
   alias Neoscan.Transfers.Transfer
   alias Neoscan.Addresses
   alias Neoscan.Stats
-  alias NeoscanMonitor.Api
+  alias NeoscanMonitor.Api, as: MonitorApi
   alias Neoscan.TxAbstracts
 
   require Logger
@@ -139,7 +139,7 @@ defmodule Neoscan.Transfers do
   end
 
   def update_transfer_state(transfer) do
-    Api.add_transfer(transfer)
+    MonitorApi.add_transfer(transfer)
     Stats.add_transfer_to_table(transfer)
     transfer
   end

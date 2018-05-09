@@ -2,12 +2,12 @@ defmodule NeoscanWeb.TransactionView do
   use NeoscanWeb, :view
   use Timex
   import Number.Delimit
-  alias NeoscanMonitor.Api
   alias Neoscan.Vm.Disassembler
   alias Neoscan.Helpers
   alias Neoscan.Explanations
   alias NeoscanWeb.ViewHelper
   alias Neoscan.ChainAssets
+  alias NeoscanMonitor.Api, as: MonitorApi
 
   def get_type(type) do
     cond do

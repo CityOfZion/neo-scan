@@ -2,11 +2,11 @@ defmodule NeoscanWeb.BlockView do
   use NeoscanWeb, :view
   import Number.Delimit
   alias Neoscan.Vm.Disassembler
-  alias NeoscanMonitor.Api
   alias Neoscan.Helpers
   alias Neoscan.Explanations
   alias NeoscanWeb.ViewHelper
   alias Neoscan.ChainAssets
+  alias NeoscanMonitor.Api, as: MonitorApi
 
   def compare_time_and_get_minutes(unix_time) do
     ViewHelper.compare_time_and_get_minutes(unix_time)

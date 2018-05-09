@@ -10,7 +10,7 @@ defmodule Neoscan.Repair do
   alias Neoscan.Blocks.Block
   alias Neoscan.Vouts
   alias Neoscan.Vouts.Vout
-  alias NeoscanMonitor.Api
+  alias NeoscanMonitor.Api, as: MonitorApi
   alias NeoscanNode.Blockchain
   alias NeoscanNode.HttpCalls
   alias NeoscanSync.Consumer
@@ -44,7 +44,7 @@ defmodule Neoscan.Repair do
   end
 
   def get_transaction(txid) do
-    transaction = Blockchain.get_transaction(HttpCalls.url(Api.get_nodes(), 1), txid)
+    transaction = Blockchain.get_transaction(HttpCalls.url(MonitorApi.get_nodes(), 1), txid)
 
     case transaction do
       {:ok, _tx} ->
@@ -171,7 +171,7 @@ defmodule Neoscan.Repair do
 
   # get a missing block from the node client
   def get_and_add_missing_block(hash) do
-    case Blockchain.get_block_by_hash(HttpCalls.url(Api.get_nodes(), 1), hash) do
+    case Blockchain.get_block_by_hash(HttpCalls.url(MonitorApi.get_nodes(), 1), hash) do
       {:ok, block} ->
         Producer.add_notifications(block, block["index"])
         |> Consumer.add_block()
@@ -183,7 +183,7 @@ defmodule Neoscan.Repair do
 
   # get a missing block from the node client, from its height
   def get_and_add_missing_block_from_height(height) do
-    case Blockchain.get_block_by_height(HttpCalls.url(Api.get_nodes(), 1), height) do
+    case Blockchain.get_block_by_height(HttpCalls.url(MonitorApi.get_nodes(), 1), height) do
       {:ok, block} ->
         Producer.add_notifications(block, height)
         |> Consumer.add_block()

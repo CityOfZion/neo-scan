@@ -4,7 +4,7 @@ defmodule Neoscan.Claims.Unclaimed do
   alias Neoscan.Repo
   alias Neoscan.Repair
   alias Neoscan.Vouts.Vout
-  alias NeoscanMonitor.Api
+  alias NeoscanMonitor.Api, as: MonitorApi
   alias Neoscan.Blocks.Block
   alias Neoscan.Blocks
   alias Neoscan.BlockGasGeneration
@@ -149,7 +149,7 @@ defmodule Neoscan.Claims.Unclaimed do
 
   # check end_height and use current height when transaction vout wasn't used
   def check_end_height(nil) do
-    {:ok, height} = Api.get_height()
+    {:ok, height} = MonitorApi.get_height()
     height
   end
 

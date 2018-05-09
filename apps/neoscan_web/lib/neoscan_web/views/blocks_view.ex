@@ -1,10 +1,10 @@
 defmodule NeoscanWeb.BlocksView do
   use NeoscanWeb, :view
   import Number.Delimit
-  alias NeoscanMonitor.Api
+  alias NeoscanMonitor.Api, as: MonitorApi
 
   def get_current_min_qtd(page) do
-    %{:total_blocks => total} = Api.get_stats()
+    %{:total_blocks => total} = MonitorApi.get_stats()
 
     if total < 15 do
       0
@@ -14,7 +14,7 @@ defmodule NeoscanWeb.BlocksView do
   end
 
   def get_current_max_qtd(page) do
-    %{:total_blocks => total} = Api.get_stats()
+    %{:total_blocks => total} = MonitorApi.get_stats()
 
     cond do
       total < 15 ->
@@ -57,7 +57,7 @@ defmodule NeoscanWeb.BlocksView do
   end
 
   def check_last(page) do
-    %{:total_blocks => total} = Api.get_stats()
+    %{:total_blocks => total} = MonitorApi.get_stats()
 
     int =
       page
@@ -67,7 +67,7 @@ defmodule NeoscanWeb.BlocksView do
   end
 
   def get_total do
-    %{:total_blocks => total} = Api.get_stats()
+    %{:total_blocks => total} = MonitorApi.get_stats()
     total
   end
 

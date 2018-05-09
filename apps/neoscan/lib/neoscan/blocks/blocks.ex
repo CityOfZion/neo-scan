@@ -8,7 +8,7 @@ defmodule Neoscan.Blocks do
   alias Neoscan.Blocks.Block
   alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
-  alias NeoscanMonitor.Api
+  alias NeoscanMonitor.Api, as: MonitorApi
   alias Neoscan.Stats
   alias NeoscanNode.HttpCalls
   alias NeoscanNode.Blockchain
@@ -241,7 +241,7 @@ defmodule Neoscan.Blocks do
 
   """
   def get_block_time(height) do
-    url = HttpCalls.url(Api.get_nodes(), 1)
+    url = HttpCalls.url(MonitorApi.get_nodes(), 1)
 
     case Blockchain.get_block_by_height(url, height) do
       {:ok, block} ->
@@ -272,7 +272,7 @@ defmodule Neoscan.Blocks do
   end
 
   def update_blocks_state(block) do
-    Api.add_block(block)
+    MonitorApi.add_block(block)
     Stats.add_block_to_table()
     block
   end

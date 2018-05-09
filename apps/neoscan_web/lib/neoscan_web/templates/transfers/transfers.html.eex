@@ -39,7 +39,7 @@
                 <p class="large-detail-text"><%= gettext "Sent from" %></p>
                 <div class="individual-transaction">
                   <a href='<%= address_path(@conn, :index, transaction.address_from)%>' alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transaction.address_from %></a>
-                  <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transaction.contract,transaction.amount)) %> <%= Api.get_asset_name(transaction.contract) %></p>
+                  <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transaction.contract,transaction.amount)) %> <%= MonitorApi.get_asset_name(transaction.contract) %></p>
                 </div>
             </div>
             <img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" class="transaction-sent-arrow" />
@@ -47,7 +47,7 @@
               <p class="large-detail-text"><%= gettext "Sent to" %></p>
               <div class="individual-transaction">
                 <a href='<%= address_path(@conn, :index, transaction.address_to)%>' alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transaction.address_to %></a>
-                <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transaction.contract,transaction.amount)) %> <%= Api.get_asset_name(transaction.contract) %></p>
+                <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transaction.contract,transaction.amount)) %> <%= MonitorApi.get_asset_name(transaction.contract) %></p>
               </div>
             </div>
           </div>

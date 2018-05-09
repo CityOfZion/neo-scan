@@ -1,7 +1,7 @@
 defmodule NeoscanWeb.AddressView do
   use NeoscanWeb, :view
   import Number.Delimit
-  alias NeoscanMonitor.Api
+  alias NeoscanMonitor.Api, as: MonitorApi
   alias Neoscan.Helpers
   alias Neoscan.ChainAssets
 
@@ -13,7 +13,7 @@ defmodule NeoscanWeb.AddressView do
     balance
     |> Map.to_list()
     |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
-      Api.get_asset_name(asset) == "NEO"
+      MonitorApi.get_asset_name(asset) == "NEO"
     end)
     |> Enum.reduce(0, fn {_asset, %{"amount" => amount}}, _acc -> amount end)
     |> Helpers.round_or_not()
@@ -24,10 +24,10 @@ defmodule NeoscanWeb.AddressView do
     balance
     |> Map.to_list()
     |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
-      Api.get_asset_name(asset) != "NEO"
+      MonitorApi.get_asset_name(asset) != "NEO"
     end)
     |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
-      Api.get_asset_name(asset) != "GAS"
+      MonitorApi.get_asset_name(asset) != "GAS"
     end)
   end
 
@@ -40,7 +40,7 @@ defmodule NeoscanWeb.AddressView do
       balance
       |> Map.to_list()
       |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
-        Api.get_asset_name(asset) == "GAS"
+        MonitorApi.get_asset_name(asset) == "GAS"
       end)
       |> Enum.reduce(0.0, fn {_asset, %{"amount" => amount}}, acc ->
         amount + acc

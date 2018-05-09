@@ -1,7 +1,7 @@
 defmodule NeoscanWeb.TransactionsView do
   use NeoscanWeb, :view
   import Number.Delimit
-  alias NeoscanMonitor.Api
+  alias NeoscanMonitor.Api, as: MonitorApi
   alias Neoscan.Helpers
   alias Neoscan.ChainAssets
 
@@ -37,7 +37,7 @@ defmodule NeoscanWeb.TransactionsView do
   end
 
   def get_current_min_qtd(page, type) do
-    %{:total_transactions => [filtered_totals, total, _total_transfers]} = Api.get_stats()
+    %{:total_transactions => [filtered_totals, total, _total_transfers]} = MonitorApi.get_stats()
 
     total =
       case type do
@@ -53,7 +53,7 @@ defmodule NeoscanWeb.TransactionsView do
   end
 
   def get_current_max_qtd(page, type) do
-    %{:total_transactions => [filtered_totals, total, _total_transfers]} = Api.get_stats()
+    %{:total_transactions => [filtered_totals, total, _total_transfers]} = MonitorApi.get_stats()
 
     total =
       case type do
@@ -118,7 +118,7 @@ defmodule NeoscanWeb.TransactionsView do
       page
       |> String.to_integer()
 
-    %{:total_transactions => [filtered_totals, total, _total_transfers]} = Api.get_stats()
+    %{:total_transactions => [filtered_totals, total, _total_transfers]} = MonitorApi.get_stats()
 
     total =
       case type do
@@ -134,7 +134,7 @@ defmodule NeoscanWeb.TransactionsView do
   end
 
   def get_total(type) do
-    %{:total_transactions => [filtered_totals, total, _total_transfers]} = Api.get_stats()
+    %{:total_transactions => [filtered_totals, total, _total_transfers]} = MonitorApi.get_stats()
 
     if type do
       Map.get(filtered_totals, String.capitalize(type) <> "Transaction")

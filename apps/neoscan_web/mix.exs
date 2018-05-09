@@ -10,6 +10,7 @@ defmodule NeoscanWeb.Mixfile do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
+      elixirc_options: [warnings_as_errors: true],
       elixirc_paths: elixirc_paths(Mix.env()),
       test_coverage: [
         tool: ExCoveralls

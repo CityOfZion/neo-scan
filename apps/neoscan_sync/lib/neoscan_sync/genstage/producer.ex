@@ -5,7 +5,7 @@ defmodule NeoscanSync.Producer do
   alias NeoscanNode.Blockchain
   alias NeoscanNode.Notifications
   alias NeoscanNode.HttpCalls
-  alias NeoscanMonitor.Api
+  alias NeoscanMonitor.Api, as: MonitorApi
   alias Neoscan.Blocks
 
   require Logger
@@ -83,7 +83,7 @@ defmodule NeoscanSync.Producer do
   end
 
   defp check_if_nodes(n) do
-    nodes = HttpCalls.url(NeoscanMonitor.Api.get_nodes(), n)
+    nodes = HttpCalls.url(MonitorApi.get_nodes(), n)
 
     if Enum.count(nodes) == n do
       nodes
@@ -118,7 +118,7 @@ defmodule NeoscanSync.Producer do
 
   # get current height from monitor
   def get_current_height do
-    Api.get_height()
+    MonitorApi.get_height()
   end
 
   def add_notifications(block, height) do

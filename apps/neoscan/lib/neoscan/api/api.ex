@@ -20,7 +20,7 @@ defmodule Neoscan.Api do
   alias Neoscan.Blocks
   alias Neoscan.Vouts
   alias Neoscan.Vouts.Vout
-  alias NeoscanMonitor.Api
+  alias NeoscanMonitor.Api, as: MonitorApi
   alias Neoscan.Helpers
   alias Neoscan.Claims.Claim
   alias Neoscan.Claims.Unclaimed
@@ -566,7 +566,7 @@ defmodule Neoscan.Api do
 
   """
   def get_assets do
-    Api.get_assets()
+    MonitorApi.get_assets()
     |> Enum.map(fn x ->
       Map.delete(x, :inserted_at)
       |> Map.delete(:updated_at)
@@ -1197,7 +1197,7 @@ defmodule Neoscan.Api do
 
   """
   def get_all_nodes do
-    Api.get_data()
+    MonitorApi.get_data()
     |> Enum.map(fn {url, height} -> %{url: url, height: height} end)
   end
 
@@ -1216,7 +1216,7 @@ defmodule Neoscan.Api do
 
   """
   def get_nodes do
-    %{urls: Api.get_nodes()}
+    %{urls: MonitorApi.get_nodes()}
   end
 
   @doc """
@@ -1232,7 +1232,7 @@ defmodule Neoscan.Api do
 
   """
   def get_height do
-    {:ok, height} = Api.get_height()
+    {:ok, height} = MonitorApi.get_height()
     %{:height => height}
   end
 
