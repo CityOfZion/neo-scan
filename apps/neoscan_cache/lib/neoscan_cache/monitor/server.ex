@@ -1,7 +1,7 @@
-defmodule NeoscanMonitor.Server do
+defmodule NeoscanCache.Server do
   @moduledoc """
   GenServer module responsable to retrive blocks, states, transactions
-  and assets. Common interface to handle it is NeoscanMonitor.
+  and assets. Common interface to handle it is NeoscanCache.
   Api module(look there for more info)
   The state is updated using handle_info(:state_update, state)
   """
@@ -72,7 +72,7 @@ defmodule NeoscanMonitor.Server do
     check_endpoint = function_exported?(NeoscanWeb.Endpoint, :broadcast, 3)
 
     if check_endpoint do
-      broadcast = Application.fetch_env!(:neoscan_monitor, :broadcast)
+      broadcast = Application.fetch_env!(:neoscan_cache, :broadcast)
       broadcast.(payload)
     end
 

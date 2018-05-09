@@ -55,7 +55,7 @@ defmodule NeoscanWeb.Mixfile do
       {:gettext, "~> 0.11"},
       {:neoscan, in_umbrella: true},
       {:neoprice, in_umbrella: true},
-      {:neoscan_monitor, in_umbrella: true},
+      {:neoscan_cache, in_umbrella: true},
       {:neoscan_sync, in_umbrella: true},
       {:neoscan_node, in_umbrella: true},
       {:excoveralls, "~> 0.8", only: :test},

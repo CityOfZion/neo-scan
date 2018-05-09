@@ -1,8 +1,8 @@
-defmodule NeoscanMonitor.Api do
+defmodule NeoscanCache.Api do
   @moduledoc """
   Interface between server and worker to communicate with external modules
   """
-  alias NeoscanMonitor.Server
+  alias NeoscanCache.Server
   alias Neoscan.ChainAssets
 
   def get_blocks do

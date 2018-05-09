@@ -2,7 +2,7 @@ defmodule NeoscanWeb.ViewHelper do
   @moduledoc "Contains function used in multiple views"
   use NeoscanWeb, :view
   import Number.Delimit
-  alias NeoscanMonitor.Api, as: MonitorApi
+  alias NeoscanCache.Api, as: CacheApi
   alias Neoscan.Helpers
   alias Plug.Conn
 
@@ -21,7 +21,7 @@ defmodule NeoscanWeb.ViewHelper do
       balance
       |> Map.to_list()
       |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
-        MonitorApi.get_asset_name(asset) == "GAS"
+        CacheApi.get_asset_name(asset) == "GAS"
       end)
       |> Enum.reduce(0.0, fn {_asset, %{"amount" => amount}}, acc ->
         amount + acc
@@ -45,7 +45,7 @@ defmodule NeoscanWeb.ViewHelper do
     balance
     |> Map.to_list()
     |> Enum.filter(fn {_asset, %{"asset" => asset}} ->
-      MonitorApi.get_asset_name(asset) == "NEO"
+      CacheApi.get_asset_name(asset) == "NEO"
     end)
     |> Enum.reduce(0, fn {_asset, %{"amount" => amount}}, _acc -> amount end)
     |> Helpers.round_or_not()

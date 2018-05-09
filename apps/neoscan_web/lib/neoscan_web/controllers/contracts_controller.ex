@@ -1,10 +1,10 @@
 defmodule NeoscanWeb.ContractsController do
   use NeoscanWeb, :controller
 
-  alias NeoscanMonitor.Api, as: MonitorApi
+  alias NeoscanCache.Api, as: CacheApi
 
   def index(conn, _params) do
-    contracts = MonitorApi.get_contracts()
+    contracts = CacheApi.get_contracts()
     render(conn, "contracts.html", contracts: contracts)
   end
 end

@@ -1,4 +1,4 @@
-defmodule NeoscanMonitor.Utils do
+defmodule NeoscanCache.Utils do
   @moduledoc false
   alias Neoscan.Transactions
   alias Neoscan.Addresses

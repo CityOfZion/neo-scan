@@ -6,7 +6,7 @@ defmodule NeoscanWeb.BlockView do
   alias Neoscan.Explanations
   alias NeoscanWeb.ViewHelper
   alias Neoscan.ChainAssets
-  alias NeoscanMonitor.Api, as: MonitorApi
+  alias NeoscanCache.Api, as: CacheApi
 
   def compare_time_and_get_minutes(unix_time) do
     ViewHelper.compare_time_and_get_minutes(unix_time)

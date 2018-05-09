@@ -1,12 +1,12 @@
 defmodule NeoscanWeb.AssetController do
   use NeoscanWeb, :controller
 
-  alias NeoscanMonitor.Api, as: MonitorApi
+  alias NeoscanCache.Api, as: CacheApi
   alias Neoscan.Transactions
   alias Neoscan.Addresses
 
   def index(conn, %{"hash" => hash}) do
-    asset = MonitorApi.get_asset(hash)
+    asset = CacheApi.get_asset(hash)
 
     transactions =
       Transactions.get_last_transactions_for_asset(hash)

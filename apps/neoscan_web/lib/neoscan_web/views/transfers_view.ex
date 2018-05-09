@@ -1,12 +1,12 @@
 defmodule NeoscanWeb.TransfersView do
   use NeoscanWeb, :view
   import Number.Delimit
-  alias NeoscanMonitor.Api, as: MonitorApi
+  alias NeoscanCache.Api, as: CacheApi
   alias Neoscan.Helpers
   alias Neoscan.ChainAssets
 
   def get_current_min_qtd(page) do
-    %{:total_transfers => total} = MonitorApi.get_stats()
+    %{:total_transfers => total} = CacheApi.get_stats()
 
     if total == 0 do
       1
@@ -16,7 +16,7 @@ defmodule NeoscanWeb.TransfersView do
   end
 
   def get_current_max_qtd(page) do
-    %{:total_transfers => total} = MonitorApi.get_stats()
+    %{:total_transfers => total} = CacheApi.get_stats()
 
     cond do
       total < 15 ->
@@ -63,7 +63,7 @@ defmodule NeoscanWeb.TransfersView do
       page
       |> String.to_integer()
 
-    %{:total_transfers => total} = MonitorApi.get_stats()
+    %{:total_transfers => total} = CacheApi.get_stats()
 
     if int * 15 < total do
       true
@@ -73,7 +73,7 @@ defmodule NeoscanWeb.TransfersView do
   end
 
   def get_total() do
-    %{:total_transfers => total} = MonitorApi.get_stats()
+    %{:total_transfers => total} = CacheApi.get_stats()
 
     total
   end

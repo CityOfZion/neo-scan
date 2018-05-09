@@ -1,13 +1,13 @@
 defmodule NeoscanWeb.TransactionsController do
   use NeoscanWeb, :controller
 
-  alias NeoscanMonitor.Api, as: MonitorApi
+  alias NeoscanCache.Api, as: CacheApi
   alias Neoscan.Transactions
   alias Neoscan.Transfers
 
   def index(conn, _params) do
     transactions =
-      MonitorApi.get_transactions()
+      CacheApi.get_transactions()
       |> Enum.map(fn transaction ->
         {:ok, result} = Morphix.atomorphiform(transaction)
         result

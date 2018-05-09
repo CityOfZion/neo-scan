@@ -7,7 +7,7 @@ defmodule NeoscanWeb.TransactionView do
   alias Neoscan.Explanations
   alias NeoscanWeb.ViewHelper
   alias Neoscan.ChainAssets
-  alias NeoscanMonitor.Api, as: MonitorApi
+  alias NeoscanCache.Api, as: CacheApi
 
   def get_type(type) do
     cond do

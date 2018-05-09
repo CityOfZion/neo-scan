@@ -6,7 +6,7 @@
     <li>
       <div class="main-asset-type-wrapper">
         <p class="small-detail-text"><%= gettext "Asset"%></p>
-        <h2 class="asset-type"><%=MonitorApi.get_asset_name(asset.txid)%></h2>
+        <h2 class="asset-type"><%=CacheApi.get_asset_name(asset.txid)%></h2>
       </div>
       <div class="asset-details-wrapper">
         <div class="left-column">

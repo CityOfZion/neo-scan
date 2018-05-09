@@ -33,7 +33,7 @@ defmodule NeoscanSync.Mixfile do
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
     [
-      extra_applications: [:logger, :httpoison, :neoscan_monitor],
+      extra_applications: [:logger, :httpoison, :neoscan_cache],
       mod: {NeoscanSync.Application, []}
     ]
   end
@@ -58,7 +58,7 @@ defmodule NeoscanSync.Mixfile do
   defp deps do
     [
       {:neoscan, in_umbrella: true},
-      {:neoscan_monitor, in_umbrella: true},
+      {:neoscan_cache, in_umbrella: true},
       {:neoscan_node, in_umbrella: true},
       {:gen_stage, "~> 0.11"},
       {:hackney, "~> 1.11", override: true},

@@ -1,11 +1,11 @@
 defmodule NeoscanWeb.BlocksController do
   use NeoscanWeb, :controller
 
-  alias NeoscanMonitor.Api, as: MonitorApi
+  alias NeoscanCache.Api, as: CacheApi
   alias Neoscan.Blocks
 
   def index(conn, _params) do
-    blocks = MonitorApi.get_blocks()
+    blocks = CacheApi.get_blocks()
     render(conn, "blocks.html", blocks: blocks, page: "1")
   end
 

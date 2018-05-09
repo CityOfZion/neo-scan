@@ -1,11 +1,11 @@
 defmodule NeoscanWeb.AddressesController do
   use NeoscanWeb, :controller
 
-  alias NeoscanMonitor.Api, as: MonitorApi
+  alias NeoscanCache.Api, as: CacheApi
   alias Neoscan.Addresses
 
   def index(conn, _params) do
-    addresses = MonitorApi.get_addresses()
+    addresses = CacheApi.get_addresses()
     render(conn, "addresses.html", addresses: addresses, page: "1")
   end
 

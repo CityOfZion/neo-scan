@@ -1,12 +1,12 @@
-defmodule NeoscanMonitor.Worker do
+defmodule NeoscanCache.Worker do
   @moduledoc """
   GenServer module responsable to store blocks, states, trasactions and assets,
-  Common interface to handle it is NeoscanMonitor.Api module(look there for more info)
+  Common interface to handle it is NeoscanCache.Api module(look there for more info)
   """
 
   use GenServer
-  alias NeoscanMonitor.Utils
-  alias NeoscanMonitor.Server
+  alias NeoscanCache.Utils
+  alias NeoscanCache.Server
   alias Neoscan.Blocks
   alias Neoscan.Transactions
   alias Neoscan.Transfers
