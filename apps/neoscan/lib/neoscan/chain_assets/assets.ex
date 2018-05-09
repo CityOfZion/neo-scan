@@ -281,7 +281,7 @@ defmodule Neoscan.ChainAssets do
     asset =
       cond do
         String.length(hash) == 64 ->
-          Blockchain.get_asset(HttpCalls.url(MonitorApi.get_nodes(), 1), hash)
+          Blockchain.get_asset(HttpCalls.get_url(1), hash)
 
         true ->
           Notifications.get_token_notifications()

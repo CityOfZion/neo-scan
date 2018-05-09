@@ -26,8 +26,6 @@ defmodule NeoscanMonitor.Worker do
   # run initial queries and fill state with all info needed in the app,
   # then sends message with new state to server module
   def init(:ok) do
-    monitor_nodes = Utils.load()
-
     blocks = Blocks.home_blocks()
 
     transactions =
@@ -56,7 +54,6 @@ defmodule NeoscanMonitor.Worker do
     }
 
     new_state = %{
-      :monitor => monitor_nodes,
       :blocks => blocks,
       :transactions => transactions,
       :transfers => transfers,
@@ -82,7 +79,6 @@ defmodule NeoscanMonitor.Worker do
 
     new_state =
       Map.merge(state, %{
-        :monitor => Utils.load(),
         :assets =>
           ChainAssets.list_assets()
           |> Utils.get_stats(),

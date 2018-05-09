@@ -9,7 +9,7 @@ defmodule NeoscanNode.Application do
     import Supervisor.Spec, warn: false
 
     # Define workers and child supervisors to be supervised
-    children = []
+    children = [worker(NeoscanNode.Worker, [])]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options

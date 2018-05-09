@@ -1216,7 +1216,7 @@ defmodule Neoscan.Api do
 
   """
   def get_nodes do
-    %{urls: MonitorApi.get_nodes()}
+    %{urls: NeoscanNode.get_nodes()}
   end
 
   @doc """
@@ -1232,7 +1232,7 @@ defmodule Neoscan.Api do
 
   """
   def get_height do
-    {:ok, height} = MonitorApi.get_height()
+    {:ok, height} = NeoscanNode.get_height()
     %{:height => height}
   end
 

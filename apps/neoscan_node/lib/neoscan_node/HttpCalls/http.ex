@@ -12,6 +12,12 @@ defmodule NeoscanNode.HttpCalls do
     "http://seed2.antshares.org:10332"
 
   """
+  alias NeoscanNode.Worker
+
+  def get_url(n) do
+    url(Worker.get_nodes(), n)
+  end
+
   def url(nodes, n \\ 1) do
     test_if_nodes(nodes, n)
   end

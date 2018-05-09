@@ -6,16 +6,6 @@ defmodule NeoscanMonitor.Api do
   alias NeoscanMonitor.Worker
   alias Neoscan.ChainAssets
 
-  def get_nodes do
-    Server.get(:monitor)
-    |> Map.get(:nodes)
-  end
-
-  def get_height do
-    Server.get(:monitor)
-    |> Map.get(:height)
-  end
-
   def get_blocks do
     Server.get(:blocks)
   end
@@ -64,10 +54,6 @@ defmodule NeoscanMonitor.Api do
 
   def get_contracts do
     Server.get(:contracts)
-  end
-
-  def error do
-    GenServer.cast(NeoscanMonitor.Worker, :update_nodes)
   end
 
   def get_data do

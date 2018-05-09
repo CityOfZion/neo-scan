@@ -36,7 +36,6 @@ defmodule NeoscanMonitor.Server do
   end
 
   def handle_info({:first_state_update, new_state}, _state) do
-    set(:monitor, new_state.monitor)
     set(:blocks, new_state.blocks)
     set(:transactions, new_state.transactions)
     set(:transfers, new_state.transfers)
@@ -50,7 +49,6 @@ defmodule NeoscanMonitor.Server do
   end
 
   def handle_info({:state_update, new_state}, _state) do
-    set(:monitor, new_state.monitor)
     set(:assets, new_state.assets)
     set(:stats, new_state.stats)
     set(:addresses, new_state.addresses)

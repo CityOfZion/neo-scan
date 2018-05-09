@@ -241,7 +241,7 @@ defmodule Neoscan.Blocks do
 
   """
   def get_block_time(height) do
-    url = HttpCalls.url(MonitorApi.get_nodes(), 1)
+    url = HttpCalls.get_url(1)
 
     case Blockchain.get_block_by_height(url, height) do
       {:ok, block} ->
