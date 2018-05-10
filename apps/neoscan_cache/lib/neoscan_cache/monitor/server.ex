@@ -69,11 +69,8 @@ defmodule NeoscanCache.Server do
       "stats" => get(:stats)
     }
 
-    check_endpoint = function_exported?(NeoscanWeb.Endpoint, :broadcast, 3)
-
-    if check_endpoint do
-      broadcast = Application.fetch_env!(:neoscan_cache, :broadcast)
-      broadcast.(payload)
+    if function_exported?(NeoscanWeb.Endpoint, :broadcast, 3) do
+      apply(NeoscanWeb.Endpoint, :broadcast, ["room:home", "change", payload])
     end
 
     # In 10 seconds

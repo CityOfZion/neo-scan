@@ -42,7 +42,8 @@ defmodule Neoscan.Umbrella.Mixfile do
   defp deps do
     [
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.8", only: :test}
+      {:excoveralls, "~> 0.8", only: :test},
+      {:distillery, "~> 1.5", runtime: false}
     ]
   end
 

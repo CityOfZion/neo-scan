@@ -99,12 +99,12 @@ defmodule NeoscanNode.HttpCalls do
   end
 
   defp handle_response({:error, %HTTPoison.Error{reason: :timeout}}) do
-    Logger.error("timeout, retrying.....")
+    Logger.warn("timeout, retrying.....")
     {:error, :timeout}
   end
 
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}) do
-    Logger.error(reason)
+    Logger.warn(reason)
     {:error, "urlopen error, retry."}
   end
 
