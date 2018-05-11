@@ -12,7 +12,7 @@ build:
   script:
     - export REGISTRY_PATH="$CI_REGISTRY_IMAGE:$IMAGE_TAG"
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - cd api && docker build -t $REGISTRY_PATH .
+    - docker build -t $REGISTRY_PATH .
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker push $REGISTRY_PATH
 
