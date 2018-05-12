@@ -69,6 +69,7 @@ defmodule NeoscanSync.Producer do
       block_b = get_block_by_height(random2, height)
 
       if is_nil(block_a["nextconsensus"]) do
+        Logger.info("no nextconsensus: #{random1}")
         cross_check(height)
       else
         if block_a == block_b do

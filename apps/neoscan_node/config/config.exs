@@ -43,9 +43,8 @@ config :neoscan_node,
     "http://seed1.aphelion.org:10332",
     "http://seed2.aphelion.org:10332",
     "http://seed3.aphelion.org:10332",
-    "http://seed4.aphelion.org:10332",
-    "http://seed6.concierge.io:10332",
-    "http://seed7.concierge.io:10332",
-    "http://seed8.concierge.io:10332",
-    "http://seed9.concierge.io:10332"
+    "http://seed4.aphelion.org:10332"
+    #    "http://seed6.concierge.io:10332",
+    #    "http://seed7.concierge.io:10332",
+    #    "http://seed8.concierge.io:10332"
   ]
