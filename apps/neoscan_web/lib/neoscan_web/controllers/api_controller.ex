@@ -91,13 +91,13 @@ defmodule NeoscanWeb.ApiController do
     json(conn, transactions)
   end
 
-  def get_last_transactions_by_address(conn, %{"hash" => hash}) do
-    transactions = Api.get_last_transactions_by_address(hash, 1)
+  def get_last_transactions_by_address(conn, %{"hash" => hash, "page" => page}) do
+    transactions = Api.get_last_transactions_by_address(hash, page)
     json(conn, transactions)
   end
 
-  def get_last_transactions_by_address(conn, %{"hash" => hash, "page" => page}) do
-    transactions = Api.get_last_transactions_by_address(hash, page)
+  def get_last_transactions_by_address(conn, %{"hash" => hash}) do
+    transactions = Api.get_last_transactions_by_address(hash, 1)
     json(conn, transactions)
   end
 
