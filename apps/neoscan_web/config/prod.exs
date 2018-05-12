@@ -16,7 +16,6 @@ use Mix.Config
 config :neoscan_web, NeoscanWeb.Endpoint,
   http: [port: {:system, "PORT"}, compress: true],
   url: [scheme: "https", host: {:system, "HOST"}, port: 443],
-  force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,
   secret_key_base: "set_key",
