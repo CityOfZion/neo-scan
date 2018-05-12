@@ -14,14 +14,14 @@ RUN cd /code && mix release --env=prod
 RUN mkdir /export
 RUN RELEASE_DIR=`ls -d /code/_build/prod/rel/neoscan/releases/*/` && tar -xf "$RELEASE_DIR/neoscan.tar.gz" -C /export
 
-FROM alpine:3.7
+FROM bitwalker/alpine-elixir:1.6.5
 
 COPY --from=release /export/ /opt/app
-#RUN chown -R default /opt/app/
+RUN chown -R default /opt/app/
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-#USER default
+USER default
 
 CMD ["/start.sh"]
