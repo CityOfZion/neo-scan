@@ -65,13 +65,13 @@ defmodule NeoscanWeb.Router do
     get("/get_last_transactions/:type", ApiController, :get_last_transactions)
 
     get(
-      "/get_last_transactions_by_address/:hash",
+      "/get_last_transactions_by_address/:hash/:page",
       ApiController,
       :get_last_transactions_by_address
     )
 
     get(
-      "/get_last_transactions_by_address/:hash/:page",
+      "/get_last_transactions_by_address/:hash",
       ApiController,
       :get_last_transactions_by_address
     )
