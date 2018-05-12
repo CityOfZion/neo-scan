@@ -1,0 +1,13 @@
+version: "2"
+services:
+  neoscan:
+    image: ${REGISTRY_PATH}
+    environment:
+      HOST: neoscan.backslash.fr
+      PORT: 4000
+
+  haproxy:
+    image: ${HAPROXY_REGISTRY_PATH}
+    ports:
+     - "80:80"
+     - "443:443"
