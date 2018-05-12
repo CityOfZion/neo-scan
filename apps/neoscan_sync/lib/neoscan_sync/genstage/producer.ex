@@ -68,12 +68,16 @@ defmodule NeoscanSync.Producer do
       block_a = get_block_by_height(random1, height)
       block_b = get_block_by_height(random2, height)
 
-      if block_a == block_b do
-        NeoscanNode.add_notifications(block_a, height)
+      if is_nil(block_a["nextconsensus"]) do
+        cross_check(height)
       else
-        # cross_check(height)
-        Logger.info("Blocks don't match!")
-        NeoscanNode.add_notifications(block_a, height)
+        if block_a == block_b do
+          NeoscanNode.add_notifications(block_a, height)
+        else
+          # cross_check(height)
+          Logger.info("Blocks don't match!")
+          NeoscanNode.add_notifications(block_a, height)
+        end
       end
     else
       cross_check(height)
