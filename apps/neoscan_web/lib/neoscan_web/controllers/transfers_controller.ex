@@ -1,12 +1,12 @@
 defmodule NeoscanWeb.TransfersController do
   use NeoscanWeb, :controller
 
-  alias NeoscanMonitor.Api
+  alias NeoscanCache.Api, as: CacheApi
   alias Neoscan.Transfers
 
   def index(conn, _params) do
     transfers =
-      Api.get_transfers()
+      CacheApi.get_transfers()
       |> Enum.map(fn transfer ->
         {:ok, result} = Morphix.atomorphiform(transfer)
         result

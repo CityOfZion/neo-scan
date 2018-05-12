@@ -10,7 +10,17 @@ defmodule NeoscanWeb.Mixfile do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
+      elixirc_options: [warnings_as_errors: true],
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_coverage: [
+        tool: ExCoveralls
+      ],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -45,8 +55,10 @@ defmodule NeoscanWeb.Mixfile do
       {:gettext, "~> 0.11"},
       {:neoscan, in_umbrella: true},
       {:neoprice, in_umbrella: true},
-      {:neoscan_monitor, in_umbrella: true},
+      {:neoscan_cache, in_umbrella: true},
       {:neoscan_sync, in_umbrella: true},
+      {:neoscan_node, in_umbrella: true},
+      {:excoveralls, "~> 0.8", only: :test},
       {:cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.2"},
       {:wobserver, "~> 0.1"},

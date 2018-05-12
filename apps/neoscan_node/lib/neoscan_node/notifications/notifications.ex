@@ -1,11 +1,11 @@
-defmodule NeoscanSync.Notifications do
+defmodule NeoscanNode.Notifications do
   use HTTPoison.Base
 
   @moduledoc """
   The boundary for the notification requests.
   """
 
-  alias NeoscanSync.HttpCalls
+  alias NeoscanNode.HttpCalls
   require Logger
 
   def get_block_notifications(height, urls_tried \\ []) do
@@ -30,7 +30,7 @@ defmodule NeoscanSync.Notifications do
   end
 
   def get_url(urls_tried) do
-    list = Application.fetch_env!(:neoscan_sync, :notification_seeds) -- urls_tried
+    list = Application.fetch_env!(:neoscan_node, :notification_seeds) -- urls_tried
 
     case list do
       [] ->
@@ -64,5 +64,32 @@ defmodule NeoscanSync.Notifications do
   defp check(_response, height, urls_tried) do
     Logger.info("error getting notifications for block #{height}")
     get_block_notifications(height, urls_tried)
+  end
+
+  def add_notifications(block, height) do
+    # Disable notification checks for less than first ever nep5 token issue block height
+    limit_height = Application.fetch_env!(:neoscan_node, :start_notifications)
+
+    transfers =
+      cond do
+        height > limit_height ->
+          get_notifications(height)
+          |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
+
+        height <= limit_height ->
+          []
+      end
+
+    Map.merge(block, %{"transfers" => transfers})
+  end
+
+  def get_notifications(height) do
+    case get_block_notifications(height) do
+      {:error, _} ->
+        get_notifications(height)
+
+      result ->
+        result
+    end
   end
 end

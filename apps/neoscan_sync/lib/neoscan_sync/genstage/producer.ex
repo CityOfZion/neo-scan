@@ -2,10 +2,8 @@ defmodule NeoscanSync.Producer do
   @moduledoc false
   use GenStage
 
-  alias NeoscanSync.Blockchain
-  alias NeoscanSync.Notifications
-  alias NeoscanSync.HttpCalls
-  alias NeoscanMonitor.Api
+  alias NeoscanNode.Blockchain
+  alias NeoscanNode.HttpCalls
   alias Neoscan.Blocks
 
   require Logger
@@ -71,11 +69,11 @@ defmodule NeoscanSync.Producer do
       block_b = get_block_by_height(random2, height)
 
       if block_a == block_b do
-        add_notifications(block_a, height)
+        NeoscanNode.add_notifications(block_a, height)
       else
         # cross_check(height)
         Logger.info("Blocks don't match!")
-        add_notifications(block_a, height)
+        NeoscanNode.add_notifications(block_a, height)
       end
     else
       cross_check(height)
@@ -83,17 +81,12 @@ defmodule NeoscanSync.Producer do
   end
 
   defp check_if_nodes(n) do
-    nodes = HttpCalls.url(n)
+    nodes = HttpCalls.get_url(n)
 
     if Enum.count(nodes) == n do
       nodes
     else
-      Supervisor.terminate_child(
-        NeoscanMonitor.Supervisor,
-        NeoscanMonitor.Worker
-      )
-
-      Supervisor.restart_child(NeoscanMonitor.Supervisor, NeoscanMonitor.Worker)
+      NeoscanNode.restart()
       Process.sleep(5000)
       nil
     end
@@ -118,33 +111,6 @@ defmodule NeoscanSync.Producer do
 
   # get current height from monitor
   def get_current_height do
-    Api.get_height()
-  end
-
-  def add_notifications(block, height) do
-    # Disable notification checks for less than first ever nep5 token issue block height
-    limit_height = Application.fetch_env!(:neoscan_sync, :start_notifications)
-
-    transfers =
-      cond do
-        height > limit_height ->
-          get_notifications(height)
-          |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
-
-        height <= limit_height ->
-          []
-      end
-
-    Map.merge(block, %{"transfers" => transfers})
-  end
-
-  def get_notifications(height) do
-    case Notifications.get_block_notifications(height) do
-      {:error, _} ->
-        get_notifications(height)
-
-      result ->
-        result
-    end
+    NeoscanNode.get_height()
   end
 end

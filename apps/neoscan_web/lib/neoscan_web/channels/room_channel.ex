@@ -1,15 +1,15 @@
 defmodule NeoscanWeb.RoomChannel do
   @moduledoc false
   use Phoenix.Channel
-  alias NeoscanMonitor.Api
+  alias NeoscanCache.Api, as: CacheApi
 
   def join("room:home", _payload, socket) do
     {blocks, _} =
-      Api.get_blocks()
+      CacheApi.get_blocks()
       |> Enum.split(5)
 
     {transactions, _} =
-      Api.get_transactions()
+      CacheApi.get_transactions()
       |> Enum.split(5)
 
     {
@@ -17,8 +17,8 @@ defmodule NeoscanWeb.RoomChannel do
       %{
         :blocks => blocks,
         :transactions => transactions,
-        :price => Api.get_price(),
-        :stats => Api.get_stats()
+        :price => CacheApi.get_price(),
+        :stats => CacheApi.get_stats()
       },
       socket
     }

@@ -1,7 +1,7 @@
 defmodule NeoscanWeb.AssetsView do
   use NeoscanWeb, :view
   import Number.Delimit
-  alias NeoscanMonitor.Api
+  alias NeoscanCache.Api, as: CacheApi
 
   def get_supply(amount) when amount <= 0 do
     "Unlimited"

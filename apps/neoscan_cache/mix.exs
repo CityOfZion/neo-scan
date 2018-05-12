@@ -1,15 +1,25 @@
-defmodule NeoscanMonitor.Mixfile do
+defmodule NeoscanCache.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :neoscan_monitor,
+      app: :neoscan_cache,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
+      elixirc_options: [warnings_as_errors: true],
+      test_coverage: [
+        tool: ExCoveralls
+      ],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -22,7 +32,7 @@ defmodule NeoscanMonitor.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger, :httpoison], mod: {NeoscanMonitor.Application, []}]
+    [extra_applications: [:logger, :httpoison], mod: {NeoscanCache.Application, []}]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test"]
@@ -45,7 +55,8 @@ defmodule NeoscanMonitor.Mixfile do
     [
       {:morphix, "~> 0.0.7"},
       {:neoscan, in_umbrella: true},
-      {:neoprice, in_umbrella: true}
+      {:neoprice, in_umbrella: true},
+      {:excoveralls, "~> 0.8", only: :test}
     ]
   end
 end

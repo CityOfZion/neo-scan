@@ -10,11 +10,9 @@ defmodule Neoscan.Repair do
   alias Neoscan.Blocks.Block
   alias Neoscan.Vouts
   alias Neoscan.Vouts.Vout
-  alias NeoscanSync.Blockchain
-  alias NeoscanSync.HttpCalls
-  alias NeoscanSync.Consumer
-  alias NeoscanSync.Producer
-  alias NeoscanSync.Notifications
+  alias NeoscanNode.Blockchain
+  alias NeoscanNode.HttpCalls
+  alias NeoscanNode.Notifications
 
   # trigger repair if information is missing
   def repair_missing([], root) do
@@ -43,7 +41,7 @@ defmodule Neoscan.Repair do
   end
 
   def get_transaction(txid) do
-    transaction = Blockchain.get_transaction(HttpCalls.url(1), txid)
+    transaction = Blockchain.get_transaction(HttpCalls.get_url(1), txid)
 
     case transaction do
       {:ok, _tx} ->
@@ -170,10 +168,10 @@ defmodule Neoscan.Repair do
 
   # get a missing block from the node client
   def get_and_add_missing_block(hash) do
-    case Blockchain.get_block_by_hash(HttpCalls.url(1), hash) do
+    case Blockchain.get_block_by_hash(HttpCalls.get_url(1), hash) do
       {:ok, block} ->
-        Producer.add_notifications(block, block["index"])
-        |> Consumer.add_block()
+        NeoscanNode.add_notifications(block, block["index"])
+        |> Blocks.add_block()
 
       _ ->
         get_and_add_missing_block(hash)
@@ -182,10 +180,10 @@ defmodule Neoscan.Repair do
 
   # get a missing block from the node client, from its height
   def get_and_add_missing_block_from_height(height) do
-    case Blockchain.get_block_by_height(HttpCalls.url(1), height) do
+    case Blockchain.get_block_by_height(HttpCalls.get_url(1), height) do
       {:ok, block} ->
-        Producer.add_notifications(block, height)
-        |> Consumer.add_block()
+        NeoscanNode.add_notifications(block, height)
+        |> Blocks.add_block()
 
       _ ->
         get_and_add_missing_block_from_height(height)

@@ -1,8 +1,16 @@
 use Mix.Config
 
-config :neoscan_monitor, ecto_repos: []
+config :neoscan_node,
+  notification_seeds: [
+    "http://notifications1.neeeo.org/v1",
+    "http://notifications2.neeeo.org/v1",
+    "http://notifications3.neeeo.org/v1",
+    "http://notifications4.neeeo.org/v1"
+  ]
 
-config :neoscan_monitor,
+config :neoscan_node, start_notifications: 1_444_800
+
+config :neoscan_node,
   seeds: [
     "http://seed1.cityofzion.io:8080",
     "http://seed2.cityofzion.io:8080",
@@ -58,5 +66,3 @@ config :neoscan_monitor,
     "http://seed8.concierge.io:10332",
     "http://seed9.concierge.io:10332"
   ]
-
-config :neoscan_monitor, should_start: Mix.env() not in [:test]

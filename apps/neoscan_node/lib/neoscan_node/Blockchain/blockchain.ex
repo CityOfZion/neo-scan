@@ -1,11 +1,11 @@
-defmodule NeoscanSync.Blockchain do
+defmodule NeoscanNode.Blockchain do
   use HTTPoison.Base
 
   @moduledoc """
   The boundary for the Blockchain requests.
   """
 
-  alias NeoscanSync.HttpCalls
+  alias NeoscanNode.HttpCalls
 
   @doc """
    Get the current block by height through seed 'index'

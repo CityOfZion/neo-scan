@@ -1,7 +1,7 @@
 defmodule NeoscanWeb.AddressesView do
   use NeoscanWeb, :view
   import Number.Delimit
-  alias NeoscanMonitor.Api
+  alias NeoscanCache.Api, as: CacheApi
   alias NeoscanWeb.ViewHelper
 
   def compare_time_and_get_minutes(nil), do: nil
@@ -26,7 +26,7 @@ defmodule NeoscanWeb.AddressesView do
   end
 
   def get_current_min_qtd(page) do
-    %{:total_addresses => total} = Api.get_stats()
+    %{:total_addresses => total} = CacheApi.get_stats()
 
     if total < 15 do
       0
@@ -36,7 +36,7 @@ defmodule NeoscanWeb.AddressesView do
   end
 
   def get_current_max_qtd(page) do
-    %{:total_addresses => total} = Api.get_stats()
+    %{:total_addresses => total} = CacheApi.get_stats()
 
     cond do
       total < 15 ->
@@ -79,7 +79,7 @@ defmodule NeoscanWeb.AddressesView do
   end
 
   def check_last(page) do
-    %{:total_addresses => total} = Api.get_stats()
+    %{:total_addresses => total} = CacheApi.get_stats()
 
     int =
       page
@@ -93,7 +93,7 @@ defmodule NeoscanWeb.AddressesView do
   end
 
   def get_total do
-    %{:total_addresses => total} = Api.get_stats()
+    %{:total_addresses => total} = CacheApi.get_stats()
     total
   end
 end

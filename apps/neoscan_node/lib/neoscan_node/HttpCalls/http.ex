@@ -1,8 +1,7 @@
-defmodule NeoscanSync.HttpCalls do
+defmodule NeoscanNode.HttpCalls do
   @moduledoc false
 
   require Logger
-  alias NeoscanMonitor.Api
 
   @doc """
    Returns seed url according with 'index'
@@ -13,9 +12,14 @@ defmodule NeoscanSync.HttpCalls do
     "http://seed2.antshares.org:10332"
 
   """
-  def url(n \\ 1) do
-    Api.get_nodes()
-    |> test_if_nodes(n)
+  alias NeoscanNode.Worker
+
+  def get_url(n) do
+    url(Worker.get_nodes(), n)
+  end
+
+  def url(nodes, n \\ 1) do
+    test_if_nodes(nodes, n)
   end
 
   defp test_if_nodes(list, n) do

@@ -10,7 +10,17 @@ defmodule NeoscanSync.Mixfile do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
+      elixirc_options: [warnings_as_errors: true],
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_coverage: [
+        tool: ExCoveralls
+      ],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -23,7 +33,7 @@ defmodule NeoscanSync.Mixfile do
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
     [
-      extra_applications: [:logger, :httpoison, :neoscan_monitor],
+      extra_applications: [:logger, :httpoison, :neoscan_cache],
       mod: {NeoscanSync.Application, []}
     ]
   end
@@ -48,9 +58,11 @@ defmodule NeoscanSync.Mixfile do
   defp deps do
     [
       {:neoscan, in_umbrella: true},
-      {:neoscan_monitor, in_umbrella: true},
+      {:neoscan_cache, in_umbrella: true},
+      {:neoscan_node, in_umbrella: true},
       {:gen_stage, "~> 0.11"},
-      {:hackney, "~> 1.11", override: true}
+      {:hackney, "~> 1.11", override: true},
+      {:excoveralls, "~> 0.8", only: :test}
     ]
   end
 end

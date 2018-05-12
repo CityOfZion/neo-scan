@@ -1,9 +1,9 @@
 defmodule NeoscanWeb.AssetView do
   use NeoscanWeb, :view
   import Number.Delimit
-  alias NeoscanMonitor.Api
   alias NeoscanWeb.ViewHelper
   alias Neoscan.Helpers
+  alias NeoscanCache.Api, as: CacheApi
 
   def compare_time_and_get_minutes(balance) do
     unix_time =
