@@ -41,7 +41,7 @@ defmodule NeoscanNode.HttpCalls do
       value ->
         value
         |> HTTPoison.post(data, headers, ssl: [{:versions, [:"tlsv1.2"]}])
-        |> handle_response
+        |> handle_response(value)
     end
   end
 
@@ -56,12 +56,12 @@ defmodule NeoscanNode.HttpCalls do
       value ->
         value
         |> HTTPoison.get([], ssl: [{:versions, [:"tlsv1.2"]}])
-        |> handle_response
+        |> handle_response(value)
     end
   end
 
   # Handles the response of an HTTP call
-  defp handle_response({:ok, %HTTPoison.Response{status_code: 200, body: body} = res}) do
+  defp handle_response({:ok, %HTTPoison.Response{status_code: 200, body: body} = res}, _) do
     gzipped =
       Enum.any?(res.headers, fn kv ->
         case kv do
@@ -83,28 +83,28 @@ defmodule NeoscanNode.HttpCalls do
     |> handle_body
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{status_code: 404}}) do
+  defp handle_response({:ok, %HTTPoison.Response{status_code: 404}}, _) do
     Logger.error("Error 404 Not found! :(")
     {:error, "Error 404 Not found! :("}
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{status_code: 405}}) do
+  defp handle_response({:ok, %HTTPoison.Response{status_code: 405}}, _) do
     Logger.error("Error 405 Method not found! :(")
     {:error, "Error 405 Method not found! :("}
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{}}) do
+  defp handle_response({:ok, %HTTPoison.Response{}}, _) do
     Logger.error("Web server error! :(")
     {:error, "Web server error! :("}
   end
 
-  defp handle_response({:error, %HTTPoison.Error{reason: :timeout}}) do
-    Logger.error("timeout, retrying.....")
+  defp handle_response({:error, %HTTPoison.Error{reason: :timeout}}, url) do
+    Logger.warn("timeout, retrying..... #{url}")
     {:error, :timeout}
   end
 
-  defp handle_response({:error, %HTTPoison.Error{reason: reason}}) do
-    Logger.error(reason)
+  defp handle_response({:error, %HTTPoison.Error{reason: reason}}, url) do
+    Logger.warn("#{reason} #{url}")
     {:error, "urlopen error, retry."}
   end
 

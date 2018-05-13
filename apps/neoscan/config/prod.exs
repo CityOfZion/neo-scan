@@ -5,7 +5,7 @@ config :neoscan, Neoscan.Repo,
   username: "postgres",
   password: "postgres",
   database: "neoscan_prodv",
-  hostname: "localhost",
+  hostname: "postgres",
   pool_size: 30,
   timeout: 30_000
 

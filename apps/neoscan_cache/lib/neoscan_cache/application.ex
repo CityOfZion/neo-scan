@@ -5,8 +5,6 @@ defmodule NeoscanCache.Application do
 
   use Application
 
-  @should_start Application.get_env(:neoscan_cache, :should_start)
-
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
@@ -19,6 +17,6 @@ defmodule NeoscanCache.Application do
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: NeoscanCache.Supervisor]
-    Supervisor.start_link(if(@should_start, do: children, else: []), opts)
+    Supervisor.start_link(children, opts)
   end
 end

@@ -1,0 +1,19 @@
+version: "2"
+services:
+  neoscan:
+    image: ${REGISTRY_PATH}
+    restart: always
+    environment:
+      HOST: neoscan.backslash.fr
+      PORT: 4000
+
+#certificate generated with:
+# sudo certbot certonly --standalone --preferred-challenges http --http-01-port 80 -d neoscan.backslash.fr
+
+  haproxy:
+    image: ${HAPROXY_REGISTRY_PATH}
+    ports:
+     - "80:80"
+     - "443:443"
+    volumes:
+     - "/etc/letsencrypt/:/etc/letsencrypt/:ro"
