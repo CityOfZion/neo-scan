@@ -633,12 +633,13 @@ defmodule Neoscan.Transactions do
 
   """
   def create_transactions(block, transactions) do
-    case Enum.each(transactions, fn transaction -> create_transaction(block, transaction) end) do
-      :ok ->
-        {:ok, "Created", block}
+    pmap(transactions, fn transaction -> create_transaction(block, transaction) end)
+    {:ok, "Created", block}
+  end
 
-      _ ->
-        {:error, "failed to create transactions"}
-    end
+  defp pmap(collection, func) do
+    collection
+    |> Enum.map(&Task.async(fn -> func.(&1) end))
+    |> Enum.map(&Task.await(&1, 60_000))
   end
 end
