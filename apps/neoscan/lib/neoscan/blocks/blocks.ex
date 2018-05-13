@@ -327,10 +327,7 @@ defmodule Neoscan.Blocks do
         e in Block,
         select: e.index,
         where: e.index > -1,
-        # force postgres to use index
-        order_by: [
-          desc: e.index
-        ],
+        order_by: [fragment("? DESC NULLS LAST", e.index)],
         limit: 1
       )
 
