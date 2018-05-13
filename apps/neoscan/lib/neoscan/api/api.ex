@@ -335,11 +335,7 @@ defmodule Neoscan.Api do
             :txids => new_tx,
             :unclaimed => Unclaimed.calculate_bonus(address.id)
           })
-          |> Map.delete(:inserted_at)
-          |> Map.delete(:histories)
-          |> Map.delete(:updated_at)
-          |> Map.delete(:vouts)
-          |> Map.delete(:id)
+          |> Map.drop([:inserted_at, :histories, :updated_at, :vouts, :id, :__meta__, :__struct__])
       end
 
     result
@@ -469,11 +465,7 @@ defmodule Neoscan.Api do
             :balance => new_balance,
             :txids => new_tx
           })
-          |> Map.delete(:inserted_at)
-          |> Map.delete(:histories)
-          |> Map.delete(:updated_at)
-          |> Map.delete(:vouts)
-          |> Map.delete(:id)
+          |> Map.drop([:inserted_at, :histories, :updated_at, :vouts, :id, :__meta__, :__struct__])
       end
 
     result
@@ -568,9 +560,7 @@ defmodule Neoscan.Api do
           asset
       end
 
-    Map.delete(result, :inserted_at)
-    |> Map.delete(:updated_at)
-    |> Map.delete(:id)
+    Map.drop(result, [:inserted_at, :updated_at, :id, :__meta__, :__struct__])
   end
 
   @doc """
@@ -658,9 +648,7 @@ defmodule Neoscan.Api do
           block
       end
 
-    Map.delete(result, :inserted_at)
-    |> Map.delete(:updated_at)
-    |> Map.delete(:id)
+    Map.drop(result, [:inserted_at, :updated_at, :id, :__meta__, :__struct__])
   end
 
   @doc """
@@ -714,11 +702,7 @@ defmodule Neoscan.Api do
       )
 
     Repo.all(query)
-    |> Enum.map(fn x ->
-      Map.delete(x, :inserted_at)
-      |> Map.delete(:updated_at)
-      |> Map.delete(:id)
-    end)
+    |> Enum.map(fn x -> Map.drop(x, [:inserted_at, :updated_at, :id, :__meta__, :__struct__]) end)
   end
 
   @doc """
@@ -770,9 +754,7 @@ defmodule Neoscan.Api do
 
     Repo.all(query)
     |> List.first()
-    |> Map.delete(:inserted_at)
-    |> Map.delete(:updated_at)
-    |> Map.delete(:id)
+    |> Map.drop([:inserted_at, :updated_at, :id, :__meta__, :__struct__])
   end
 
   @doc """
@@ -885,10 +867,7 @@ defmodule Neoscan.Api do
             end)
 
           Map.delete(transaction, :block)
-          |> Map.delete(:inserted_at)
-          |> Map.delete(:updated_at)
-          |> Map.delete(:block_id)
-          |> Map.delete(:id)
+          |> Map.drop([:inserted_at, :updated_at, :id, :block_id, :__meta__, :__struct__])
           |> Map.put(:vouts, new_vouts)
           |> Map.put(:vin, new_vins)
       end
@@ -1002,11 +981,8 @@ defmodule Neoscan.Api do
           Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset))
         end)
 
-      Map.delete(x, :block)
-      |> Map.delete(:inserted_at)
-      |> Map.delete(:updated_at)
-      |> Map.delete(:block_id)
-      |> Map.delete(:id)
+      x
+      |> Map.drop([:block, :inserted_at, :updated_at, :id, :block_id, :__meta__, :__struct__])
       |> Map.put(:vouts, new_vouts)
       |> Map.put(:vin, new_vins)
     end)

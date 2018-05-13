@@ -6,6 +6,8 @@ defmodule NeoscanCache.Server do
   The state is updated using handle_info(:state_update, state)
   """
 
+  require Logger
+
   use GenServer
 
   def start_link do
