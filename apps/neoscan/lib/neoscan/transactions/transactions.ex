@@ -633,13 +633,10 @@ defmodule Neoscan.Transactions do
 
   """
   def create_transactions(block, transactions) do
-    pmap(transactions, fn transaction -> create_transaction(block, transaction) end)
+    max_concurrency = System.schedulers_online() * 2
+    opts = [max_concurrency: max_concurrency, timeout: 60_000]
+    stream = Task.async_stream(transactions, &create_transaction(block, &1), opts)
+    Stream.run(stream)
     {:ok, "Created", block}
-  end
-
-  defp pmap(collection, func) do
-    collection
-    |> Enum.map(&Task.async(fn -> func.(&1) end))
-    |> Enum.map(&Task.await(&1, 60_000))
   end
 end
