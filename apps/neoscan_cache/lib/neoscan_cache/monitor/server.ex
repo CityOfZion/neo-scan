@@ -15,7 +15,7 @@ defmodule NeoscanCache.Server do
   end
 
   def init(:ok) do
-    :ets.new(:server, [
+    :ets.new(__MODULE__, [
       :set,
       :named_table,
       :public,
@@ -29,13 +29,21 @@ defmodule NeoscanCache.Server do
   end
 
   def set(key, value) do
-    :ets.insert(:server, {key, value})
+    :ets.insert(__MODULE__, {key, value})
   end
 
   def get(key) do
-    case :ets.lookup(:server, key) do
-      [{^key, result}] -> result
-      _ -> nil
+    try do
+      :ets.lookup(__MODULE__, key)
+    rescue
+      ArgumentError ->
+        nil
+    else
+      [{^key, result}] ->
+        result
+
+      _ ->
+        nil
     end
   end
 
