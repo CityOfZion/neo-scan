@@ -18,7 +18,8 @@ defmodule NeoscanCache.Api do
   end
 
   def get_assets do
-    Server.get(:assets)
+    assets = Server.get(:assets)
+    if is_nil(assets), do: [], else: assets
   end
 
   def get_asset(hash) do
