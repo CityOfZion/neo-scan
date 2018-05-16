@@ -5,6 +5,9 @@ defmodule NeoscanNode.Notifications do
   The boundary for the notification requests.
   """
 
+  @notification_seeds Application.fetch_env!(:neoscan_node, :notification_seeds)
+  @limit_height Application.fetch_env!(:neoscan_node, :start_notifications)
+
   alias NeoscanNode.HttpCalls
   require Logger
 
@@ -29,16 +32,13 @@ defmodule NeoscanNode.Notifications do
     |> check_token()
   end
 
-  def get_url(urls_tried) do
-    list = Application.fetch_env!(:neoscan_node, :notification_seeds) -- urls_tried
-
-    case list do
+  defp get_url(urls_tried) do
+    case @notification_seeds -- urls_tried do
       [] ->
         nil
 
       not_empty_list ->
-        not_empty_list
-        |> Enum.random()
+        Enum.random(not_empty_list)
     end
   end
 
@@ -51,15 +51,11 @@ defmodule NeoscanNode.Notifications do
     {:error, "error getting notifications"}
   end
 
-  defp check({:ok, result, current_height}, height, _url) do
-    cond do
-      current_height - 1 < height ->
-        get_block_notifications(height)
-
-      current_height - 1 >= height ->
-        result
-    end
+  defp check({:ok, _result, current_height}, height, _url) when current_height - 1 < height do
+    get_block_notifications(height)
   end
+
+  defp check({:ok, result, _}, _, _), do: result
 
   defp check(_response, height, urls_tried) do
     Logger.info("error getting notifications for block #{height}")
@@ -68,22 +64,18 @@ defmodule NeoscanNode.Notifications do
 
   def add_notifications(block, height) do
     # Disable notification checks for less than first ever nep5 token issue block height
-    limit_height = Application.fetch_env!(:neoscan_node, :start_notifications)
-
     transfers =
-      cond do
-        height > limit_height ->
-          get_notifications(height)
-          |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
-
-        height <= limit_height ->
-          []
+      if height > @limit_height do
+        get_notifications(height)
+        |> Enum.filter(fn %{"notify_type" => t} -> t == "transfer" end)
+      else
+        []
       end
 
     Map.merge(block, %{"transfers" => transfers})
   end
 
-  def get_notifications(height) do
+  defp get_notifications(height) do
     case get_block_notifications(height) do
       {:error, _} ->
         get_notifications(height)
