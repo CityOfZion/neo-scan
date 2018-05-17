@@ -25,10 +25,8 @@ defmodule NeoscanSync.Producer do
   end
 
   def do_handle_demand(demand, {counter, _pending_demand}) do
-    events =
-      get_current_height()
-      |> evaluate(demand, counter + 1)
-
+    current_height = get_current_height()
+    events = evaluate(current_height, demand, counter + 1)
     events_count = Enum.count(events)
     check_if_demand(events_count, demand)
     {:noreply, events, {counter + events_count, demand - events_count}}
@@ -43,15 +41,10 @@ defmodule NeoscanSync.Producer do
   end
 
   # evaluate number of process, current block count, and start async functions
-  defp evaluate({:ok, height}, n, count) when height > count and height - count >= n do
-    Enum.to_list(count..(count + n - 1))
-    |> Enum.map(&Task.async(fn -> cross_check(&1) end))
-    |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
-    |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
-  end
+  defp evaluate({:ok, height}, n, count) when height > count do
+    max = if height - count >= n, do: count + n - 1, else: height
 
-  defp evaluate({:ok, height}, _, count) when height > count do
-    Enum.to_list(count..height)
+    Enum.to_list(count..max)
     |> Enum.map(&Task.async(fn -> cross_check(&1) end))
     |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
     |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
