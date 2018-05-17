@@ -28,21 +28,18 @@ defmodule NeoscanCache.Api do
   end
 
   def get_asset_name(hash) do
-    cond do
-      String.length(hash) == 40 ->
-        Cache.get(:assets)
-        |> Enum.find(fn %{:contract => contract} -> contract == hash end)
-        |> (&if(is_nil(&1), do: %{}, else: &1)).()
-        |> Map.get(:name)
-        |> ChainAssets.filter_name()
+    filter_fun =
+      if String.length(hash) == 40 do
+        fn %{:contract => contract} -> contract == hash end
+      else
+        fn %{:txid => txid} -> txid == hash end
+      end
 
-      true ->
-        Cache.get(:assets)
-        |> Enum.find(fn %{:txid => txid} -> txid == hash end)
-        |> (&if(is_nil(&1), do: %{}, else: &1)).()
-        |> Map.get(:name)
-        |> ChainAssets.filter_name()
-    end
+    Cache.get(:assets)
+    |> Enum.find(filter_fun)
+    |> (&if(is_nil(&1), do: %{}, else: &1)).()
+    |> Map.get(:name)
+    |> ChainAssets.filter_name()
   end
 
   def check_asset(hash) do
