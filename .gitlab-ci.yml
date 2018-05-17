@@ -35,6 +35,22 @@ staging:
   script:
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker-compose -f docker-compose.prod.yml up -d
+  variables:
+    HOST: neoscan.backslash.fr
   tags:
     - staging
   when: manual
+
+production:
+  stage: deploy
+  environment: production
+  script:
+    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - docker-compose -f docker-compose.prod.yml up -d
+  variables:
+    HOST: neoscanprod.backslash.fr
+  tags:
+    - production
+  when: manual
+  only:
+    - master
