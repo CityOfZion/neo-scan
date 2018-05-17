@@ -633,12 +633,11 @@ defmodule Neoscan.Transactions do
 
   """
   def create_transactions(block, transactions) do
-    case Enum.each(transactions, fn transaction -> create_transaction(block, transaction) end) do
-      :ok ->
-        {:ok, "Created", block}
-
-      _ ->
-        {:error, "failed to create transactions"}
-    end
+    # max_concurrency = System.schedulers_online() * 2
+    # opts = [max_concurrency: max_concurrency, timeout: 60_000]
+    # stream = Task.async_stream(transactions, &create_transaction(block, &1), opts)
+    # Stream.run(stream)
+    Enum.each(transactions, &create_transaction(block, &1))
+    {:ok, "Created", block}
   end
 end

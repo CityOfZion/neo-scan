@@ -18,11 +18,7 @@ defmodule NeoscanSync.Consumer do
   end
 
   def handle_events(events, _from, state) do
-    for event <- events do
-      Blocks.add_block(event)
-    end
-
-    # As a consumer we never emit events
+    Enum.each(events, &Blocks.add_block/1)
     {:noreply, [], state}
   end
 end

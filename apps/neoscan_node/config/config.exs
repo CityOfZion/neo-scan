@@ -48,3 +48,14 @@ config :neoscan_node,
     #    "http://seed7.concierge.io:10332",
     #    "http://seed8.concierge.io:10332"
   ]
+
+if Mix.env() == :test do
+  config :neoscan_node,
+    seeds: [
+      "http://seed1.cityofzion.io:8080",
+      "http://seed2.cityofzion.io:8080",
+      "http://seed3.cityofzion.io:8080",
+      "http://seed4.cityofzion.io:8080",
+      "http://seed5.cityofzion.io:8080"
+    ]
+end

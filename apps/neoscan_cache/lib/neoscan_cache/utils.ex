@@ -6,16 +6,6 @@ defmodule NeoscanCache.Utils do
   alias Neoscan.ChainAssets
   alias NeoscanNode.Notifications
 
-  # function to cut extra elements
-  def cut_if_more(list, count) when count == 15 do
-    list
-    |> Enum.drop(-1)
-  end
-
-  def cut_if_more(list, _count) do
-    list
-  end
-
   # function to get DB asset stats
   def get_stats(assets) do
     Enum.map(assets, fn asset ->

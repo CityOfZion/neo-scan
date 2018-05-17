@@ -2,6 +2,7 @@
 /.elixir_ls
 /cover
 /deps
+/apps/*/cover
 erl_crash.dump
 *.ez
 .idea
