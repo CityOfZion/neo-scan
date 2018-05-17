@@ -28,10 +28,17 @@ defmodule NeoscanNode.Worker do
     Map.get(get(:monitor), :data)
   end
 
+  defp get_servers do
+    ["NEO_SEED_1", "NEO_SEED_2", "NEO_SEED_3", "NEO_SEED_4"]
+    |> Enum.map(&System.get_env/1)
+    |> Enum.filter(&(not is_nil(&1)))
+    |> (&if(&1 == [], do: @servers, else: &1)).()
+  end
+
   # function to load nodes state
   def load do
     data =
-      @servers
+      get_servers()
       |> pmap(fn url ->
         current_height = Blockchain.get_current_height(url)
         {url, current_height, evaluate_result(url, current_height)}
