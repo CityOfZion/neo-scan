@@ -35,7 +35,7 @@ defmodule NeoscanCache.Mixfile do
     [extra_applications: [:logger, :httpoison], mod: {NeoscanCache.Application, []}]
   end
 
-  defp elixirc_paths(:test), do: ["lib", "test"]
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Dependencies can be Hex packages:

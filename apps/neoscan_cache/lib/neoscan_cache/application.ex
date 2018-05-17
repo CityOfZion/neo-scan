@@ -10,8 +10,7 @@ defmodule NeoscanCache.Application do
 
     # Define workers and child supervisors to be supervised
     children = [
-      worker(NeoscanCache.Server, []),
-      worker(NeoscanCache.Worker, [])
+      worker(NeoscanCache.Cache, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
