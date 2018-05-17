@@ -4,7 +4,7 @@ services:
     image: ${REGISTRY_PATH}
     restart: always
     environment:
-      HOST: neoscan.backslash.fr
+      HOST: ${HOST}
       PORT: 4000
 
 #certificate generated with:
