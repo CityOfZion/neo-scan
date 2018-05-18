@@ -10,6 +10,7 @@ defmodule NeoscanCache.Cache do
   alias Neoscan.Transactions
   alias Neoscan.Transfers
   alias Neoscan.Addresses
+  alias Neoscan.ChainAssets
   alias Neoprice.NeoBtc
   alias Neoprice.NeoUsd
   alias Neoprice.GasBtc
@@ -115,11 +116,8 @@ defmodule NeoscanCache.Cache do
 
     transfers = Transfers.home_transfers()
 
-#    assets =
-#      ChainAssets.list_assets()
+    assets = ChainAssets.list_assets()
 #      |> Utils.get_stats()
-
-    assets = []
 
     stats = Utils.get_general_stats()
 
