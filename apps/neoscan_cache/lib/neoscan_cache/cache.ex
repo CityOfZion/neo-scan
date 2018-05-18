@@ -117,7 +117,7 @@ defmodule NeoscanCache.Cache do
     transfers = Transfers.home_transfers()
 
     assets = ChainAssets.list_assets()
-#      |> Utils.get_stats()
+    #      |> Utils.get_stats()
 
     stats = Utils.get_general_stats()
 
