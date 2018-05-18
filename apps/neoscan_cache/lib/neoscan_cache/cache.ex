@@ -10,7 +10,6 @@ defmodule NeoscanCache.Cache do
   alias Neoscan.Transactions
   alias Neoscan.Transfers
   alias Neoscan.Addresses
-  alias Neoscan.ChainAssets
   alias Neoprice.NeoBtc
   alias Neoprice.NeoUsd
   alias Neoprice.GasBtc
