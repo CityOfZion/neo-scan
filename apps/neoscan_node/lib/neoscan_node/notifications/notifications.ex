@@ -32,8 +32,13 @@ defmodule NeoscanNode.Notifications do
     |> check_token()
   end
 
+  defp get_servers() do
+    notification_server = System.get_env("NEO_NOTIFICATIONS_SERVER")
+    if is_nil(notification_server), do: @notification_seeds, else: [notification_server]
+  end
+
   defp get_url(urls_tried) do
-    case @notification_seeds -- urls_tried do
+    case get_servers() -- urls_tried do
       [] ->
         nil
 

@@ -30,7 +30,8 @@ config :neoscan_web, NeoscanWeb.Endpoint,
     "https://neoscan.io",
     "https://www.neoscan.io",
     "https://neoscan.backslash.fr",
-    "https://neoscanprod.backslash.fr"
+    "https://neoscanprod.backslash.fr",
+    "//neoscanlocal.com"
   ]
 
 # ## SSL Support
