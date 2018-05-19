@@ -9,7 +9,7 @@ Elixir + Phoenix Blockchain explorer for NEO.
 
 Using docker you can start the project with:
 - `docker-compose up -d`
-- `docker exec -it neoscan_phoenix_1 sh`
+- `docker exec -it phoenixdev sh`
 - `cd /data`
 
 # Development
