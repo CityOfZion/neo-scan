@@ -1,6 +1,6 @@
 version: "2"
 services:
-  postgresql:
+  postgres:
     image: postgres
     ports:
       - 5432:5432
@@ -9,9 +9,11 @@ services:
       POSTGRES_PASSWORD: postgres
 
   phoenix:
-    image: nikolauska/phoenix
+    container_name: "phoenixdev"
+    image: bitwalker/alpine-elixir-phoenix:1.6.5
     command: sh -c "while true; do echo Alive; sleep 100; done"
     volumes:
-        - ./:/data
-    links:
-      - postgresql:postgres
+      - ./:/data
+    ports:
+      - 4000:4000
+

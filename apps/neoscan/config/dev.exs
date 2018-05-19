@@ -6,5 +6,5 @@ config :neoscan, Neoscan.Repo,
   username: "postgres",
   password: "postgres",
   database: "neoscan_dev",
-  hostname: "localhost",
+  hostname: "postgres",
   pool_size: 10
