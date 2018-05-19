@@ -42,7 +42,7 @@ defmodule NeoscanNode.Worker do
       |> pmap(fn url ->
         current_height = Blockchain.get_current_height(url)
         {url, current_height, evaluate_result(url, current_height)}
-      end)
+      end, 15_000)
       |> Enum.filter(fn {_, _, keep} -> keep end)
       |> Enum.map(fn {url, {:ok, height}, _} -> {url, height} end)
 
@@ -56,10 +56,12 @@ defmodule NeoscanNode.Worker do
 
   defp evaluate_result(_url, {:error, _height}), do: false
 
-  def pmap(collection, func) do
+  defp pmap(collection, func, timeout) do
     collection
     |> Enum.map(&Task.async(fn -> func.(&1) end))
-    |> Enum.map(&Task.await(&1, 15_000))
+    |> Enum.map(&(Task.yield(&1, timeout) || Task.shutdown(&1)))
+    |> Enum.filter(&(is_tuple(&1) and elem(&1, 0) == :ok))
+    |> Enum.map(fn {:ok, result} -> result end)
   end
 
   # handler for nil data

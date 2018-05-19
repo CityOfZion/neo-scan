@@ -45,12 +45,19 @@ defmodule NeoscanSync.Producer do
     max = if height - count >= n, do: count + n - 1, else: height
 
     Enum.to_list(count..max)
-    |> Enum.map(&Task.async(fn -> cross_check(&1) end))
-    |> Enum.map(&Task.await(&1, 60 * 60 * 1000))
+    |> pmap(&cross_check/1, 60 * 60 * 1000)
     |> Enum.filter(fn b -> Map.has_key?(b, "nextblockhash") end)
   end
 
   defp evaluate({:ok, _}, _, _), do: []
+
+  defp pmap(collection, func, timeout) do
+    collection
+    |> Enum.map(&Task.async(fn -> func.(&1) end))
+    |> Enum.map(&(Task.yield(&1, timeout) || Task.shutdown(&1)))
+    |> Enum.filter(&(is_tuple(&1) and elem(&1, 0) == :ok))
+    |> Enum.map(fn {:ok, result} -> result end)
+  end
 
   # cross check block hash between different seeds
   defp cross_check(height) do
