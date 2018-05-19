@@ -39,10 +39,13 @@ defmodule NeoscanNode.Worker do
   def load do
     data =
       get_servers()
-      |> pmap(fn url ->
-        current_height = Blockchain.get_current_height(url)
-        {url, current_height, evaluate_result(url, current_height)}
-      end, 15_000)
+      |> pmap(
+        fn url ->
+          current_height = Blockchain.get_current_height(url)
+          {url, current_height, evaluate_result(url, current_height)}
+        end,
+        15_000
+      )
       |> Enum.filter(fn {_, _, keep} -> keep end)
       |> Enum.map(fn {url, {:ok, height}, _} -> {url, height} end)
 
