@@ -5,7 +5,7 @@ defmodule Neoscan.HttpCalls.HttpCallsTest do
   import ExUnit.CaptureLog
 
   @node_url "http://seed1.cityofzion.io:8080"
-  @token_url "http://notifications4.neeeo.org/v1/tokens"
+  @token_url "http://notifications1.neeeo.org/v1/tokens"
 
   test "get_url/1" do
     assert 2 == Enum.count(HttpCalls.get_url(2))
