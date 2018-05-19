@@ -15,3 +15,5 @@ services:
   - postgresql
 addons:
   postgresql: "9.4"
+  hosts:
+    - postgres
