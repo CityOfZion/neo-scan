@@ -4,13 +4,16 @@ defmodule NeoscanCache.Application do
   @moduledoc false
 
   use Application
+  alias NeoscanCache.EtsProcess
+  alias NeoscanCache.Cache
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
     # Define workers and child supervisors to be supervised
     children = [
-      worker(NeoscanCache.Cache, [])
+      worker(EtsProcess, []),
+      worker(Cache, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
