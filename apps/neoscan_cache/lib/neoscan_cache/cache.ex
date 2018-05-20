@@ -16,6 +16,7 @@ defmodule NeoscanCache.Cache do
   alias Neoprice.GasBtc
   alias Neoprice.GasUsd
   alias Neoscan.Claims.Unclaimed
+  alias NeoscanCache.EtsProcess
 
   require Logger
 
@@ -27,14 +28,7 @@ defmodule NeoscanCache.Cache do
   # run initial queries and fill state with all info needed in the app,
   # then sends message with new state to server module
   def init(:ok) do
-    :ets.new(__MODULE__, [
-      :set,
-      :named_table,
-      :public,
-      read_concurrency: true,
-      write_concurrency: true
-    ])
-
+    EtsProcess.create_table(__MODULE__)
     Process.send_after(self(), :broadcast, 30_000)
     Process.send(self(), :repair, [])
     {:ok, sync(%{tokens: []})}

@@ -6,12 +6,14 @@ defmodule Neoprice do
   alias Neoprice.NeoUsd
   alias Neoprice.GasBtc
   alias Neoprice.GasUsd
+  alias Neoprice.EtsProcess
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
     # Define workers and child supervisors to be supervised
     children = [
+      worker(EtsProcess, []),
       NeoBtc.worker(),
       NeoUsd.worker(),
       GasBtc.worker(),
