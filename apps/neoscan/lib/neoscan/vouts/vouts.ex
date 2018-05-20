@@ -80,10 +80,7 @@ defmodule Neoscan.Vouts do
 
   # push changes into multi operation
   def push_vout_into_multi({vout, changeset}, acc) do
-    name = String.to_atom(vout.query)
-
-    acc
-    |> Multi.update(name, changeset, [])
+    Multi.update(acc, vout.query, changeset, [])
   end
 
   def check_and_return_vouts({:ok, _any}, vouts) do
