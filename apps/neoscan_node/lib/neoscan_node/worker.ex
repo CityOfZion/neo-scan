@@ -8,6 +8,7 @@ defmodule NeoscanNode.Worker do
   @update_interval 10_000
 
   alias NeoscanNode.Blockchain
+  alias NeoscanNode.EtsProcess
 
   use GenServer
 
@@ -117,16 +118,8 @@ defmodule NeoscanNode.Worker do
   end
 
   def init(:ok) do
-    :ets.new(__MODULE__, [
-      :set,
-      :named_table,
-      :public,
-      read_concurrency: true,
-      write_concurrency: true
-    ])
-
+    EtsProcess.create_table(__MODULE__)
     sync()
-
     {:ok, nil}
   end
 end

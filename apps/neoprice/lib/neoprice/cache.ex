@@ -5,6 +5,7 @@ defmodule Neoprice.Cache do
 
   use GenServer
   alias Neoprice.Cryptocompare
+  alias Neoprice.EtsProcess
   require Logger
 
   @minute 60
@@ -58,7 +59,7 @@ defmodule Neoprice.Cache do
 
   def init(state) do
     Enum.each(state.module.config, fn cache ->
-      :ets.new(cache.cache_name, [:public, :ordered_set, :named_table, {:read_concurrency, true}])
+      EtsProcess.create_table(cache.cache_name)
     end)
 
     Process.send_after(self(), :sync, 0)
