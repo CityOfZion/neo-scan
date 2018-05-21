@@ -3,6 +3,12 @@ defmodule NeoscanWeb.ApiControllerTest do
 
   import NeoscanWeb.Factory
 
+  setup do
+    Supervisor.terminate_child(NeoscanWeb.Supervisor, ConCache)
+    Supervisor.restart_child(NeoscanWeb.Supervisor, ConCache)
+    :ok
+  end
+
   test "get_balance/:hash", %{conn: conn} do
     address =
       insert(:address, %{
