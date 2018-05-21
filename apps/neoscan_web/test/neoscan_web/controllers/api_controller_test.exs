@@ -110,8 +110,21 @@ defmodule NeoscanWeb.ApiControllerTest do
     insert(:block)
     insert(:block)
     conn = get(conn, "/api/main_net/v1/get_last_blocks")
-
     assert 2 == Enum.count(json_response(conn, 200))
+  end
+
+  test "test concache", %{conn: conn} do
+    insert(:block)
+    insert(:block)
+    conn = get(conn, "/api/main_net/v1/get_last_blocks")
+    assert 2 == Enum.count(json_response(conn, 200))
+    insert(:block)
+    conn = get(conn, "/api/main_net/v1/get_last_blocks")
+    assert 2 == Enum.count(json_response(conn, 200))
+    Supervisor.terminate_child(NeoscanWeb.Supervisor, ConCache)
+    Supervisor.restart_child(NeoscanWeb.Supervisor, ConCache)
+    conn = get(conn, "/api/main_net/v1/get_last_blocks")
+    assert 3 == Enum.count(json_response(conn, 200))
   end
 
   test "get_highest_block", %{conn: conn} do

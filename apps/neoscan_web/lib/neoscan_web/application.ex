@@ -9,6 +9,14 @@ defmodule NeoscanWeb.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
+      {
+        ConCache,
+        [
+          name: :my_cache,
+          ttl_check_interval: :timer.seconds(1),
+          global_ttl: :timer.seconds(5)
+        ]
+      },
       supervisor(Endpoint, [])
       # Start your own worker by calling:
       # NeoscanWeb.Worker.start_link(arg1, arg2, arg3)
