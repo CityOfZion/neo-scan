@@ -267,14 +267,10 @@ defmodule Neoscan.Addresses do
          {address, claim_changeset, history_changeset, address_changeset},
          acc
        ) do
-    name = String.to_atom(address.address)
-    name1 = String.to_atom("#{address.address}_history")
-    name2 = String.to_atom("#{address.address}_claim")
-
     acc
-    |> Multi.update(name, address_changeset, [])
-    |> Multi.insert(name1, history_changeset, [])
-    |> Claims.add_claim_if_claim(name2, claim_changeset)
+    |> Multi.update(address.address, address_changeset, [])
+    |> Multi.insert("#{address.address}_history", history_changeset, [])
+    |> Claims.add_claim_if_claim("#{address.address}_claim", claim_changeset)
   end
 
   # verify if DB transaction was sucessfull
