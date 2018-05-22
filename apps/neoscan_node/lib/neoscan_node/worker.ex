@@ -5,7 +5,7 @@ defmodule NeoscanNode.Worker do
   """
 
   @servers Application.fetch_env!(:neoscan_node, :seeds)
-  @update_interval 10_000
+  @update_interval 2_000
 
   alias NeoscanNode.Blockchain
   alias NeoscanNode.EtsProcess

@@ -48,7 +48,7 @@ production:
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker-compose -f docker-compose.prod.yml up -d
   variables:
-    HOST: neoscanprod.backslash.fr
+    HOST: neoscan.io
   tags:
     - production
   when: manual

@@ -18,6 +18,8 @@ defmodule NeoscanCache.Cache do
   alias Neoscan.Claims.Unclaimed
   alias NeoscanCache.EtsProcess
 
+  @update_interval 2_000
+
   require Logger
 
   # starts the genserver
@@ -101,7 +103,7 @@ defmodule NeoscanCache.Cache do
 
   # update nodes and stats information
   def sync(state) do
-    Process.send_after(self(), :sync, 5_000)
+    Process.send_after(self(), :sync, @update_interval)
     blocks = Blocks.home_blocks()
 
     transactions =
