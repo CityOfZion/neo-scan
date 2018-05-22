@@ -10,7 +10,9 @@ defmodule NeoscanWeb.Mixfile do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
-      elixirc_options: [warnings_as_errors: true],
+      elixirc_options: [
+        warnings_as_errors: true
+      ],
       elixirc_paths: elixirc_paths(Mix.env()),
       test_coverage: [
         tool: ExCoveralls
@@ -52,6 +54,7 @@ defmodule NeoscanWeb.Mixfile do
       {:phoenix_ecto, "~> 3.2"},
       {:phoenix_html, "~> 2.10"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
+      {:con_cache, "~> 0.13.0"},
       {:gettext, "~> 0.11"},
       {:neoscan, in_umbrella: true},
       {:neoprice, in_umbrella: true},
