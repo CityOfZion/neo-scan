@@ -18,7 +18,7 @@ defmodule NeoscanCache.Cache do
   alias Neoscan.Claims.Unclaimed
   alias NeoscanCache.EtsProcess
 
-  @update_interval 2_000
+  @update_interval 5_000
 
   require Logger
 
