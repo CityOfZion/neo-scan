@@ -15,10 +15,7 @@ defmodule Neoscan.Repo.Migrations.TxAbstracts do
       timestamps()
     end
 
-    create(index(:tx_abstracts, [:txid]))
     create(index(:tx_abstracts, [:address_from]))
     create(index(:tx_abstracts, [:address_to]))
-    create(index(:tx_abstracts, [:asset]))
-    create(index(:tx_abstracts, [:check_hash]))
   end
 end

@@ -15,7 +15,6 @@ defmodule Neoscan.Repo.Migrations.Claims do
       timestamps()
     end
 
-    create(index(:claims, [:address_hash]))
     create(index(:claims, [:address_id]))
   end
 end

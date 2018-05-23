@@ -14,8 +14,8 @@ defmodule Neoscan.Repo.Migrations.Histories do
       timestamps()
     end
 
+    create(index(:histories, [:address_hash, :id]))
     create(index(:histories, [:address_hash]))
     create(index(:histories, [:address_id]))
-    create(index(:histories, [:time]))
   end
 end

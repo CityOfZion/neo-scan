@@ -12,7 +12,5 @@ defmodule Neoscan.Repo.Migrations.Addresses do
     end
 
     create(unique_index(:addresses, [:address]))
-    create(index(:addresses, ["inserted_at DESC NULLS LAST"]))
-    create(index(:addresses, [:balance]))
   end
 end
