@@ -24,6 +24,7 @@ defmodule Neoscan.Repo.Migrations.Blocks do
     end
 
     create(unique_index(:blocks, ["index DESC NULLS LAST"]))
+    create(unique_index(:blocks, [:index]))
     create(unique_index(:blocks, [:hash]))
   end
 end

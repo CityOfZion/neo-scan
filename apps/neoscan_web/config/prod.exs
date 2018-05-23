@@ -29,6 +29,7 @@ config :neoscan_web, NeoscanWeb.Endpoint,
   check_origin: [
     "https://neoscan.io",
     "https://www.neoscan.io",
+    "https://api.neoscan.io",
     "https://neoscan.backslash.fr",
     "https://neoscanprod.backslash.fr",
     "//neoscanlocal.com"

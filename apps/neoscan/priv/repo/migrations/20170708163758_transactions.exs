@@ -37,6 +37,5 @@ defmodule Neoscan.Repo.Migrations.Transactions do
     create(unique_index(:transactions, [:txid]))
     create(index(:transactions, [:type]))
     create(index(:transactions, [:block_id]))
-    create(index(:transactions, [:asset_moved]))
   end
 end

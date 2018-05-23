@@ -18,10 +18,6 @@ defmodule Neoscan.Repo.Migrations.Transfers do
     end
 
     create(index(:transfers, [:txid]))
-    create(index(:transfers, [:address_from]))
-    create(index(:transfers, [:address_to]))
-    create(index(:transfers, [:contract]))
     create(index(:transfers, [:block_id]))
-    create(index(:transfers, [:check_hash]))
   end
 end

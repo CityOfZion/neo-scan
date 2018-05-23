@@ -25,6 +25,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     create(unique_index(:vouts, [:query]))
     create(index(:vouts, [:transaction_id]))
     create(index(:vouts, [:address_id]))
+    create(index(:vouts, [:address_id, :asset]))
     create(index(:vouts, [:address_hash, :asset, :end_height]))
   end
 end
