@@ -11,8 +11,8 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: "100m"
+        max-file: "10"
 
 #certificate generated with:
 # sudo certbot certonly --standalone --preferred-challenges http --http-01-port 80 -d neoscan.backslash.fr
@@ -29,5 +29,5 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: "100m"
+        max-file: "10"
