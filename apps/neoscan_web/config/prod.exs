@@ -25,15 +25,7 @@ config :neoscan_web, NeoscanWeb.Endpoint,
   ],
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,
-  secret_key_base: "J8EWtXVVWp+AmNn4fmdodz17pug1X8v8QbjiPnNf0IkeFYhY140Dhei7UGUACHXs",
-  check_origin: [
-    "https://neoscan.io",
-    "https://www.neoscan.io",
-    "https://api.neoscan.io",
-    "https://neoscan.backslash.fr",
-    "https://neoscanprod.backslash.fr",
-    "//neoscanlocal.com"
-  ]
+  secret_key_base: "J8EWtXVVWp+AmNn4fmdodz17pug1X8v8QbjiPnNf0IkeFYhY140Dhei7UGUACHXs"
 
 # ## SSL Support
 #
