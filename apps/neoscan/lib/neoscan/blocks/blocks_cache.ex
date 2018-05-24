@@ -104,6 +104,6 @@ defmodule Neoscan.Blocks.BlocksCache do
     set(:min, min)
     set(:max, max)
 
-    get_cached_response(min, max)
+    IO.inspect get_cached_response(min, max)
   end
 end
