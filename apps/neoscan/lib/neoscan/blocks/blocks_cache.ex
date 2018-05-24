@@ -27,21 +27,18 @@ defmodule Neoscan.Blocks.BlocksCache do
   defp init_file_cache do
     {:ok, file} = :file.open(@filename, [:raw, :write])
     total_size = @integer_byte_size * @nb_cached_blocks
-    :file.write(file, <<0 :: size(total_size)>>)
+    :file.write(file, <<0::size(total_size)>>)
     :file.close(file)
   end
 
   defp init_ets_table do
-    :ets.new(
-      __MODULE__,
-      [
-        :set,
-        :named_table,
-        :public,
-        read_concurrency: true,
-        write_concurrency: true
-      ]
-    )
+    :ets.new(__MODULE__, [
+      :set,
+      :named_table,
+      :public,
+      read_concurrency: true,
+      write_concurrency: true
+    ])
   end
 
   defp set_cached_response(min, response) do
@@ -54,8 +51,9 @@ defmodule Neoscan.Blocks.BlocksCache do
 
   defp response_to_binary(response), do: response_to_binary(response, <<>>)
   defp response_to_binary([], acc), do: acc
+
   defp response_to_binary([%{total_sys_fee: fee} | t], acc) do
-    response_to_binary(t, <<acc :: binary, round(fee) :: size(@integer_bit_size)>>)
+    response_to_binary(t, <<acc::binary, round(fee)::size(@integer_bit_size)>>)
   end
 
   defp get_cached_response(min, max) do
@@ -67,7 +65,8 @@ defmodule Neoscan.Blocks.BlocksCache do
 
   defp binary_to_response(binary, index), do: binary_to_response(binary, index, [])
   defp binary_to_response(<<>>, _, acc), do: Enum.reverse(acc)
-  defp binary_to_response(<<fee :: size(@integer_bit_size), rest :: binary>>, index, acc) do
+
+  defp binary_to_response(<<fee::size(@integer_bit_size), rest::binary>>, index, acc) do
     binary_to_response(rest, index + 1, [%{index: index, total_sys_fee: fee * 1.0} | acc])
   end
 
@@ -83,19 +82,23 @@ defmodule Neoscan.Blocks.BlocksCache do
   end
 
   def get_total_sys_fee(_, -1), do: []
+
   def get_total_sys_fee(min, max) do
     cache_min = get(:min)
     cache_max = get(:max)
 
-    uncached_ranges =   if is_nil(cache_max) or is_nil(cache_min) do
-      [{min, max}]
-    else
-      Enum.filter([{min, cache_min}, {cache_max, max}], fn ({a, b}) -> a < b end)
-    end
+    uncached_ranges =
+      if is_nil(cache_max) or is_nil(cache_min) do
+        [{min, max}]
+      else
+        Enum.filter([{min, cache_min}, {cache_max, max}], fn {a, b} -> a < b end)
+      end
 
-    Enum.each(uncached_ranges, fn ({min, max}) -> set_cached_response(min, Blocks.get_total_sys_fee(min, max)) end)
+    Enum.each(uncached_ranges, fn {min, max} ->
+      set_cached_response(min, Blocks.get_total_sys_fee(min, max))
+    end)
 
-    #it is possible override will occur here, for example another process stores a smaller value of min
+    # it is possible override will occur here, for example another process stores a smaller value of min
     # or a higher value of max, however if data is queried again, it is not a serious problem, it would be better
     # to update it atomically if and only if the value is lower or higher. But there is no easy way to do it wiht ets
     set(:min, min)
