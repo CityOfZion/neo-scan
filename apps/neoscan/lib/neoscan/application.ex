@@ -9,13 +9,18 @@ defmodule Neoscan.Application do
   """
   use Application
 
+  alias Neoscan.Blocks.BlocksCache
+
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
+    children = [
+      worker(BlocksCache, []),
+      supervisor(Neoscan.Repo, [])
+    ]
+
     Supervisor.start_link(
-      [
-        supervisor(Neoscan.Repo, [])
-      ],
+      children,
       strategy: :one_for_one,
       name: Neoscan.Supervisor
     )

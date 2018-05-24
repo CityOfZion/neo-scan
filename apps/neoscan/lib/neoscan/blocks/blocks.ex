@@ -430,6 +430,18 @@ defmodule Neoscan.Blocks do
       "wrong input string can't be parsed into integer"
   end
 
+  def get_total_sys_fee(min, max) do
+    query =
+      from(
+        b in Block,
+        where: b.index >= ^min and b.index <= ^max,
+        select: map(b, [:index, :total_sys_fee]),
+        order_by: :index
+      )
+
+    Repo.all(query)
+  end
+
   def compute_fees(block) do
     sys_fee =
       Enum.reduce(block["tx"], 0, fn tx, acc ->
