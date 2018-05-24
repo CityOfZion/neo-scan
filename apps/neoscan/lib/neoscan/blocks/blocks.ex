@@ -430,6 +430,8 @@ defmodule Neoscan.Blocks do
       "wrong input string can't be parsed into integer"
   end
 
+  def get_total_sys_fee(min, max) when max < min, do: []
+
   def get_total_sys_fee(min, max) do
     query =
       from(

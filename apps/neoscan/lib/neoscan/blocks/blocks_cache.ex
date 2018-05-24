@@ -49,6 +49,7 @@ defmodule Neoscan.Blocks.BlocksCache do
     :ok = :file.write(file, binary)
     :ok = :file.sync(file)
     :ok = :file.close(file)
+    Enum.count(response)
   end
 
   defp response_to_binary(response), do: response_to_binary(response, <<>>)
@@ -90,23 +91,23 @@ defmodule Neoscan.Blocks.BlocksCache do
     cache_min = get(:min)
     cache_max = get(:max)
 
-    uncached_ranges =
+    real_max =
       if is_nil(cache_max) or is_nil(cache_min) do
-        [{min, max}]
+        min + set_cached_response(min, Blocks.get_total_sys_fee(min, max))
       else
-        Enum.filter([{min, cache_min}, {cache_max, max}], fn {a, b} -> a < b end)
+        set_cached_response(min, Blocks.get_total_sys_fee(min, cache_min))
+        cache_max + set_cached_response(cache_max, Blocks.get_total_sys_fee(cache_max, max))
       end
-
-    Enum.each(uncached_ranges, fn {min, max} ->
-      set_cached_response(min, Blocks.get_total_sys_fee(min, max))
-    end)
 
     # it is possible override will occur here, for example another process stores a smaller value of min
     # or a higher value of max, however if data is queried again, it is not a serious problem, it would be better
     # to update it atomically if and only if the value is lower or higher. But there is no easy way to do it wiht ets
     set(:min, min)
-    set(:max, max)
 
-    get_cached_response(min, max)
+    # current logic check the highest block so max can be ahead of the current database state, we need to put max to the
+    # real block number in the database
+    set(:max, real_max - 1)
+
+    get_cached_response(min, real_max)
   end
 end
