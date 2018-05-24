@@ -25,7 +25,7 @@ defmodule Neoscan.Blocks.BlocksCache do
   end
 
   defp init_file_cache do
-    {:ok, file} = :file.open(@filename, [:raw, :write])
+    {:ok, file} = :file.open(@filename, [:write])
     total_size = @integer_byte_size * @nb_cached_blocks
     :file.write(file, <<0::size(total_size)>>)
     :file.close(file)
@@ -43,7 +43,7 @@ defmodule Neoscan.Blocks.BlocksCache do
 
   defp set_cached_response(min, response) do
     binary = response_to_binary(response)
-    {:ok, file} = :file.open(@filename, [:raw, :append])
+    {:ok, file} = :file.open(@filename, [:append])
     :file.pwrite(file, @integer_byte_size * min, binary)
     :file.close(file)
     :ok
@@ -57,7 +57,7 @@ defmodule Neoscan.Blocks.BlocksCache do
   end
 
   defp get_cached_response(min, max) do
-    {:ok, file} = :file.open(@filename, [:raw, :read, :binary])
+    {:ok, file} = :file.open(@filename, [:read, :binary])
     {:ok, binary} = :file.pread(file, @integer_byte_size * min, @integer_byte_size * max)
     :file.close(file)
     binary_to_response(binary, min)
