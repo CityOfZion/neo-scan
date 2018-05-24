@@ -27,8 +27,9 @@ defmodule Neoscan.Blocks.BlocksCache do
   defp init_file_cache do
     {:ok, file} = :file.open(@filename, [:write])
     total_size = @integer_byte_size * @nb_cached_blocks
-    :file.write(file, <<0::size(total_size)>>)
-    :file.close(file)
+    :ok = :file.write(file, <<0::size(total_size)>>)
+    :ok = :file.sync(file)
+    :ok = :file.close(file)
   end
 
   defp init_ets_table do
@@ -44,9 +45,9 @@ defmodule Neoscan.Blocks.BlocksCache do
   defp set_cached_response(min, response) do
     binary = response_to_binary(response)
     {:ok, file} = :file.open(@filename, [:append])
-    :file.pwrite(file, @integer_byte_size * min, binary)
-    :file.close(file)
-    :ok
+    :ok = :file.pwrite(file, @integer_byte_size * min, binary)
+    :ok = :file.sync(file)
+    :ok = :file.close(file)
   end
 
   defp response_to_binary(response), do: response_to_binary(response, <<>>)
@@ -58,8 +59,8 @@ defmodule Neoscan.Blocks.BlocksCache do
 
   defp get_cached_response(min, max) do
     {:ok, file} = :file.open(@filename, [:read, :binary])
-    {:ok, binary} = :file.pread(file, @integer_byte_size * min, @integer_byte_size * max)
-    :file.close(file)
+    {:ok, binary} = :file.pread(file, @integer_byte_size * min, @integer_byte_size * (max - min))
+    :ok = :file.close(file)
     binary_to_response(binary, min)
   end
 
@@ -95,7 +96,7 @@ defmodule Neoscan.Blocks.BlocksCache do
       end
 
     Enum.each(uncached_ranges, fn {min, max} ->
-      set_cached_response(min, IO.inspect(Blocks.get_total_sys_fee(min, max)))
+      set_cached_response(min, Blocks.get_total_sys_fee(min, max))
     end)
 
     # it is possible override will occur here, for example another process stores a smaller value of min
@@ -104,6 +105,6 @@ defmodule Neoscan.Blocks.BlocksCache do
     set(:min, min)
     set(:max, max)
 
-    IO.inspect get_cached_response(min, max)
+    get_cached_response(min, max)
   end
 end

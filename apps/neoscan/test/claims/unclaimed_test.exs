@@ -19,13 +19,13 @@ defmodule Neoscan.Claims.UnclaimedTest do
         vouts: [insert(:vout, %{asset: @asset, start_height: 25, end_height: 75})]
       })
 
-    assert 0.0014375000000000002 == Unclaimed.calculate_bonus(address.id)
+    assert 1.96e-4 == Unclaimed.calculate_bonus(address.id)
 
     address =
       insert(:address, %{
         vouts: [insert(:vout, %{asset: @asset, start_height: 1, end_height: 100})]
       })
 
-    assert 0.0028710000000000003 == Unclaimed.calculate_bonus(address.id)
+    assert 3.92e-4 == Unclaimed.calculate_bonus(address.id)
   end
 end
