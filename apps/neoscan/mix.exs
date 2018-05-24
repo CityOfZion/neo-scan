@@ -47,7 +47,6 @@ defmodule Neoscan.Mixfile do
   defp deps do
     [
       {:postgrex, ">= 0.0.0"},
-      {:bitmap, "~> 1.0"},
       {:ecto, "~> 2.1"},
       {:ex_machina, "~> 2.0", only: :test},
       {:excoveralls, "~> 0.8", only: :test},
