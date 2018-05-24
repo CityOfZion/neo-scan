@@ -95,7 +95,7 @@ defmodule Neoscan.Blocks.BlocksCache do
       end
 
     Enum.each(uncached_ranges, fn {min, max} ->
-      set_cached_response(min, Blocks.get_total_sys_fee(min, max))
+      set_cached_response(min, IO.inspect(Blocks.get_total_sys_fee(min, max)))
     end)
 
     # it is possible override will occur here, for example another process stores a smaller value of min
