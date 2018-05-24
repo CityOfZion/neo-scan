@@ -8,6 +8,11 @@ services:
     environment:
       HOST: ${HOST}
       PORT: 4000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
 
 #certificate generated with:
 # sudo certbot certonly --standalone --preferred-challenges http --http-01-port 80 -d neoscan.backslash.fr
@@ -21,3 +26,8 @@ services:
      - "9000:9000"
     volumes:
      - "/etc/letsencrypt/:/etc/letsencrypt/:ro"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
