@@ -39,7 +39,7 @@ defmodule Neoscan.Api.ApiTest do
       })
 
     assert %{
-             address: "hash1",
+             address: _,
              claimable: [
                %{
                  end_height: 75,
@@ -47,13 +47,13 @@ defmodule Neoscan.Api.ApiTest do
                  n: 0,
                  start_height: 25,
                  sys_fee: 0.0012375,
-                 txid: "txhash0",
+                 txid: _,
                  unclaimed: 0.0014375000000000002,
                  value: 50
                }
              ],
              unclaimed: 0.0014375000000000002
-           } == Api.get_claimable(address.address)
+           } = Api.get_claimable(address.address)
 
     assert %{address: "not found", claimable: nil} == Api.get_claimable("notexisting")
   end
