@@ -145,11 +145,13 @@ defmodule Neoscan.Claims.Unclaimed do
 
   # get total gas distribution amount for all blocks in a given range tuple
   def get_blocks_gas({min, max}) do
-    fees = if Application.get_env(:neoscan, :use_block_cache) do
-      BlocksCache.get_total_sys_fee(min, max)
-    else
-      Blocks.get_total_sys_fee(min, max)
-    end
+    fees =
+      if Application.get_env(:neoscan, :use_block_cache) do
+        BlocksCache.get_total_sys_fee(min, max)
+      else
+        Blocks.get_total_sys_fee(min, max)
+      end
+
     Enum.map(fees, fn %{:index => index, :total_sys_fee => sys} ->
       %{
         :index => index,
