@@ -8,3 +8,5 @@ erl_crash.dump
 .idea
 *.iml
 .DS_Store
+apps/neoscan/block_cache
+block_cache

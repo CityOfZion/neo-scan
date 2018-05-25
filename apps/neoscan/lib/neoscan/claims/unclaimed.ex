@@ -1,11 +1,10 @@
 defmodule Neoscan.Claims.Unclaimed do
   @moduledoc false
   import Ecto.Query, warn: false
-  alias Neoscan.Repo
   alias Neoscan.Repair
-  alias Neoscan.Vouts.Vout
-  alias Neoscan.Blocks.Block
+  alias Neoscan.Vouts
   alias Neoscan.Blocks
+  alias Neoscan.Blocks.BlocksCache
   alias Neoscan.BlockGasGeneration
 
   require Logger
@@ -15,14 +14,16 @@ defmodule Neoscan.Claims.Unclaimed do
 
   # calculate unclaimed gas bonus
   def calculate_bonus(address_id) do
-    get_unclaimed_vouts(address_id)
+    address_id
+    |> Vouts.get_unclaimed_vouts()
     |> add_end_height
     |> route_if_there_is_unclaimed
   end
 
   # calculate unclaimed gas bonus
   def calculate_vouts_bonus(address_id) do
-    get_unclaimed_vouts(address_id)
+    address_id
+    |> Vouts.get_unclaimed_vouts()
     |> filter_end_height
     |> route_if_there_is_unclaimed_but_dont_add
   end
@@ -102,20 +103,6 @@ defmodule Neoscan.Claims.Unclaimed do
     }
   end
 
-  # get all unclaimed transaction vouts
-  def get_unclaimed_vouts(address_id) do
-    query =
-      from(
-        v in Vout,
-        where:
-          v.address_id == ^address_id and v.claimed == false and
-            v.asset == "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
-        select: map(v, [:value, :start_height, :end_height, :n, :txid])
-      )
-
-    Repo.all(query)
-  end
-
   def add_end_height(unclaimed_vouts) do
     Enum.map(unclaimed_vouts, fn %{:end_height => height} = vout ->
       Map.put(vout, :end_height, check_end_height(height))
@@ -158,15 +145,14 @@ defmodule Neoscan.Claims.Unclaimed do
 
   # get total gas distribution amount for all blocks in a given range tuple
   def get_blocks_gas({min, max}) do
-    query =
-      from(
-        b in Block,
-        where: b.index >= ^min and b.index <= ^max,
-        select: map(b, [:index, :total_sys_fee])
-      )
+    fees =
+      if Application.get_env(:neoscan, :use_block_cache) do
+        BlocksCache.get_total_sys_fee(min, max)
+      else
+        Blocks.get_total_sys_fee(min, max)
+      end
 
-    Repo.all(query)
-    |> Enum.map(fn %{:index => index, :total_sys_fee => sys} ->
+    Enum.map(fees, fn %{:index => index, :total_sys_fee => sys} ->
       %{
         :index => index,
         :claim => BlockGasGeneration.get_amount_generate_in_block(index),

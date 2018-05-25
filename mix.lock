@@ -1,5 +1,6 @@
 %{
   "approximate_histogram": {:hex, :approximate_histogram, "0.1.1", "198eb36681e763ed4baab6ca0682acec4ef642f60ba272f251d3059052f4f378", [:mix], []},
+  "bitmap": {:hex, :bitmap, "1.0.1", "37d913e4f36e65ffffc3e38ee2bd2e8d768aedec6973de4bdce5c3456ef8a86e", [:mix], [], "hexpm"},
   "bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], []},
   "certifi": {:hex, :certifi, "2.0.0", "a0c0e475107135f76b8c1d5bc7efb33cd3815cb3cf3dea7aefdd174dabead064", [:rebar3], [], "hexpm"},
   "combine": {:hex, :combine, "0.10.0", "eff8224eeb56498a2af13011d142c5e7997a80c8f5b97c499f84c841032e429f", [:mix], [], "hexpm"},
