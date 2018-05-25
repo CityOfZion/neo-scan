@@ -3,6 +3,8 @@ defmodule Neoscan.Api.ApiTest do
   import Neoscan.Factory
   alias Neoscan.Api
 
+  @asset "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"
+
   test "get_balance/1" do
     address = insert(:address)
 
@@ -28,10 +30,30 @@ defmodule Neoscan.Api.ApiTest do
   end
 
   test "get_claimable/1" do
-    address = insert(:address)
+    Application.put_env(:neoscan, :use_block_cache, true)
+    for x <- 1..75, do: insert(:block, %{index: x, total_sys_fee: x})
 
-    assert %{address: address.address, claimable: [], unclaimed: 0} ==
-             Api.get_claimable(address.address)
+    address =
+      insert(:address, %{
+        vouts: [insert(:vout, %{asset: @asset, start_height: 25, end_height: 75})]
+      })
+
+    assert %{
+             address: _,
+             claimable: [
+               %{
+                 end_height: 75,
+                 generated: 0.0002,
+                 n: 0,
+                 start_height: 25,
+                 sys_fee: 0.0012375,
+                 txid: _,
+                 unclaimed: 0.0014375000000000002,
+                 value: 50
+               }
+             ],
+             unclaimed: 0.0014375000000000002
+           } = Api.get_claimable(address.address)
 
     assert %{address: "not found", claimable: nil} == Api.get_claimable("notexisting")
   end

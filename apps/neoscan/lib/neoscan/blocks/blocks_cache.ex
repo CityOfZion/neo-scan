@@ -62,7 +62,7 @@ defmodule Neoscan.Blocks.BlocksCache do
   defp get_cached_response(min, max) do
     {:ok, file} = :file.open(@filename, [:read, :binary])
     {:ok, _} = :file.position(file, {:bof, @integer_byte_size * min})
-    {:ok, binary} = :file.read(file, @integer_byte_size * (max - min))
+    {:ok, binary} = :file.read(file, @integer_byte_size * (max - min + 1))
     :ok = :file.close(file)
     binary_to_response(binary, min)
   end
@@ -91,22 +91,25 @@ defmodule Neoscan.Blocks.BlocksCache do
     cache_min = get(:min)
     cache_max = get(:max)
 
-    real_max =
+    new_cache_max =
       if is_nil(cache_max) or is_nil(cache_min) do
-        min + set_cached_response(min, Blocks.get_total_sys_fee(min, max))
+        min + set_cached_response(min, Blocks.get_total_sys_fee(min, max)) - 1
       else
         set_cached_response(min, Blocks.get_total_sys_fee(min, cache_min))
-        cache_max + set_cached_response(cache_max, Blocks.get_total_sys_fee(cache_max, max))
+        cache_max + set_cached_response(cache_max, Blocks.get_total_sys_fee(cache_max, max)) - 1
       end
 
     # it is possible override will occur here, for example another process stores a smaller value of min
     # or a higher value of max, however if data is queried again, it is not a serious problem, it would be better
     # to update it atomically if and only if the value is lower or higher. But there is no easy way to do it wiht ets
-    set(:min, min)
+    new_cache_min = if min < cache_min, do: min, else: cache_min
+    set(:min, new_cache_min)
 
     # current logic check the highest block so max can be ahead of the current database state, we need to put max to the
     # real block number in the database
-    set(:max, real_max - 1)
+    set(:max, new_cache_max)
+
+    real_max = if new_cache_max > max, do: max, else: new_cache_max
 
     get_cached_response(min, real_max)
   end
