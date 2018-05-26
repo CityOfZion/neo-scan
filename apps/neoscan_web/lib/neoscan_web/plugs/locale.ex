@@ -1,7 +1,7 @@
 defmodule NeoscanWeb.Plugs.Locale do
   @moduledoc false
   alias Plug.Conn
-  @languages ["en","es", "nl", "fr", "pt_BR", "it", "de", "ru", "ro", "ja", "zh"]
+  @languages ["en", "es", "nl", "fr", "pt_BR", "it", "de", "ru", "ro", "ja", "zh"]
 
   def init(opts) do
     opts
