@@ -1,0 +1,771 @@
+#  `msgid`s in this file come from POT (.pot) files.
+#
+#  Do not add, change, or remove `msgid`s manually here as
+#  they're tied to the ones in the corresponding POT file
+#  (with the same domain).
+#
+#  Use `mix gettext.extract --merge` or `mix gettext.merge`
+#  to merge POT files into PO files.
+# Translators:
+# José Wenceslao A. Castillo Mendoza (jwcastillo) <jwcastillo@gmail.com>, 2018
+msgid ""
+msgstr ""
+"Last-Translator: José Wenceslao A. Castillo Mendoza (jwcastillo) <jwcastillo@gmail.com>, 2018\n"
+"Language-Team: Spanish (https://www.transifex.com/vezla/teams/86823/es/)\n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/neoscan_web/templates/home/index.html.eex:51
+msgid "24 hour change"
+msgstr "Cambios de las últimas 24 horas"
+
+#: lib/neoscan_web/templates/home/index.html.eex:55
+msgid "24 hour volume"
+msgstr "Volumen de las últimas 24 horas"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:96
+msgid "API"
+msgstr "API"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:99
+msgid "About"
+msgstr "Acerca de"
+
+#: lib/neoscan_web/templates/address/address.html.eex:5
+msgid "Address"
+msgstr "Dirección"
+
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:7
+#: lib/neoscan_web/templates/asset/asset.html.eex:73
+msgid "Address ID"
+msgstr "Dirección ID"
+
+#: lib/neoscan_web/templates/address/address.html.eex:3
+msgid "Address Information"
+msgstr "Información de la dirección"
+
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:55
+#: lib/neoscan_web/templates/asset/asset.html.eex:48
+#: lib/neoscan_web/templates/assets/assets.html.eex:33
+msgid "Addresses"
+msgstr "Direcciones"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:24
+msgid "Admin"
+msgstr "Administrador"
+
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:12
+#: lib/neoscan_web/templates/home/index.html.eex:108
+msgid "All block information"
+msgstr "Toda la información del bloque"
+
+#: lib/neoscan_web/templates/address/address.html.eex:50
+#: lib/neoscan_web/templates/asset/asset.html.eex:132
+#: lib/neoscan_web/templates/block/block.html.eex:70
+#: lib/neoscan_web/templates/home/index.html.eex:88
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:27
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:10
+msgid "All transaction information"
+msgstr "Toda la información de la transacción"
+
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:12
+#: lib/neoscan_web/templates/asset/asset.html.eex:78
+msgid "All wallet address information"
+msgstr "Toda la información de dirección de la billetera"
+
+#: lib/neoscan_web/templates/assets/assets.html.eex:8
+msgid "Asset"
+msgstr "Activo"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:6
+msgid "Asset Hash"
+msgstr "Hash de Activo"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:2
+msgid "Asset Information"
+msgstr "Información de Activos"
+
+#: lib/neoscan_web/templates/address/address.html.eex:76
+#: lib/neoscan_web/templates/asset/asset.html.eex:159
+#: lib/neoscan_web/templates/block/block.html.eex:95
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:54
+msgid "Asset Issue"
+msgstr "Emisión de Activos"
+
+#: lib/neoscan_web/templates/address/address.html.eex:79
+#: lib/neoscan_web/templates/asset/asset.html.eex:162
+#: lib/neoscan_web/templates/block/block.html.eex:98
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:57
+msgid "Asset Register"
+msgstr "Registro de Activos"
+
+#: lib/neoscan_web/templates/assets/assets.html.eex:1
+#: lib/neoscan_web/templates/layout/app.html.eex:93
+msgid "Assets"
+msgstr "Activos"
+
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:156
+msgid "Atributte"
+msgstr "Atributo"
+
+#: lib/neoscan_web/templates/home/index.html.eex:62
+msgid "BTC"
+msgstr "BTC"
+
+#: lib/neoscan_web/templates/address/address.html.eex:7
+msgid "Back to all addresses"
+msgstr "Volver a todas las direcciones"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:8
+msgid "Back to all assets"
+msgstr "Volver a todos los activos"
+
+#: lib/neoscan_web/templates/block/block.html.eex:4
+msgid "Back to all blocks"
+msgstr "Volver a todos los bloques"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:8
+#: lib/neoscan_web/templates/asset/asset.html.eex:8
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:10
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:10
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:10
+msgid "Back to all transactions"
+msgstr "Volver a todas las transacciones"
+
+#: lib/neoscan_web/templates/block/block.html.eex:2
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:26
+msgid "Block"
+msgstr "Bloque"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:69
+msgid "Block Height, Hash, Address or Transaction id"
+msgstr "Altura del Bloque, Hash, Dirección o ID Transacción"
+
+#: lib/neoscan_web/templates/block/block.html.eex:1
+msgid "Block Information"
+msgstr "Información del Bloque"
+
+#: lib/neoscan_web/templates/block/block.html.eex:16
+msgid "Block index"
+msgstr "Índice del Bloque"
+
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:1
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:62
+#: lib/neoscan_web/templates/layout/app.html.eex:90
+msgid "Blocks"
+msgstr "Bloques"
+
+#: lib/neoscan_web/templates/block/block.html.eex:203
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:130
+msgid "Bytecode Invocation Script"
+msgstr "Invocación de Script Bytecode"
+
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:165
+msgid "Bytecode Script"
+msgstr "Script Bycode"
+
+#: lib/neoscan_web/templates/block/block.html.eex:216
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:141
+msgid "Bytecode Verification Script"
+msgstr "Verificación del Script Bytecode"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:121
+msgid "City Of Zion"
+msgstr "City Of Zion"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:129
+#: lib/neoscan_web/templates/layout/app.html.eex:129
+#: lib/neoscan_web/templates/layout/app.html.eex:129
+msgid "City of Zion Github"
+msgstr "Github City of Zion"
+
+#: lib/neoscan_web/templates/address/address.html.eex:122
+#: lib/neoscan_web/templates/asset/asset.html.eex:197
+#: lib/neoscan_web/templates/block/block.html.eex:141
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:19
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:100
+msgid "Claimed from"
+msgstr "Reclamado de"
+
+#: lib/neoscan_web/templates/address/address.html.eex:49
+#: lib/neoscan_web/templates/asset/asset.html.eex:131
+#: lib/neoscan_web/templates/block/block.html.eex:69
+#: lib/neoscan_web/templates/home/index.html.eex:87
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:26
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:9
+msgid "Completed on"
+msgstr "Completado en"
+
+#: lib/neoscan_web/templates/address/address.html.eex:61
+#: lib/neoscan_web/templates/asset/asset.html.eex:144
+#: lib/neoscan_web/templates/block/block.html.eex:80
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:119
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:9
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:39
+msgid "Contract"
+msgstr "Contrato"
+
+#: lib/neoscan_web/templates/address/address.html.eex:82
+#: lib/neoscan_web/templates/asset/asset.html.eex:165
+#: lib/neoscan_web/templates/block/block.html.eex:101
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:60
+msgid "Contract Publish"
+msgstr "Publicación de Contrato"
+
+#: lib/neoscan_web/templates/contracts/contracts.html.eex:5
+msgid "Contracts"
+msgstr "Contratos"
+
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:8
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:26
+#: lib/neoscan_web/templates/asset/asset.html.eex:52
+#: lib/neoscan_web/templates/asset/asset.html.eex:74
+#: lib/neoscan_web/templates/asset/asset.html.eex:92
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:39
+msgid "Created"
+msgstr "Creado"
+
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:10
+#: lib/neoscan_web/templates/home/index.html.eex:107
+msgid "Created on"
+msgstr "Creado en"
+
+#: lib/neoscan_web/templates/home/index.html.eex:60
+msgid "Currency"
+msgstr "Moneda"
+
+#: lib/neoscan_web/templates/home/index.html.eex:47
+msgid "Current market cap"
+msgstr "Límite actual del mercado"
+
+#: lib/neoscan_web/templates/address/address.html.eex:161
+#: lib/neoscan_web/templates/asset/asset.html.eex:226
+#: lib/neoscan_web/templates/block/block.html.eex:180
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:139
+msgid "Data Size"
+msgstr "Tamaño de datos"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:78
+msgid "Explorer"
+msgstr "Explorador"
+
+#: lib/neoscan_web/templates/address/address.html.eex:161
+#: lib/neoscan_web/templates/address/address.html.eex:161
+#: lib/neoscan_web/templates/asset/asset.html.eex:226
+#: lib/neoscan_web/templates/asset/asset.html.eex:226
+#: lib/neoscan_web/templates/block/block.html.eex:180
+#: lib/neoscan_web/templates/block/block.html.eex:180
+#: lib/neoscan_web/templates/home/index.html.eex:67
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:139
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:139
+msgid "GAS"
+msgstr "GAS"
+
+#: lib/neoscan_web/templates/address/address.html.eex:18
+msgid "GAS Balance"
+msgstr "Balance de GAS"
+
+#: lib/neoscan_web/templates/address/address.html.eex:64
+#: lib/neoscan_web/templates/asset/asset.html.eex:147
+#: lib/neoscan_web/templates/block/block.html.eex:83
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:42
+msgid "Gas Claim"
+msgstr "Reclamo de GAS"
+
+#: lib/neoscan_web/templates/block/block.html.eex:56
+msgid "Generated GAS"
+msgstr "Generado GAS"
+
+#: lib/neoscan_web/templates/home/index.html.eex:70
+msgid "Graph Zoom"
+msgstr "Zoom Gráfico"
+
+#: lib/neoscan_web/templates/block/block.html.eex:26
+msgid "Hash"
+msgstr "Hash"
+
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:7
+#: lib/neoscan_web/templates/home/index.html.eex:104
+msgid "Height"
+msgstr "Altura"
+
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:77
+msgid "Included in Block"
+msgstr "Incluido en Bloque"
+
+#: lib/neoscan_web/templates/address/address.html.eex:67
+#: lib/neoscan_web/templates/asset/asset.html.eex:150
+#: lib/neoscan_web/templates/block/block.html.eex:86
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:10
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:45
+msgid "Invocation"
+msgstr "Invocación"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:32
+#: lib/neoscan_web/templates/assets/assets.html.eex:37
+msgid "Issued"
+msgstr "Emitido"
+
+#: lib/neoscan_web/templates/home/index.html.eex:100
+msgid "Last 5 Blocks"
+msgstr "Últimos 5 Bloques"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:125
+#: lib/neoscan_web/templates/home/index.html.eex:81
+msgid "Last 5 Transactions"
+msgstr "Últimas 5 Transacciones"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:69
+msgid "Last 5 Wallet Addresses"
+msgstr "Últimas 5 Billeteras"
+
+#: lib/neoscan_web/templates/home/index.html.eex:26
+msgid "Last block"
+msgstr "Último bloque"
+
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:10
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:41
+#: lib/neoscan_web/templates/asset/asset.html.eex:76
+msgid "Last transaction"
+msgstr "Última transacción"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:107
+msgid "Last transactions"
+msgstr "Últimas transacciones"
+
+#: lib/neoscan_web/templates/address/address.html.eex:21
+msgid "Loading Unclaimed Gas"
+msgstr "Cargando Gas No Reclamado"
+
+#: lib/neoscan_web/templates/block/block.html.eex:41
+msgid "Merkle root"
+msgstr "Raíz de Merkle"
+
+#: lib/neoscan_web/templates/address/address.html.eex:85
+#: lib/neoscan_web/templates/asset/asset.html.eex:168
+#: lib/neoscan_web/templates/block/block.html.eex:104
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:63
+msgid "Miner"
+msgstr "Minero"
+
+#: lib/neoscan_web/templates/assets/assets.html.eex:47
+msgid "More details"
+msgstr "Más detalles"
+
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:47
+#: lib/neoscan_web/templates/home/index.html.eex:43
+#: lib/neoscan_web/templates/home/index.html.eex:66
+msgid "NEO"
+msgstr "NEO"
+
+#: lib/neoscan_web/templates/address/address.html.eex:14
+msgid "NEO Balance"
+msgstr "Balance de NEO"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:120
+#: lib/neoscan_web/templates/layout/app.html.eex:120
+#: lib/neoscan_web/templates/layout/app.html.eex:120
+msgid "NEO Slack"
+msgstr "NEO Slack"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:132
+#: lib/neoscan_web/templates/layout/app.html.eex:132
+#: lib/neoscan_web/templates/layout/app.html.eex:132
+msgid "NEOSCAN API"
+msgstr "API NEOSCAN"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:63
+#: lib/neoscan_web/templates/layout/app.html.eex:63
+msgid "NEOSCAN Home"
+msgstr "Inicio NEOSCAN"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:120
+#: lib/neoscan_web/templates/layout/app.html.eex:120
+#: lib/neoscan_web/templates/layout/app.html.eex:120
+msgid "NEOSCAN Testnet"
+msgstr "Testnet NEOSCAN"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:16
+msgid "Name"
+msgstr "Nombre"
+
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:67
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:139
+msgid "Network Fee"
+msgstr "Tarifa de Red"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:226
+#: lib/neoscan_web/templates/block/block.html.eex:180
+msgid "Network fee"
+msgstr "Tarifa de red"
+
+#: lib/neoscan_web/templates/block/block.html.eex:6
+msgid "Next block"
+msgstr "Siguiente bloque"
+
+#: lib/neoscan_web/templates/block/block.html.eex:232
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:176
+msgid "Opcode Invocation Script"
+msgstr "Script de Invocación del Opcode"
+
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:209
+msgid "Opcode Script"
+msgstr "Script Opcode"
+
+#: lib/neoscan_web/templates/block/block.html.eex:249
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:191
+msgid "Opcode Verification Script"
+msgstr "Verificación del Script Opcode"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:40
+msgid "Precision"
+msgstr "Precisión"
+
+#: lib/neoscan_web/templates/block/block.html.eex:7
+msgid "Previous block"
+msgstr "Bloque anterior"
+
+#: lib/neoscan_web/templates/address/address.html.eex:153
+#: lib/neoscan_web/templates/asset/asset.html.eex:218
+#: lib/neoscan_web/templates/block/block.html.eex:172
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:49
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:131
+msgid "Registered"
+msgstr "Registrado"
+
+#: lib/neoscan_web/templates/assets/assets.html.eex:22
+msgid "Registered on"
+msgstr "Registrado en"
+
+#: lib/neoscan_web/templates/home/index.html.eex:115
+#: lib/neoscan_web/templates/home/index.html.eex:115
+msgid "See all blocks"
+msgstr "Ver todos los bloques"
+
+#: lib/neoscan_web/templates/home/index.html.eex:95
+#: lib/neoscan_web/templates/home/index.html.eex:95
+msgid "See all transactions"
+msgstr "Ver todas las transacciones"
+
+#: lib/neoscan_web/templates/address/address.html.eex:105
+#: lib/neoscan_web/templates/asset/asset.html.eex:188
+#: lib/neoscan_web/templates/block/block.html.eex:124
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:28
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:97
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:83
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:39
+msgid "Sent from"
+msgstr "Enviado desde"
+
+#: lib/neoscan_web/templates/address/address.html.eex:134
+#: lib/neoscan_web/templates/asset/asset.html.eex:209
+#: lib/neoscan_web/templates/block/block.html.eex:153
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:40
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:105
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:112
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:47
+msgid "Sent to"
+msgstr "Enviado a"
+
+#: lib/neoscan_web/templates/block/block.html.eex:51
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:8
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:31
+#: lib/neoscan_web/templates/home/index.html.eex:105
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:81
+msgid "Size"
+msgstr "Tamaño"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:36
+#: lib/neoscan_web/templates/assets/assets.html.eex:18
+msgid "Supply"
+msgstr "Suministro"
+
+#: lib/neoscan_web/templates/asset/asset.html.eex:26
+msgid "System"
+msgstr "Sistema"
+
+#: lib/neoscan_web/templates/address/address.html.eex:161
+#: lib/neoscan_web/templates/asset/asset.html.eex:226
+#: lib/neoscan_web/templates/block/block.html.eex:180
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:72
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:139
+msgid "System Fee"
+msgstr "Tarifa del Sistema"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:118
+msgid "The source code is"
+msgstr "El código fuente es"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:119
+msgid "The website content is licensed"
+msgstr "El contenido del sitio web tiene licencia"
+
+#: lib/neoscan_web/templates/block/block.html.eex:31
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:62
+msgid "Time"
+msgstr "Tiempo"
+
+#: lib/neoscan_web/templates/home/index.html.eex:65
+msgid "Token"
+msgstr "Token"
+
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:11
+#: lib/neoscan_web/templates/asset/asset.html.eex:77
+msgid "Tokens"
+msgstr "Tokens"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:137
+msgid "Tooltips Off "
+msgstr "Tooltips Desactivados"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:136
+msgid "Tooltips On "
+msgstr "Tooltips Activados"
+
+#: lib/neoscan_web/templates/home/index.html.eex:19
+msgid "Total transactions"
+msgstr "Total de transacciones"
+
+#: lib/neoscan_web/templates/address/address.html.eex:48
+#: lib/neoscan_web/templates/asset/asset.html.eex:130
+#: lib/neoscan_web/templates/block/block.html.eex:68
+#: lib/neoscan_web/templates/home/index.html.eex:86
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:25
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:8
+msgid "Transaction ID"
+msgstr "ID de Transacción"
+
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:1
+msgid "Transaction Information"
+msgstr "Información de la Transacción"
+
+#: lib/neoscan_web/templates/address/address.html.eex:43
+#: lib/neoscan_web/templates/address/address.html.eex:170
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:9
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:37
+#: lib/neoscan_web/templates/asset/asset.html.eex:44
+#: lib/neoscan_web/templates/asset/asset.html.eex:75
+#: lib/neoscan_web/templates/asset/asset.html.eex:103
+#: lib/neoscan_web/templates/assets/assets.html.eex:41
+#: lib/neoscan_web/templates/block/block.html.eex:21
+#: lib/neoscan_web/templates/block/block.html.eex:62
+#: lib/neoscan_web/templates/block/block.html.eex:187
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:9
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:35
+#: lib/neoscan_web/templates/home/index.html.eex:106
+#: lib/neoscan_web/templates/layout/app.html.eex:81
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:1
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:149
+msgid "Transactions"
+msgstr "Transacciones"
+
+#: lib/neoscan_web/templates/address/address.html.eex:47
+#: lib/neoscan_web/templates/asset/asset.html.eex:20
+#: lib/neoscan_web/templates/asset/asset.html.eex:129
+#: lib/neoscan_web/templates/assets/assets.html.eex:14
+#: lib/neoscan_web/templates/block/block.html.eex:67
+#: lib/neoscan_web/templates/home/index.html.eex:85
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:24
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:7
+msgid "Type"
+msgstr "Tipo"
+
+#: lib/neoscan_web/templates/home/index.html.eex:61
+msgid "USD"
+msgstr "USD"
+
+#: lib/neoscan_web/templates/block/block.html.eex:46
+msgid "Validator"
+msgstr "Validador"
+
+#: lib/neoscan_web/templates/block/block.html.eex:36
+msgid "Version"
+msgstr "Versión"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:118
+#: lib/neoscan_web/templates/layout/app.html.eex:118
+msgid "View MIT License"
+msgstr "Ver la Licencia MIT"
+
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:23
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:23
+#: lib/neoscan_web/templates/asset/asset.html.eex:89
+#: lib/neoscan_web/templates/asset/asset.html.eex:89
+msgid "View address"
+msgstr "Ver Direccion"
+
+#: lib/neoscan_web/templates/home/index.html.eex:36
+#: lib/neoscan_web/templates/home/index.html.eex:36
+msgid "View all addresses"
+msgstr "Ver todas las direcciones"
+
+#: lib/neoscan_web/templates/home/index.html.eex:29
+#: lib/neoscan_web/templates/home/index.html.eex:29
+msgid "View all blocks"
+msgstr "Ver todos los bloques"
+
+#: lib/neoscan_web/templates/home/index.html.eex:22
+#: lib/neoscan_web/templates/home/index.html.eex:22
+msgid "View all transactions"
+msgstr "Ver todas las transacciones"
+
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:25
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:25
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:78
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:78
+msgid "View block"
+msgstr "Ver bloque"
+
+#: lib/neoscan_web/templates/address/address.html.eex:88
+#: lib/neoscan_web/templates/address/address.html.eex:88
+#: lib/neoscan_web/templates/asset/asset.html.eex:171
+#: lib/neoscan_web/templates/asset/asset.html.eex:171
+#: lib/neoscan_web/templates/block/block.html.eex:107
+#: lib/neoscan_web/templates/block/block.html.eex:107
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:66
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:66
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:23
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:23
+msgid "View transaction"
+msgstr "Ver transacción"
+
+#: lib/neoscan_web/templates/block/block.html.eex:174
+#: lib/neoscan_web/templates/block/block.html.eex:174
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:22
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:22
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:31
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:31
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:43
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:43
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:51
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:51
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:99
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:99
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:107
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:107
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:133
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:133
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:41
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:41
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:49
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:49
+msgid "View wallet address"
+msgstr "Ver dirección de la cartera"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:121
+#: lib/neoscan_web/templates/layout/app.html.eex:121
+msgid "Visit City of Zion"
+msgstr "Visitar City of Zion"
+
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:1
+#: lib/neoscan_web/templates/layout/app.html.eex:87
+msgid "Wallet Addresses"
+msgstr "Direcciones de Billetera"
+
+#: lib/neoscan_web/templates/home/index.html.eex:33
+msgid "Wallet addresses created"
+msgstr "Direcciones de billetera creadas"
+
+#: lib/neoscan_web/templates/home/index.html.eex:3
+msgid "Welcome to NEOSCAN"
+msgstr "Bienvenido a NEOSCAN"
+
+#: lib/neoscan_web/templates/home/index.html.eex:4
+msgid "Your home for all NEO related blockchain information"
+msgstr "Su hogar para toda la información de blockchain relacionada con NEO"
+
+#: lib/neoscan_web/templates/block/block.html.eex:52
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:32
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:82
+msgid "bytes"
+msgstr "bytes"
+
+#: lib/neoscan_web/templates/layout/app.html.eex:118
+msgid "licensed"
+msgstr "con licencia"
+
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:55
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:62
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:149
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:61
+msgid "of"
+msgstr "de"
+
+#: lib/neoscan_web/templates/address/address.html.eex:170
+#: lib/neoscan_web/templates/addresses/addresses.html.eex:55
+#: lib/neoscan_web/templates/block/block.html.eex:187
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:62
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:149
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:61
+msgid "to"
+msgstr "a"
+
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:5
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:8
+msgid "Any"
+msgstr "Alguna"
+
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:14
+msgid "Claim"
+msgstr "Reclamación"
+
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:12
+msgid "Issue"
+msgstr "Problema"
+
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:11
+msgid "Publish"
+msgstr "Publicar"
+
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:13
+msgid "Register"
+msgstr "Registro"
+
+#, elixir-format
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:11
+#: lib/neoscan_web/templates/blocks/blocks.html.eex:50
+msgid "Block Time"
+msgstr "Tiempo del Bloque"
+
+#, elixir-format
+#: lib/neoscan_web/templates/asset/asset.html.eex:4
+msgid "Contract Hash"
+msgstr "Hash del Contracto"
+
+#, elixir-format
+#: lib/neoscan_web/templates/address/address.html.eex:70
+#: lib/neoscan_web/templates/asset/asset.html.eex:153
+#: lib/neoscan_web/templates/block/block.html.eex:89
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:15
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:48
+msgid "Enrollment"
+msgstr "Inscripción"
+
+#, elixir-format
+#: lib/neoscan_web/templates/layout/app.html.eex:126
+#: lib/neoscan_web/templates/layout/app.html.eex:126
+#: lib/neoscan_web/templates/layout/app.html.eex:126
+msgid "NEO Discord"
+msgstr "NEO Discord"
+
+#, elixir-format
+#: lib/neoscan_web/templates/address/address.html.eex:73
+#: lib/neoscan_web/templates/asset/asset.html.eex:156
+#: lib/neoscan_web/templates/block/block.html.eex:92
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:16
+#: lib/neoscan_web/templates/transactions/transactions.html.eex:51
+msgid "State"
+msgstr "Estado"
+
+#, elixir-format
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:21
+msgid "Transfer"
+msgstr "Transferir"
+
+#, elixir-format
+#: lib/neoscan_web/templates/layout/app.html.eex:84
+#: lib/neoscan_web/templates/transaction/transaction.html.eex:92
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:1
+#: lib/neoscan_web/templates/transfers/transfers.html.eex:61
+msgid "Transfers"
+msgstr "Transferencias"

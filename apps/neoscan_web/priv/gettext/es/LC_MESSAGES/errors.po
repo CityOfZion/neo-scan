@@ -1,0 +1,91 @@
+#  `msgid`s in this file come from POT (.pot) files.
+# 
+#  Do not add, change, or remove `msgid`s manually here as
+#  they're tied to the ones in the corresponding POT file
+#  (with the same domain).
+# 
+#  Use `mix gettext.extract --merge` or `mix gettext.merge`
+#  to merge POT files into PO files.
+# Translators:
+# José Wenceslao A. Castillo Mendoza (jwcastillo) <jwcastillo@gmail.com>, 2018
+msgid ""
+msgstr ""
+"Last-Translator: José Wenceslao A. Castillo Mendoza (jwcastillo) <jwcastillo@gmail.com>, 2018\n"
+"Language-Team: Spanish (https://www.transifex.com/vezla/teams/86823/es/)\n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "can't be blank"
+msgstr "no puede estar en blanco"
+
+msgid "has already been taken"
+msgstr "ya se ha tomado"
+
+msgid "is invalid"
+msgstr "es inválido"
+
+msgid "must be accepted"
+msgstr "debe ser aceptado"
+
+msgid "has invalid format"
+msgstr "tiene un formato inválido"
+
+msgid "has an invalid entry"
+msgstr "tiene una entrada inválida"
+
+msgid "is reserved"
+msgstr "Está reservado"
+
+msgid "does not match confirmation"
+msgstr "la confirmación no coincide"
+
+msgid "is still associated with this entry"
+msgstr "todavía está asociado con esta entrada"
+
+msgid "are still associated with this entry"
+msgstr "todavía están asociados con esta entrada"
+
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "debería ser un personaje"
+msgstr[1] "debería ser %{count} personajes"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "debería tener un elemento"
+msgstr[1] "debería tener %{count} elementos"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "debe ser de al menos un personaje"
+msgstr[1] "debe ser de al menos %{count} personajes"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "debe tener al menos un elemento"
+msgstr[1] "debe tener al menos %{count} elementos"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "debería ser a lo sumo un personaje"
+msgstr[1] "debería ser a lo sumo %{count} personajes"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "debería tener como máximo un elemento"
+msgstr[1] "debería tener como máximo %{count} elementos"
+
+msgid "must be less than %{number}"
+msgstr "debe ser menor que %{number}"
+
+msgid "must be greater than %{number}"
+msgstr "debe ser mayor que %{number}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "debe ser menor o igual que %{number}"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "debe ser mayor o igual que %{number}"
+
+msgid "must be equal to %{number}"
+msgstr "debe ser igual a %{number}"
