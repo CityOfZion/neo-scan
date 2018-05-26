@@ -1,6 +1,6 @@
-# Neoscan Umbrella Application
+# Neoscan 
 
-[![Travis](https://img.shields.io/travis/CityOfZion/neo-scan.svg?branch=master&style=flat-square)](https://travis-ci.org/CityOfZion/neo-scan)
+[![Gitlab](https://gitlab.com/CityOfZion/neo-scan/badges/master/build.svg)](https://gitlab.com/CityOfZion/neo-scan/pipelines)
 [![Coveralls](https://img.shields.io/coveralls/CityOfZion/neo-scan.svg?branch=master&style=flat-square)](https://coveralls.io/github/CityOfZion/neo-scan)
 
 
