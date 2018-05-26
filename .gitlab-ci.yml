@@ -1,11 +1,29 @@
 stages:
+  - test
   - build
   - deploy
+
+variables:
+  POSTGRES_DB: neoscan_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: "postgres"
 
 before_script:
   - export IMAGE_TAG="$CI_PIPELINE_ID-$CI_COMMIT_REF_SLUG"
   - export REGISTRY_PATH="$CI_REGISTRY_IMAGE:$IMAGE_TAG"
   - export HAPROXY_REGISTRY_PATH="$CI_REGISTRY_IMAGE/haproxy:$IMAGE_TAG"
+
+test:
+  stage: test
+  image: bitwalker/alpine-elixir-phoenix:1.6.5
+  services:
+    - postgres
+  script:
+    - mix local.rebar --force
+    - mix local.hex --force
+    - mix deps.get
+    - mix format --check-formatted
+    - mix coveralls.post -u --token "${COVERALLS_REPO_TOKEN}" --branch "${CI_COMMIT_REF_NAME}" --message "${CI_COMMIT_TITLE}" --sha "${CI_COMMIT_SHA}" --service_name "gitlab"
 
 neoscan-build:
   stage: build

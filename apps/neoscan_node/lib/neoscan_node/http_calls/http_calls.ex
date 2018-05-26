@@ -51,7 +51,7 @@ defmodule NeoscanNode.HttpCalls do
     body = if gzipped, do: :zlib.gunzip(body), else: body
 
     body
-    |> Poison.decode!()
+    |> Poison.decode()
     |> handle_body
   end
 
@@ -62,12 +62,12 @@ defmodule NeoscanNode.HttpCalls do
   end
 
   # handles a sucessful response
-  defp handle_body(%{"result" => result}), do: {:ok, result}
+  defp handle_body({:ok, %{"result" => result}}), do: {:ok, result}
 
-  defp handle_body(%{"results" => result, "current_height" => current_height}),
+  defp handle_body({:ok, %{"results" => result, "current_height" => current_height}}),
     do: {:ok, result, current_height}
 
-  defp handle_body(%{"results" => results}), do: {:ok, results}
-  defp handle_body(%{"error" => error}), do: {:error, error}
-  defp handle_body(_), do: {:error, "server error"}
+  defp handle_body({:ok, %{"results" => results}}), do: {:ok, results}
+  defp handle_body({:ok, %{"error" => error}}), do: {:error, error}
+  defp handle_body(error), do: {:error, "body error: #{inspect(error)}"}
 end
