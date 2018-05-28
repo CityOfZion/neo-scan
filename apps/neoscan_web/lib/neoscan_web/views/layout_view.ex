@@ -6,7 +6,6 @@ defmodule NeoscanWeb.LayoutView do
 
   @languages %{
     "en" => "English",
-
     "es" => "Español",
     "nl" => "Nederlands",
     "fr" => "Français",
