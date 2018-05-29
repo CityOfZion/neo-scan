@@ -19,7 +19,7 @@ defmodule Neoscan.Blockchain.BlockchainTest do
 
   test "get_current_height/1" do
     {:ok, height} = Blockchain.get_current_height([@node_url])
-    assert is_number(height)
+    assert 200 == height
   end
 
   test "get_transaction/2" do
