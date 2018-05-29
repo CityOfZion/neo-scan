@@ -10,7 +10,6 @@ defmodule Neoscan.Blocks do
   alias Neoscan.Transactions
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Stats
-  alias NeoscanNode.HttpCalls
   alias NeoscanNode.Blockchain
   require Logger
 
@@ -242,9 +241,7 @@ defmodule Neoscan.Blocks do
 
   """
   def get_block_time(height) do
-    url = HttpCalls.get_url(1)
-
-    case Blockchain.get_block_by_height(url, height) do
+    case Blockchain.get_block_by_height(height) do
       {:ok, block} ->
         Map.get(block, "time")
 
