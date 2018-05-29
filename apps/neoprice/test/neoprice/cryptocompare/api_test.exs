@@ -25,7 +25,7 @@ defmodule Neoprice.Cryptocompare.ApiTest do
   test "day report error json" do
     now = DateTime.utc_now() |> DateTime.to_unix()
 
-    with_mock Neoprice.Helper,
+    with_mock Neoprice.Cryptocompare.Helper,
       retry_get: fn _url -> {:ok, %{status_code: 200, body: "nonjson"}} end do
       assert [] == Api.get_historical_price(:hour, "NEO", "BTC", 100, 1, now)
     end
@@ -34,7 +34,7 @@ defmodule Neoprice.Cryptocompare.ApiTest do
   test "day report error status" do
     now = DateTime.utc_now() |> DateTime.to_unix()
 
-    with_mock Neoprice.Helper,
+    with_mock Neoprice.Cryptocompare.Helper,
       retry_get: fn _url -> {:ok, %{status_code: 500, body: "nonjson"}} end do
       assert [] == Api.get_historical_price(:hour, "NEO", "BTC", 100, 1, now)
     end

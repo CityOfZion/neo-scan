@@ -1,7 +1,7 @@
-defmodule Neoprice.Helper do
+defmodule Neoprice.Cryptocompare.Helper do
   @moduledoc "helper methods"
 
-  alias Neoprice.Helper.Request
+  alias Neoprice.Cryptocompare.Request
 
   @retry_interval 1_000
   @total_retry 3
@@ -20,8 +20,4 @@ defmodule Neoprice.Helper do
         retry_get(url, n - 1)
     end
   end
-end
-
-defmodule Neoprice.Helper.Request do
-  def get(url), do: HTTPoison.get(url)
 end
