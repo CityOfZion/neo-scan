@@ -9,8 +9,10 @@ defmodule Neoprice.Mixfile do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.5",
-      elixirc_options: [warnings_as_errors: true],
+      elixir: "~> 1.6",
+      elixirc_options: [
+        warnings_as_errors: true
+      ],
       start_permanent: Mix.env() == :prod,
       test_coverage: [
         tool: ExCoveralls
@@ -38,7 +40,6 @@ defmodule Neoprice.Mixfile do
     [
       {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
       {:poison, "~> 2.0 or ~> 3.1"},
-      {:mock, "~> 0.3.0", only: :test},
       {:excoveralls, "~> 0.8", only: :test}
     ]
   end

@@ -16,9 +16,9 @@ defmodule NeoPrice.CryptoCompareTest do
       DateTime.utc_now()
       |> DateTime.to_unix()
 
-    from = now - 3600 * 24
+    from = now - 60 * 24
     prices = Cryptocompare.get_price(:minute, from, now, "NEO", "BTC", 1)
-    assert_in_delta length(prices), 1440, 2
+    assert length(prices) == 24
 
     assert_in_delta List.last(prices)
                     |> elem(0),

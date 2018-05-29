@@ -3,7 +3,7 @@ defmodule Neoprice.Cryptocompare.Helper do
 
   alias Neoprice.Cryptocompare.Request
 
-  @retry_interval 1_000
+  @retry_interval Application.get_env(:neoprice, :http_retry_interval)
   @total_retry 3
 
   def retry_get(url), do: retry_get(url, @total_retry)
