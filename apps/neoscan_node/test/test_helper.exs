@@ -548,6 +548,8 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     }
   end
 
+  def get("error", _, _), do: {:error, :error}
+
   def get(url, headers, opts) do
     IO.inspect({url, headers, opts})
     result = HTTPoison.get(url, headers, opts)

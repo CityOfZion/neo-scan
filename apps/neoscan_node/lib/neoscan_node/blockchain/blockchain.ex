@@ -24,6 +24,8 @@ defmodule NeoscanNode.Blockchain do
 
   def get_block_by_hash(url, hash), do: request(url, "getblock", [hash, 1])
 
+  def get_current_height, do: get_current_height(HttpCalls.get_url(1))
+
   def get_current_height(url), do: request(url, "getblockcount", [])
 
   def get_transaction(txid), do: get_transaction(HttpCalls.get_url(1), txid)
@@ -33,6 +35,8 @@ defmodule NeoscanNode.Blockchain do
   def get_asset(txid), do: get_asset(HttpCalls.get_url(1), txid)
 
   def get_asset(url, txid), do: request(url, "getassetstate", [txid, 1])
+
+  def get_contract(hash), do: get_contract(HttpCalls.get_url(1), hash)
 
   def get_contract(url, hash), do: request(url, "getcontractstate", [hash])
 end
