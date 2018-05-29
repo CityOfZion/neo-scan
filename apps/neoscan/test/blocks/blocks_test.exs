@@ -12,7 +12,10 @@ defmodule Neoscan.BlocksTest do
     "nextconsensus" => "APyEx5f4Zm4oCHwFWiSTaph1fPBxZacYVR",
     "nonce" => "000000007c2bac1d",
     "previousblockhash" => "0x0000000000000000000000000000000000000000000000000000000000000000",
-    "script" => %{"invocation" => "", "verification" => "51"},
+    "script" => %{
+      "invocation" => "",
+      "verification" => "51"
+    },
     "size" => 401,
     "time" => 1_468_595_301,
     "transfers" => [],
@@ -219,6 +222,10 @@ defmodule Neoscan.BlocksTest do
       block = insert(:block)
       assert block.id == Blocks.get_block_by_height(block.index).id
       assert is_nil(Blocks.get_block_by_height(12355))
+    end
+
+    test "get_block_time/1" do
+      assert 1_476_649_675 == Blocks.get_block_time(123)
     end
 
     test "create_block/1 with valid data creates a block" do
