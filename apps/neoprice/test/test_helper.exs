@@ -1,4 +1,4 @@
-defmodule Neoprice.Cryptocompare.Request do
+defmodule Neoprice.Cryptocompare.HTTPPoisonWrapper do
   @moduledoc "poison wrapper"
 
   def get("successful"), do: {:ok, :ok}

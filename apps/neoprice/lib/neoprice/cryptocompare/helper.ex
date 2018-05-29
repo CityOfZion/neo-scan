@@ -1,7 +1,7 @@
 defmodule Neoprice.Cryptocompare.Helper do
   @moduledoc "helper methods"
 
-  alias Neoprice.Cryptocompare.Request
+  alias Neoprice.Cryptocompare.HTTPPoisonWrapper
 
   @retry_interval Application.get_env(:neoprice, :http_retry_interval)
   @total_retry 3
@@ -11,7 +11,7 @@ defmodule Neoprice.Cryptocompare.Helper do
   defp retry_get(_, 0), do: {:error, :retry_max}
 
   defp retry_get(url, n) do
-    case Request.get(url) do
+    case HTTPPoisonWrapper.get(url) do
       {:ok, _} = result ->
         result
 
