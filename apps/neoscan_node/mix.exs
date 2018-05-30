@@ -9,8 +9,11 @@ defmodule NeoscanNode.Mixfile do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.4",
-      elixirc_options: [warnings_as_errors: true],
+      elixir: "~> 1.6",
+      elixirc_options: [
+        warnings_as_errors: true,
+        ignore_module_conflict: true
+      ],
       elixirc_paths: elixirc_paths(Mix.env()),
       test_coverage: [
         tool: ExCoveralls
@@ -39,7 +42,7 @@ defmodule NeoscanNode.Mixfile do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test"]
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Dependencies can be Hex packages:
