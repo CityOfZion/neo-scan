@@ -1,0 +1,5 @@
+{
+  "skip_files": [
+    "test/support/http_poison_wrapper.ex"
+  ]
+}
