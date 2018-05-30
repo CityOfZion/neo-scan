@@ -4,6 +4,7 @@
 [![Coveralls](https://img.shields.io/coveralls/CityOfZion/neo-scan.svg?branch=master)](https://coveralls.io/github/CityOfZion/neo-scan)
 
 Elixir + Phoenix Blockchain explorer for NEO.
+
 # How to contribute
 
 Using docker you can start the project with:
