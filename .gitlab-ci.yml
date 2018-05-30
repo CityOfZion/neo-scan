@@ -28,20 +28,14 @@ test:
     - mix local.hex --force
     - mix deps.get
     - mix format --check-formatted
-    - MIX_ENV=prod mix compile
     - mix coveralls.post -u --token "${COVERALLS_REPO_TOKEN}" --branch "${CI_COMMIT_REF_NAME}" --message "${CI_COMMIT_TITLE}" --sha "${CI_COMMIT_SHA}" --service_name "gitlab"
-    - rm -Rf _build/**/lib/neo*
+    - rm -Rf _build/test/lib/neo*
 
 neoscan-build:
   stage: build
   image: docker:latest
   services:
     - docker:dind
-  cache:
-    key: build-cache
-    paths:
-      - deps/
-      - _build/
   script:
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker build -t $REGISTRY_PATH .
