@@ -13,6 +13,7 @@ defmodule NeoscanNode.HttpCalls do
 
   """
   alias NeoscanNode.Worker
+  alias NeoscanNode.HttpCalls.HTTPPoisonWrapper
 
   def get_url(n) do
     nodes = Worker.get_nodes()
@@ -26,7 +27,7 @@ defmodule NeoscanNode.HttpCalls do
 
   # Makes a request to the 'url' seed
   def request(headers, data, url) when is_bitstring(url) do
-    HTTPoison.post(url, data, headers, ssl: [{:versions, [:"tlsv1.2"]}])
+    HTTPPoisonWrapper.post(url, data, headers, ssl: [{:versions, [:"tlsv1.2"]}])
     |> handle_response(url)
   end
 
@@ -35,7 +36,7 @@ defmodule NeoscanNode.HttpCalls do
 
   # Makes a request to the 'url' seed
   def get(url) when is_bitstring(url) do
-    HTTPoison.get(url, [], ssl: [{:versions, [:"tlsv1.2"]}])
+    HTTPPoisonWrapper.get(url, [], ssl: [{:versions, [:"tlsv1.2"]}])
     |> handle_response(url)
   end
 

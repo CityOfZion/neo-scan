@@ -30,5 +30,8 @@ defmodule Neoscan.HttpCalls.HttpCallsTest do
     assert {:ok, [_ | _], _} = HttpCalls.get(@token_url)
     assert {:ok, [_ | _], _} = HttpCalls.get([@token_url])
     assert capture_log(fn -> assert :ok == HttpCalls.get(123) end) =~ "Error in url"
+
+    assert capture_log(fn -> assert {:error, ":error error"} == HttpCalls.get("error") end) =~
+             ":error error"
   end
 end

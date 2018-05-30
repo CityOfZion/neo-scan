@@ -2,7 +2,7 @@ defmodule Neoprice.Cryptocompare.Api do
   @moduledoc false
   require Logger
 
-  alias Neoprice.Helper
+  alias Neoprice.Cryptocompare.Helper
 
   @url Application.get_env(:neoprice, :crypto_compare_url)
   @app_name Application.get_env(:neoprice, :app_name, "neoscan")

@@ -3,8 +3,8 @@
 [![Gitlab](https://gitlab.com/CityOfZion/neo-scan/badges/master/build.svg)](https://gitlab.com/CityOfZion/neo-scan/pipelines)
 [![Coveralls](https://img.shields.io/coveralls/CityOfZion/neo-scan.svg?branch=master)](https://coveralls.io/github/CityOfZion/neo-scan)
 
+Elixir + Phoenix Blockchain explorer for NEO
 
-Elixir + Phoenix Blockchain explorer for NEO.
 # How to contribute
 
 Using docker you can start the project with:

@@ -9,8 +9,12 @@ defmodule Neoprice.Mixfile do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.5",
-      elixirc_options: [warnings_as_errors: true],
+      elixir: "~> 1.6",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      elixirc_options: [
+        warnings_as_errors: true,
+        ignore_module_conflict: true
+      ],
       start_permanent: Mix.env() == :prod,
       test_coverage: [
         tool: ExCoveralls
@@ -25,6 +29,10 @@ defmodule Neoprice.Mixfile do
     ]
   end
 
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
@@ -38,7 +46,6 @@ defmodule Neoprice.Mixfile do
     [
       {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
       {:poison, "~> 2.0 or ~> 3.1"},
-      {:mock, "~> 0.3.0", only: :test},
       {:excoveralls, "~> 0.8", only: :test}
     ]
   end

@@ -158,10 +158,10 @@ defmodule Neoscan.ChainAssets.AssetsTest do
     assert 567.8 == ChainAssets.get_asset_by_hash(asset2.txid).issued
   end
 
-  #  test "verify_asset/2" do
-  #    asset = insert(:asset)
-  #    ChainAssets.verify_asset(asset.txid, asset.time)
-  #  end
+  #    test "verify_asset/2" do
+  #      asset = insert(:asset)
+  #      ChainAssets.verify_asset(asset.txid, asset.time)
+  #    end
 
   #  test "check_db/2" do
   #    with_mocks(
@@ -176,6 +176,14 @@ defmodule Neoscan.ChainAssets.AssetsTest do
   #      #assert asset.txid == ChainAssets.check_db("randomvalue", asset.time)
   #    end
   #  end
+
+  test "get_new_asset/2" do
+    assert %{type: "GoverningToken"} =
+             ChainAssets.get_new_asset(
+               "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+               123
+             )
+  end
 
   test "get_assets_stats/0" do
     # TODO we need to initialize stats counter before inserting insert otherwise there is an infinite loop
