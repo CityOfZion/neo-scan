@@ -6,6 +6,8 @@ defmodule NeoscanCache.Utils do
   alias Neoscan.ChainAssets
   alias NeoscanNode.Notifications
 
+  @retry_interval 1_000
+
   # function to get DB asset stats
   def get_stats(assets) do
     Enum.map(assets, fn asset ->
@@ -64,6 +66,7 @@ defmodule NeoscanCache.Utils do
   defp get_token_notifications do
     case Notifications.get_token_notifications() do
       {:error, _} ->
+        Process.sleep(@retry_interval)
         get_token_notifications()
 
       result ->

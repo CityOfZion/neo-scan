@@ -5,9 +5,20 @@ defmodule NeoscanNode.Notifications do
 
   @notification_seeds Application.fetch_env!(:neoscan_node, :notification_seeds)
   @limit_height Application.fetch_env!(:neoscan_node, :start_notifications)
+  @retry_interval 1_000
 
   alias NeoscanNode.HttpCalls
   require Logger
+
+  defp get_servers() do
+    notification_server = System.get_env("NEO_NOTIFICATIONS_SERVER")
+    if is_nil(notification_server), do: @notification_seeds, else: [notification_server]
+  end
+
+  defp get_url(urls_tried) do
+    remaining_urls = get_servers() -- urls_tried
+    unless remaining_urls == [], do: Enum.random(remaining_urls)
+  end
 
   def get_block_notifications(height, urls_tried \\ []) do
     url = get_url(urls_tried)
@@ -25,33 +36,17 @@ defmodule NeoscanNode.Notifications do
   end
 
   def get_token_notifications(urls_tried \\ []) do
-    "#{get_url(urls_tried)}/tokens"
-    |> HttpCalls.get()
-    |> check_token()
-  end
+    url = get_url(urls_tried)
+    result = HttpCalls.get("#{url}/tokens")
 
-  defp get_servers() do
-    notification_server = System.get_env("NEO_NOTIFICATIONS_SERVER")
-    if is_nil(notification_server), do: @notification_seeds, else: [notification_server]
-  end
+    case result do
+      {:ok, result2, _current_height} ->
+        result2
 
-  defp get_url(urls_tried) do
-    case get_servers() -- urls_tried do
-      [] ->
-        nil
-
-      not_empty_list ->
-        Enum.random(not_empty_list)
+      _ ->
+        Logger.info("error getting notifications for tokens")
+        {:error, "error getting notifications"}
     end
-  end
-
-  defp check_token({:ok, result, _current_height}) do
-    result
-  end
-
-  defp check_token(_response) do
-    Logger.info("error getting notifications for tokens")
-    {:error, "error getting notifications"}
   end
 
   defp check({:ok, _result, current_height}, height, _url) when current_height - 1 < height do
@@ -81,6 +76,7 @@ defmodule NeoscanNode.Notifications do
   defp get_notifications(height) do
     case get_block_notifications(height) do
       {:error, _} ->
+        Process.sleep(@retry_interval)
         get_notifications(height)
 
       result ->
