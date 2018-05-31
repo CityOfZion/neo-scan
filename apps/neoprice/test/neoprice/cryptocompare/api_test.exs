@@ -2,6 +2,7 @@ defmodule Neoprice.Cryptocompare.ApiTest do
   @moduledoc "tests on the API"
   use ExUnit.Case
   alias Neoprice.Cryptocompare.Api
+  import ExUnit.CaptureLog
 
   test "minute report" do
     now = DateTime.utc_now() |> DateTime.to_unix()
@@ -23,12 +24,18 @@ defmodule Neoprice.Cryptocompare.ApiTest do
 
   test "day report error json" do
     now = DateTime.utc_now() |> DateTime.to_unix()
-    assert [] == Api.get_historical_price(:hour, "MYCOIN200", "BTC", 100, 1, now)
+
+    assert capture_log(fn ->
+             assert [] == Api.get_historical_price(:hour, "MYCOIN200", "BTC", 100, 1, now)
+           end) =~ "Couldn't decode json nonjson"
   end
 
   test "day report error status" do
     now = DateTime.utc_now() |> DateTime.to_unix()
-    assert [] == Api.get_historical_price(:hour, "MYCOIN500", "BTC", 100, 1, now)
+
+    assert capture_log(fn ->
+             assert [] == Api.get_historical_price(:hour, "MYCOIN500", "BTC", 100, 1, now)
+           end) =~ "status_code: 500"
   end
 
   test "last" do
