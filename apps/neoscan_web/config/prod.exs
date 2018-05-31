@@ -24,6 +24,7 @@ config :neoscan_web, NeoscanWeb.Endpoint,
     port: 443
   ],
   cache_static_manifest: "priv/static/cache_manifest.json",
+  check_origin: false,
   server: true,
   secret_key_base: "J8EWtXVVWp+AmNn4fmdodz17pug1X8v8QbjiPnNf0IkeFYhY140Dhei7UGUACHXs"
 
