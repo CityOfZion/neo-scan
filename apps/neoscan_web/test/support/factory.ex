@@ -7,6 +7,7 @@ defmodule NeoscanWeb.Factory do
   alias Neoscan.Vouts.Vout
   alias Neoscan.BalanceHistories.History
   alias Neoscan.Claims.Claim
+  alias Neoscan.Transfers.Transfer
   alias Neoscan.ChainAssets.Asset
   alias Neoscan.TxAbstracts.TxAbstract
 
@@ -23,7 +24,7 @@ defmodule NeoscanWeb.Factory do
       previousblockhash:
         sequence("b30f6f3dfead7ddde999846kf5dda8a6bbbc92cb57f161b5030ae608317c6fa8"),
       script: %{
-        sequence("scripthash") => sequence("scripthashinner")
+        "invocation" => sequence("scripthashinner")
       },
       size: 1526,
       time: 15_154_813,
@@ -45,7 +46,13 @@ defmodule NeoscanWeb.Factory do
       txid: sequence("txhash"),
       type: "FactoryTransaction",
       version: 1,
-      vin: [%{"asset" => sequence("vininnerhash")}],
+      vin: [
+        %{
+          "asset" => sequence("vininnerhash"),
+          "address_hash" => sequence("addresshash"),
+          "value" => 12
+        }
+      ],
       time: 1_548_656,
       nonce: 15155,
       claims: [%{sequence("claimhash") => sequence("claiminnerhash")}],
@@ -62,6 +69,19 @@ defmodule NeoscanWeb.Factory do
     }
   end
 
+  def transfer_factory do
+    %Transfer{
+      address_from: sequence("assethash"),
+      address_to: sequence("hash"),
+      amount: 0.1,
+      block_height: 50,
+      txid: sequence("txhash"),
+      contract: sequence("hash"),
+      time: 123,
+      check_hash: sequence("txhash")
+    }
+  end
+
   def address_factory do
     %Address{
       address: sequence("hash"),
@@ -69,7 +89,8 @@ defmodule NeoscanWeb.Factory do
       balance: %{
         sequence("assethash") => %{
           "asset" => sequence("assethash"),
-          "amount" => 50
+          "amount" => 50,
+          "time" => 1_548_656
         }
       },
       claimed: [insert(:claim)],
