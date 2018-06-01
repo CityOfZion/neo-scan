@@ -5,6 +5,7 @@ defmodule Neoscan.Factory do
   alias Neoscan.Transactions.Transaction
   alias Neoscan.Blocks.Block
   alias Neoscan.Vouts.Vout
+  alias Neoscan.Transfers.Transfer
   alias Neoscan.BalanceHistories.History
   alias Neoscan.Claims.Claim
   alias Neoscan.ChainAssets.Asset
@@ -75,6 +76,19 @@ defmodule Neoscan.Factory do
       time: 154_856,
       vouts: [insert(:vout)],
       tx_count: 5
+    }
+  end
+
+  def transfer_factory do
+    %Transfer{
+      address_from: sequence("assethash"),
+      address_to: sequence("hash"),
+      amount: 0.1,
+      block_height: 50,
+      txid: sequence("txhash"),
+      contract: sequence("hash"),
+      time: 123,
+      check_hash: sequence("txhash")
     }
   end
 

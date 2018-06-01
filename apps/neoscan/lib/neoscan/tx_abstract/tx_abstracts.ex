@@ -77,7 +77,7 @@ defmodule Neoscan.TxAbstracts do
           total + amount
 
         false ->
-          amount
+          total
       end
     end)
   end
