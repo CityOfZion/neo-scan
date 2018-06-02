@@ -39,6 +39,21 @@ defmodule NeoscanWeb.TransactionsController do
         result
       end)
 
+    transfers =
+      Enum.map(transactions, fn tx -> tx.txid end)
+      |> Transfers.get_transactions_transfers()
+
+    transactions =
+      transactions
+      |> Enum.map(fn tx ->
+        Map.merge(tx, %{
+          :transfers =>
+            Enum.filter(transfers, fn transfer ->
+              transfer.txid == tx.txid
+            end) || []
+        })
+      end)
+
     render(conn, "transactions.html", transactions: transactions, page: page, type: nil)
   end
 

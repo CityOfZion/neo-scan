@@ -20,5 +20,6 @@ defmodule Neoscan.Notifications.NotificationsTest do
   test "add_notifications/2" do
     assert %{"transfers" => []} = Notifications.add_notifications(%{}, 0)
     assert %{"transfers" => []} = Notifications.add_notifications(%{}, @limit_height + 1)
+    Notifications.add_notifications(%{}, 1_444_843)
   end
 end

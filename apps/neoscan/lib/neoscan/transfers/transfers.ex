@@ -86,7 +86,7 @@ defmodule Neoscan.Transfers do
     transfer_query =
       from(
         transfer in Transfer,
-        where: transfer.address_to == ^hash or transfer.address_to == ^hash,
+        where: transfer.address_from == ^hash or transfer.address_to == ^hash,
         order_by: [
           desc: transfer.id
         ],

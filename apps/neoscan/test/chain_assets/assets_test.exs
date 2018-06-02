@@ -4,7 +4,6 @@ defmodule Neoscan.ChainAssets.AssetsTest do
   alias Neoscan.ChainAssets
   alias Neoscan.ChainAssets.Asset
   import Neoscan.Factory
-  import Mock
   import ExUnit.CaptureLog
 
   test "create_asset/2" do
@@ -21,45 +20,43 @@ defmodule Neoscan.ChainAssets.AssetsTest do
   end
 
   test "add_token/1" do
-    with_mock Neoscan.Blocks, get_block_time: fn _ -> 1234 end do
-      response = %{
-        "token" => %{
-          "name" => "n\u0000am\u0000e",
-          "contract_address" => "23243",
-          "decimals" => 12,
-          "script_hash" => "d9j21092901j90j2190dj219dj29jd290ffijunvcuzncz9212903nf0932n9203n"
-        },
-        "tx" =>
-          "d9j21092901j90j2190dj219dj29jd290ffijunvcuzncz9212903nf0932n9203ncxkmakasfkasfskjfa"
-      }
+    response = %{
+      "token" => %{
+        "name" => "n\u0000am\u0000e",
+        "contract_address" => "23243",
+        "decimals" => 12,
+        "script_hash" => "d9j21092901j90j2190dj219dj29jd290ffijunvcuzncz9212903nf0932n9203n"
+      },
+      "block" => 1,
+      "tx" =>
+        "d9j21092901j90j2190dj219dj29jd290ffijunvcuzncz9212903nf0932n9203ncxkmakasfkasfskjfa"
+    }
 
-      asset = ChainAssets.add_token(response)
-      assert [%{"lang" => "en", "name" => "name"}] == asset.name
-      assert 1234 == asset.time
-      assert "23243" == asset.admin
-      assert 12 == asset.precision
-      assert "j29jd290ffijunvcuzncz9212903nf0932n9203n" == asset.contract
-      assert "dj219dj29jd290ffijunvcuzncz9212903nf0932n9203ncxkmakasfkasfskjfa" == asset.txid
-    end
+    asset = ChainAssets.add_token(response)
+    assert [%{"lang" => "en", "name" => "name"}] == asset.name
+    assert 1_476_647_382 == asset.time
+    assert "23243" == asset.admin
+    assert 12 == asset.precision
+    assert "j29jd290ffijunvcuzncz9212903nf0932n9203n" == asset.contract
+    assert "dj219dj29jd290ffijunvcuzncz9212903nf0932n9203ncxkmakasfkasfskjfa" == asset.txid
   end
 
   test "create_tokens/1" do
-    with_mock Neoscan.Blocks, get_block_time: fn _ -> 1234 end do
-      insert(:asset, %{txid: "contracthash"})
+    insert(:asset, %{txid: "contracthash"})
 
-      response = %{
-        "token" => %{
-          "name" => "n\u0000am\u0000e",
-          "contract_address" => "23243",
-          "decimals" => 12,
-          "script_hash" => "contracthash"
-        },
-        "tx" =>
-          "d9j21092901j90j2190dj219dj29jd290ffijunvcuzncz9212903nf0932n9203ncxkmakasfkasfskjfa"
-      }
+    response = %{
+      "token" => %{
+        "name" => "n\u0000am\u0000e",
+        "contract_address" => "23243",
+        "decimals" => 12,
+        "script_hash" => "contracthash"
+      },
+      "block" => 1,
+      "tx" =>
+        "d9j21092901j90j2190dj219dj29jd290ffijunvcuzncz9212903nf0932n9203ncxkmakasfkasfskjfa"
+    }
 
-      assert [response] == ChainAssets.create_tokens([response])
-    end
+    assert [response] == ChainAssets.create_tokens([response])
   end
 
   test "get_asset_by_hash/1" do
@@ -183,6 +180,12 @@ defmodule Neoscan.ChainAssets.AssetsTest do
                "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
                123
              )
+
+    assert_raise Ecto.InvalidChangesetError,
+                 ~r/could not perform insert because changeset is invalid\..*/,
+                 fn ->
+                   ChainAssets.get_new_asset("0x06fa8be9b6609d963e8fc63977b9f8dc5f10895f", 123)
+                 end
   end
 
   test "get_assets_stats/0" do

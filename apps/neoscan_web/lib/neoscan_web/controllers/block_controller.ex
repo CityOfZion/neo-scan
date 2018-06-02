@@ -46,12 +46,6 @@ defmodule NeoscanWeb.BlockController do
     route(block, transactions, conn, page)
   end
 
-  def route(nil, _transactions, conn, _page) do
-    conn
-    |> put_flash(:info, "Not Found in DB!")
-    |> redirect(to: home_path(conn, :index))
-  end
-
   def route(block, transactions, conn, page) do
     clean_transactions =
       transactions
