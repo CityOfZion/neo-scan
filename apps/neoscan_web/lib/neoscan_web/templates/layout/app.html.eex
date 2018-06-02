@@ -97,9 +97,6 @@
 					<li>
 						<a href="<%= doc_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_doc_path(@conn), do: " active" %>"><%= gettext "API" %></a>
 					</li>
-					<!-- <li>
-						<a href="<%= about_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_about_path(@conn), do: " active" %>"><%= gettext "About" %></a>
-					</li> -->
 				</ul>
 			</div>
 		</nav>

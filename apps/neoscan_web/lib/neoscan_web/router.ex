@@ -25,7 +25,6 @@ defmodule NeoscanWeb.Router do
 
     get("/", HomeController, :index)
     post("/", HomeController, :search)
-    get("/about", AboutController, :index)
     get("/address/:address", AddressController, :index)
     get("/address/:address/:page", AddressController, :go_to_page)
     get("/addresses/1", AddressesController, :index)
@@ -39,12 +38,12 @@ defmodule NeoscanWeb.Router do
     get("/contracts", ContractsController, :index)
     get("/doc", DocController, :index)
     get("/price/:from/:to/:graph", PriceController, :index)
+    get("/transaction/:txid", TransactionController, :index)
     get("/transactions/1", TransactionsController, :index)
     get("/transactions/:page", TransactionsController, :go_to_page)
+    get("/transactions/type/:type/:page", TransactionsController, :filtered_transactions)
     get("/transfers/1", TransfersController, :index)
     get("/transfers/:page", TransfersController, :go_to_page)
-    get("/transactions/type/:type/:page", TransactionsController, :filtered_transactions)
-    get("/transaction/:txid", TransactionController, :index)
   end
 
   scope "/api/main_net/v1", NeoscanWeb do

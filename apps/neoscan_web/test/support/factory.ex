@@ -40,7 +40,13 @@ defmodule NeoscanWeb.Factory do
     %Transaction{
       attributes: [%{sequence("attributehash") => sequence("attributeinnerhash")}],
       net_fee: "0",
-      scripts: [%{sequence("scripthash") => sequence("scriptinnerhash")}],
+      scripts: [
+        %{
+          sequence("scripthash") => sequence("scriptinnerhash"),
+          "invocation" => "2189e21821",
+          "verification" => "234329ee"
+        }
+      ],
       size: 5,
       sys_fee: "0",
       txid: sequence("txhash"),
@@ -55,10 +61,19 @@ defmodule NeoscanWeb.Factory do
       ],
       time: 1_548_656,
       nonce: 15155,
-      claims: [%{sequence("claimhash") => sequence("claiminnerhash")}],
+      claims: [
+        %{
+          sequence("claimhash") => sequence("claiminnerhash"),
+          "value" => 20,
+          "address_hash" => sequence("claiminnerhash"),
+          "asset" => "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"
+        }
+      ],
       pubkey: sequence("pubkeyhash"),
       asset: %{
-        sequence("assethash") => sequence("assetinnerhash")
+        sequence("assethash") => sequence("assetinnerhash"),
+        "admin" => sequence("hash"),
+        "amount" => 12
       },
       description: sequence("description"),
       contract: %{
