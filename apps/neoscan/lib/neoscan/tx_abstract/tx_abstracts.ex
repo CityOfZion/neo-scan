@@ -149,11 +149,11 @@ defmodule Neoscan.TxAbstracts do
   end
 
   def build_list_for_vouts(transaction) do
-    %{:address_hash => address_from, :asset => asset} =
+    %{:address_hash => address_from} =
       transaction["vin"]
       |> List.first()
 
-    Enum.map(transaction["vout"], fn %{"address" => address, "value" => amount} ->
+    Enum.map(transaction["vout"], fn %{"address" => address, "value" => amount, "asset" => asset} ->
       cond do
         address != address_from ->
           %{
