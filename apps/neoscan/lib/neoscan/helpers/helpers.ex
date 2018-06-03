@@ -132,11 +132,11 @@ defmodule Neoscan.Helpers do
   def contract?(hash), do: String.length(hash) != 64
 
   def apply_precision(integer, hash, precision) do
-    if String.length(hash) == 40 do
-      num = integer / :math.pow(10, precision)
-      "#{num}"
-    else
-      "#{integer}"
-    end
+    value = if String.length(hash) == 40, do: integer / :math.pow(10, precision), else: integer
+
+    (value * 1.0)
+    |> :erlang.float_to_binary(decimals: 20)
+    |> String.trim_trailing("0")
+    |> String.trim_trailing(".")
   end
 end

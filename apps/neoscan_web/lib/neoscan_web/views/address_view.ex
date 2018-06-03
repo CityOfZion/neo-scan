@@ -46,7 +46,9 @@ defmodule NeoscanWeb.AddressView do
         amount + acc
       end)
       |> Float.round(8)
-      |> Float.to_string()
+      |> :erlang.float_to_binary(decimals: 20)
+      |> String.trim_trailing("0")
+      |> String.trim_trailing(".")
       |> Integer.parse()
 
     raw('<p class="balance-amount">#{number_to_delimited(int)}<span>#{div}</span></p>')
