@@ -5,36 +5,15 @@ defmodule NeoscanWeb.TransactionsView do
   alias Neoscan.Helpers
   alias Neoscan.ChainAssets
 
-  def get_class(type) do
-    cond do
-      type == "ContractTransaction" ->
-        'neo-transaction'
-
-      type == "ClaimTransaction" ->
-        'gas-transaction'
-
-      type == "IssueTransaction" ->
-        'issue-transaction'
-
-      type == "RegisterTransaction" ->
-        'register-transaction'
-
-      type == "InvocationTransaction" ->
-        'invocation-transaction'
-
-      type == "EnrollmentTransaction" ->
-        'invocation-transaction'
-
-      type == "StateTransaction" ->
-        'invocation-transaction'
-
-      type == "PublishTransaction" ->
-        'publish-transaction'
-
-      type == "MinerTransaction" ->
-        'miner-transaction'
-    end
-  end
+  def get_class("ContractTransaction"), do: 'neo-transaction'
+  def get_class("ClaimTransaction"), do: 'gas-transaction'
+  def get_class("IssueTransaction"), do: 'issue-transaction'
+  def get_class("RegisterTransaction"), do: 'register-transaction'
+  def get_class("InvocationTransaction"), do: 'invocation-transaction'
+  def get_class("EnrollmentTransaction"), do: 'invocation-transaction'
+  def get_class("StateTransaction"), do: 'invocation-transaction'
+  def get_class("PublishTransaction"), do: 'publish-transaction'
+  def get_class("MinerTransaction"), do: 'miner-transaction'
 
   def get_current_min_qtd(page, type) do
     %{:total_transactions => [filtered_totals, total, _total_transfers]} = CacheApi.get_stats()
