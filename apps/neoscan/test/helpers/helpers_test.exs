@@ -75,7 +75,7 @@ defmodule Neoscan.Helpers.HelperTest do
   end
 
   test "apply_precision/3" do
-    assert "1.234567e-6" ==
+    assert "0.000001234567" ==
              Helpers.apply_precision(1_234_567, "1234567890123456789012345678901234567890", 12)
 
     assert "1234567" == Helpers.apply_precision(1_234_567, "1", 12)
