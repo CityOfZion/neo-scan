@@ -35,11 +35,8 @@ defmodule NeoscanWeb.Plugs.Locale do
   defp req_header_locale(conn) do
     case Conn.get_req_header(conn, "accept-language") do
       [language | _] ->
-        splited =
-          Regex.scan(~r/[a-z]/, language)
-          |> List.flatten()
-
-        Enum.find(splited, fn x -> x in @languages end)
+        sliced = String.slice(language, 0..1)
+        if sliced in @languages, do: sliced
 
       _ ->
         "en"
