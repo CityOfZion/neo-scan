@@ -12,5 +12,6 @@ defmodule Neoscan.Repo.Migrations.Addresses do
     end
 
     create(unique_index(:addresses, [:address]))
+    create(index(:addresses, [:updated_at]))
   end
 end

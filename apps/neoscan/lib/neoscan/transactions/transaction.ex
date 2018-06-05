@@ -15,7 +15,6 @@ defmodule Neoscan.Transactions.Transaction do
     field(:version, :integer)
     field(:vin, {:array, :map})
     field(:time, :integer)
-    field(:block_hash, :string)
     field(:block_height, :integer)
     field(:nonce, :integer)
     field(:claims, {:array, :map})
@@ -28,7 +27,14 @@ defmodule Neoscan.Transactions.Transaction do
     field(:asset_moved, :string)
 
     has_many(:vouts, Neoscan.Vouts.Vout)
-    belongs_to(:block, Neoscan.Blocks.Block)
+
+    belongs_to(
+      :block,
+      Neoscan.Blocks.Block,
+      foreign_key: :block_hash,
+      references: :hash,
+      type: :string
+    )
 
     timestamps()
   end

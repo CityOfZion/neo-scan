@@ -588,29 +588,29 @@ defmodule Neoscan.BlocksTest do
 
     test "get_block!/1 returns the block with given id" do
       block = insert(:block)
-      assert Blocks.get_block!(block.id) == block
+      assert Blocks.get_block!(block.hash) == block
     end
 
     test "get_block_by_hash/1" do
       block = insert(:block)
-      assert block.id == Blocks.get_block_by_hash(block.hash).id
+      assert block.hash == Blocks.get_block_by_hash(block.hash).hash
     end
 
     test "get_block_by_hash_for_view/1" do
       block = insert(:block)
-      assert block.id == Blocks.get_block_by_hash_for_view(block.hash).id
+      assert block.hash == Blocks.get_block_by_hash_for_view(block.hash).hash
     end
 
     test "paginate_transactions/2" do
       block = insert(:block)
-      insert(:transaction, %{block_id: block.id})
+      insert(:transaction, %{block_hash: block.hash})
       {_, transactions} = Blocks.paginate_transactions(block.hash, 1)
       assert 1 == Enum.count(transactions)
     end
 
     test "get_block_by_height/1" do
       block = insert(:block)
-      assert block.id == Blocks.get_block_by_height(block.index).id
+      assert block.hash == Blocks.get_block_by_height(block.index).hash
       assert is_nil(Blocks.get_block_by_height(12355))
     end
 
@@ -635,23 +635,23 @@ defmodule Neoscan.BlocksTest do
 
     test "get_higher_than/1" do
       block1 = insert(:block)
-      %{id: block_id} = insert(:block)
-      assert [%{id: ^block_id}] = Blocks.get_higher_than(block1.index)
+      %{hash: block_hash} = insert(:block)
+      assert [%{hash: ^block_hash}] = Blocks.get_higher_than(block1.index)
     end
 
     test "delete_higher_than/1" do
       block1 = insert(:block)
-      %{id: block_id} = insert(:block)
-      assert [] == Blocks.delete_higher_than(block_id)
-      assert [%{id: ^block_id}] = Blocks.get_higher_than(block1.index)
+      %{hash: block_hash, index: index} = insert(:block)
+      assert [] == Blocks.delete_higher_than(index)
+      assert [%{hash: ^block_hash}] = Blocks.get_higher_than(index - 1)
 
-      assert block_id ==
+      assert block_hash ==
                block1.index
                |> Blocks.delete_higher_than()
                |> List.first()
-               |> Map.get(:id)
+               |> Map.get(:hash)
 
-      assert [] = Blocks.get_higher_than(block1.index)
+      assert [] = Blocks.get_higher_than(index)
     end
 
     test "update_block/2 with valid data updates the block" do
@@ -676,13 +676,13 @@ defmodule Neoscan.BlocksTest do
     test "update_block/2 with invalid data returns error changeset" do
       block = insert(:block)
       assert {:error, %Ecto.Changeset{}} = Blocks.update_block(block, %{"confirmations" => nil})
-      assert block == Blocks.get_block!(block.id)
+      assert block == Blocks.get_block!(block.hash)
     end
 
     test "delete_block/1 deletes the block" do
       block = insert(:block)
       assert %Block{} = Blocks.delete_block(block)
-      assert_raise Ecto.NoResultsError, fn -> Blocks.get_block!(block.id) end
+      assert_raise Ecto.NoResultsError, fn -> Blocks.get_block!(block.hash) end
     end
 
     test "add_block/1" do

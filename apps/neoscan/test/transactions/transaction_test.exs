@@ -20,7 +20,6 @@ defmodule Neoscan.Transactions.TransactionTest do
     assert %{version: ["can't be blank"]} = errors_on(changeset)
     assert %{vin: ["can't be blank"]} = errors_on(changeset)
     assert %{time: ["can't be blank"]} = errors_on(changeset)
-    assert %{block_hash: ["can't be blank"]} = errors_on(changeset)
     assert %{block_height: ["can't be blank"]} = errors_on(changeset)
   end
 

@@ -53,11 +53,16 @@ defmodule Neoscan.TransactionsTest do
 
     test "paginate_transactions_for_block/2" do
       block = insert(:block)
-      transaction1 = insert(:transaction, %{type: "InvocationTransaction", block_id: block.id})
+
+      transaction1 =
+        insert(:transaction, %{type: "InvocationTransaction", block_hash: block.hash})
+
       insert(:vout, %{transaction_id: transaction1.id})
 
       assert 1 ==
-               Enum.count(Transactions.paginate_transactions_for_block(transaction1.block_id, 1))
+               Enum.count(
+                 Transactions.paginate_transactions_for_block(transaction1.block_hash, 1)
+               )
     end
 
     test "get_transaction_vouts/1" do

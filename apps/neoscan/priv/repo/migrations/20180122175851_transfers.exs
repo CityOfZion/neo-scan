@@ -12,12 +12,13 @@ defmodule Neoscan.Repo.Migrations.Transfers do
       add(:time, :integer)
       add(:check_hash, :string)
 
-      add(:block_id, references(:blocks, on_delete: :delete_all))
+      add(:block_hash, :string)
+      #add(:block_hash, references(:blocks, column: :hash, type: :string, on_delete: :delete_all))
 
       timestamps()
     end
 
     create(index(:transfers, [:txid]))
-    create(index(:transfers, [:block_id]))
+    create(index(:transfers, [:block_hash]))
   end
 end

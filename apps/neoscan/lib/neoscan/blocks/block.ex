@@ -8,9 +8,10 @@ defmodule Neoscan.Blocks.Block do
   alias Neoscan.BlockGasGeneration
   alias Neoscan.Blocks.Block
 
+  @primary_key {:hash, :string, []}
+  @foreign_key_type :hash
   schema "blocks" do
     field(:confirmations, :integer)
-    field(:hash, :string)
     field(:index, :integer)
     field(:merkleroot, :string)
     field(:nextblockhash, :string)

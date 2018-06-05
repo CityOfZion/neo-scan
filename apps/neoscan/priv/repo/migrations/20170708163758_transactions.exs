@@ -15,7 +15,6 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add(:vin, {:array, :map})
 
       add(:time, :integer)
-      add(:block_hash, :string)
       add(:block_height, :integer)
 
       add(:nonce, :bigint)
@@ -28,7 +27,8 @@ defmodule Neoscan.Repo.Migrations.Transactions do
 
       add(:asset_moved, :string)
 
-      add(:block_id, references(:blocks, on_delete: :delete_all))
+      add(:block_hash, :string)
+      #add(:block_hash, references(:blocks, column: :hash, type: :string, on_delete: :delete_all))
 
       timestamps()
     end
@@ -36,6 +36,6 @@ defmodule Neoscan.Repo.Migrations.Transactions do
     create(index(:transactions, ["inserted_at DESC NULLS LAST"]))
     create(unique_index(:transactions, [:txid]))
     create(index(:transactions, [:type]))
-    create(index(:transactions, [:block_id]))
+    create(index(:transactions, [:block_hash]))
   end
 end

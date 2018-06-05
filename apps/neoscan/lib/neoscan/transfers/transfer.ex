@@ -13,7 +13,13 @@ defmodule Neoscan.Transfers.Transfer do
     field(:time, :integer)
     field(:check_hash, :string)
 
-    belongs_to(:block, Neoscan.Blocks.Block)
+    belongs_to(
+      :block,
+      Neoscan.Blocks.Block,
+      foreign_key: :block_hash,
+      references: :hash,
+      type: :string
+    )
 
     timestamps()
   end
