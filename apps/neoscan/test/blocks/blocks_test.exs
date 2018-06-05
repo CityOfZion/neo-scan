@@ -621,7 +621,7 @@ defmodule Neoscan.BlocksTest do
     test "create_block/1 with valid data creates a block" do
       block = insert(:block)
       assert block.confirmations == 50
-      assert String.contains?(block.hash, "hash")
+      assert byte_size(block.hash) == 32
       assert String.length(block.merkleroot) > 64
       assert String.length(block.nextblockhash) > 64
       assert String.length(block.nextconsensus) > 64

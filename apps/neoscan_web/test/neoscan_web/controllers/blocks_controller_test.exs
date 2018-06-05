@@ -9,10 +9,10 @@ defmodule NeoscanWeb.BlocksControllerTest do
     Cache.sync(%{tokens: []})
     conn = get(conn, "/blocks/1")
     body = html_response(conn, 200)
-    assert body =~ block.hash
+    assert body =~ Base.encode16(block.hash)
 
     conn = get(conn, "/blocks/2")
     body = html_response(conn, 200)
-    assert not (body =~ block.hash)
+    assert not (body =~ Base.encode16(block.hash))
   end
 end

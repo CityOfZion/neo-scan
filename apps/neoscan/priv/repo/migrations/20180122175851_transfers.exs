@@ -12,7 +12,7 @@ defmodule Neoscan.Repo.Migrations.Transfers do
       add(:time, :integer)
       add(:check_hash, :string)
 
-      add(:block_hash, :string)
+      add(:block_hash, :binary)
       #add(:block_hash, references(:blocks, column: :hash, type: :string, on_delete: :delete_all))
 
       timestamps()

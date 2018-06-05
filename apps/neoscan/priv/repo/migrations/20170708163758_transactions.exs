@@ -27,7 +27,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
 
       add(:asset_moved, :string)
 
-      add(:block_hash, :string)
+      add(:block_hash, :binary)
       #add(:block_hash, references(:blocks, column: :hash, type: :string, on_delete: :delete_all))
 
       timestamps()

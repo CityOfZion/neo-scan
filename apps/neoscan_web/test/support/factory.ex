@@ -15,7 +15,7 @@ defmodule NeoscanWeb.Factory do
   def block_factory do
     %Block{
       confirmations: 50,
-      hash: sequence("blockhash"),
+      hash: :crypto.strong_rand_bytes(32),
       index: sequence(5, & &1),
       merkleroot: sequence("b33f6f3dfead7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6faP"),
       nextblockhash: sequence("b33f6f3dfead7ddde999846bf5dda8aibbbc92cb57f161b5030ae608317c6fa8"),
@@ -79,7 +79,7 @@ defmodule NeoscanWeb.Factory do
       contract: %{
         sequence("contracthash") => sequence("contractinnerhash")
       },
-      block_hash: sequence("block_hash"),
+      block_hash: :crypto.strong_rand_bytes(32),
       block_height: 0
     }
   end

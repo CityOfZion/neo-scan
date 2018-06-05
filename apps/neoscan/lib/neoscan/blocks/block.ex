@@ -37,7 +37,7 @@ defmodule Neoscan.Blocks.Block do
   def changeset(%Block{} = block, attrs) do
     new_attrs =
       Map.merge(attrs, %{
-        "hash" => String.slice(to_string(attrs["hash"]), -64..-1),
+        "hash" => attrs["hash"],
         "nextblockhash" => String.slice(to_string(attrs["nextblockhash"]), -64..-1),
         "previousblockhash" => String.slice(to_string(attrs["previousblockhash"]), -64..-1),
         "merkleroot" => String.slice(to_string(attrs["merkleroot"]), -64..-1),

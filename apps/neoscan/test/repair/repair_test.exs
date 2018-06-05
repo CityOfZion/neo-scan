@@ -5,7 +5,11 @@ defmodule Neoscan.Repair.RepairTest do
 
   test "get_transaction/1" do
     assert {:ok,
-            %{"blockhash" => "0x1670427ca839ab855a32694a803dc1357840ecb1a5ffc2ac3731b0e129b3b956"}} =
+            %{
+              "blockhash" =>
+                <<22, 112, 66, 124, 168, 57, 171, 133, 90, 50, 105, 74, 128, 61, 193, 53, 120, 64,
+                  236, 177, 165, 255, 194, 172, 55, 49, 176, 225, 41, 179, 185, 86>>
+            }} =
              Repair.get_transaction(
                "9f3316d2eaa4c5cdd8cfbd3252be14efb8e9dcd76d3115517c45f85946db41b2"
              )

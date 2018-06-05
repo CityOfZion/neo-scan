@@ -107,9 +107,8 @@ defmodule NeoscanWeb.ApiControllerTest do
 
   test "get_block/:hash", %{conn: conn} do
     block = insert(:block)
-    conn = get(conn, "/api/main_net/v1/get_block/#{block.hash}")
-
-    assert block.hash == json_response(conn, 200)["hash"]
+    conn = get(conn, "/api/main_net/v1/get_block/#{Base.encode16(block.hash)}")
+    assert Base.encode16(block.hash) == json_response(conn, 200)["hash"]
   end
 
   test "get_last_blocks", %{conn: conn} do
@@ -138,7 +137,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     block2 = insert(:block)
     conn = get(conn, "/api/main_net/v1/get_highest_block")
 
-    assert block2.hash == json_response(conn, 200)["hash"]
+    assert Base.encode16(block2.hash) == json_response(conn, 200)["hash"]
   end
 
   test "get_transaction/:hash", %{conn: conn} do

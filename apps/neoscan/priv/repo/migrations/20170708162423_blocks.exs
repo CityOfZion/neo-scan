@@ -4,7 +4,7 @@ defmodule Neoscan.Repo.Migrations.Blocks do
   def change do
     create table(:blocks, primary_key: false) do
       add(:confirmations, :integer)
-      add :hash, :string, primary_key: true
+      add :hash, :binary, primary_key: true
       add(:index, :bigint)
       add(:merkleroot, :string)
       add(:nextblockhash, :string)

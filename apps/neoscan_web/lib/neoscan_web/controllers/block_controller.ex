@@ -3,8 +3,10 @@ defmodule NeoscanWeb.BlockController do
 
   alias Neoscan.Blocks
   alias Neoscan.Transfers
+  alias NeoscanWeb.Helper
 
   def index(conn, %{"hash" => block_hash}) do
+    block_hash = Helper.parse_hash(block_hash)
     {block, transactions} = Blocks.paginate_transactions(block_hash, "1")
 
     transfers =
@@ -26,6 +28,7 @@ defmodule NeoscanWeb.BlockController do
   end
 
   def go_to_page(conn, %{"hash" => block_hash, "page" => page}) do
+    block_hash = Helper.parse_hash(block_hash)
     {block, transactions} = Blocks.paginate_transactions(block_hash, page)
 
     transfers =
@@ -54,6 +57,7 @@ defmodule NeoscanWeb.BlockController do
         result
       end)
 
+    block = Helper.format_block(block)
     render(conn, "block.html", block: block, transactions: clean_transactions, page: page)
   end
 end
