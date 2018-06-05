@@ -46,7 +46,7 @@ defmodule NeoscanWeb.AddressView do
         amount + acc
       end)
       |> Float.round(8)
-      |> :erlang.float_to_binary(decimals: 20)
+      |> :erlang.float_to_binary(decimals: 8)
       |> String.trim_trailing("0")
       |> String.trim_trailing(".")
       |> Integer.parse()
@@ -145,17 +145,7 @@ defmodule NeoscanWeb.AddressView do
     )
   end
 
-  def check_last(page, total) do
-    int =
-      page
-      |> String.to_integer()
-
-    if int * 15 < total do
-      true
-    else
-      false
-    end
-  end
+  def check_last(page, total), do: String.to_integer(page) * 15 < total
 
   def apply_precision(asset, amount) do
     precision = ChainAssets.get_asset_precision_by_hash(asset)
