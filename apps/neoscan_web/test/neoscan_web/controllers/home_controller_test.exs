@@ -5,6 +5,14 @@ defmodule NeoscanWeb.PageControllerTest do
   test "GET /", %{conn: conn} do
     conn = get(conn, "/")
     assert html_response(conn, 200) =~ "Your home for all NEO related blockchain information"
+
+    conn =
+      build_conn()
+      |> put_req_header("accept-language", "fr")
+      |> get("/")
+
+    assert html_response(conn, 200) =~
+             "Votre portail pour toutes les informations liées à la blockchain NEO"
   end
 
   test "POST /", %{conn: conn} do

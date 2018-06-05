@@ -51,10 +51,6 @@ defmodule NeoscanCache.Api do
     Cache.get(:addresses)
   end
 
-  def get_contracts do
-    Cache.get(:contracts)
-  end
-
   def get_price do
     Cache.get(:price)
   end

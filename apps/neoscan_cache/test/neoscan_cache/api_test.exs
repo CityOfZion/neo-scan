@@ -48,10 +48,6 @@ defmodule NeoscanCache.ApiTest do
     assert is_list(Api.get_addresses())
   end
 
-  test "get_contracts/0" do
-    assert is_nil(Api.get_contracts())
-  end
-
   test "get_price/0" do
     assert %{
              gas: %{
