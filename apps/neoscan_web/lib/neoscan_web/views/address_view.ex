@@ -46,7 +46,7 @@ defmodule NeoscanWeb.AddressView do
         amount + acc
       end)
       |> Float.round(8)
-      |> :erlang.float_to_binary(decimals: 20)
+      |> :erlang.float_to_binary(decimals: 8)
       |> String.trim_trailing("0")
       |> String.trim_trailing(".")
       |> Integer.parse()

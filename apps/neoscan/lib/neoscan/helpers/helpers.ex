@@ -135,7 +135,7 @@ defmodule Neoscan.Helpers do
     value = if String.length(hash) == 40, do: integer / :math.pow(10, precision), else: integer
 
     (value * 1.0)
-    |> :erlang.float_to_binary(decimals: 20)
+    |> :erlang.float_to_binary(decimals: precision)
     |> String.trim_trailing("0")
     |> String.trim_trailing(".")
   end
