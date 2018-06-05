@@ -132,6 +132,7 @@ defmodule Neoscan.Helpers do
   def contract?(hash), do: String.length(hash) != 64
 
   def apply_precision(integer, hash, precision) do
+    precision = if is_nil(precision), do: 8, else: precision
     value = if String.length(hash) == 40, do: integer / :math.pow(10, precision), else: integer
 
     (value * 1.0)
