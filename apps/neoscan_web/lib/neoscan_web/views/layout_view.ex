@@ -36,14 +36,6 @@ defmodule NeoscanWeb.LayoutView do
     Controller.controller_module(conn) == NeoscanWeb.AddressesController
   end
 
-  def is_about_path(conn) do
-    Controller.controller_module(conn) == NeoscanWeb.AboutController
-  end
-
-  def is_assets_path(conn) do
-    Controller.controller_module(conn) == NeoscanWeb.AssetsController
-  end
-
   def is_doc_path(conn) do
     Controller.controller_module(conn) == NeoscanWeb.DocController
   end

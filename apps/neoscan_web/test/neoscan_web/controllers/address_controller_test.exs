@@ -7,7 +7,7 @@ defmodule NeoscanWeb.AddressControllerTest do
     address =
       insert(:address, %{
         balance: %{
-          "assethash0" => %{
+          "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b" => %{
             "amount" => 50,
             "asset" => "assethash1"
           }

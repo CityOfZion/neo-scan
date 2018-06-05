@@ -220,7 +220,7 @@ msgstr "Usage"
 msgid "Welcome to NEOSCAN"
 msgstr "Bienvenue sur NEOSCAN"
 
-msgid "Your home for all blockchain related information for NEO"
+msgid "Your home for all NEO related blockchain information"
 msgstr "Votre portail pour toutes les informations liées à la blockchain NEO"
 
 msgid "Total transactions"

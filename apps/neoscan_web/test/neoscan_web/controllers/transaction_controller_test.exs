@@ -20,5 +20,8 @@ defmodule NeoscanWeb.TransactionControllerTest do
       body = html_response(conn, 200)
       assert body =~ transaction.txid
     end
+
+    conn = get(conn, "/transaction/random")
+    assert "/" == redirected_to(conn, 302)
   end
 end

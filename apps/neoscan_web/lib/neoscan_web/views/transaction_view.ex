@@ -9,67 +9,25 @@ defmodule NeoscanWeb.TransactionView do
   alias Neoscan.ChainAssets
   alias NeoscanCache.Api, as: CacheApi
 
-  def get_type(type) do
-    cond do
-      type == "MinerTransaction" ->
-        'Miner'
+  def get_type("MinerTransaction"), do: 'Miner'
+  def get_type("ContractTransaction"), do: 'Contract'
+  def get_type("ClaimTransaction"), do: 'GAS Claim'
+  def get_type("IssueTransaction"), do: 'Asset Issue'
+  def get_type("RegisterTransaction"), do: 'Asset Register'
+  def get_type("InvocationTransaction"), do: 'Contract Invocation'
+  def get_type("PublishTransaction"), do: 'Contract Publish'
+  def get_type("EnrollmentTransaction"), do: 'Enrollment'
+  def get_type("StateTransaction"), do: 'State'
 
-      type == "ContractTransaction" ->
-        'Contract'
-
-      type == "ClaimTransaction" ->
-        'GAS Claim'
-
-      type == "IssueTransaction" ->
-        'Asset Issue'
-
-      type == "RegisterTransaction" ->
-        'Asset Register'
-
-      type == "InvocationTransaction" ->
-        'Contract Invocation'
-
-      type == "PublishTransaction" ->
-        'Contract Publish'
-
-      type == "EnrollmentTransaction" ->
-        'Enrollment'
-
-      type == "StateTransaction" ->
-        'State'
-    end
-  end
-
-  def get_icon(type) do
-    cond do
-      type == "MinerTransaction" ->
-        'fa-user-circle-o'
-
-      type == "ContractTransaction" ->
-        'fa-cube'
-
-      type == "ClaimTransaction" ->
-        'fa-cubes'
-
-      type == "IssueTransaction" ->
-        'fa-handshake-o'
-
-      type == "RegisterTransaction" ->
-        'fa-list-alt'
-
-      type == "InvocationTransaction" ->
-        'fa-paper-plane'
-
-      type == "EnrollmentTransaction" ->
-        'fa-paper-plane'
-
-      type == "StateTransaction" ->
-        'fa-paper-plane'
-
-      type == "PublishTransaction" ->
-        'Contract Publish'
-    end
-  end
+  def get_icon("MinerTransaction"), do: 'fa-user-circle-o'
+  def get_icon("ContractTransaction"), do: 'fa-cube'
+  def get_icon("ClaimTransaction"), do: 'fa-cubes'
+  def get_icon("IssueTransaction"), do: 'fa-handshake-o'
+  def get_icon("RegisterTransaction"), do: 'fa-list-alt'
+  def get_icon("InvocationTransaction"), do: 'fa-paper-plane'
+  def get_icon("EnrollmentTransaction"), do: 'fa-paper-plane'
+  def get_icon("StateTransaction"), do: 'fa-list-alt'
+  def get_icon("PublishTransaction"), do: 'Contract Publish'
 
   def compare_time_and_get_minutes(time) do
     ViewHelper.compare_time_and_get_minutes(time)
