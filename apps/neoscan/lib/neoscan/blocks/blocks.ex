@@ -324,7 +324,7 @@ defmodule Neoscan.Blocks do
         e in Block,
         select: e.index,
         where: e.index > -1,
-        order_by: [fragment("? DESC NULLS LAST", e.index)],
+        order_by: [desc: e.index],
         limit: 1
       )
 

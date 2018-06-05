@@ -636,7 +636,7 @@ defmodule Neoscan.Api do
             :nextconcensus => nil,
             :nonce => nil,
             :previousblockhash => nil,
-            :scrip => nil,
+            :script => nil,
             :size => nil,
             :time => nil,
             :version => nil,
@@ -691,7 +691,7 @@ defmodule Neoscan.Api do
     query =
       from(
         e in Block,
-        order_by: [fragment("? DESC NULLS LAST", e.index)],
+        order_by: [desc: e.index],
         preload: [
           transactions: ^tran_query,
           transfers: ^trans_query
@@ -740,7 +740,7 @@ defmodule Neoscan.Api do
     query =
       from(
         e in Block,
-        order_by: [fragment("? DESC NULLS LAST", e.index)],
+        order_by: [desc: e.index],
         preload: [
           transactions: ^tran_query,
           transfers: ^trans_query

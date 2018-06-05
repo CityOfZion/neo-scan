@@ -18,7 +18,7 @@ defmodule Neoscan.Transfers.Transfer do
       Neoscan.Blocks.Block,
       foreign_key: :block_hash,
       references: :hash,
-      type: :string
+      type: :binary
     )
 
     timestamps()

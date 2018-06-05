@@ -110,7 +110,7 @@ defmodule Neoscan.Api.ApiTest do
              nextconcensus: nil,
              nonce: nil,
              previousblockhash: nil,
-             scrip: nil,
+             script: nil,
              size: nil,
              time: nil,
              transactions: nil,

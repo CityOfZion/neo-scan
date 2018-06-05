@@ -33,7 +33,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       timestamps()
     end
 
-    create(index(:transactions, ["inserted_at DESC NULLS LAST"]))
+    create(index(:transactions, [:inserted_at]))
     create(unique_index(:transactions, [:txid]))
     create(index(:transactions, [:type]))
     create(index(:transactions, [:block_hash]))
