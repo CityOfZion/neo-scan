@@ -5,7 +5,9 @@ defmodule Neoscan.BlocksTest do
 
   @block0 %{
     "confirmations" => 2_291_280,
-    "hash" => "0xd42561e3d30e15be6400b6df2f328e02d2bf6354c41dce433bc57687c82144bf",
+    "hash" =>
+      <<212, 37, 97, 227, 211, 14, 21, 190, 100, 0, 182, 223, 47, 50, 142, 2, 210, 191, 99, 84,
+        196, 29, 206, 67, 59, 197, 118, 135, 200, 33, 68, 191>>,
     "index" => 0,
     "merkleroot" => "0x803ff4abe3ea6533bcc0be574efa02f83ae8fdc651c879056b0d9be336c01bf4",
     "nextblockhash" => "0xd782db8a38b0eea0d7394e0f007c61c71798867578c77c387c08113903946cc9",
@@ -104,7 +106,9 @@ defmodule Neoscan.BlocksTest do
 
   @block4130 %{
     "confirmations" => 2_287_186,
-    "hash" => "0x6a7fe6471b3c2f92a393e7b49077bbac0ce131334393d75565be92b04d1bf1b4",
+    "hash" =>
+      <<106, 127, 230, 71, 27, 60, 47, 146, 163, 147, 231, 180, 144, 119, 187, 172, 12, 225, 49,
+        51, 67, 147, 215, 85, 101, 190, 146, 176, 77, 27, 241, 180>>,
     "index" => 4130,
     "merkleroot" => "0x0e523d0390d2ebc1d84c9640459ff065232aadb7c485a068882105d8e1c936fa",
     "nextblockhash" => "0xdebe7fe75d977a89dfaf36f0f543e9e99add4e8f5ed5fcfa57afff9dca327400",
@@ -177,7 +181,9 @@ defmodule Neoscan.BlocksTest do
 
   @block4159 %{
     "confirmations" => 2_332_973,
-    "hash" => "0x57da079269cc6307afee2448d99866d2bf505181d8f484465c1f123e99e117aa",
+    "hash" =>
+      <<87, 218, 7, 146, 105, 204, 99, 7, 175, 238, 36, 72, 217, 152, 102, 210, 191, 80, 81, 129,
+        216, 244, 132, 70, 92, 31, 18, 62, 153, 225, 23, 170>>,
     "index" => 4159,
     "merkleroot" => "0xd246ee15eacde5d0190c6cd8409905a08caf68716e64054cee844556c6c59644",
     "nextblockhash" => "0xee4c5c8ce2dfff12ee79490468e359fb8a9cede4ce760e3aaf756c219ff10fb7",
@@ -244,7 +250,9 @@ defmodule Neoscan.BlocksTest do
 
   @block4273 %{
     "confirmations" => 2_332_861,
-    "hash" => "0x0d7b55a50c9887164a4cb443b16101127d78115fc6ac4a73f39083bb7bfb813a",
+    "hash" =>
+      <<13, 123, 85, 165, 12, 152, 135, 22, 74, 76, 180, 67, 177, 97, 1, 18, 125, 120, 17, 95,
+        198, 172, 74, 115, 243, 144, 131, 187, 123, 251, 129, 58>>,
     "index" => 4273,
     "merkleroot" => "0x76d1d32cd6aa7b0fea75330a1a5fe9a54732fb2c3c51d9c7d643b2f6fa1f045f",
     "nextblockhash" => "0xb4925de0a488e22ac3767d3889ce3802d22db2d2a470c61de23ef16584d70e3e",
@@ -311,7 +319,9 @@ defmodule Neoscan.BlocksTest do
 
   @block4275 %{
     "confirmations" => 2_332_861,
-    "hash" => "0x10a3fe6d82e9be185a6dd2cae85c47f2d80e57942a7d3a97c0986a4fa2a59832",
+    "hash" =>
+      <<16, 163, 254, 109, 130, 233, 190, 24, 90, 109, 210, 202, 232, 92, 71, 242, 216, 14, 87,
+        148, 42, 125, 58, 151, 192, 152, 106, 79, 162, 165, 152, 50>>,
     "index" => 4275,
     "merkleroot" => "0x4a196d5cfc6e0979bc1071bf549aec28e01634a377862175280d2117c027d323",
     "nextblockhash" => "0x120ea1b72ad38ff81e53a9f18f6c8c56ff746d3eace29d52900be83002d95de4",
@@ -379,7 +389,9 @@ defmodule Neoscan.BlocksTest do
 
   @block4292 %{
     "confirmations" => 2_332_846,
-    "hash" => "0x74a5421e31a5524e59e3daf8a39ab65e876665cd81a03ec03839d88cad8d1ae9",
+    "hash" =>
+      <<116, 165, 66, 30, 49, 165, 82, 78, 89, 227, 218, 248, 163, 154, 182, 94, 135, 102, 101,
+        205, 129, 160, 62, 192, 56, 57, 216, 140, 173, 141, 26, 233>>,
     "index" => 4292,
     "merkleroot" => "0x9441abd0827429a6e5f8efa037916e9891958336add2e876a1f0553459bd02e3",
     "nextblockhash" => "0xcf6b92a1c886087f1c7af61f412b711c605ebe8ca4494e09051960cf03cf8063",
@@ -450,7 +462,9 @@ defmodule Neoscan.BlocksTest do
 
   @fake_block4299 %{
     "confirmations" => 2_332_842,
-    "hash" => "0xfe82a3bf5b86c0f10fc5598a18e0ba2c1f28defb305793b70853fa480690ce49",
+    "hash" =>
+      <<254, 130, 163, 191, 91, 134, 192, 241, 15, 197, 89, 138, 24, 224, 186, 44, 31, 40, 222,
+        251, 48, 87, 147, 183, 8, 83, 250, 72, 6, 144, 206, 73>>,
     "index" => 4299,
     "merkleroot" => "0xd28b0da6a97c4ffce6f2e1878a83d5ee00e60c2bdfbbbdb61996a226b6cfb305",
     "nextblockhash" => "0x9d30c3b5bfe701003b7af36a58df110d97c862d0d2a08cef31a6650a038dd7f0",
