@@ -4,6 +4,7 @@ defmodule Neoscan.Block do
   """
 
   use Ecto.Schema
+  alias Neoscan.Transaction
 
   @primary_key {:hash, :binary, []}
   @foreign_key_type :binary
@@ -22,8 +23,7 @@ defmodule Neoscan.Block do
     field(:total_sys_fee, :float)
     field(:total_net_fee, :float)
     field(:gas_generated, :float)
-
-    #    has_many(:transactions, Neoscan.Transactions.Transaction)
+    has_many(:transactions, Transaction, foreign_key: :block_hash, references: :hash)
     #    has_many(:transfers, Neoscan.Transfers.Transfer)
 
     timestamps()

@@ -1,6 +1,34 @@
 defmodule NeoscanSync.Syncer do
   alias Neoscan.Block
+  alias Neoscan.Transaction
+  alias Neoscan.Vout
   alias Neoscan.Repo
+
+  def import_vout(vout_raw) do
+    %Vout{
+      n: vout_raw.n,
+      address: vout_raw.address,
+      value: vout_raw.value,
+      asset: vout_raw.asset
+    }
+  end
+
+  def import_transaction(transaction_raw, block_raw) do
+    %Transaction{
+      hash: transaction_raw.hash,
+      block_index: block_raw.index,
+      block_time: block_raw.time,
+      attributes: transaction_raw.attributes,
+      net_fee: transaction_raw.net_fee,
+      sys_fee: transaction_raw.sys_fee,
+      nonce: transaction_raw.nonce,
+      scripts: transaction_raw.scripts,
+      size: transaction_raw.size,
+      type: to_string(transaction_raw.type),
+      version: transaction_raw.version,
+      vouts: Enum.map(transaction_raw.vouts, &import_vout(&1))
+    }
+  end
 
   def import_block(index) do
     {:ok, block_raw} = NeoscanNode.get_block_by_height(index)
@@ -17,6 +45,7 @@ defmodule NeoscanSync.Syncer do
       size: block_raw.size,
       time: block_raw.time,
       version: block_raw.version,
+      transactions: Enum.map(block_raw.tx, &import_transaction(&1, block_raw)),
       total_sys_fee: Enum.sum(Enum.map(block_raw.tx, & &1.sys_fee)),
       total_net_fee: Enum.sum(Enum.map(block_raw.tx, & &1.net_fee)),
       gas_generated: 0.0,

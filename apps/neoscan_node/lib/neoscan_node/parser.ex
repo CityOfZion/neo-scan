@@ -139,8 +139,8 @@ defmodule NeoscanNode.Parser do
       hash: parse16(transaction["txid"]),
       type: parse_transaction_type(transaction["type"]),
       version: transaction["version"],
-      vin: Enum.map(transaction["vin"], &parse_vin/1),
-      vout: Enum.map(transaction["vout"], &parse_vout/1)
+      vins: Enum.map(transaction["vin"], &parse_vin/1),
+      vouts: Enum.map(transaction["vout"], &parse_vout/1)
     }
   end
 

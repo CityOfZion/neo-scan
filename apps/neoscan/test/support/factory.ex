@@ -2,6 +2,7 @@ defmodule Neoscan.Factory do
   # with Ecto
   use ExMachina.Ecto, repo: Neoscan.Repo
   alias Neoscan.Block
+  alias Neoscan.Transaction
 
   def block_factory do
     %Block{
@@ -12,7 +13,9 @@ defmodule Neoscan.Factory do
       next_block_hash: :crypto.strong_rand_bytes(32),
       next_consensus: :crypto.strong_rand_bytes(32),
       nonce: :crypto.strong_rand_bytes(32),
-      script: %{sequence("scripthash") => sequence("scripthashinner")},
+      script: %{
+        sequence("scripthash") => sequence("scripthashinner")
+      },
       size: 1526,
       time: DateTime.utc_now(),
       version: 2,
@@ -20,6 +23,23 @@ defmodule Neoscan.Factory do
       total_sys_fee: 0,
       total_net_fee: 0,
       gas_generated: 8.1
+    }
+  end
+
+  def transaction_factory do
+    %Transaction{
+      hash: :crypto.strong_rand_bytes(32),
+      block_hash: :crypto.strong_rand_bytes(32),
+      block_index: sequence(1, & &1),
+      block_time: DateTime.utc_now(),
+      attributes: [],
+      net_fee: 0.0,
+      sys_fee: 0.0,
+      nonce: 5,
+      scripts: [],
+      size: 123,
+      type: "machin",
+      version: 0
     }
   end
 

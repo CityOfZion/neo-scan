@@ -50,8 +50,8 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                    sys_fee: 0.0,
                    type: :miner_transaction,
                    version: 0,
-                   vin: [],
-                   vout: []
+                   vins: [],
+                   vouts: []
                  },
                  %{
                    asset: %{
@@ -94,8 +94,8 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                    sys_fee: 0.0,
                    type: :register_transaction,
                    version: 0,
-                   vin: [],
-                   vout: []
+                   vins: [],
+                   vouts: []
                  },
                  %{
                    asset: %{
@@ -138,8 +138,8 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                    sys_fee: 0.0,
                    type: :register_transaction,
                    version: 0,
-                   vin: [],
-                   vout: []
+                   vins: [],
+                   vouts: []
                  },
                  %{
                    asset: nil,
@@ -158,8 +158,8 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                    sys_fee: 0.0,
                    type: :issue_transaction,
                    version: 0,
-                   vin: [],
-                   vout: [
+                   vins: [],
+                   vouts: [
                      %{
                        address:
                          <<1, 5, 97, 218, 145, 187, 223, 102, 47, 180, 214, 177, 16, 105, 16, 81,
@@ -214,8 +214,8 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                sys_fee: 0.0,
                type: :miner_transaction,
                version: 0,
-               vin: [],
-               vout: []
+               vins: [],
+               vouts: []
              }
            } == Blockchain.get_transaction(txid)
   end
