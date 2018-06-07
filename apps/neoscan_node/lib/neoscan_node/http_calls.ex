@@ -6,27 +6,31 @@ defmodule NeoscanNode.HttpCalls do
   alias NeoscanNode.HttpCalls.HTTPPoisonWrapper
 
   @opts [ssl: [{:versions, [:"tlsv1.2"]}]]
+  @headers [{"Content-Type", "application/json"}, {"Accept-Encoding", "gzip"}]
 
-  def request(headers, data, url) when is_bitstring(url) do
-    result = HTTPPoisonWrapper.post(url, data, headers, @opts)
+  def post(url, method, params) when is_bitstring(url) do
+    data =
+      Poison.encode!(%{
+        "jsonrpc" => "2.0",
+        "method" => method,
+        "params" => params,
+        "id" => 5
+      })
+
+    result = HTTPPoisonWrapper.post(url, data, @headers, @opts)
     handle_response(result, url)
   end
-
-  def request(_, _, url), do: Logger.error("Error in url #{inspect(url)}")
 
   def get(url) when is_bitstring(url) do
     result = HTTPPoisonWrapper.get(url, [], @opts)
     handle_response(result, url)
   end
 
-  def get(url), do: Logger.error("Error in url #{inspect(url)}")
-
   # Handles the response of an HTTP call
   defp handle_response({:ok, %HTTPoison.Response{status_code: 200, body: body} = res}, _) do
     gzipped =
       {"Content-Encoding", "gzip"} in res.headers or {"Content-Encoding", "x-gzip"} in res.headers
 
-    # body is an Elixir string
     body = if gzipped, do: :zlib.gunzip(body), else: body
 
     body
