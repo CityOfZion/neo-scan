@@ -2,9 +2,10 @@ defmodule Neoscan.Repo.Migrations.Blocks do
   use Ecto.Migration
 
   def change do
-    create table(:blocks) do
+    create table(:blocks, primary_key: false) do
+      add(:hash, :binary, primary_key: true)
+
       add(:confirmations, :integer)
-      add(:hash, :string)
       add(:index, :bigint)
       add(:merkleroot, :string)
       add(:nextblockhash, :string)
@@ -23,7 +24,6 @@ defmodule Neoscan.Repo.Migrations.Blocks do
       timestamps()
     end
 
-    create(unique_index(:blocks, ["index DESC NULLS LAST"]))
     create(unique_index(:blocks, [:index]))
     create(unique_index(:blocks, [:hash]))
   end

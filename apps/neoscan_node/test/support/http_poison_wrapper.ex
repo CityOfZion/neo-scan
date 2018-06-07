@@ -673,7 +673,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
   }
 
   @transaction %{
-    "txid" => "0x9e9526615ee7d460ed445c873c4af91bf7bfcc67e6e43feaf051b962a6df0a98",
+    "hash" => "0x9e9526615ee7d460ed445c873c4af91bf7bfcc67e6e43feaf051b962a6df0a98",
     "size" => 10,
     "type" => "MinerTransaction",
     "version" => 0,

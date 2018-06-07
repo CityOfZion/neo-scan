@@ -3,6 +3,7 @@ defmodule NeoscanWeb.ApiController do
 
   alias Neoscan.Api
   alias NeoscanCache.Api, as: CacheApi
+  alias NeoscanWeb.Helper
 
   defmacro cache(key, value, ttl \\ 10_000) do
     quote do
@@ -74,33 +75,40 @@ defmodule NeoscanWeb.ApiController do
     json(conn, asset)
   end
 
-  def get_block(conn, %{"hash" => hash}) do
-    block = cache({:get_block, hash}, Api.get_block(hash))
+  def get_block(conn, %{"hash" => block_hash}) do
+    block_hash = Helper.parse_hash(block_hash)
+    block = cache({:get_block, block_hash}, Api.get_block(block_hash))
+    block = Helper.format_block(block)
     json(conn, block)
   end
 
   def get_last_blocks(conn, _params) do
     blocks = cache({:get_last_blocks}, Api.get_last_blocks())
+    blocks = Helper.format_blocks(blocks)
     json(conn, blocks)
   end
 
   def get_highest_block(conn, _params) do
     block = cache({:get_highest_block}, Api.get_highest_block())
+    block = Helper.format_block(block)
     json(conn, block)
   end
 
   def get_transaction(conn, %{"hash" => hash}) do
     transaction = cache({:get_transaction, hash}, Api.get_transaction(hash))
+    transaction = Helper.format_transaction(transaction)
     json(conn, transaction)
   end
 
   def get_last_transactions(conn, %{"type" => type}) do
     transactions = cache({:get_last_transactions, type}, Api.get_last_transactions(type))
+    transactions = Helper.format_transactions(transactions)
     json(conn, transactions)
   end
 
   def get_last_transactions(conn, %{}) do
     transactions = cache({:get_last_transactions}, Api.get_last_transactions(nil))
+    transactions = Helper.format_transactions(transactions)
     json(conn, transactions)
   end
 
@@ -111,6 +119,7 @@ defmodule NeoscanWeb.ApiController do
         Api.get_last_transactions_by_address(hash, page)
       )
 
+    transactions = Helper.format_transactions(transactions)
     json(conn, transactions)
   end
 

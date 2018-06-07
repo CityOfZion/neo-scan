@@ -23,8 +23,8 @@ defmodule Neoscan.ChainAssets do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_asset(transaction_id, attrs) do
-    Asset.changeset(transaction_id, attrs)
+  def create_asset(transaction_hash, attrs) do
+    Asset.changeset(transaction_hash, attrs)
     |> Repo.insert!()
   end
 
@@ -73,8 +73,8 @@ defmodule Neoscan.ChainAssets do
       "not found"
 
   """
-  def get_asset_by_hash(hash) do
-    query = from(e in Asset, where: e.txid == ^hash)
+  def get_asset_by_hash(transaction_hash) do
+    query = from(e in Asset, where: e.transaction_hash == ^transaction_hash)
 
     Repo.all(query)
     |> List.first()
@@ -234,13 +234,13 @@ defmodule Neoscan.ChainAssets do
   Create new assets
   """
   # create new assets
-  def create(%{"amount" => amount} = asset, txid, time) do
+  def create(%{"amount" => amount} = asset, transaction_hash, time) do
     {float, _} = Float.parse(amount)
     new_asset = Map.merge(asset, %{"amount" => float, "time" => time})
-    create_asset(txid, new_asset)
+    create_asset(transaction_hash, new_asset)
   end
 
-  def create(nil, _txid, _time), do: nil
+  def create(nil, _transaction_hash, _time), do: nil
 
   @doc """
   Issue assets

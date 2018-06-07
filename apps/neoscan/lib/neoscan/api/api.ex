@@ -595,7 +595,7 @@ defmodule Neoscan.Api do
 
   """
   def get_block(hash_or_integer) do
-    tran_query = from(t in Transaction, select: t.txid)
+    tran_query = from(t in Transaction, select: t.hash)
     trans_query = from(t in Transfer, select: t.txid)
 
     query =
@@ -636,7 +636,7 @@ defmodule Neoscan.Api do
             :nextconcensus => nil,
             :nonce => nil,
             :previousblockhash => nil,
-            :scrip => nil,
+            :script => nil,
             :size => nil,
             :time => nil,
             :version => nil,
@@ -685,13 +685,13 @@ defmodule Neoscan.Api do
 
   """
   def get_last_blocks do
-    tran_query = from(t in Transaction, select: t.txid)
+    tran_query = from(t in Transaction, select: t.hash)
     trans_query = from(t in Transfer, select: t.txid)
 
     query =
       from(
         e in Block,
-        order_by: [fragment("? DESC NULLS LAST", e.index)],
+        order_by: [desc: e.index],
         preload: [
           transactions: ^tran_query,
           transfers: ^trans_query
@@ -734,13 +734,13 @@ defmodule Neoscan.Api do
 
   """
   def get_highest_block do
-    tran_query = from(t in Transaction, select: t.txid)
+    tran_query = from(t in Transaction, select: t.hash)
     trans_query = from(t in Transfer, select: t.txid)
 
     query =
       from(
         e in Block,
-        order_by: [fragment("? DESC NULLS LAST", e.index)],
+        order_by: [desc: e.index],
         preload: [
           transactions: ^tran_query,
           transfers: ^trans_query
@@ -819,7 +819,7 @@ defmodule Neoscan.Api do
     query =
       from(
         t in Transaction,
-        where: t.txid == ^hash,
+        where: t.hash == ^hash,
         preload: [
           vouts: ^vout_query
         ]
@@ -830,7 +830,7 @@ defmodule Neoscan.Api do
            |> List.first() do
         nil ->
           %{
-            :txid => "not found",
+            :hash => "not found",
             :attributes => nil,
             :net_fee => nil,
             :scripts => nil,

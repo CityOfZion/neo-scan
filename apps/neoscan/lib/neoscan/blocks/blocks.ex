@@ -36,7 +36,7 @@ defmodule Neoscan.Blocks do
 
   """
   def count_blocks do
-    Repo.aggregate(Block, :count, :id)
+    Repo.aggregate(Block, :count, :hash)
   end
 
   @doc """
@@ -54,7 +54,7 @@ defmodule Neoscan.Blocks do
         e in Block,
         where: e.index > -1,
         order_by: [
-          desc: e.id
+          desc: e.index
         ],
         select: %{
           :index => e.index,
@@ -84,7 +84,7 @@ defmodule Neoscan.Blocks do
         e in Block,
         where: e.index > -1,
         order_by: [
-          desc: e.id
+          desc: e.index
         ],
         select: %{
           :index => e.index,
@@ -113,7 +113,7 @@ defmodule Neoscan.Blocks do
       ** (Ecto.NoResultsError)
 
   """
-  def get_block!(id), do: Repo.get!(Block, id)
+  def get_block!(hash), do: Repo.get!(Block, hash)
 
   @doc """
   Gets a single block by its hash value
@@ -157,7 +157,7 @@ defmodule Neoscan.Blocks do
         t in Transaction,
         select: %{
           type: t.type,
-          txid: t.txid
+          hash: t.hash
         }
       )
 
@@ -199,7 +199,7 @@ defmodule Neoscan.Blocks do
       Repo.all(query)
       |> List.first()
 
-    transactions = Transactions.paginate_transactions_for_block(block.id, page)
+    transactions = Transactions.paginate_transactions_for_block(block.hash, page)
 
     {block, transactions}
   end
@@ -324,7 +324,7 @@ defmodule Neoscan.Blocks do
         e in Block,
         select: e.index,
         where: e.index > -1,
-        order_by: [fragment("? DESC NULLS LAST", e.index)],
+        order_by: [desc: e.index],
         limit: 1
       )
 

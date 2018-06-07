@@ -89,14 +89,14 @@ defmodule Neoscan.Vouts do
                          :address_hash => address_hash,
                          :n => n,
                          :value => value,
-                         :txid => txid
+                         :transaction_hash => transaction_hash
                        } ->
       %{
         :asset => asset,
         :address_hash => address_hash,
         :n => n,
         :value => value,
-        :txid => txid
+        :transaction_hash => transaction_hash
       }
     end)
   end
@@ -116,7 +116,7 @@ defmodule Neoscan.Vouts do
 
   # insert vouts into address balance
   def insert_vouts_in_address(
-        %{:txid => txid, :block_height => index, :time => time} = transaction,
+        %{:hash => transaction_hash, :block_height => index, :time => time} = transaction,
         vouts
       ) do
     %{"address" => {address, attrs}} = List.first(vouts)
@@ -127,7 +127,7 @@ defmodule Neoscan.Vouts do
         :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
       })
       |> add_vouts(vouts, transaction, time)
-      |> BalanceHistories.add_tx_id(txid, index, time)
+      |> BalanceHistories.add_tx_id(transaction_hash, index, time)
 
     {address, new_attrs}
   end
@@ -166,7 +166,7 @@ defmodule Neoscan.Vouts do
       from(
         v in Vout,
         where: v.address_hash == ^address and v.asset == ^asset and is_nil(v.end_height),
-        select: map(v, [:txid, :value, :n])
+        select: map(v, [:transaction_hash, :value, :n])
       )
 
     Repo.all(query)
@@ -182,7 +182,7 @@ defmodule Neoscan.Vouts do
         where:
           v.address_id == ^address_id and v.claimed == false and
             v.asset == "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
-        select: map(v, [:value, :start_height, :end_height, :n, :txid])
+        select: map(v, [:value, :start_height, :end_height, :n, :transaction_hash])
       )
 
     Repo.all(query)

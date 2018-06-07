@@ -13,16 +13,59 @@ defmodule NeoscanNode.Blockchain do
     HttpCalls.request(headers, data, url)
   end
 
+  defp parse16(string) do
+    string
+    |> String.slice(-64..-1)
+    |> String.upcase()
+    |> Base.decode16!()
+  end
+
+  defp parse_block(block) do
+    hash = block["hash"]
+
+    if is_nil(hash) do
+      block
+    else
+      tx =
+        Enum.map(block["tx"], fn transaction ->
+          transaction
+          |> Map.put("hash", parse16(transaction["txid"]))
+          |> Map.delete("txid")
+        end)
+
+      %{block | "hash" => parse16(hash), "tx" => tx}
+    end
+  end
+
+  defp parse_transaction(transaction) do
+    hash = transaction["blockhash"]
+
+    if is_nil(hash) do
+      transaction
+    else
+      transaction
+      |> Map.put("blockhash", parse16(hash))
+      |> Map.put("hash", parse16(transaction["txid"]))
+      |> Map.delete("txid")
+    end
+  end
+
   @doc """
    Get the current block by height through seed 'index'
   """
   def get_block_by_height(height), do: get_block_by_height(HttpCalls.get_url(1), height)
 
-  def get_block_by_height(url, height), do: request(url, "getblock", [height, 1])
+  def get_block_by_height(url, height) do
+    {:ok, response} = request(url, "getblock", [height, 1])
+    {:ok, parse_block(response)}
+  end
 
   def get_block_by_hash(hash), do: get_block_by_hash(HttpCalls.get_url(1), hash)
 
-  def get_block_by_hash(url, hash), do: request(url, "getblock", [hash, 1])
+  def get_block_by_hash(url, hash) do
+    {:ok, response} = request(url, "getblock", [hash, 1])
+    {:ok, parse_block(response)}
+  end
 
   def get_current_height, do: get_current_height(HttpCalls.get_url(1))
 
@@ -30,7 +73,10 @@ defmodule NeoscanNode.Blockchain do
 
   def get_transaction(txid), do: get_transaction(HttpCalls.get_url(1), txid)
 
-  def get_transaction(url, txid), do: request(url, "getrawtransaction", [txid, 1])
+  def get_transaction(url, txid) do
+    {:ok, response} = request(url, "getrawtransaction", [txid, 1])
+    {:ok, parse_transaction(response)}
+  end
 
   def get_asset(txid), do: get_asset(HttpCalls.get_url(1), txid)
 

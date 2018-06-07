@@ -84,7 +84,7 @@ defmodule Neoscan.Transactions do
       from(
         e in Transaction,
         order_by: [
-          desc: e.id
+          desc: e.block_height
         ],
         where:
           e.inserted_at >
@@ -93,10 +93,9 @@ defmodule Neoscan.Transactions do
               "hour"
             ) and e.type != "MinerTransaction",
         select: %{
-          :id => e.id,
           :type => e.type,
           :time => e.time,
-          :txid => e.txid,
+          :hash => e.hash,
           :block_height => e.block_height,
           :block_hash => e.block_hash,
           :vin => e.vin,
@@ -127,13 +126,12 @@ defmodule Neoscan.Transactions do
         e in Transaction,
         where: e.asset_moved == ^hash and e.type != "MinerTransaction",
         order_by: [
-          desc: e.id
+          desc: e.block_height
         ],
         select: %{
-          :id => e.id,
           :type => e.type,
           :time => e.time,
-          :txid => e.txid,
+          :hash => e.hash,
           :block_height => e.block_height,
           :block_hash => e.block_hash,
           :vin => e.vin,
@@ -149,7 +147,7 @@ defmodule Neoscan.Transactions do
     transactions = Repo.all(transaction_query)
 
     vouts =
-      Enum.map(transactions, fn tx -> tx.id end)
+      Enum.map(transactions, fn tx -> tx.hash end)
       |> get_transactions_vouts
 
     transactions
@@ -158,7 +156,7 @@ defmodule Neoscan.Transactions do
         tx,
         :vouts,
         Enum.filter(vouts, fn vout ->
-          vout.transaction_id == tx.id
+          vout.transaction_hash == tx.hash
         end)
       )
     end)
@@ -193,14 +191,13 @@ defmodule Neoscan.Transactions do
       from(
         e in Transaction,
         order_by: [
-          desc: e.id
+          desc: e.block_height
         ],
         where: e.type in ^type_list,
         select: %{
-          :id => e.id,
           :type => e.type,
           :time => e.time,
-          :txid => e.txid,
+          :hash => e.hash,
           :block_height => e.block_height,
           :block_hash => e.block_hash,
           :vin => e.vin,
@@ -215,7 +212,7 @@ defmodule Neoscan.Transactions do
     transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
 
     vouts =
-      Enum.map(transactions, fn tx -> tx.id end)
+      Enum.map(transactions, fn tx -> tx.hash end)
       |> get_transactions_vouts
 
     transactions
@@ -224,7 +221,7 @@ defmodule Neoscan.Transactions do
         tx,
         :vouts,
         Enum.filter(vouts, fn vout ->
-          vout.transaction_id == tx.id
+          vout.transaction_hash == tx.hash
         end)
       )
     end)
@@ -239,19 +236,18 @@ defmodule Neoscan.Transactions do
       [%Transaction{}, ...]
 
   """
-  def paginate_transactions_for_block(id, pag) do
+  def paginate_transactions_for_block(hash, pag) do
     transaction_query =
       from(
         e in Transaction,
         order_by: [
-          desc: e.id
+          desc: e.block_height
         ],
-        where: e.block_id == ^id,
+        where: e.block_hash == ^hash,
         select: %{
-          :id => e.id,
           :type => e.type,
           :time => e.time,
-          :txid => e.txid,
+          :hash => e.hash,
           :block_height => e.block_height,
           :block_hash => e.block_hash,
           :vin => e.vin,
@@ -266,7 +262,7 @@ defmodule Neoscan.Transactions do
     transactions = Repo.paginate(transaction_query, page: pag, page_size: 15)
 
     vouts =
-      Enum.map(transactions, fn tx -> tx.id end)
+      Enum.map(transactions, fn tx -> tx.hash end)
       |> get_transactions_vouts
 
     transactions
@@ -275,7 +271,7 @@ defmodule Neoscan.Transactions do
         tx,
         :vouts,
         Enum.filter(vouts, fn vout ->
-          vout.transaction_id == tx.id
+          vout.transaction_hash == tx.hash
         end)
       )
     end)
@@ -286,18 +282,18 @@ defmodule Neoscan.Transactions do
 
   ## Examples
 
-      iex> get_transaction_vouts(id)
+      iex> get_transaction_vouts(hash)
       [%Vout{}, ...]
 
   """
-  def get_transaction_vouts(id) do
+  def get_transaction_vouts(hash) do
     vout_query =
       from(
         e in Vout,
         order_by: [
           asc: e.n
         ],
-        where: e.transaction_id == ^id,
+        where: e.transaction_hash == ^hash,
         select: %{
           :asset => e.asset,
           :address_hash => e.address_hash,
@@ -317,16 +313,16 @@ defmodule Neoscan.Transactions do
       [%Vout{}, ...]
 
   """
-  def get_transactions_vouts(id_list) do
+  def get_transactions_vouts(hash_list) do
     vout_query =
       from(
         e in Vout,
         order_by: [
           asc: e.n
         ],
-        where: e.transaction_id in ^id_list,
+        where: e.transaction_hash in ^hash_list,
         select: %{
-          :transaction_id => e.transaction_id,
+          :transaction_hash => e.transaction_hash,
           :asset => e.asset,
           :address_hash => e.address_hash,
           :value => e.value
@@ -350,13 +346,13 @@ defmodule Neoscan.Transactions do
       from(
         e in Transaction,
         order_by: [
-          desc: e.id
+          desc: e.block_height
         ],
         where: e.type == "PublishTransaction" or e.type == "InvocationTransaction",
         select: %{
           :type => e.type,
           :time => e.time,
-          :txid => e.txid
+          :hash => e.hash
         }
       )
 
@@ -377,7 +373,7 @@ defmodule Neoscan.Transactions do
       ** (Ecto.NoResultsError)
 
   """
-  def get_transaction!(id), do: Repo.get!(Transaction, id)
+  def get_transaction!(hash), do: Repo.get!(Transaction, hash)
 
   @doc """
   Gets a single transaction by its hash value
@@ -392,7 +388,7 @@ defmodule Neoscan.Transactions do
 
   """
   def get_transaction_by_hash(hash) do
-    query = from(e in Transaction, where: e.txid == ^hash)
+    query = from(e in Transaction, where: e.hash == ^hash)
 
     Repo.all(query)
     |> List.first()
@@ -427,7 +423,7 @@ defmodule Neoscan.Transactions do
     query =
       from(
         e in Transaction,
-        where: e.txid == ^hash,
+        where: e.hash == ^hash,
         preload: [
           vouts: ^vout_query
         ],
@@ -452,10 +448,12 @@ defmodule Neoscan.Transactions do
   """
   def create_transaction(
         %{:time => time, :hash => hash, :index => height} = block,
-        %{"vout" => vouts, "vin" => vin, "txid" => txid, "type" => type} = attrs
+        %{"vout" => vouts, "vin" => vin, "hash" => transaction_hash, "type" => type} = attrs
       ) do
     # get inputs from db
     new_vin = get_vins(vin, height)
+
+    IO.inspect(transaction_hash)
 
     # get claims from db
     new_claim = get_claims(attrs["claims"])
@@ -468,7 +466,7 @@ defmodule Neoscan.Transactions do
           new_vin,
           new_claim,
           vouts,
-          String.slice(to_string(txid), -64..-1),
+          transaction_hash,
           height,
           time
         )
@@ -479,11 +477,7 @@ defmodule Neoscan.Transactions do
     # the balance is updated in the insert vout function called in create_vout
 
     # create asset if register Transaction
-    ChainAssets.create(
-      attrs["asset"],
-      String.slice(to_string(txid), -64..-1),
-      time
-    )
+    ChainAssets.create(attrs["asset"], transaction_hash, time)
 
     # create asset if issue Transaction
     ChainAssets.issue(type, vouts)
@@ -491,7 +485,7 @@ defmodule Neoscan.Transactions do
     # prepare and create transaction
     transaction =
       Map.merge(attrs, %{
-        "txid" => String.slice(to_string(txid), -64..-1),
+        "hash" => transaction_hash,
         "time" => time,
         "vin" => new_vin,
         "claims" => new_claim,
@@ -540,11 +534,7 @@ defmodule Neoscan.Transactions do
   end
 
   defp get_vins(vin, height) do
-    lookups =
-      Enum.map(
-        vin,
-        &"#{String.slice(to_string(&1["txid"]), -64..-1)}#{&1["vout"]}"
-      )
+    lookups = Enum.map(vin, &"#{String.slice(to_string(&1["txid"]), -64..-1)}#{&1["vout"]}")
 
     # sometimes "0x" is prepended to hashes
 
@@ -552,7 +542,7 @@ defmodule Neoscan.Transactions do
       from(
         e in Vout,
         where: e.query in ^lookups,
-        select: struct(e, [:asset, :address_hash, :n, :value, :txid, :query, :id])
+        select: struct(e, [:asset, :address_hash, :n, :value, :transaction_hash, :query, :id])
       )
 
     Repo.all(query)
@@ -578,7 +568,7 @@ defmodule Neoscan.Transactions do
       from(
         e in Vout,
         where: e.query in ^lookups,
-        select: struct(e, [:asset, :address_hash, :n, :value, :txid, :query, :id])
+        select: struct(e, [:asset, :address_hash, :n, :value, :transaction_hash, :query, :id])
       )
 
     Repo.all(query)

@@ -3,6 +3,8 @@ defmodule Neoscan.Transactions.Transaction do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:hash, :binary, []}
+  @foreign_key_type :binary
   schema "transactions" do
     field(:attributes, {:array, :map})
     field(:net_fee, :string)
@@ -10,12 +12,11 @@ defmodule Neoscan.Transactions.Transaction do
     field(:script, :string)
     field(:size, :integer)
     field(:sys_fee, :string)
-    field(:txid, :string)
+
     field(:type, :string)
     field(:version, :integer)
     field(:vin, {:array, :map})
     field(:time, :integer)
-    field(:block_hash, :string)
     field(:block_height, :integer)
     field(:nonce, :integer)
     field(:claims, {:array, :map})
@@ -27,8 +28,15 @@ defmodule Neoscan.Transactions.Transaction do
 
     field(:asset_moved, :string)
 
-    has_many(:vouts, Neoscan.Vouts.Vout)
-    belongs_to(:block, Neoscan.Blocks.Block)
+    has_many(:vouts, Neoscan.Vouts.Vout, foreign_key: :transaction_hash, references: :hash)
+
+    belongs_to(
+      :block,
+      Neoscan.Blocks.Block,
+      foreign_key: :block_hash,
+      references: :hash,
+      type: :binary
+    )
 
     timestamps()
   end
@@ -43,7 +51,7 @@ defmodule Neoscan.Transactions.Transaction do
       :scripts,
       :size,
       :sys_fee,
-      :txid,
+      :hash,
       :type,
       :version,
       :vin,
@@ -60,14 +68,14 @@ defmodule Neoscan.Transactions.Transaction do
       :descriptors
     ])
     |> assoc_constraint(:block, required: true)
-    |> unique_constraint(:txid)
+    |> unique_constraint(:hash)
     |> validate_required([
       :attributes,
       :net_fee,
       :scripts,
       :size,
       :sys_fee,
-      :txid,
+      :hash,
       :type,
       :version,
       :vin,
@@ -86,7 +94,7 @@ defmodule Neoscan.Transactions.Transaction do
       :scripts,
       :size,
       :sys_fee,
-      :txid,
+      :hash,
       :type,
       :version,
       :vin,
@@ -109,7 +117,7 @@ defmodule Neoscan.Transactions.Transaction do
       :scripts,
       :size,
       :sys_fee,
-      :txid,
+      :hash,
       :type,
       :version,
       :vin,
