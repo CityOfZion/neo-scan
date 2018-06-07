@@ -7,6 +7,7 @@ defmodule Neoscan.Blockchain.BlockchainTest do
     assert {
              :ok,
              %{
+               version: 0,
                confirmations: 2_326_310,
                hash:
                  <<212, 37, 97, 227, 211, 14, 21, 190, 100, 0, 182, 223, 47, 50, 142, 2, 210, 191,

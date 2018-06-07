@@ -110,6 +110,7 @@ defmodule NeoscanNode.Parser do
       next_block_hash: parse16(block["nextblockhash"]),
       previous_block_hash: parse16(block["previousblockhash"]),
       next_consensus: parse64(block["nextconsensus"]),
+      version: block["version"],
       nonce: parse16(block["nonce"]),
       script: block["script"],
       size: block["size"],

@@ -46,9 +46,6 @@ config :neoscan_node,
     "http://seed1.o3node.org:10332",
     "http://seed2.o3node.org:10332",
     "http://54.66.154.140:10332"
-    #    "http://seed6.concierge.io:10332",
-    #    "http://seed7.concierge.io:10332",
-    #    "http://seed8.concierge.io:10332"
   ]
 
 if Mix.env() == :test do

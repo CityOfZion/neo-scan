@@ -9,10 +9,10 @@ defmodule Neoscan.Block do
   @foreign_key_type :binary
   schema "blocks" do
     field(:index, :integer)
-    field(:merkleroot, :binary)
-    field(:previousblockhash, :binary)
-    field(:nextblockhash, :binary)
-    field(:nextconsensus, :binary)
+    field(:merkle_root, :binary)
+    field(:previous_block_hash, :binary)
+    field(:next_block_hash, :binary)
+    field(:next_consensus, :binary)
     field(:nonce, :binary)
     field(:script, {:map, :string})
     field(:size, :integer)

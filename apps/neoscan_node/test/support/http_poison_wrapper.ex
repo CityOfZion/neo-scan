@@ -95,7 +95,8 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
           }
         ]
       }
-    ]
+    ],
+    "version" => 0
   }
 
   @block1 %{
@@ -129,7 +130,8 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
         "vin" => [],
         "vout" => []
       }
-    ]
+    ],
+    "version" => 0
   }
 
   @block2 %{
@@ -233,7 +235,8 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
         "vin" => [],
         "vout" => []
       }
-    ]
+    ],
+    "version" => 0
   }
 
   @block2120069 %{
