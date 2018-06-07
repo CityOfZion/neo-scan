@@ -5,7 +5,7 @@ defmodule NeoscanNode.Application do
 
   use Application
 
-  alias NeoscanNode.Worker
+  alias NeoscanNode.NodeChecker
   alias NeoscanNode.EtsProcess
 
   def start(_type, _args) do
@@ -14,7 +14,7 @@ defmodule NeoscanNode.Application do
     # Define workers and child supervisors to be supervised
     children = [
       worker(EtsProcess, []),
-      worker(Worker, [])
+      worker(NodeChecker, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

@@ -7,10 +7,6 @@ defmodule Neoscan.HttpCalls.HttpCallsTest do
   @node_url "http://seed1.cityofzion.io:8080"
   @token_url "http://notifications1.neeeo.org/v1/tokens"
 
-  test "get_url/1" do
-    assert is_bitstring(HttpCalls.get_url(1))
-  end
-
   test "request/3" do
     data = "{\"params\":[0,1],\"method\":\"getblock\",\"jsonrpc\":\"2.0\",\"id\":5}"
     headers = [{"Content-Type", "application/json"}, {"Accept-Encoding", "gzip"}]

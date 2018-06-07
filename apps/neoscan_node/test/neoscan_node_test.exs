@@ -18,8 +18,4 @@ defmodule NeoscanNodeTest do
   test "add_notifications/2" do
     assert %{"transfers" => []} = NeoscanNode.add_notifications(%{}, 0)
   end
-
-  test "restart/0" do
-    assert {:ok, _} = NeoscanNode.restart()
-  end
 end

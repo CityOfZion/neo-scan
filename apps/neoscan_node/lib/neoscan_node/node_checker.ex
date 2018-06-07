@@ -1,4 +1,4 @@
-defmodule NeoscanNode.Worker do
+defmodule NeoscanNode.NodeChecker do
   @moduledoc false
 
   @servers Application.fetch_env!(:neoscan_node, :seeds)
@@ -28,16 +28,10 @@ defmodule NeoscanNode.Worker do
       |> pmap(&get_node_height/1, 15_000)
       |> Enum.filter(&(not is_nil(&1)))
 
-    if data == [] do
-      set(:nodes, [])
-      set(:height, {:ok, nil})
-      set(:data, data)
-    else
-      height = get_common_height(data)
-      set(:nodes, filter_nodes_by_height(data, height))
-      set(:height, {:ok, height})
-      set(:data, data)
-    end
+    height = get_common_height(data)
+    set(:nodes, filter_nodes_by_height(data, height))
+    set(:height, {:ok, height})
+    set(:data, data)
   end
 
   def handle_info(:sync, _), do: {:noreply, sync()}
@@ -47,6 +41,8 @@ defmodule NeoscanNode.Worker do
   def get_height, do: get(:height)
 
   def get_data, do: get(:data)
+
+  def get_random_node, do: Enum.random(get_nodes())
 
   defp get_servers do
     @env_vars
@@ -83,6 +79,8 @@ defmodule NeoscanNode.Worker do
   end
 
   # filter current height
+  defp get_common_height([]), do: 0
+
   defp get_common_height(data) do
     {height, _count} =
       data
