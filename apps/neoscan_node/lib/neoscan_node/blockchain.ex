@@ -6,24 +6,72 @@ defmodule NeoscanNode.Blockchain do
   alias NeoscanNode.HttpCalls
   alias NeoscanNode.NodeChecker
 
+  defp parse16("0x" <> rest), do: parse16(rest)
+
   defp parse16(string) do
     string
-    |> String.slice(-64..-1)
     |> String.upcase()
     |> Base.decode16!()
   end
 
+  defp parse64(string), do: Base.decode64!(string, padding: false)
+
+  defp parse_transaction_type("RegisterTransaction"), do: :register_transaction
+  defp parse_transaction_type("IssueTransaction"), do: :issue_transaction
+  defp parse_transaction_type("MinerTransaction"), do: :miner_transaction
+  defp parse_transaction_type("ContractTransaction"), do: :contract_transaction
+  defp parse_transaction_type("ClaimTransaction"), do: :claim_transaction
+  defp parse_transaction_type("InvocationTransaction"), do: :invocation_transaction
+
+  defp parse_float(string), do: elem(Float.parse(string), 0)
+
+  defp parse_vin(vin) do
+    %{
+      transaction_hash: parse16(vin["txid"]),
+      vout_index: vin["vout"]
+    }
+  end
+
+  defp parse_vout(vout) do
+    %{
+      address: parse64(vout["address"]),
+      asset: parse16(vout["asset"]),
+      n: vout["n"],
+      value: parse_float(vout["value"])
+    }
+  end
+
+  defp parse_block_transaction(transaction) do
+    %{
+      attributes: transaction["attributes"],
+      net_fee: transaction["net_fee"],
+      nonce: transaction["nonce"],
+      scripts: transaction["scripts"],
+      size: transaction["size"],
+      sys_fee: transaction["sys_fee"],
+      hash: parse16(transaction["txid"]),
+      type: parse_transaction_type(transaction["type"]),
+      version: transaction["version"],
+      vin: Enum.map(transaction["vin"], &parse_vin/1),
+      vout: Enum.map(transaction["vout"], &parse_vout/1)
+    }
+  end
+
   defp parse_block(block) do
-    hash = block["hash"]
-
-    tx =
-      Enum.map(block["tx"], fn transaction ->
-        transaction
-        |> Map.put("hash", parse16(transaction["txid"]))
-        |> Map.delete("txid")
-      end)
-
-    %{block | "hash" => parse16(hash), "tx" => tx}
+    %{
+      confirmations: block["confirmations"],
+      hash: parse16(block["hash"]),
+      index: block["index"],
+      merkle_root: parse16(block["merkleroot"]),
+      next_block_hash: parse16(block["nextblockhash"]),
+      previous_block_hash: parse16(block["previousblockhash"]),
+      next_consensus: parse64(block["nextconsensus"]),
+      nonce: parse16(block["nonce"]),
+      script: block["script"],
+      size: block["size"],
+      time: DateTime.from_unix!(block["time"]),
+      tx: Enum.map(block["tx"], &parse_block_transaction/1)
+    }
   end
 
   defp parse_transaction(transaction) do
