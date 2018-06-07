@@ -28,8 +28,8 @@ defmodule NeoscanNode.Parser do
 
   defp parse_vin(vin) do
     %{
-      transaction_hash: parse16(vin["txid"]),
-      vout_index: vin["vout"]
+      vout_transaction_hash: parse16(vin["txid"]),
+      vout_n: vin["vout"]
     }
   end
 

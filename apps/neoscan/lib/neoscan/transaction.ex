@@ -6,6 +6,7 @@ defmodule Neoscan.Transaction do
   use Ecto.Schema
   alias Neoscan.Block
   alias Neoscan.Vout
+  alias Neoscan.Vin
 
   @primary_key {:hash, :binary, []}
   @foreign_key_type :binary
@@ -22,6 +23,7 @@ defmodule Neoscan.Transaction do
     field(:type, :string)
     field(:version, :integer)
     has_many(:vouts, Vout, foreign_key: :transaction_hash, references: :hash)
+    has_many(:vins, Vin, foreign_key: :transaction_hash, references: :hash)
 
     timestamps()
   end

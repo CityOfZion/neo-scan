@@ -2,11 +2,19 @@ defmodule NeoscanSync.Syncer do
   alias Neoscan.Block
   alias Neoscan.Transaction
   alias Neoscan.Vout
+  alias Neoscan.Vin
   alias Neoscan.Repo
 
   require Logger
 
   @parallelism 8
+
+  def convert_vin(vin_raw) do
+    %Vin{
+      vout_n: vin_raw.vout_n,
+      vout_transaction_hash: vin_raw.vout_transaction_hash
+    }
+  end
 
   def convert_vout(vout_raw) do
     %Vout{
@@ -30,7 +38,8 @@ defmodule NeoscanSync.Syncer do
       size: transaction_raw.size,
       type: to_string(transaction_raw.type),
       version: transaction_raw.version,
-      vouts: Enum.map(transaction_raw.vouts, &convert_vout(&1))
+      vouts: Enum.map(transaction_raw.vouts, &convert_vout(&1)),
+      vins: Enum.map(transaction_raw.vins, &convert_vin(&1))
     }
   end
 
@@ -60,12 +69,13 @@ defmodule NeoscanSync.Syncer do
       {:ok, block_raw} ->
         try do
           block = convert_block(block_raw)
-
-          Repo.transaction(fn ->
-            Repo.insert!(block)
-          end)
+          Repo.transaction(fn -> Repo.insert!(block) end)
         catch
           error ->
+            Logger.error("error while loading block #{inspect({index, error})}")
+            import_block(index)
+
+          error, _ ->
             Logger.error("error while loading block #{inspect({index, error})}")
             import_block(index)
         end
@@ -79,7 +89,7 @@ defmodule NeoscanSync.Syncer do
     concurrency = System.schedulers_online() * @parallelism
 
     Task.async_stream(
-      160_000..1_000_000,
+      48_000..1_000_000,
       fn n ->
         import_block(n)
         Logger.warn("block #{n}}")
