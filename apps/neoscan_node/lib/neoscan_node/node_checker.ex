@@ -42,7 +42,16 @@ defmodule NeoscanNode.NodeChecker do
 
   def get_data, do: get(:data)
 
-  def get_random_node, do: Enum.random(get_nodes())
+  def get_random_node do
+    nodes = get_nodes()
+
+    if Enum.empty?(nodes) do
+      Process.sleep(1_000)
+      get_random_node()
+    else
+      Enum.random(nodes)
+    end
+  end
 
   defp get_servers do
     @env_vars

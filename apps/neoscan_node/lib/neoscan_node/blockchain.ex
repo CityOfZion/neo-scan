@@ -13,15 +13,25 @@ defmodule NeoscanNode.Blockchain do
   def get_block_by_height(height), do: get_block_by_height(NodeChecker.get_random_node(), height)
 
   def get_block_by_height(url, height) do
-    {:ok, response} = HttpCalls.post(url, "getblock", [height, 1])
-    {:ok, Parser.parse_block(response)}
+    case HttpCalls.post(url, "getblock", [height, 1]) do
+      {:ok, response} ->
+        {:ok, Parser.parse_block(response)}
+
+      error ->
+        error
+    end
   end
 
   def get_block_by_hash(hash), do: get_block_by_hash(NodeChecker.get_random_node(), hash)
 
   def get_block_by_hash(url, hash) do
-    {:ok, response} = HttpCalls.post(url, "getblock", [hash, 1])
-    {:ok, Parser.parse_block(response)}
+    case HttpCalls.post(url, "getblock", [hash, 1]) do
+      {:ok, response} ->
+        {:ok, Parser.parse_block(response)}
+
+      error ->
+        error
+    end
   end
 
   def get_current_height, do: get_current_height(NodeChecker.get_random_node())

@@ -11,6 +11,8 @@ defmodule NeoscanNode.Parser do
 
   defp parse_asset_type("GoverningToken"), do: :governing_token
   defp parse_asset_type("UtilityToken"), do: :utility_token
+  defp parse_asset_type("Token"), do: :token
+  defp parse_asset_type("Share"), do: :share
 
   defp parse_transaction_type("RegisterTransaction"), do: :register_transaction
   defp parse_transaction_type("IssueTransaction"), do: :issue_transaction
@@ -18,6 +20,7 @@ defmodule NeoscanNode.Parser do
   defp parse_transaction_type("ContractTransaction"), do: :contract_transaction
   defp parse_transaction_type("ClaimTransaction"), do: :claim_transaction
   defp parse_transaction_type("InvocationTransaction"), do: :invocation_transaction
+  defp parse_transaction_type("EnrollmentTransaction"), do: :enrollment_transaction
 
   defp parse_float(string), do: elem(Float.parse(string), 0)
   defp parse_integer(nil), do: nil
@@ -107,7 +110,8 @@ defmodule NeoscanNode.Parser do
       hash: parse16(block["hash"]),
       index: block["index"],
       merkle_root: parse16(block["merkleroot"]),
-      next_block_hash: parse16(block["nextblockhash"]),
+      next_block_hash:
+        if(is_nil(block["nextblockhash"]), do: nil, else: parse16(block["nextblockhash"])),
       previous_block_hash: parse16(block["previousblockhash"]),
       next_consensus: parse64(block["nextconsensus"]),
       version: block["version"],

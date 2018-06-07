@@ -3,6 +3,7 @@ defmodule Neoscan.Factory do
   use ExMachina.Ecto, repo: Neoscan.Repo
   alias Neoscan.Block
   alias Neoscan.Transaction
+  alias Neoscan.Vout
 
   def block_factory do
     %Block{
@@ -40,6 +41,16 @@ defmodule Neoscan.Factory do
       size: 123,
       type: "machin",
       version: 0
+    }
+  end
+
+  def vout_factory do
+    %Vout{
+      transaction_hash: :crypto.strong_rand_bytes(32),
+      n: sequence(1, & &1),
+      address: :crypto.strong_rand_bytes(32),
+      asset: :crypto.strong_rand_bytes(32),
+      value: 1.23
     }
   end
 
