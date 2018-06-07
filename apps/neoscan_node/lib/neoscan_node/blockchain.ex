@@ -16,6 +16,9 @@ defmodule NeoscanNode.Blockchain do
 
   defp parse64(string), do: Base.decode64!(string, padding: false)
 
+  defp parse_asset_type("GoverningToken"), do: :governing_token
+  defp parse_asset_type("UtilityToken"), do: :utility_token
+
   defp parse_transaction_type("RegisterTransaction"), do: :register_transaction
   defp parse_transaction_type("IssueTransaction"), do: :issue_transaction
   defp parse_transaction_type("MinerTransaction"), do: :miner_transaction
@@ -24,6 +27,8 @@ defmodule NeoscanNode.Blockchain do
   defp parse_transaction_type("InvocationTransaction"), do: :invocation_transaction
 
   defp parse_float(string), do: elem(Float.parse(string), 0)
+  defp parse_integer(nil), do: nil
+  defp parse_integer(string), do: String.to_integer(string)
 
   defp parse_vin(vin) do
     %{
@@ -41,19 +46,43 @@ defmodule NeoscanNode.Blockchain do
     }
   end
 
-  defp parse_block_transaction(transaction) do
+  defp parse_transaction_asset(nil, _), do: nil
+
+  defp parse_transaction_asset(asset, transaction) do
+    asset
+    |> Map.merge(%{"id" => transaction["txid"], "issuer" => asset["admin"]})
+    |> parse_asset()
+  end
+
+  defp parse_contract(contract) do
     %{
-      attributes: transaction["attributes"],
-      net_fee: transaction["net_fee"],
-      nonce: transaction["nonce"],
-      scripts: transaction["scripts"],
-      size: transaction["size"],
-      sys_fee: transaction["sys_fee"],
-      hash: parse16(transaction["txid"]),
-      type: parse_transaction_type(transaction["type"]),
-      version: transaction["version"],
-      vin: Enum.map(transaction["vin"], &parse_vin/1),
-      vout: Enum.map(transaction["vout"], &parse_vout/1)
+      author: contract["author"],
+      code_version: contract["code_version"],
+      email: contract["email"],
+      hash: parse16(contract["hash"]),
+      name: contract["name"],
+      parameters: contract["parameters"],
+      properties: contract["properties"],
+      return_type: contract["returntype"],
+      script: parse16(contract["script"]),
+      version: contract["version"]
+    }
+  end
+
+  defp parse_asset(asset) do
+    %{
+      admin: parse64(asset["admin"]),
+      amount: parse_integer(asset["amount"]),
+      available: parse_integer(asset["available"]),
+      expiration: asset["expiration"],
+      frozen: asset["frozen"],
+      transaction_hash: parse16(asset["id"]),
+      issuer: parse64(asset["issuer"]),
+      name: asset["name"],
+      owner: asset["owner"],
+      precision: asset["precision"],
+      type: parse_asset_type(asset["type"]),
+      version: asset["version"]
     }
   end
 
@@ -70,17 +99,33 @@ defmodule NeoscanNode.Blockchain do
       script: block["script"],
       size: block["size"],
       time: DateTime.from_unix!(block["time"]),
-      tx: Enum.map(block["tx"], &parse_block_transaction/1)
+      tx: Enum.map(block["tx"], &parse_block_transaction(&1, block))
     }
   end
 
-  defp parse_transaction(transaction) do
-    hash = transaction["blockhash"]
-
+  defp parse_block_transaction(transaction, block) do
     transaction
-    |> Map.put("blockhash", parse16(hash))
-    |> Map.put("hash", parse16(transaction["txid"]))
-    |> Map.delete("txid")
+    |> Map.merge(%{"blockhash" => block["hash"], "blocktime" => block["time"]})
+    |> parse_transaction()
+  end
+
+  defp parse_transaction(transaction) do
+    %{
+      asset: parse_transaction_asset(transaction["asset"], transaction),
+      attributes: transaction["attributes"],
+      nonce: transaction["nonce"],
+      scripts: transaction["scripts"],
+      block_time: DateTime.from_unix!(transaction["blocktime"]),
+      block_hash: parse16(transaction["blockhash"]),
+      size: transaction["size"],
+      sys_fee: parse_float(transaction["sys_fee"]),
+      net_fee: parse_float(transaction["net_fee"]),
+      hash: parse16(transaction["txid"]),
+      type: parse_transaction_type(transaction["type"]),
+      version: transaction["version"],
+      vin: Enum.map(transaction["vin"], &parse_vin/1),
+      vout: Enum.map(transaction["vout"], &parse_vout/1)
+    }
   end
 
   @doc """
@@ -113,9 +158,15 @@ defmodule NeoscanNode.Blockchain do
 
   def get_asset(txid), do: get_asset(NodeChecker.get_random_node(), txid)
 
-  def get_asset(url, txid), do: HttpCalls.post(url, "getassetstate", [txid, 1])
+  def get_asset(url, txid) do
+    {:ok, response} = HttpCalls.post(url, "getassetstate", [txid, 1])
+    {:ok, parse_asset(response)}
+  end
 
   def get_contract(hash), do: get_contract(NodeChecker.get_random_node(), hash)
 
-  def get_contract(url, hash), do: HttpCalls.post(url, "getcontractstate", [hash])
+  def get_contract(url, hash) do
+    {:ok, response} = HttpCalls.post(url, "getcontractstate", [hash])
+    {:ok, parse_contract(response)}
+  end
 end
