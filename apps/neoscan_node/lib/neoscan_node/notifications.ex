@@ -7,6 +7,7 @@ defmodule NeoscanNode.Notifications do
   @limit_height Application.fetch_env!(:neoscan_node, :start_notifications)
 
   alias NeoscanNode.HttpCalls
+  alias NeoscanNode.Parser
   require Logger
 
   defp get_servers() do
@@ -18,25 +19,20 @@ defmodule NeoscanNode.Notifications do
 
   def get_block_notifications(height) do
     url = get_random_server()
-    {:ok, result, _} = HttpCalls.get("#{url}/notifications/block/#{height}")
-    result
+    {:ok, block_notifications, _} = HttpCalls.get("#{url}/notifications/block/#{height}")
+    Enum.map(block_notifications, &Parser.parse_block_notification/1)
   end
 
   def get_token_notifications do
     url = get_random_server()
-    {:ok, result, _current_height} = HttpCalls.get("#{url}/tokens")
-
-    result
+    {:ok, tokens, _current_height} = HttpCalls.get("#{url}/tokens")
+    Enum.map(tokens, &Parser.parse_token/1)
   end
 
-  def get_transfer_notification(height) when height <= @limit_height, do: []
+  def get_transfer_block_notifications(height) when height <= @limit_height, do: []
 
-  def get_transfer_notification(height) do
+  def get_transfer_block_notifications(height) do
     notifications = get_block_notifications(height)
-    Enum.filter(notifications, &(&1["notify_type"] == "transfer"))
-  end
-
-  def add_notifications(block, height) do
-    Map.merge(block, %{"transfers" => get_transfer_notification(height)})
+    Enum.filter(notifications, &(&1.notify_type == :transfer))
   end
 end

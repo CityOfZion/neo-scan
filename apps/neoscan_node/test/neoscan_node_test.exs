@@ -14,8 +14,4 @@ defmodule NeoscanNodeTest do
     [{url, height} | _] = NeoscanNode.get_data()
     assert is_bitstring(url) and is_number(height)
   end
-
-  test "add_notifications/2" do
-    assert %{"transfers" => []} = NeoscanNode.add_notifications(%{}, 0)
-  end
 end
