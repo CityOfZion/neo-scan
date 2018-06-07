@@ -2,20 +2,22 @@ defmodule Neoscan.Repo.Migrations.Transactions do
   use Ecto.Migration
 
   def change do
-    create table(:transactions) do
+    create table(:transactions, primary_key: false) do
+      add(:hash, :binary, primary_key: true)
+      add(:block_hash, :binary)
+      add(:block_height, :integer)
+
       add(:attributes, {:array, :map})
       add(:net_fee, :string)
       add(:scripts, {:array, :map})
       add(:script, :text)
       add(:size, :integer)
       add(:sys_fee, :string)
-      add(:txid, :string)
       add(:type, :string)
       add(:version, :integer)
       add(:vin, {:array, :map})
 
       add(:time, :integer)
-      add(:block_height, :integer)
 
       add(:nonce, :bigint)
       add(:claims, {:array, :map})
@@ -27,14 +29,10 @@ defmodule Neoscan.Repo.Migrations.Transactions do
 
       add(:asset_moved, :string)
 
-      add(:block_hash, :binary)
-      #add(:block_hash, references(:blocks, column: :hash, type: :string, on_delete: :delete_all))
-
       timestamps()
     end
 
     create(index(:transactions, [:inserted_at]))
-    create(unique_index(:transactions, [:txid]))
     create(index(:transactions, [:type]))
     create(index(:transactions, [:block_hash]))
   end

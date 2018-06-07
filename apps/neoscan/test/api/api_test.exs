@@ -69,8 +69,8 @@ defmodule Neoscan.Api.ApiTest do
 
   test "get_address_neon/1" do
     address = insert(:address)
-    %{histories: [%{txid: txid}]} = address
-    insert(:transaction, %{txid: txid})
+    %{histories: [%{txid: transaction_hash}]} = address
+    insert(:transaction, %{hash: transaction_hash})
 
     assert %{address: "not found", balance: nil, txids: nil, claimed: nil} ==
              Api.get_address_neon("notexisting")
@@ -133,7 +133,7 @@ defmodule Neoscan.Api.ApiTest do
 
   test "get_transaction/1" do
     transaction = insert(:transaction)
-    assert transaction.txid == Api.get_transaction(transaction.txid).txid
+    assert transaction.hash == Api.get_transaction(transaction.hash).hash
 
     assert %{
              asset: nil,
@@ -143,6 +143,7 @@ defmodule Neoscan.Api.ApiTest do
              claims: nil,
              contract: nil,
              description: nil,
+             hash: "not found",
              net_fee: nil,
              nonce: nil,
              pubkey: nil,
@@ -150,7 +151,6 @@ defmodule Neoscan.Api.ApiTest do
              size: nil,
              sys_fee: nil,
              time: nil,
-             txid: "not found",
              type: nil,
              version: nil,
              vin: nil,
@@ -168,9 +168,9 @@ defmodule Neoscan.Api.ApiTest do
 
   test "get_last_transactions_by_address/2" do
     transaction = insert(:transaction)
-    history = insert(:history, %{txid: transaction.txid})
+    history = insert(:history, %{txid: transaction.hash})
     transaction2 = insert(:transaction)
-    insert(:history, %{address_hash: history.address_hash, txid: transaction2.txid})
+    insert(:history, %{address_hash: history.address_hash, txid: transaction2.hash})
     insert(:history)
 
     assert 2 == Enum.count(Api.get_last_transactions_by_address(history.address_hash, 1))

@@ -3,6 +3,8 @@ defmodule Neoscan.Repo.Migrations.Transfers do
 
   def change do
     create table(:transfers) do
+      add(:block_hash, :binary)
+
       add(:address_from, :string)
       add(:address_to, :string)
       add(:amount, :float)
@@ -11,9 +13,6 @@ defmodule Neoscan.Repo.Migrations.Transfers do
       add(:contract, :string)
       add(:time, :integer)
       add(:check_hash, :string)
-
-      add(:block_hash, :binary)
-      #add(:block_hash, references(:blocks, column: :hash, type: :string, on_delete: :delete_all))
 
       timestamps()
     end

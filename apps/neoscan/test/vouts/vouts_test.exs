@@ -13,7 +13,9 @@ defmodule Neoscan.Vouts.VoutsTest do
       "address" => {address, nil},
       "value" => "23.4",
       "n" => 1,
-      "asset" => "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"
+      "asset" =>
+        <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144, 175, 133,
+          96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
     }
 
     assert %Vout{} = Vouts.create_vout(transaction, attrs)

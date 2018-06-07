@@ -20,17 +20,17 @@ defmodule Neoscan.TransactionsTest do
       insert(:transaction, %{type: "MinerTransaction"})
       transaction = insert(:transaction)
       assert [transaction1] = Transactions.home_transactions()
-      assert transaction.txid == transaction1.txid
+      assert transaction.hash == transaction1.hash
     end
 
     test "get_last_transactions_for_asset/1" do
       transaction = insert(:transaction, %{asset_moved: "12345678"})
-      vout = insert(:vout, %{transaction_id: transaction.id})
+      vout = insert(:vout, %{transaction_hash: transaction.hash})
 
       assert [%{vouts: [vout2]} = transaction2] =
                Transactions.get_last_transactions_for_asset("12345678")
 
-      assert transaction2.id == transaction.id
+      assert transaction2.hash == transaction.hash
       assert vout.address_hash == vout2.address_hash
     end
 
@@ -38,7 +38,7 @@ defmodule Neoscan.TransactionsTest do
       transaction1 = insert(:transaction, %{type: "InvocationTransaction"})
       _transaction2 = insert(:transaction, %{type: "IssueTransaction"})
       _transaction3 = insert(:transaction, %{type: "RegisterTransaction"})
-      _vout = insert(:vout, %{transaction_id: transaction1.id})
+      _vout = insert(:vout, %{transaction_hash: transaction1.hash})
       assert 3 == Enum.count(Transactions.paginate_transactions(1))
 
       assert 2 ==
@@ -57,7 +57,7 @@ defmodule Neoscan.TransactionsTest do
       transaction1 =
         insert(:transaction, %{type: "InvocationTransaction", block_hash: block.hash})
 
-      insert(:vout, %{transaction_id: transaction1.id})
+      insert(:vout, %{transaction_hash: transaction1.hash})
 
       assert 1 ==
                Enum.count(
@@ -67,8 +67,8 @@ defmodule Neoscan.TransactionsTest do
 
     test "get_transaction_vouts/1" do
       transaction1 = insert(:transaction, %{type: "InvocationTransaction"})
-      insert(:vout, %{transaction_id: transaction1.id})
-      assert [_] = Transactions.get_transaction_vouts(transaction1.id)
+      insert(:vout, %{transaction_hash: transaction1.hash})
+      assert [_] = Transactions.get_transaction_vouts(transaction1.hash)
     end
 
     test "list_contracts/0" do
@@ -81,10 +81,10 @@ defmodule Neoscan.TransactionsTest do
 
     test "get_transaction_by_hash_for_view/1" do
       transaction = insert(:transaction, %{type: "PublishTransaction"})
-      insert(:vout, %{transaction_id: transaction.id})
+      insert(:vout, %{transaction_hash: transaction.hash})
 
       assert %Transaction{vouts: [_]} =
-               Transactions.get_transaction_by_hash_for_view(transaction.txid)
+               Transactions.get_transaction_by_hash_for_view(transaction.hash)
     end
 
     test "list_transactions/0 returns all transaction" do
@@ -94,7 +94,7 @@ defmodule Neoscan.TransactionsTest do
 
     test "get_transaction!/1 returns the transaction with given id" do
       transaction = insert(:transaction)
-      assert Transactions.get_transaction!(transaction.id) == transaction
+      assert Transactions.get_transaction!(transaction.hash) == transaction
     end
 
     #    test "create_transaction/2" do
@@ -122,7 +122,7 @@ defmodule Neoscan.TransactionsTest do
       assert length(transaction.scripts) == 1
       assert transaction.size == 5
       assert transaction.sys_fee == "0"
-      assert "txhash" <> _ = transaction.txid
+      assert 32 == byte_size(transaction.hash)
       assert transaction.type == "FactoryTransaction"
       assert transaction.version == 1
       assert length(transaction.vin) == 1
@@ -140,13 +140,13 @@ defmodule Neoscan.TransactionsTest do
       assert {:error, %Ecto.Changeset{}} =
                Transactions.update_transaction(transaction, %{"block_hash" => nil})
 
-      assert transaction == Transactions.get_transaction!(transaction.id)
+      assert transaction == Transactions.get_transaction!(transaction.hash)
     end
 
     test "delete_transaction/1 deletes the transaction" do
       transaction = insert(:transaction)
       assert {:ok, %Transaction{}} = Transactions.delete_transaction(transaction)
-      assert_raise Ecto.NoResultsError, fn -> Transactions.get_transaction!(transaction.id) end
+      assert_raise Ecto.NoResultsError, fn -> Transactions.get_transaction!(transaction.hash) end
     end
   end
 end

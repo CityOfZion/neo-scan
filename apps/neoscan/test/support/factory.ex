@@ -42,7 +42,7 @@ defmodule Neoscan.Factory do
       scripts: [%{sequence("scripthash") => sequence("scriptinnerhash")}],
       size: 5,
       sys_fee: "0",
-      txid: sequence("txhash"),
+      hash: :crypto.strong_rand_bytes(32),
       type: "FactoryTransaction",
       version: 1,
       vin: [%{"asset" => sequence("vininnerhash")}],
@@ -98,7 +98,7 @@ defmodule Neoscan.Factory do
       address_hash: sequence("hash"),
       n: 0,
       value: 50,
-      txid: sequence("txhash"),
+      transaction_hash: :crypto.strong_rand_bytes(32),
       start_height: 1,
       end_height: 50,
       claimed: false,
@@ -129,7 +129,7 @@ defmodule Neoscan.Factory do
 
   def asset_factory do
     %Asset{
-      txid: sequence("txhash"),
+      transaction_hash: :crypto.strong_rand_bytes(32),
       admin: sequence("AZvTqMjOGT4AH7DZZRf4t6PRYm2k1CFdJZ"),
       amount: 100_000.0,
       name: [%{}],

@@ -157,7 +157,7 @@ defmodule Neoscan.Blocks do
         t in Transaction,
         select: %{
           type: t.type,
-          txid: t.txid
+          hash: t.hash
         }
       )
 

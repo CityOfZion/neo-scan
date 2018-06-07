@@ -13,19 +13,27 @@ defmodule NeoscanNode.Blockchain do
     HttpCalls.request(headers, data, url)
   end
 
+  defp parse16(string) do
+    string
+    |> String.slice(-64..-1)
+    |> String.upcase()
+    |> Base.decode16!()
+  end
+
   defp parse_block(block) do
     hash = block["hash"]
 
     if is_nil(hash) do
       block
     else
-      hash =
-        hash
-        |> String.slice(-64..-1)
-        |> String.upcase()
-        |> Base.decode16!()
+      tx =
+        Enum.map(block["tx"], fn transaction ->
+          transaction
+          |> Map.put("hash", parse16(transaction["txid"]))
+          |> Map.delete("txid")
+        end)
 
-      %{block | "hash" => hash}
+      %{block | "hash" => parse16(hash), "tx" => tx}
     end
   end
 
@@ -35,13 +43,10 @@ defmodule NeoscanNode.Blockchain do
     if is_nil(hash) do
       transaction
     else
-      hash =
-        hash
-        |> String.slice(-64..-1)
-        |> String.upcase()
-        |> Base.decode16!()
-
-      %{transaction | "blockhash" => hash}
+      transaction
+      |> Map.put("blockhash", parse16(hash))
+      |> Map.put("hash", parse16(transaction["txid"]))
+      |> Map.delete("txid")
     end
   end
 

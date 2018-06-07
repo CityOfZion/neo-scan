@@ -15,7 +15,6 @@ defmodule Neoscan.Transactions.TransactionTest do
     assert %{scripts: ["can't be blank"]} = errors_on(changeset)
     assert %{size: ["can't be blank"]} = errors_on(changeset)
     assert %{sys_fee: ["can't be blank"]} = errors_on(changeset)
-    assert %{txid: ["can't be blank"]} = errors_on(changeset)
     assert %{type: ["can't be blank"]} = errors_on(changeset)
     assert %{version: ["can't be blank"]} = errors_on(changeset)
     assert %{vin: ["can't be blank"]} = errors_on(changeset)
@@ -32,7 +31,7 @@ defmodule Neoscan.Transactions.TransactionTest do
       scripts: [],
       size: 23,
       sys_fee: "23.3232",
-      txid: "2332",
+      hash: "2332",
       type: "23232",
       version: 12,
       vin: [],

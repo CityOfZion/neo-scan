@@ -29,7 +29,9 @@ defmodule Neoscan.BlocksTest do
         "scripts" => [],
         "size" => 10,
         "sys_fee" => "0",
-        "txid" => "0xfb5bd72b2d6792d75dc2f1084ffa9e9f70ca85543c717a6b13d9959b452a57d6",
+        "hash" =>
+          <<251, 91, 215, 43, 45, 103, 146, 215, 93, 194, 241, 8, 79, 250, 158, 159, 112, 202,
+            133, 84, 60, 113, 122, 107, 19, 217, 149, 155, 69, 42, 87, 214>>,
         "type" => "MinerTransaction",
         "version" => 0,
         "vin" => [],
@@ -52,7 +54,9 @@ defmodule Neoscan.BlocksTest do
         "scripts" => [],
         "size" => 107,
         "sys_fee" => "0",
-        "txid" => "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+        "hash" =>
+          <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144, 175,
+            133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>,
         "type" => "RegisterTransaction",
         "version" => 0,
         "vin" => [],
@@ -75,7 +79,9 @@ defmodule Neoscan.BlocksTest do
         "scripts" => [],
         "size" => 106,
         "sys_fee" => "0",
-        "txid" => "0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7",
+        "hash" =>
+          <<96, 44, 121, 113, 139, 22, 228, 66, 222, 88, 119, 142, 20, 141, 11, 16, 132, 227, 178,
+            223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45, 231>>,
         "type" => "RegisterTransaction",
         "version" => 0,
         "vin" => [],
@@ -87,7 +93,9 @@ defmodule Neoscan.BlocksTest do
         "scripts" => [%{"invocation" => "", "verification" => "51"}],
         "size" => 69,
         "sys_fee" => "0",
-        "txid" => "0x3631f66024ca6f5b033d7e0809eb993443374830025af904fb51b0334f127cda",
+        "hash" =>
+          <<54, 49, 246, 96, 36, 202, 111, 91, 3, 61, 126, 8, 9, 235, 153, 52, 67, 55, 72, 48, 2,
+            90, 249, 4, 251, 81, 176, 51, 79, 18, 124, 218>>,
         "type" => "IssueTransaction",
         "version" => 0,
         "vin" => [],
@@ -132,7 +140,9 @@ defmodule Neoscan.BlocksTest do
         "scripts" => [],
         "size" => 10,
         "sys_fee" => "0",
-        "txid" => "0x5f5e4058ea59a8f53f38186061661e7be01b4952d1393784f7ff9bd8ef87d793",
+        "hash" =>
+          <<95, 94, 64, 88, 234, 89, 168, 245, 63, 56, 24, 96, 97, 102, 30, 123, 224, 27, 73, 82,
+            209, 57, 55, 132, 247, 255, 155, 216, 239, 135, 215, 147>>,
         "type" => "MinerTransaction",
         "version" => 0,
         "vin" => [],
@@ -151,7 +161,9 @@ defmodule Neoscan.BlocksTest do
         ],
         "size" => 665,
         "sys_fee" => "0",
-        "txid" => "0xee85d489e4428a538f39c1903771e1f222a383f8327c96ed19cc02079149a1fd",
+        "hash" =>
+          <<238, 133, 212, 137, 228, 66, 138, 83, 143, 57, 193, 144, 55, 113, 225, 242, 34, 163,
+            131, 248, 50, 124, 150, 237, 25, 204, 2, 7, 145, 73, 161, 253>>,
         "type" => "ContractTransaction",
         "version" => 0,
         "vin" => [
@@ -207,7 +219,9 @@ defmodule Neoscan.BlocksTest do
         "scripts" => [],
         "size" => 10,
         "sys_fee" => "0",
-        "txid" => "0x5bf5220b1af7ad5b27a3dfcf057bb9cf9d7e24c8b573f8ef09615761a2ed3aea",
+        "hash" =>
+          <<91, 245, 34, 11, 26, 247, 173, 91, 39, 163, 223, 207, 5, 123, 185, 207, 157, 126, 36,
+            200, 181, 115, 248, 239, 9, 97, 87, 97, 162, 237, 58, 234>>,
         "type" => "MinerTransaction",
         "version" => 0,
         "vin" => [],
@@ -226,7 +240,9 @@ defmodule Neoscan.BlocksTest do
         ],
         "size" => 202,
         "sys_fee" => "0",
-        "txid" => "0x32e3a4f92adee2acf0e0455af8db089398a08dc8a3228b51c5465328ff8756c4",
+        "hash" =>
+          <<50, 227, 164, 249, 42, 222, 226, 172, 240, 224, 69, 90, 248, 219, 8, 147, 152, 160,
+            141, 200, 163, 34, 139, 81, 197, 70, 83, 40, 255, 135, 86, 196>>,
         "type" => "ContractTransaction",
         "version" => 0,
         "vin" => [
@@ -276,7 +292,9 @@ defmodule Neoscan.BlocksTest do
         "scripts" => [],
         "size" => 10,
         "sys_fee" => "0",
-        "txid" => "0x6a891ea1da3d72f381ed5e6877345756e138478bbab6be3bf47b5836787b90b4",
+        "hash" =>
+          <<106, 137, 30, 161, 218, 61, 114, 243, 129, 237, 94, 104, 119, 52, 87, 86, 225, 56, 71,
+            139, 186, 182, 190, 59, 244, 123, 88, 54, 120, 123, 144, 180>>,
         "type" => "MinerTransaction",
         "version" => 0,
         "vin" => [],
@@ -295,7 +313,9 @@ defmodule Neoscan.BlocksTest do
         ],
         "size" => 202,
         "sys_fee" => "0",
-        "txid" => "0x06c6e24699d12fa4dd1848d4bda41c5dbc466f51dd550a94d5d8e8dbd01e35b9",
+        "hash" =>
+          <<6, 198, 226, 70, 153, 209, 47, 164, 221, 24, 72, 212, 189, 164, 28, 93, 188, 70, 111,
+            81, 221, 85, 10, 148, 213, 216, 232, 219, 208, 30, 53, 185>>,
         "type" => "ContractTransaction",
         "version" => 0,
         "vin" => [
@@ -345,7 +365,9 @@ defmodule Neoscan.BlocksTest do
         "scripts" => [],
         "size" => 10,
         "sys_fee" => "0",
-        "txid" => "0x20398ac8301ce0acd54068bb25f4d8e612356f06dec9edc5c840ccd24e3fb6f7",
+        "hash" =>
+          <<32, 57, 138, 200, 48, 28, 224, 172, 213, 64, 104, 187, 37, 244, 216, 230, 18, 53, 111,
+            6, 222, 201, 237, 197, 200, 64, 204, 210, 78, 63, 182, 247>>,
         "type" => "MinerTransaction",
         "version" => 0,
         "vin" => [],
@@ -370,7 +392,9 @@ defmodule Neoscan.BlocksTest do
         ],
         "size" => 203,
         "sys_fee" => "0",
-        "txid" => "0x462c0e6fcd68853dd44f4055e2aa759548038d3b1362b6182398a6d44c0d1bf0",
+        "hash" =>
+          <<70, 44, 14, 111, 205, 104, 133, 61, 212, 79, 64, 85, 226, 170, 117, 149, 72, 3, 141,
+            59, 19, 98, 182, 24, 35, 152, 166, 212, 76, 13, 27, 240>>,
         "type" => "ClaimTransaction",
         "version" => 0,
         "vin" => [],
@@ -415,7 +439,9 @@ defmodule Neoscan.BlocksTest do
         "scripts" => [],
         "size" => 10,
         "sys_fee" => "0",
-        "txid" => "0x4207c12a1c01db632908f1ec6d0bb6f1c7ba6e2a1463f9b66b5cf1bf42b4eae4",
+        "hash" =>
+          <<66, 7, 193, 42, 28, 1, 219, 99, 41, 8, 241, 236, 109, 11, 182, 241, 199, 186, 110, 42,
+            20, 99, 249, 182, 107, 92, 241, 191, 66, 180, 234, 228>>,
         "type" => "MinerTransaction",
         "version" => 0,
         "vin" => [],
@@ -434,7 +460,9 @@ defmodule Neoscan.BlocksTest do
         ],
         "size" => 639,
         "sys_fee" => "0",
-        "txid" => "0xf2c913777e2909075d709aaf49a2a70f999a7e6b42cfbf1dca62bf1e21fcf939",
+        "hash" =>
+          <<242, 201, 19, 119, 126, 41, 9, 7, 93, 112, 154, 175, 73, 162, 167, 15, 153, 154, 126,
+            107, 66, 207, 191, 29, 202, 98, 191, 30, 33, 252, 249, 57>>,
         "type" => "ContractTransaction",
         "version" => 0,
         "vin" => [
@@ -519,7 +547,9 @@ defmodule Neoscan.BlocksTest do
         "scripts" => [],
         "size" => 10,
         "sys_fee" => "0",
-        "txid" => "0x62429dfa21be7187a0bd116eadf5b3a94ce393588833662a5da9756fb134fa59",
+        "hash" =>
+          <<98, 66, 157, 250, 33, 190, 113, 135, 160, 189, 17, 110, 173, 245, 179, 169, 76, 227,
+            147, 88, 136, 51, 102, 42, 93, 169, 117, 111, 177, 52, 250, 89>>,
         "type" => "MinerTransaction",
         "version" => 0,
         "vin" => [],
@@ -562,7 +592,9 @@ defmodule Neoscan.BlocksTest do
         ],
         "size" => 810,
         "sys_fee" => "0",
-        "txid" => "0xd37acc5e0b851e97cfad73de629127b6ec372343a56b77e9bd87a9894d48d2d4",
+        "hash" =>
+          <<211, 122, 204, 94, 11, 133, 30, 151, 207, 173, 115, 222, 98, 145, 39, 182, 236, 55,
+            35, 67, 165, 107, 119, 233, 189, 135, 169, 137, 77, 72, 210, 212>>,
         "type" => "ClaimTransaction",
         "version" => 0,
         "vin" => [],

@@ -10,7 +10,6 @@ defmodule Neoscan.Vouts.Vout do
     field(:address_hash, :string)
     field(:n, :integer)
     field(:value, :float)
-    field(:txid, :string)
     field(:time, :integer)
 
     field(:start_height, :integer)
@@ -20,7 +19,14 @@ defmodule Neoscan.Vouts.Vout do
     # colum for composed query indexing
     field(:query, :string)
 
-    belongs_to(:transaction, Neoscan.Transactions.Transaction)
+    belongs_to(
+      :transaction,
+      Neoscan.Transactions.Transaction,
+      foreign_key: :transaction_hash,
+      references: :hash,
+      type: :binary
+    )
+
     belongs_to(:address, Neoscan.Addresses.Address)
     timestamps()
   end
@@ -28,8 +34,7 @@ defmodule Neoscan.Vouts.Vout do
   @doc false
   def changeset(
         %{
-          :id => transaction_id,
-          :txid => txid,
+          :hash => transaction_hash,
           :time => time,
           :block_height => height
         },
@@ -52,11 +57,10 @@ defmodule Neoscan.Vouts.Vout do
         "time" => time,
         "asset" => verified_asset,
         "address_id" => address.id,
-        "transaction_id" => transaction_id,
+        "transaction_hash" => transaction_hash,
         "address_hash" => address.address,
-        "txid" => txid,
         "value" => new_value,
-        "query" => "#{txid}#{n}"
+        "query" => "#{Base.encode16(transaction_hash)}#{n}"
       })
       |> Map.delete("address")
 
@@ -67,8 +71,7 @@ defmodule Neoscan.Vouts.Vout do
       :n,
       :value,
       :address_id,
-      :transaction_id,
-      :txid,
+      :transaction_hash,
       :query,
       :time,
       :start_height,
@@ -82,7 +85,6 @@ defmodule Neoscan.Vouts.Vout do
       :address_hash,
       :n,
       :value,
-      :txid,
       :query,
       :time,
       :start_height
