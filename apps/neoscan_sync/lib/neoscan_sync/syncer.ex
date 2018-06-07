@@ -17,8 +17,8 @@ defmodule NeoscanSync.Syncer do
       size: block_raw.size,
       time: block_raw.time,
       version: block_raw.version,
-      total_sys_fee: 0.0,
-      total_net_fee: 0.0,
+      total_sys_fee: Enum.sum(Enum.map(block_raw.tx, & &1.sys_fee)),
+      total_net_fee: Enum.sum(Enum.map(block_raw.tx, & &1.net_fee)),
       gas_generated: 0.0,
       tx_count: Enum.count(block_raw.tx)
     }
