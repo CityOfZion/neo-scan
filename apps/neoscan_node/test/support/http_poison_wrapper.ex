@@ -203,42 +203,37 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
   }
 
   @block199 %{
-    "id" => 5,
-    "jsonrpc" => "2.0",
-    "result" => %{
-      "confirmations" => 2_326_284,
-      "hash" => "0xb4cabbcde5e5d5ecf0429cb4726f7a4d857e195e12bdc568cb1df2097c2d918d",
-      "index" => 199,
-      "merkleroot" => "0x22785537b678da290b0fa00cf1703a0436f303ee1c8a8e8f5e93615fcbb6a280",
-      "nextblockhash" => "0xe5313431ecd1b59d1cb7848f35dadc5e51ebd700fd232fe3502003e14aeb9bf7",
-      "nextconsensus" => "APyEx5f4Zm4oCHwFWiSTaph1fPBxZacYVR",
-      "nonce" => "d76e2a45089c0672",
-      "previousblockhash" => "0x5fc3475ffa875d6e82d63523ba7a83e218e81d03a20ce36fd792d0cfbdbeb68c",
-      "script" => %{
-        "invocation" =>
-          "404d679bb8131a0fe995bf0f4c4122be78ac085bfbbaf0d71e729ce832e4761e0c245fc53c23dad1d3d5fdd0f1a558de107d0f882ecb6a349ffe02e33dbe83f21e40617e3686538763de96941da201aff56c7de25d321323ed0b6fb076ab2652f8ee3b230066eec67483c37cfef315608d7c30f68929c0fc718c86e5ec20ffef901c407f3970ddb448e1d24e40afbfc5b75b69967a36da8a98ab2aa9cfe62bf465dcb16c1902d07c15e7c2c02d68583d051376f95f353252620b6cad5338d27546870240ff95af7bbd16249f17480a72ea6a6d45cab4948cc68d72f8d51930af8c512c4308a69da5a72136ec7193f142871225a3c1aafeac44cb306a275c32715a0dc969400a66a4d9e6f2ae56157246a72b0b044e54532c8d70ca2f65e4991c376b880a44e6b3e9be3e86ee577238f28802c3f28889c19d48bc1845098e061f8794af8225",
-        "verification" =>
-          "552102486fd15702c4490a26703112a5cc1d0923fd697a33406bd5a1c00e0013b09a7021024c7b7fb6c310fccf1ba33b082519d82964ea93868d676662d4a59ad548df0e7d2102aaec38470f6aad0042c6e877cfd8087d2676b0f516fddd362801b9bd3936399e2103b209fd4f53a7170ea4444e0cb0a6bb6a53c2bd016926989cf85f9b0fba17a70c2103b8d9d5771d8f513aa0869b9cc8d50986403b78c6da36890638c3d46a5adce04a2102ca0e27697b9c248f6f16e085fd0061e26f44da85b58ee835c110caa5ec3ba5542102df48f60e8f3e01c48ff40b9b7f1310d7a8b2a193188befe1c2e3df740e89509357ae"
-      },
-      "size" => 686,
-      "time" => 1_476_651_110,
-      "tx" => [
-        %{
-          "attributes" => [],
-          "net_fee" => "0",
-          "nonce" => 144_442_994,
-          "scripts" => [],
-          "size" => 10,
-          "sys_fee" => "0",
-          "txid" => "0x22785537b678da290b0fa00cf1703a0436f303ee1c8a8e8f5e93615fcbb6a280",
-          "type" => "MinerTransaction",
-          "version" => 0,
-          "vin" => [],
-          "vout" => []
-        }
-      ],
-      "version" => 0
-    }
+    "confirmations" => 2_326_284,
+    "hash" => "0xb4cabbcde5e5d5ecf0429cb4726f7a4d857e195e12bdc568cb1df2097c2d918d",
+    "index" => 199,
+    "merkleroot" => "0x22785537b678da290b0fa00cf1703a0436f303ee1c8a8e8f5e93615fcbb6a280",
+    "nextblockhash" => "0xe5313431ecd1b59d1cb7848f35dadc5e51ebd700fd232fe3502003e14aeb9bf7",
+    "nextconsensus" => "APyEx5f4Zm4oCHwFWiSTaph1fPBxZacYVR",
+    "nonce" => "d76e2a45089c0672",
+    "previousblockhash" => "0x5fc3475ffa875d6e82d63523ba7a83e218e81d03a20ce36fd792d0cfbdbeb68c",
+    "script" => %{
+      "invocation" =>
+        "404d679bb8131a0fe995bf0f4c4122be78ac085bfbbaf0d71e729ce832e4761e0c245fc53c23dad1d3d5fdd0f1a558de107d0f882ecb6a349ffe02e33dbe83f21e40617e3686538763de96941da201aff56c7de25d321323ed0b6fb076ab2652f8ee3b230066eec67483c37cfef315608d7c30f68929c0fc718c86e5ec20ffef901c407f3970ddb448e1d24e40afbfc5b75b69967a36da8a98ab2aa9cfe62bf465dcb16c1902d07c15e7c2c02d68583d051376f95f353252620b6cad5338d27546870240ff95af7bbd16249f17480a72ea6a6d45cab4948cc68d72f8d51930af8c512c4308a69da5a72136ec7193f142871225a3c1aafeac44cb306a275c32715a0dc969400a66a4d9e6f2ae56157246a72b0b044e54532c8d70ca2f65e4991c376b880a44e6b3e9be3e86ee577238f28802c3f28889c19d48bc1845098e061f8794af8225",
+      "verification" =>
+        "552102486fd15702c4490a26703112a5cc1d0923fd697a33406bd5a1c00e0013b09a7021024c7b7fb6c310fccf1ba33b082519d82964ea93868d676662d4a59ad548df0e7d2102aaec38470f6aad0042c6e877cfd8087d2676b0f516fddd362801b9bd3936399e2103b209fd4f53a7170ea4444e0cb0a6bb6a53c2bd016926989cf85f9b0fba17a70c2103b8d9d5771d8f513aa0869b9cc8d50986403b78c6da36890638c3d46a5adce04a2102ca0e27697b9c248f6f16e085fd0061e26f44da85b58ee835c110caa5ec3ba5542102df48f60e8f3e01c48ff40b9b7f1310d7a8b2a193188befe1c2e3df740e89509357ae"
+    },
+    "size" => 686,
+    "time" => 1_476_651_110,
+    "tx" => [
+      %{
+        "attributes" => [],
+        "net_fee" => "0",
+        "nonce" => 144_442_994,
+        "scripts" => [],
+        "size" => 10,
+        "sys_fee" => "0",
+        "txid" => "0x22785537b678da290b0fa00cf1703a0436f303ee1c8a8e8f5e93615fcbb6a280",
+        "type" => "MinerTransaction",
+        "version" => 0,
+        "vin" => [],
+        "vout" => []
+      }
+    ]
   }
 
   @block2120069 %{
@@ -840,8 +835,10 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     unless is_nil(result) do
       body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => result}))
 
-      {:ok,
-       %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}}
+      {
+        :ok,
+        %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}
+      }
     end
   end
 
@@ -856,8 +853,10 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     unless is_nil(result) do
       body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => result}))
 
-      {:ok,
-       %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}}
+      {
+        :ok,
+        %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}
+      }
     end
   end
 
@@ -872,8 +871,10 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     unless is_nil(result) do
       body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => result}))
 
-      {:ok,
-       %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}}
+      {
+        :ok,
+        %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}
+      }
     end
   end
 
@@ -888,16 +889,20 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     unless is_nil(result) do
       body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => result}))
 
-      {:ok,
-       %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}}
+      {
+        :ok,
+        %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}
+      }
     end
   end
 
   def handle_post(%{"params" => [], "method" => "getblockcount", "jsonrpc" => "2.0", "id" => 5}) do
     body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => 200}))
 
-    {:ok,
-     %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}}
+    {
+      :ok,
+      %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}
+    }
   end
 
   def handle_post(_), do: nil
