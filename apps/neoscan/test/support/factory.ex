@@ -48,7 +48,7 @@ defmodule Neoscan.Factory do
     %Vout{
       transaction_hash: :crypto.strong_rand_bytes(32),
       n: sequence(1, & &1),
-      address: :crypto.strong_rand_bytes(32),
+      address_hash: :crypto.strong_rand_bytes(32),
       asset: :crypto.strong_rand_bytes(32),
       value: 1.23
     }

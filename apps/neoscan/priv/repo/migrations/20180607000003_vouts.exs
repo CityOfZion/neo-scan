@@ -5,7 +5,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     create table(:vouts, primary_key: false) do
       add(:transaction_hash, :binary, null: false, primary_key: true)
       add(:n, :integer, null: false, primary_key: true)
-      add(:address, :binary, null: false)
+      add(:address_hash, :binary, null: false)
       add(:asset, :binary, null: false)
       add(:value, :float)
 

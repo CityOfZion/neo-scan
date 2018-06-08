@@ -2,6 +2,7 @@ defmodule Neoscan.Vout do
   @moduledoc false
   use Ecto.Schema
   alias Neoscan.Transaction
+  alias Neoscan.Address
 
   @primary_key false
   schema "vouts" do
@@ -15,7 +16,15 @@ defmodule Neoscan.Vout do
     )
 
     field(:n, :integer, primary_key: true)
-    field(:address, :binary)
+
+    belongs_to(
+      :address,
+      Address,
+      foreign_key: :address_hash,
+      references: :hash,
+      type: :binary
+    )
+
     field(:asset, :binary)
     field(:value, :float)
 

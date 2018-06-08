@@ -19,7 +19,7 @@ defmodule NeoscanSync.Syncer do
   def convert_vout(vout_raw) do
     %Vout{
       n: vout_raw.n,
-      address: vout_raw.address,
+      address_hash: vout_raw.address,
       value: vout_raw.value,
       asset: vout_raw.asset
     }
@@ -65,22 +65,17 @@ defmodule NeoscanSync.Syncer do
   end
 
   def import_block(index) do
-    case NeoscanNode.get_block_by_height(index) do
-      {:ok, block_raw} ->
-        try do
-          block = convert_block(block_raw)
-          Repo.transaction(fn -> Repo.insert!(block) end)
-        catch
-          error ->
-            Logger.error("error while loading block #{inspect({index, error})}")
-            import_block(index)
+    try do
+      {:ok, block_raw} = NeoscanNode.get_block_by_height(index)
+      block = convert_block(block_raw)
+      Repo.transaction(fn -> Repo.insert!(block) end)
+    catch
+      error ->
+        Logger.error("error while loading block #{inspect({index, error})}")
+        import_block(index)
 
-          error, _ ->
-            Logger.error("error while loading block #{inspect({index, error})}")
-            import_block(index)
-        end
-
-      _ ->
+      error, _ ->
+        Logger.error("error while loading block #{inspect({index, error})}")
         import_block(index)
     end
   end
@@ -89,7 +84,7 @@ defmodule NeoscanSync.Syncer do
     concurrency = System.schedulers_online() * @parallelism
 
     Task.async_stream(
-      48_000..1_000_000,
+      0..1_000_000,
       fn n ->
         import_block(n)
         Logger.warn("block #{n}}")

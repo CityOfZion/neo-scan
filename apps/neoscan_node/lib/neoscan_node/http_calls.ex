@@ -5,7 +5,9 @@ defmodule NeoscanNode.HttpCalls do
 
   alias NeoscanNode.HttpCalls.HTTPPoisonWrapper
 
-  @opts [ssl: [{:versions, [:"tlsv1.2"]}]]
+  @timeout 5_000
+
+  @opts [ssl: [{:versions, [:"tlsv1.2"]}], timeout: @timeout, recv_timeout: @timeout]
   @headers [{"Content-Type", "application/json"}, {"Accept-Encoding", "gzip"}]
 
   def post(url, method, params) when is_bitstring(url) do
