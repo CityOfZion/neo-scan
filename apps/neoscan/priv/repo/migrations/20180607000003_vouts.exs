@@ -7,7 +7,8 @@ defmodule Neoscan.Repo.Migrations.Vouts do
       add(:n, :integer, null: false, primary_key: true)
       add(:address_hash, :binary, null: false)
       add(:asset, :binary, null: false)
-      add(:value, :float)
+      add(:value, :float, null: false)
+      add(:block_time, :naive_datetime, null: false)
 
       timestamps()
     end

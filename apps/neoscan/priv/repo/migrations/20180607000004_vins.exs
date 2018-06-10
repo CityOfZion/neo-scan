@@ -6,6 +6,8 @@ defmodule Neoscan.Repo.Migrations.Vins do
       add(:transaction_hash, :binary, null: false)
       add(:vout_transaction_hash, :binary, null: false)
       add(:vout_n, :integer, null: false)
+      add(:block_time, :naive_datetime, null: false)
+      add(:processed, :boolean, default: false, null: false)
 
       timestamps()
     end

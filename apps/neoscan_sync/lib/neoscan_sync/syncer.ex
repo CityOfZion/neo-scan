@@ -10,19 +10,22 @@ defmodule NeoscanSync.Syncer do
 
   @parallelism 8
 
-  def convert_vin(vin_raw) do
+  def convert_vin(vin_raw, block_raw) do
     %Vin{
       vout_n: vin_raw.vout_n,
-      vout_transaction_hash: vin_raw.vout_transaction_hash
+      vout_transaction_hash: vin_raw.vout_transaction_hash,
+      processed: false,
+      block_time: block_raw.time
     }
   end
 
-  def convert_vout(vout_raw) do
+  def convert_vout(vout_raw, block_raw) do
     %Vout{
       n: vout_raw.n,
       address_hash: vout_raw.address,
       value: vout_raw.value,
-      asset: vout_raw.asset
+      asset: vout_raw.asset,
+      block_time: block_raw.time
     }
   end
 
@@ -39,8 +42,8 @@ defmodule NeoscanSync.Syncer do
       size: transaction_raw.size,
       type: to_string(transaction_raw.type),
       version: transaction_raw.version,
-      vouts: Enum.map(transaction_raw.vouts, &convert_vout(&1)),
-      vins: Enum.map(transaction_raw.vins, &convert_vin(&1))
+      vouts: Enum.map(transaction_raw.vouts, &convert_vout(&1, block_raw)),
+      vins: Enum.map(transaction_raw.vins, &convert_vin(&1, block_raw))
     }
   end
 

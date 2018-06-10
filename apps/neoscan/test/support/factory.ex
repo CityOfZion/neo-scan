@@ -50,7 +50,8 @@ defmodule Neoscan.Factory do
       n: sequence(1, & &1),
       address_hash: :crypto.strong_rand_bytes(32),
       asset: :crypto.strong_rand_bytes(32),
-      value: 1.23
+      value: 1.23,
+      block_time: DateTime.utc_now()
     }
   end
 

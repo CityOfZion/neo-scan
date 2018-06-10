@@ -1,22 +1,12 @@
-defmodule Neoscan.Vout do
-  @moduledoc false
+defmodule Neoscan.AddressHistory do
+  @moduledoc """
+  Represent a Address in Database.
+  """
   use Ecto.Schema
-  alias Neoscan.Transaction
   alias Neoscan.Address
 
   @primary_key false
-  schema "vouts" do
-    belongs_to(
-      :transaction,
-      Transaction,
-      foreign_key: :transaction_hash,
-      references: :hash,
-      type: :binary,
-      primary_key: true
-    )
-
-    field(:n, :integer, primary_key: true)
-
+  schema "address_histories" do
     belongs_to(
       :address,
       Address,
