@@ -22,9 +22,8 @@ defmodule NeoscanNode.Parser do
   defp parse_transaction_type("InvocationTransaction"), do: :invocation_transaction
   defp parse_transaction_type("EnrollmentTransaction"), do: :enrollment_transaction
 
+  defp parse_float(nil), do: nil
   defp parse_float(string), do: elem(Float.parse(string), 0)
-  defp parse_integer(nil), do: nil
-  defp parse_integer(string), do: String.to_integer(string)
 
   defp parse_vin(vin) do
     %{
@@ -90,8 +89,8 @@ defmodule NeoscanNode.Parser do
   def parse_asset(asset) do
     %{
       admin: parse64(asset["admin"]),
-      amount: parse_integer(asset["amount"]),
-      available: parse_integer(asset["available"]),
+      amount: parse_float(asset["amount"]),
+      available: parse_float(asset["available"]),
       expiration: asset["expiration"],
       frozen: asset["frozen"],
       transaction_hash: parse16(asset["id"]),

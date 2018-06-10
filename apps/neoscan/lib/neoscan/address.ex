@@ -7,7 +7,8 @@ defmodule Neoscan.Address do
   @primary_key {:hash, :binary, []}
   @foreign_key_type :binary
   schema "addresses" do
-    field(:first_transaction_time, :naive_datetime)
+    field(:first_transaction_time, :utc_datetime)
+    field(:last_transaction_time, :utc_datetime)
     field(:tx_count, :integer, default: 0)
 
     # has_many(:claimed, Neoscan.Claims.Claim)

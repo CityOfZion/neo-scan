@@ -3,6 +3,7 @@ defmodule NeoscanSync.Syncer do
   alias Neoscan.Transaction
   alias Neoscan.Vout
   alias Neoscan.Vin
+  alias Neoscan.Address
   alias Neoscan.Repo
 
   require Logger
@@ -43,6 +44,28 @@ defmodule NeoscanSync.Syncer do
     }
   end
 
+  def create_addresses(block_raw) do
+    addresses =
+      for transaction_raw <- block_raw.tx do
+        for %{address: hash} <- transaction_raw.vouts do
+          %Address{
+            hash: hash,
+            first_transaction_time: block_raw.time,
+            tx_count: 1,
+            inserted_at: DateTime.utc_now(),
+            updated_at: DateTime.utc_now()
+          }
+        end
+      end
+
+    addresses
+    |> List.flatten()
+    |> Enum.group_by(& &1.hash)
+    |> Enum.map(fn {_, [address | _] = addresses} ->
+      %{address | tx_count: Enum.count(addresses)}
+    end)
+  end
+
   def convert_block(block_raw) do
     %Block{
       hash: block_raw.hash,
@@ -68,14 +91,41 @@ defmodule NeoscanSync.Syncer do
     try do
       {:ok, block_raw} = NeoscanNode.get_block_by_height(index)
       block = convert_block(block_raw)
-      Repo.transaction(fn -> Repo.insert!(block) end)
+      addresses = create_addresses(block_raw)
+
+      Repo.transaction(fn ->
+        Repo.insert!(block)
+
+        for address <- addresses do
+          Ecto.Adapters.SQL.query!(
+            Repo,
+            """
+            INSERT INTO addresses AS a (hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at)
+            VALUES($1,$2,$3,$4,$5,$6)
+            ON CONFLICT (hash) DO
+            UPDATE SET
+            tx_count = a.tx_count + EXCLUDED.tx_count,
+            first_transaction_time = LEAST(a.first_transaction_time, EXCLUDED.first_transaction_time),
+            last_transaction_time = GREATEST(a.last_transaction_time, EXCLUDED.last_transaction_time)
+            """,
+            [
+              address.hash,
+              address.first_transaction_time,
+              address.first_transaction_time,
+              address.tx_count,
+              address.inserted_at,
+              address.updated_at
+            ]
+          )
+        end
+      end)
     catch
       error ->
         Logger.error("error while loading block #{inspect({index, error})}")
         import_block(index)
 
-      error, _ ->
-        Logger.error("error while loading block #{inspect({index, error})}")
+      error, reason ->
+        Logger.error("error while loading block #{inspect({index, error, reason})}")
         import_block(index)
     end
   end
@@ -90,7 +140,7 @@ defmodule NeoscanSync.Syncer do
         Logger.warn("block #{n}}")
       end,
       max_concurrency: concurrency,
-      timeout: 60_000
+      timeout: :infinity
     )
     |> Stream.run()
   end

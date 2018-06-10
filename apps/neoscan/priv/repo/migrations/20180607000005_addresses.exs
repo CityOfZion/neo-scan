@@ -5,6 +5,7 @@ defmodule Neoscan.Repo.Migrations.Addresses do
     create table(:addresses, primary_key: false) do
       add(:hash, :binary, primary_key: true)
       add(:first_transaction_time, :naive_datetime)
+      add(:last_transaction_time, :naive_datetime)
       add(:tx_count, :integer)
 
       timestamps()
