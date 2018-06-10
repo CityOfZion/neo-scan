@@ -4,6 +4,7 @@ defmodule NeoscanSync.Syncer do
   alias Neoscan.Vout
   alias Neoscan.Vin
   alias Neoscan.Repo
+  alias Neoscan.BlockGasGeneration
 
   require Logger
 
@@ -62,7 +63,7 @@ defmodule NeoscanSync.Syncer do
       transactions: Enum.map(block_raw.tx, &convert_transaction(&1, block_raw)),
       total_sys_fee: Enum.sum(Enum.map(block_raw.tx, & &1.sys_fee)),
       total_net_fee: Enum.sum(Enum.map(block_raw.tx, & &1.net_fee)),
-      gas_generated: 0.0,
+      gas_generated: BlockGasGeneration.get_amount_generate_in_block(block_raw.index),
       tx_count: Enum.count(block_raw.tx)
     }
   end
