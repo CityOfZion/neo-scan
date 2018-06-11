@@ -4,6 +4,11 @@ defmodule Neoscan.Factory do
   alias Neoscan.Block
   alias Neoscan.Transaction
   alias Neoscan.Vout
+  alias Neoscan.Vin
+  alias Neoscan.Claim
+  alias Neoscan.AddressHistory
+  alias Neoscan.AddressBalance
+  alias Neoscan.Address
 
   def block_factory do
     %Block{
@@ -55,110 +60,47 @@ defmodule Neoscan.Factory do
     }
   end
 
-  #
-  #  def transaction_factory do
-  #    %Transaction{
-  #      attributes: [%{sequence("attributehash") => sequence("attributeinnerhash")}],
-  #      net_fee: "0",
-  #      scripts: [%{sequence("scripthash") => sequence("scriptinnerhash")}],
-  #      size: 5,
-  #      sys_fee: "0",
-  #      txid: sequence("txhash"),
-  #      type: "FactoryTransaction",
-  #      version: 1,
-  #      vin: [%{"asset" => sequence("vininnerhash")}],
-  #      time: 1_548_656,
-  #      nonce: 15155,
-  #      claims: [%{sequence("claimhash") => sequence("claiminnerhash")}],
-  #      pubkey: sequence("pubkeyhash"),
-  #      asset: %{
-  #        sequence("assethash") => sequence("assetinnerhash")
-  #      },
-  #      description: sequence("description"),
-  #      contract: %{
-  #        sequence("contracthash") => sequence("contractinnerhash")
-  #      },
-  #      block_hash: sequence("block_hash"),
-  #      block_height: 0
-  #    }
-  #  end
-  #
-  #  def address_factory do
-  #    %Address{
-  #      address: sequence("hash"),
-  #      histories: [insert(:history)],
-  #      balance: %{
-  #        sequence("assethash") => %{
-  #          "asset" => sequence("assethash"),
-  #          "amount" => 50
-  #        }
-  #      },
-  #      claimed: [insert(:claim)],
-  #      time: 154_856,
-  #      vouts: [insert(:vout)],
-  #      tx_count: 5
-  #    }
-  #  end
-  #
-  #  def transfer_factory do
-  #    %Transfer{
-  #      address_from: sequence("assethash"),
-  #      address_to: sequence("hash"),
-  #      amount: 0.1,
-  #      block_height: 50,
-  #      txid: sequence("txhash"),
-  #      contract: sequence("hash"),
-  #      time: 123,
-  #      check_hash: sequence("txhash")
-  #    }
-  #  end
-  #
-  #  def vout_factory do
-  #    %Vout{
-  #      asset: sequence("assethash"),
-  #      address_hash: sequence("hash"),
-  #      n: 0,
-  #      value: 50,
-  #      txid: sequence("txhash"),
-  #      start_height: 1,
-  #      end_height: 50,
-  #      claimed: false,
-  #      query: "#{sequence("assethash")}#{0}"
-  #    }
-  #  end
-  #
-  #  def history_factory do
-  #    %History{
-  #      address_hash: sequence("AZvTqMjOGT4AH7DZZRf4t6PRYm2k1CFdJZ"),
-  #      txid: sequence("txid"),
-  #      balance: %{},
-  #      block_height: 1,
-  #      time: 1
-  #    }
-  #  end
-  #
-  #  def claim_factory do
-  #    %Claim{
-  #      address_hash: sequence("AZvTqMjOGT4AH7DZZRf4t6PRYm2k1CFdJZ"),
-  #      txids: [sequence("txhash")],
-  #      asset: sequence("assethash"),
-  #      amount: 0.5,
-  #      block_height: 5,
-  #      time: 154_856
-  #    }
-  #  end
-  #
-  #  def asset_factory do
-  #    %Asset{
-  #      txid: sequence("txhash"),
-  #      admin: sequence("AZvTqMjOGT4AH7DZZRf4t6PRYm2k1CFdJZ"),
-  #      amount: 100_000.0,
-  #      name: [%{}],
-  #      owner: sequence("AZvTqMjOGT4AH7DZZRf4t6PRYm2k1CFdJZ"),
-  #      precision: 1,
-  #      type: sequence("typestring"),
-  #      issued: 500.0,
-  #      time: 154_856
-  #    }
-  #  end
+  def vin_factory do
+    %Vin{
+      transaction_hash: :crypto.strong_rand_bytes(32),
+      vout_transaction_hash: :crypto.strong_rand_bytes(32),
+      vout_n: sequence(1, & &1),
+      block_time: DateTime.utc_now()
+    }
+  end
+
+  def claim_factory do
+    %Claim{
+      transaction_hash: :crypto.strong_rand_bytes(32),
+      vout_transaction_hash: :crypto.strong_rand_bytes(32),
+      vout_n: sequence(1, & &1),
+      block_time: DateTime.utc_now()
+    }
+  end
+
+  def address_history_factory do
+    %AddressHistory{
+      address_hash: :crypto.strong_rand_bytes(32),
+      asset: :crypto.strong_rand_bytes(32),
+      value: 5.0,
+      block_time: DateTime.utc_now()
+    }
+  end
+
+  def address_balance_factory do
+    %AddressBalance{
+      address_hash: :crypto.strong_rand_bytes(32),
+      asset: :crypto.strong_rand_bytes(32),
+      value: 5.0
+    }
+  end
+
+  def address_factory do
+    %Address{
+      hash: :crypto.strong_rand_bytes(32),
+      first_transaction_time: DateTime.utc_now(),
+      last_transaction_time: DateTime.utc_now(),
+      tx_count: 12
+    }
+  end
 end
