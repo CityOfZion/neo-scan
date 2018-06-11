@@ -31,7 +31,7 @@ defmodule Neoscan.VoutTest do
     _address_history = insert(:address_history)
   end
 
-  test "vout vin trigger" do
+  test "vout vin trigger (vin inserted after vout)" do
     vout = insert(:vout)
 
     address_history =
@@ -47,6 +47,30 @@ defmodule Neoscan.VoutTest do
     insert(:vin, %{vout_n: vout.n, vout_transaction_hash: vout.transaction_hash})
     [ah1, ah2] = Repo.all(from(a in AddressHistory, where: a.address_hash == ^vout.address_hash))
     assert ah1.value == -ah2.value
+
+    address_balance =
+      Repo.one(from(a in AddressBalance, where: a.address_hash == ^vout.address_hash))
+
+    assert 0 == address_balance.value
+  end
+
+  test "vout vin trigger (vin inserted before vout)" do
+    vin = insert(:vin)
+
+    vout = insert(:vout, %{n: vin.vout_n, transaction_hash: vin.vout_transaction_hash})
+
+    [ah1, ah2] =
+      Repo.all(
+        from(
+          a in AddressHistory,
+          where: a.address_hash == ^vout.address_hash,
+          order_by: :block_time
+        )
+      )
+
+    assert ah1.value == -ah2.value
+    assert ah1.block_time == vin.block_time
+    assert ah2.block_time == vout.block_time
 
     address_balance =
       Repo.one(from(a in AddressBalance, where: a.address_hash == ^vout.address_hash))

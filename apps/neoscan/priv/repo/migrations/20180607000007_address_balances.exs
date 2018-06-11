@@ -27,6 +27,23 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
     """
 
     execute """
+    CREATE OR REPLACE FUNCTION generate_address_history_from_vouts2() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        INSERT INTO address_histories (address_hash, asset, value, block_time, inserted_at, updated_at)
+        SELECT NEW.address_hash, NEW.asset, NEW.value * -1.0, block_time, inserted_at, updated_at FROM vins
+        WHERE vout_n = NEW.n and vout_transaction_hash = NEW.transaction_hash;
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER generate_address_history_from_vins_trigger
+      AFTER INSERT ON vouts FOR each row
+      EXECUTE PROCEDURE generate_address_history_from_vouts2();
+    """
+
+    execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vins() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
         INSERT INTO address_histories (address_hash, asset, value, block_time, inserted_at, updated_at)
