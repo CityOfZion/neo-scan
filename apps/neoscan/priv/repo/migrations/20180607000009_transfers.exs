@@ -3,6 +3,7 @@ defmodule Neoscan.Repo.Migrations.Transfers do
 
   def change do
     create table(:transfers, primary_key: false) do
+      add(:transaction_hash, :binary, null: false)
       add(:address_from, :binary, null: false)
       add(:address_to, :binary, null: false)
       add(:amount, :float, null: false)

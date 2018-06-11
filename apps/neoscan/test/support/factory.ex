@@ -107,6 +107,7 @@ defmodule Neoscan.Factory do
 
   def transfer_factory do
     %Transfer{
+      transaction_hash: :crypto.strong_rand_bytes(32),
       address_from: :crypto.strong_rand_bytes(32),
       address_to: :crypto.strong_rand_bytes(32),
       amount: 5.0,

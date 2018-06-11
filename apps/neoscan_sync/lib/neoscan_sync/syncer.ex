@@ -6,6 +6,7 @@ defmodule NeoscanSync.Syncer do
   alias Neoscan.Claim
   alias Neoscan.Repo
   alias Neoscan.BlockGasGeneration
+  alias Neoscan.Transfer
 
   require Logger
 
@@ -23,6 +24,17 @@ defmodule NeoscanSync.Syncer do
     %Vin{
       vout_n: vin_raw.vout_n,
       vout_transaction_hash: vin_raw.vout_transaction_hash,
+      block_time: block_raw.time
+    }
+  end
+
+  def convert_transfer(transfer_raw, block_raw) do
+    %Transfer{
+      address_from: transfer_raw.addr_from,
+      address_to: transfer_raw.addr_to,
+      amount: transfer_raw.amount * 1.0,
+      contract: transfer_raw.contract,
+      block_index: block_raw.index,
       block_time: block_raw.time
     }
   end
@@ -52,7 +64,8 @@ defmodule NeoscanSync.Syncer do
       version: transaction_raw.version,
       vouts: Enum.map(transaction_raw.vouts, &convert_vout(&1, block_raw)),
       vins: Enum.map(transaction_raw.vins, &convert_vin(&1, block_raw)),
-      claims: Enum.map(transaction_raw.claims, &convert_claim(&1, block_raw))
+      claims: Enum.map(transaction_raw.claims, &convert_claim(&1, block_raw)),
+      transfers: Enum.map(transaction_raw.transfers, &convert_transfer(&1, block_raw))
     }
   end
 
@@ -79,9 +92,8 @@ defmodule NeoscanSync.Syncer do
 
   def import_block(index) do
     try do
-      {:ok, block_raw} = NeoscanNode.get_block_by_height(index)
+      block_raw = NeoscanNode.get_block_with_transfers(index)
       block = convert_block(block_raw)
-
       Repo.transaction(fn -> Repo.insert!(block) end)
     catch
       error ->
