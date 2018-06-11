@@ -8,6 +8,8 @@ defmodule NeoscanSync.Syncer do
   alias Neoscan.BlockGasGeneration
   alias Neoscan.Transfer
 
+  alias Ecto.ConstraintError
+
   require Logger
 
   @parallelism 8
@@ -93,12 +95,16 @@ defmodule NeoscanSync.Syncer do
   def import_block(index) do
     try do
       block_raw = NeoscanNode.get_block_with_transfers(index)
+      ^index = block_raw.index
       block = convert_block(block_raw)
       Repo.transaction(fn -> Repo.insert!(block) end)
     catch
       error ->
         Logger.error("error while loading block #{inspect({index, error})}")
         import_block(index)
+
+      :error, %ConstraintError{constraint: "blocks_pkey"} ->
+        Logger.error("block already #{index} in the database")
 
       error, reason ->
         Logger.error("error while loading block #{inspect({index, error, reason})}")
@@ -113,7 +119,7 @@ defmodule NeoscanSync.Syncer do
       0..1_000_000,
       fn n ->
         import_block(n)
-        Logger.warn("block #{n}}")
+        Logger.warn("insert block #{n}")
       end,
       max_concurrency: concurrency,
       timeout: :infinity
