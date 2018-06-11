@@ -1,8 +1,8 @@
-defmodule Neoscan.Repo.Migrations.Vins do
+defmodule Neoscan.Repo.Migrations.Claims do
   use Ecto.Migration
 
   def change do
-    create table(:vins, primary_key: false) do
+    create table(:claims, primary_key: false) do
       add(:transaction_hash, :binary, null: false)
       add(:vout_transaction_hash, :binary, null: false)
       add(:vout_n, :integer, null: false)
@@ -10,7 +10,5 @@ defmodule Neoscan.Repo.Migrations.Vins do
 
       timestamps()
     end
-
-    create(unique_index(:vins, [:vout_transaction_hash, :vout_n]))
   end
 end

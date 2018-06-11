@@ -3,6 +3,7 @@ defmodule NeoscanSync.Syncer do
   alias Neoscan.Transaction
   alias Neoscan.Vout
   alias Neoscan.Vin
+  alias Neoscan.Claim
   alias Neoscan.Repo
   alias Neoscan.BlockGasGeneration
 
@@ -10,11 +11,18 @@ defmodule NeoscanSync.Syncer do
 
   @parallelism 8
 
+  def convert_claim(claim_raw, block_raw) do
+    %Claim{
+      vout_n: claim_raw.vout_n,
+      vout_transaction_hash: claim_raw.vout_transaction_hash,
+      block_time: block_raw.time
+    }
+  end
+
   def convert_vin(vin_raw, block_raw) do
     %Vin{
       vout_n: vin_raw.vout_n,
       vout_transaction_hash: vin_raw.vout_transaction_hash,
-      processed: false,
       block_time: block_raw.time
     }
   end
@@ -43,7 +51,8 @@ defmodule NeoscanSync.Syncer do
       type: to_string(transaction_raw.type),
       version: transaction_raw.version,
       vouts: Enum.map(transaction_raw.vouts, &convert_vout(&1, block_raw)),
-      vins: Enum.map(transaction_raw.vins, &convert_vin(&1, block_raw))
+      vins: Enum.map(transaction_raw.vins, &convert_vin(&1, block_raw)),
+      claims: Enum.map(transaction_raw.claims, &convert_claim(&1, block_raw))
     }
   end
 

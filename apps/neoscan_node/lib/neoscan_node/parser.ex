@@ -25,6 +25,9 @@ defmodule NeoscanNode.Parser do
   defp parse_float(nil), do: nil
   defp parse_float(string), do: elem(Float.parse(string), 0)
 
+  defp parse_claims(nil), do: []
+  defp parse_claims(claims), do: Enum.map(claims, &parse_vin/1)
+
   defp parse_vin(vin) do
     %{
       vout_transaction_hash: parse16(vin["txid"]),
@@ -143,7 +146,8 @@ defmodule NeoscanNode.Parser do
       type: parse_transaction_type(transaction["type"]),
       version: transaction["version"],
       vins: Enum.map(transaction["vin"], &parse_vin/1),
-      vouts: Enum.map(transaction["vout"], &parse_vout/1)
+      vouts: Enum.map(transaction["vout"], &parse_vout/1),
+      claims: parse_claims(transaction["claims"])
     }
   end
 

@@ -1,10 +1,10 @@
-defmodule Neoscan.Vin do
+defmodule Neoscan.Claim do
   @moduledoc false
   use Ecto.Schema
   alias Neoscan.Transaction
 
   @primary_key false
-  schema "vins" do
+  schema "claims" do
     belongs_to(
       :transaction,
       Transaction,

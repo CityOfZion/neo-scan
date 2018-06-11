@@ -7,6 +7,7 @@ defmodule Neoscan.Transaction do
   alias Neoscan.Block
   alias Neoscan.Vout
   alias Neoscan.Vin
+  alias Neoscan.Claim
 
   @primary_key {:hash, :binary, []}
   @foreign_key_type :binary
@@ -24,6 +25,7 @@ defmodule Neoscan.Transaction do
     field(:version, :integer)
     has_many(:vouts, Vout, foreign_key: :transaction_hash, references: :hash)
     has_many(:vins, Vin, foreign_key: :transaction_hash, references: :hash)
+    has_many(:claims, Claim, foreign_key: :transaction_hash, references: :hash)
 
     timestamps()
   end
