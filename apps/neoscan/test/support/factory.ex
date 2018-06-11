@@ -9,6 +9,7 @@ defmodule Neoscan.Factory do
   alias Neoscan.AddressHistory
   alias Neoscan.AddressBalance
   alias Neoscan.Address
+  alias Neoscan.Transfer
 
   def block_factory do
     %Block{
@@ -101,6 +102,17 @@ defmodule Neoscan.Factory do
       first_transaction_time: DateTime.utc_now(),
       last_transaction_time: DateTime.utc_now(),
       tx_count: 12
+    }
+  end
+
+  def transfer_factory do
+    %Transfer{
+      address_from: :crypto.strong_rand_bytes(32),
+      address_to: :crypto.strong_rand_bytes(32),
+      amount: 5.0,
+      contract: :crypto.strong_rand_bytes(32),
+      block_index: 12,
+      block_time: DateTime.utc_now()
     }
   end
 end

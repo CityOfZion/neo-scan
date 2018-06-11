@@ -1,4 +1,4 @@
-defmodule Neoscan.VoutTest do
+defmodule Neoscan.SchemaTest do
   use Neoscan.DataCase
   import Neoscan.Factory
   import Ecto.Query
@@ -6,6 +6,18 @@ defmodule Neoscan.VoutTest do
   alias Neoscan.Address
   alias Neoscan.AddressHistory
   alias Neoscan.AddressBalance
+
+  test "create block" do
+    _block = insert(:block)
+  end
+
+  test "create transaction" do
+    _transaction = insert(:transaction)
+  end
+
+  test "create transfer" do
+    _transfer = insert(:transfer)
+  end
 
   test "create vout" do
     _vout = insert(:vout)
