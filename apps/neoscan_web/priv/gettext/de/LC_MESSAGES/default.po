@@ -1,0 +1,296 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: de\n"
+
+msgid "Transactions"
+msgstr "Transaktionen"
+
+msgid "Claimed"
+msgstr "Beansprucht"
+
+msgid "Balance"
+msgstr "Kontostand"
+
+msgid "Unclaimed"
+msgstr "Nicht beansprucht"
+
+msgid "Address ID"
+msgstr "Adressen ID"
+
+msgid "Created"
+msgstr "Erstellt"
+
+msgid "Last transaction"
+msgstr "Letzte Transaktion"
+
+msgid "Tokens"
+msgstr "Tokens"
+
+msgid "minutes ago"
+msgstr "Minuten vergangen"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Owner"
+msgstr "Besitzer"
+
+msgid "System"
+msgstr "System"
+
+msgid "Issued"
+msgstr "Erteilt"
+
+msgid "Supply"
+msgstr "Bereitstellung"
+
+msgid "Precision"
+msgstr "Genauigkeit"
+
+msgid "Transaction"
+msgstr "Transaktion"
+
+msgid "Wallet Addresses"
+msgstr "Brieftaschen-Adressen"
+
+msgid "Token"
+msgstr "Token"
+
+msgid "Addresses"
+msgstr "Adresse"
+
+msgid "Transaction ID"
+msgstr "Transaktions ID"
+
+msgid "Block"
+msgstr "Block"
+
+msgid "Completed on"
+msgstr "Abgeschlossen am"
+
+msgid "Contract"
+msgstr "Vertrag"
+
+msgid "Gas Claim"
+msgstr "Gas Beanspruchung"
+
+msgid "Invocation"
+msgstr "Aufruf"
+
+msgid "Asset Issue"
+msgstr "Anlageausgabe"
+
+msgid "Asset Register"
+msgstr "Anlageregistrierung"
+
+msgid "Contract Publish"
+msgstr "Vertragsveröffentlichung"
+
+msgid "Sent from"
+msgstr "Gesendet von"
+
+msgid "Claimed from"
+msgstr "Beansprucht von"
+
+msgid "Sent to"
+msgstr "Gesendet zu"
+
+msgid "GAS"
+msgstr "GAS"
+
+msgid "Data Size"
+msgstr "Datengröße"
+
+msgid "Registered on"
+msgstr "Registriert am"
+
+msgid "More details"
+msgstr "Weitere Informationen"
+
+msgid "Block index"
+msgstr "Block Höhe"
+
+msgid "Hash"
+msgstr "Hash"
+
+msgid "Merkle root"
+msgstr ""
+
+msgid "to"
+msgstr "bis"
+
+msgid "of"
+msgstr "von"
+
+msgid "Time"
+msgstr "Zeit"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "bytes"
+msgstr "bytes"
+
+msgid "Miner"
+msgstr "Miner"
+
+msgid "Network Fee"
+msgstr "Netzwerk Kosten"
+
+msgid "Opcode Verification Script"
+msgstr "Opcode Verifizierungs-Script"
+
+msgid "Opcode Invocation Script"
+msgstr "Opcode Aufruf-Script"
+
+msgid "Bytecode Verification Script"
+msgstr "Bytecode Verifizierungs-Script"
+
+msgid "Bytecode Invocation Script"
+msgstr "Bytecode Aufruf-Script"
+
+msgid "Block height index"
+msgstr "Block Höhe Index"
+
+msgid "Created on"
+msgstr "Erstellt am"
+
+msgid "Size"
+msgstr "Größe"
+
+msgid "Last 5 Blocks"
+msgstr "Letzte 5 Blöcke"
+
+msgid "Last 5 Transactions"
+msgstr "Letzte 5 Transaktionen"
+
+msgid "here"
+msgstr "hier"
+
+msgid "Assets"
+msgstr "Anlagen"
+
+msgid "Blocks"
+msgstr "Blöcke"
+
+msgid "licensed"
+msgstr "lizensiert"
+
+msgid "City Of Zion"
+msgstr "City Of Zion"
+
+msgid "The source code is"
+msgstr "The Quellcode ist"
+
+msgid "The website content is licensed"
+msgstr "Der Inhalt der Website ist lizensiert"
+
+msgid "NEOSCAN API"
+msgstr "NEOSCAN API"
+
+msgid "City of Zion Github"
+msgstr "City of Zion Github"
+
+msgid "NEO Slack"
+msgstr "NEO Slack"
+
+msgid "NEO Balance"
+msgstr "Saldo de NEO"
+
+msgid "Block Information"
+msgstr "Block Information"
+
+msgid "Back to all blocks"
+msgstr "Zurück zu allen Blöcken"
+
+msgid "Next block"
+msgstr "Nächster Block"
+
+msgid "Previous block"
+msgstr "Voriger Block"
+
+msgid "Generated GAS"
+msgstr "Generiertes GAS"
+
+msgid "Back to all transactions"
+msgstr "Zurück zu allen Transaktionen"
+
+msgid "Registered"
+msgstr "Registriert"
+
+msgid "Included in Block"
+msgstr "Enthalten im Block"
+
+msgid "System Fee"
+msgstr "Systemkosten"
+
+msgid "Bytecode Attributes"
+msgstr "Bytecode Attribute"
+
+msgid "Usage"
+msgstr "Nutzung"
+
+msgid "Height"
+msgstr "Höhe"
+
+msgid "Welcome to NEOSCAN"
+msgstr "Willkommen auf NEOSCAN"
+
+msgid "Your home for all NEO related blockchain information"
+msgstr "Dein Zuhause für alle NEO bezogenen Blockchain-Informationen"
+
+msgid "Block Height, Hash, Address or Transaction id"
+msgstr "Block Höhe, Hash, Adresse oder Transaktions-ID"
+
+msgid "Total transactions"
+msgstr "Gesamte Transaktionen"
+
+msgid "View all transactions"
+msgstr "Alle Transaktionen anzeigen"
+
+msgid "View transaction"
+msgstr "Transaktion anzeigen"
+
+msgid "Last block"
+msgstr "Letzter Block"
+
+msgid "View all blocks"
+msgstr "Alle Blöcke anzeigen"
+
+msgid "View block"
+msgstr "Block anzeigen"
+
+msgid "Wallet addresses created"
+msgstr "Brieftaschen-Adressen erstellt"
+
+msgid "View all addresses"
+msgstr "Alle Adressen anzeigen"
+
+msgid "View address"
+msgstr "Adresse anzeigen"
+
+msgid "24 hour change"
+msgstr "24h Änderung"
+
+msgid "24 hour volume"
+msgstr "24h Volumen"
+
+msgid "See all transactions"
+msgstr "Alle Transaktionen anzeigen"
+
+msgid "See all blocks"
+msgstr "Alle Blöcke ansehen"
+
+msgid "Current market cap"
+msgstr "Marktkapitalisierung"

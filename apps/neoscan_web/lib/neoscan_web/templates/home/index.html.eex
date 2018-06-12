@@ -1,0 +1,117 @@
+
+<!-- Welcome -->
+<h1 class="content-title"><%= gettext "Welcome to NEOSCAN" %></h1>
+<p class="content-subline"><%= gettext "Your home for all NEO related blockchain information" %></p>
+
+<!-- Search input -->
+<!-- <div class="hero-input-container">
+  <%= form_for @conn, home_path(@conn, :index), [as: :search], fn f -> %>
+  <%= text_input f, :for,placeholder: "Search for a transaction, block, hash or address...",class: "hero-input", type: "search" %>
+  <%= error_tag f, :for %>
+  <%= submit "", [class: "hero-submit-btn fa fa-search"]  %>
+  <% end %>
+</div> -->
+
+<!-- Jump link buttons -->
+<section id="jump-links">
+  <div class="individual-jump-link-box">
+   <div class="jump-links-information">
+    <p class="large-detail-text stat-detail"><%= gettext "Total transactions" %></p>
+    <p class="large-stat-number" id= "total-tx"></p>
+   </div>
+    <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all transactions"%>"><%= gettext "View all transactions" %> <i class="fa fa-arrow-right"></i></a>
+  </div>
+  <div class="individual-jump-link-box">
+    <div class="jump-links-information">
+      <p class="large-detail-text stat-detail"><%= gettext "Last block" %></p>
+      <p class="large-stat-number" id= "total-blocks"></p>
+    </div>
+    <a href="<%= blocks_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all blocks"%>"><%= gettext "View all blocks" %> <i class="fa fa-arrow-right"></i></a>
+  </div>
+  <div class="individual-jump-link-box">
+    <div class="jump-links-information">
+      <p class="large-detail-text stat-detail"><%= gettext "Wallet addresses created" %></p>
+      <p class="large-stat-number" id= "total-addresses"></p>
+    </div>
+    <a href="<%= addresses_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all addresses"%>"><%= gettext "View all addresses" %> <i class="fa fa-arrow-right"></i></a>
+  </div>
+</section>
+
+<!-- Market graph -->
+<section id="market-graph">
+  <div class="individual-graph-box remove-border-right-555px">
+    <p id="mkt-graph-coin" class="large-detail-text stat-detail"><%= gettext "NEO" %></p>
+    <p class="large-stat-number remove-margin-bottom" id="mkt-graph-coin-price"></p>
+  </div>
+  <div class="individual-graph-box remove-border-right-920px">
+    <p class="large-detail-text stat-detail"><%= gettext "Current market cap" %></p>
+    <p class="large-stat-number remove-margin-bottom" id="mkt-cap-us"></p>
+  </div>
+  <div class="individual-graph-box remove-border-right-555px">
+    <p class="large-detail-text stat-detail"><%= gettext "24 hour change" %></p>
+    <p id="24hchange"></p>
+  </div>
+  <div class="individual-graph-box last">
+    <p class="large-detail-text stat-detail"><%= gettext "24 hour volume" %></p>
+    <p id="24hvol"></p>
+  </div>
+  <div id="chart-controls">
+    <div class="currency-wrapper">
+      <div class="chart-controls-label"><%= gettext "Currency" %></div>
+      <div id="usd-chart" class="btn btn-primary radio-btn radio-active"><%= gettext "USD" %></div>
+      <div id="btc-chart" class="btn btn-primary second-btn radio-btn"><%= gettext "BTC" %></div>
+    </div>
+    <div class="token-wrapper">
+      <div class="chart-controls-label"><%= gettext "Token" %></div>
+      <div id="neo-chart" class="btn btn-primary radio-btn radio-active"><%= gettext "NEO" %></div>
+      <div id="gas-chart" class="btn btn-primary second-btn radio-btn"><%= gettext "GAS" %></div>
+    </div>
+    <div class="zoom-wrapper">
+      <div class="chart-controls-label"><%= gettext "Graph Zoom" %></div>
+      <div id="zoom-out-chart" class="btn btn-primary zoom-btn"><i class="fa fa-search-minus" aria-hidden="true"></i></div>
+      <div id="zoom-in-chart" class="btn btn-primary second-btn zoom-btn"><i class="fa fa-search-plus" aria-hidden="true"></i></div>
+    </div>
+  </div>
+  <div class="chart-container">
+    <div id="market-chart"></div>
+  </div>
+</section>
+
+<!-- Transactions -->
+<h2><%= gettext "Last 5 Transactions" %></h2>
+<section id="all-transactions-wrapper">
+
+  <div class="detail-bar">
+    <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
+    <p class="detail-type col-6-width"><%= gettext "Transaction ID" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
+    <p class="detail-type tablet-full-width"><%= gettext "All transaction information"%></p>
+  </div>
+
+  <!-- Transactions -->
+  <section id="transactions-wrapper"></section>
+
+  <div class="see-all-button-container">
+    <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-see-all" alt="<%= gettext "See all transactions"%>"><%= gettext "See all transactions" %> <i class="fa fa-arrow-right"></i></a>
+  </div>
+</section>
+
+<!-- Blocks -->
+<h2><%= gettext "Last 5 Blocks" %></h2>
+<section id="all-blocks-wrapper">
+
+  <div class="detail-bar">
+    <p class="detail-type detail-type-first-4-col"><%= gettext "Height" %></p>
+    <p class="detail-type col-3-width"><%= gettext "Size" %></p>
+    <p class="detail-type col-3-width"><%= gettext "Transactions" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Created on" %></p>
+    <p class="detail-type tablet-full-width"><%= gettext "All block information"%></p>
+  </div>
+
+  <!-- Blocks -->
+  <section id="blocks-wrapper"></section>
+
+  <div class="see-all-button-container">
+    <a href="<%= blocks_path(@conn, :index) %>" class="btn-primary btn-see-all" alt="<%= gettext "See all blocks"%>"><%= gettext "See all blocks" %> <i class="fa fa-arrow-right"></i></a>
+  </div>
+</section>

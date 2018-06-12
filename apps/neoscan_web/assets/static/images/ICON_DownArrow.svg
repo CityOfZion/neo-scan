@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="9px" viewBox="0 0 14 9" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>ICON_DownArrow</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="02_Transactions" transform="translate(-1173.000000, -301.000000)" fill="#4598FF">
+            <g id="Accordions" transform="translate(231.000000, 276.000000)">
+                <g id="Accordion_Claim">
+                    <path d="M955.553822,27.2907042 C955.755498,27.0973741 955.755498,26.7803127 955.553822,26.5869826 L954.214697,25.3110039 C954.013022,25.1176738 953.690341,25.1176738 953.488666,25.3110039 L949.205079,29.4173354 L944.921492,25.3110039 C944.719817,25.1176738 944.397136,25.1176738 944.195461,25.3110039 L942.856336,26.5869826 C942.65466,26.7803127 942.65466,27.0973741 942.856336,27.2907042 L948.842063,33.0210087 C949.043739,33.2143388 949.366419,33.2143388 949.568095,33.0210087 L955.553822,27.2907042 Z" id="ICON_DownArrow"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
