@@ -5,13 +5,13 @@ defmodule NeoscanCache.ApiTest do
   alias NeoscanCache.Api
   alias NeoscanCache.Cache
 
-  test "get_blocks/0" do
-    assert is_list(Api.get_blocks())
-  end
-
-  test "get_transfers/0" do
-    assert is_list(Api.get_transfers())
-  end
+  #  test "get_blocks/0" do
+  #    assert is_list(Api.get_blocks())
+  #  end
+  #
+  #  test "get_transfers/0" do
+  #    assert is_list(Api.get_transfers())
+  #  end
 
   test "get_transactions/0" do
     transaction = insert(:transaction)
