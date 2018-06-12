@@ -3,7 +3,6 @@ defmodule NeoscanCache.Api do
   Interface between server and worker to communicate with external modules
   """
   alias NeoscanCache.Cache
-  alias Neoscan.ChainAssets
 
   def get_blocks do
     Cache.get(:blocks)
@@ -27,19 +26,20 @@ defmodule NeoscanCache.Api do
     |> Enum.find(fn %{:txid => txid} -> txid == hash end)
   end
 
-  def get_asset_name(hash) do
-    filter_fun =
-      if String.length(hash) == 40 do
-        fn %{:contract => contract} -> contract == hash end
-      else
-        fn %{:txid => txid} -> txid == hash end
-      end
-
-    Cache.get(:assets)
-    |> Enum.find(filter_fun)
-    |> (&if(is_nil(&1), do: %{}, else: &1)).()
-    |> Map.get(:name)
-    |> ChainAssets.filter_name()
+  def get_asset_name(_) do
+    "Asset not Found"
+    #    filter_fun =
+    #      if String.length(hash) == 40 do
+    #        fn %{:contract => contract} -> contract == hash end
+    #      else
+    #        fn %{:txid => txid} -> txid == hash end
+    #      end
+    #
+    #    Cache.get(:assets)
+    #    |> Enum.find(filter_fun)
+    #    |> (&if(is_nil(&1), do: %{}, else: &1)).()
+    #    |> Map.get(:name)
+    #    |> ChainAssets.filter_name()
   end
 
   def check_asset(hash) do

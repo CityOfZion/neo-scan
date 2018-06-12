@@ -19,6 +19,10 @@ defmodule Neoscan.SchemaTest do
     _transfer = insert(:transfer)
   end
 
+  test "create asset" do
+    _asset = insert(:asset)
+  end
+
   test "create vout" do
     _vout = insert(:vout)
   end

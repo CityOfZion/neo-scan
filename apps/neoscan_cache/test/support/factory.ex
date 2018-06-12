@@ -1,4 +1,4 @@
-defmodule Neoscan.Factory do
+defmodule NeoscanCache.Factory do
   # with Ecto
   use ExMachina.Ecto, repo: Neoscan.Repo
   alias Neoscan.Block

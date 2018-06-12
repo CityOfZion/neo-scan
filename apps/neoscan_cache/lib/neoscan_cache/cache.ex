@@ -5,17 +5,16 @@ defmodule NeoscanCache.Cache do
   """
 
   use GenServer
-  alias NeoscanCache.Utils
   alias Neoscan.Blocks
   alias Neoscan.Transactions
   alias Neoscan.Transfers
   alias Neoscan.Addresses
-  alias Neoscan.ChainAssets
+  alias Neoscan.Stats
+
   alias Neoprice.NeoBtc
   alias Neoprice.NeoUsd
   alias Neoprice.GasBtc
   alias Neoprice.GasUsd
-  alias Neoscan.Claims.Unclaimed
   alias NeoscanCache.EtsProcess
 
   @update_interval 5_000
@@ -32,7 +31,6 @@ defmodule NeoscanCache.Cache do
   def init(:ok) do
     EtsProcess.create_table(__MODULE__)
     Process.send_after(self(), :broadcast, 30_000)
-    Process.send(self(), :repair, [])
     {:ok, sync(%{tokens: []})}
   end
 
@@ -86,11 +84,11 @@ defmodule NeoscanCache.Cache do
     {:noreply, state}
   end
 
-  # repair blocks on startup
-  def handle_info(:repair, state) do
-    Unclaimed.repair_blocks()
-    {:noreply, state}
-  end
+  #  # repair blocks on startup
+  #  def handle_info(:repair, state) do
+  #    Unclaimed.repair_blocks()
+  #    {:noreply, state}
+  #  end
 
   def handle_info(:sync, state) do
     {:noreply, sync(state)}
@@ -101,21 +99,28 @@ defmodule NeoscanCache.Cache do
     {:noreply, state}
   end
 
+  def get_general_stats do
+    %{
+      :total_blocks => Stats.count_blocks(),
+      :total_transactions => Stats.count_transactions(),
+      :total_transfers => Stats.count_transfers(),
+      :total_addresses => Stats.count_addresses()
+    }
+  end
+
   # update nodes and stats information
-  def sync(state) do
+  def sync(_) do
     Process.send_after(self(), :sync, @update_interval)
     blocks = Blocks.home_blocks()
 
-    transactions =
-      Transactions.home_transactions()
-      |> Utils.add_vouts()
+    transactions = Transactions.home_transactions()
 
     transfers = Transfers.home_transfers()
 
-    assets = ChainAssets.list_assets()
-    #      |> Utils.get_stats()
+    # Assets.list_assets()
+    assets = []
 
-    stats = Utils.get_general_stats()
+    stats = get_general_stats()
 
     addresses = Addresses.list_latest()
 
@@ -130,7 +135,7 @@ defmodule NeoscanCache.Cache do
       }
     }
 
-    tokens = Utils.add_new_tokens(state.tokens)
+    tokens = []
 
     set(:blocks, blocks)
     set(:transactions, transactions)
