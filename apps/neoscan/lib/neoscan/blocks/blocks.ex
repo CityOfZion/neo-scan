@@ -75,4 +75,17 @@ defmodule Neoscan.Blocks do
   end
 
   def paginate_transactions(_, _), do: []
+
+  def get_missing_block_indexes do
+    query =
+      "SELECT * FROM generate_series(0, (SELECT max(index) FROM blocks)) as index EXCEPT SELECT index FROM blocks"
+
+    result = Ecto.Adapters.SQL.query!(Repo, query, [])
+    List.flatten(result.rows)
+  end
+
+  def get_max_index do
+    max_index = Repo.one(from(b in Block, order_by: [desc: b.index], limit: 1, select: b.index))
+    if is_nil(max_index), do: -1, else: max_index
+  end
 end
