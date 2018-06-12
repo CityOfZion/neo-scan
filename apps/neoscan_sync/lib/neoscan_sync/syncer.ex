@@ -7,12 +7,13 @@ defmodule NeoscanSync.Syncer do
   alias Neoscan.Repo
   alias Neoscan.BlockGasGeneration
   alias Neoscan.Transfer
+  alias Neoscan.Asset
 
   alias Ecto.ConstraintError
 
   require Logger
 
-  @parallelism 8
+  @parallelism 16
 
   def convert_claim(claim_raw, block_raw) do
     %Claim{
@@ -27,6 +28,22 @@ defmodule NeoscanSync.Syncer do
       vout_n: vin_raw.vout_n,
       vout_transaction_hash: vin_raw.vout_transaction_hash,
       block_time: block_raw.time
+    }
+  end
+
+  def convert_asset(nil, _), do: nil
+
+  def convert_asset(asset_raw, block_raw) do
+    %Asset{
+      admin: asset_raw.admin,
+      amount: asset_raw.amount,
+      name: asset_raw.name,
+      owner: asset_raw.owner,
+      precision: asset_raw.precision,
+      type: to_string(asset_raw.type),
+      issued: asset_raw.available,
+      block_time: block_raw.time,
+      contract: <<0>>
     }
   end
 
@@ -67,7 +84,8 @@ defmodule NeoscanSync.Syncer do
       vouts: Enum.map(transaction_raw.vouts, &convert_vout(&1, block_raw)),
       vins: Enum.map(transaction_raw.vins, &convert_vin(&1, block_raw)),
       claims: Enum.map(transaction_raw.claims, &convert_claim(&1, block_raw)),
-      transfers: Enum.map(transaction_raw.transfers, &convert_transfer(&1, block_raw))
+      transfers: Enum.map(transaction_raw.transfers, &convert_transfer(&1, block_raw)),
+      asset: convert_asset(transaction_raw.asset, block_raw)
     }
   end
 
@@ -92,36 +110,65 @@ defmodule NeoscanSync.Syncer do
     }
   end
 
-  def import_block(index) do
+  def download_block(index) do
     try do
       block_raw = NeoscanNode.get_block_with_transfers(index)
       ^index = block_raw.index
-      block = convert_block(block_raw)
+      convert_block(block_raw)
+    catch
+      error ->
+        Logger.error("error while downloading block #{inspect({index, error})}")
+        download_block(index)
+
+      error, reason ->
+        Logger.error("error while downloading block #{inspect({index, error, reason})}")
+        download_block(index)
+    end
+  end
+
+  def insert_block(block) do
+    try do
       Repo.transaction(fn -> Repo.insert!(block) end)
     catch
       error ->
-        Logger.error("error while loading block #{inspect({index, error})}")
-        import_block(index)
+        Logger.error("error while loading block #{inspect({block.index, error})}")
+        insert_block(block)
 
       :error, %ConstraintError{constraint: "blocks_pkey"} ->
-        Logger.error("block already #{index} in the database")
+        Logger.error("block already #{block.index} in the database")
 
       error, reason ->
-        Logger.error("error while loading block #{inspect({index, error, reason})}")
-        import_block(index)
+        Logger.error("error while loading block #{inspect({block.index, error, reason})}")
+        insert_block(block)
     end
   end
 
   def sync_all() do
     concurrency = System.schedulers_online() * @parallelism
 
-    Task.async_stream(
-      0..1_000_000,
+    0..2_300_000
+    # 0..1_000_000
+    |> Task.async_stream(
       fn n ->
-        import_block(n)
-        Logger.warn("insert block #{n}")
+        now = Time.utc_now()
+        block = download_block(n)
+        Logger.warn("download block #{n} #{Time.diff(Time.utc_now(), now, :microseconds)}}")
+        block
       end,
       max_concurrency: concurrency,
+      timeout: :infinity,
+      ordered: false
+    )
+    |> Task.async_stream(
+      fn {:ok, block} ->
+        now = Time.utc_now()
+        insert_block(block)
+
+        Logger.warn(
+          "insert block #{block.index} #{Time.diff(Time.utc_now(), now, :microseconds)}}"
+        )
+      end,
+      max_concurrency: 1,
       timeout: :infinity
     )
     |> Stream.run()

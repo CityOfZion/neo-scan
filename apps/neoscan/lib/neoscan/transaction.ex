@@ -9,6 +9,7 @@ defmodule Neoscan.Transaction do
   alias Neoscan.Vin
   alias Neoscan.Claim
   alias Neoscan.Transfer
+  alias Neoscan.Asset
 
   @primary_key {:hash, :binary, []}
   @foreign_key_type :binary
@@ -28,6 +29,7 @@ defmodule Neoscan.Transaction do
     has_many(:vins, Vin, foreign_key: :transaction_hash, references: :hash)
     has_many(:claims, Claim, foreign_key: :transaction_hash, references: :hash)
     has_many(:transfers, Transfer, foreign_key: :transaction_hash, references: :hash)
+    has_one(:asset, Asset, foreign_key: :transaction_hash, references: :hash)
 
     timestamps()
   end
