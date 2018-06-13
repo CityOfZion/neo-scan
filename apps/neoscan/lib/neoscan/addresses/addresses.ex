@@ -611,7 +611,7 @@ defmodule Neoscan.Addresses do
 
     new_balance = %{
       "asset" => String.slice(to_string(transfer["contract"]), -40..-1),
-      "amount" => current_amount + transfer["amount"],
+      "amount" => current_amount + String.to_integer(transfer["amount"]),
       "time" => time
     }
 
@@ -632,7 +632,7 @@ defmodule Neoscan.Addresses do
 
     new_balance = %{
       "asset" => String.slice(to_string(transfer["contract"]), -40..-1),
-      "amount" => current_amount - transfer["amount"],
+      "amount" => current_amount - String.to_integer(transfer["amount"]),
       "time" => time
     }
 
