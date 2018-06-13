@@ -469,7 +469,7 @@ defmodule Neoscan.BlocksTest do
       %{
         "addr_from" => "AFmseVrdL9f9oyCzZefL9tG6UbvhPbdYzM",
         "addr_to" => "ATuT3d1cM4gtg6HezpFrgMppAV3wC5Pjd9",
-        "amount" => 5_065_200_000_000_000,
+        "amount" => "5065200000000000",
         "block" => 1_444_843,
         "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
         "notify_type" => "transfer",
@@ -479,7 +479,7 @@ defmodule Neoscan.BlocksTest do
       %{
         "addr_from" => "AFmseVrdL9f9oyCzZefL9tG6UbvhPbdYzM",
         "addr_to" => "AHWaJejUjvez5R6SW5kbWrMoLA9vSzTpW9",
-        "amount" => 9_096_780_000_000_000,
+        "amount" => "9096780000000000",
         "block" => 1_444_843,
         "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
         "notify_type" => "transfer",
@@ -489,7 +489,7 @@ defmodule Neoscan.BlocksTest do
       %{
         "addr_from" => "AFmseVrdL9f9oyCzZefL9tG6UbvhPbdYzM",
         "addr_to" => "AN8cLUwpv7UEWTVxXgGKeuWvwoT2psMygA",
-        "amount" => 3_500_000_000_000_000,
+        "amount" => "3500000000000000",
         "block" => 1_444_843,
         "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
         "notify_type" => "transfer",
