@@ -3,6 +3,9 @@ defmodule NeoscanWeb.HomeController do
   use NeoscanWeb, :controller
 
   alias Neoscan.Blocks
+  alias Neoscan.Block
+  alias Neoscan.Address
+  alias Neoscan.Transaction
   alias Neoscan.Transactions
   alias Neoscan.Addresses
 
@@ -18,41 +21,55 @@ defmodule NeoscanWeb.HomeController do
         }
       }) do
     result =
-      try do
-        String.to_integer(value)
-      rescue
-        ArgumentError ->
-          Blocks.get_block_by_hash(String.slice(value, -64..-1)) ||
-            Transactions.get_transaction_by_hash(String.slice(value, -64..-1)) ||
-            Addresses.get_address_by_hash(value)
-      else
-        value ->
-          Blocks.get_block_by_height(value)
+      case Integer.parse(value) do
+        {integer, ""} ->
+          Blocks.get_block_by_height(integer)
+
+        _ ->
+          Blocks.get_block_by_hash(safe_decode_16(value)) ||
+            Transactions.get_transaction_by_hash(safe_decode_16(value)) ||
+            Addresses.get_address_by_hash(safe_decode_58(value))
       end
 
     redirect_search_result(conn, result)
   end
 
-  # redirect search results to correct page
-  def redirect_search_result(conn, result) do
-    cond do
-      nil == result ->
-        no_result(conn, [])
+  def safe_decode_16(value) do
+    case Base.decode16(value) do
+      :error ->
+        <<0>>
 
-      Map.has_key?(result, :hash) ->
-        redirect(conn, to: block_path(conn, :index, result.hash))
-
-      Map.has_key?(result, :txid) ->
-        redirect(conn, to: transaction_path(conn, :index, result.txid))
-
-      Map.has_key?(result, :address) ->
-        redirect(conn, to: address_path(conn, :index, result.address))
+      {:ok, value} ->
+        value
     end
   end
 
-  def no_result(conn, _params) do
+  def safe_decode_58(value) do
+    try do
+      Base58.decode(value)
+    rescue
+      _ -> <<0>>
+    catch
+      _ -> <<0>>
+    end
+  end
+
+  # redirect search results to correct page
+  def redirect_search_result(conn, nil) do
     conn
     |> put_flash(:info, "Not Found in DB!")
     |> redirect(to: home_path(conn, :index))
+  end
+
+  def redirect_search_result(conn, %Block{hash: hash}) do
+    redirect(conn, to: block_path(conn, :index, Base.encode16(hash)))
+  end
+
+  def redirect_search_result(conn, %Transaction{hash: hash}) do
+    redirect(conn, to: transaction_path(conn, :index, Base.encode16(hash)))
+  end
+
+  def redirect_search_result(conn, %Address{hash: hash}) do
+    redirect(conn, to: address_path(conn, :index, Base58.encode(hash)))
   end
 end

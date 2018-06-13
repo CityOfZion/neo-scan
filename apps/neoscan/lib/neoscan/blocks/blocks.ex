@@ -28,12 +28,7 @@ defmodule Neoscan.Blocks do
       nil
   """
   def get_block_by_hash(hash) do
-    query =
-      from(
-        e in Block,
-        where: e.hash == ^hash
-      )
-
+    query = from(e in Block, where: e.hash == ^hash)
     Repo.one(query)
   end
 
@@ -46,12 +41,7 @@ defmodule Neoscan.Blocks do
       nill
   """
   def get_block_by_height(height) do
-    query =
-      from(
-        e in Block,
-        where: e.index == ^height
-      )
-
+    query = from(e in Block, where: e.index == ^height)
     Repo.one(query)
   end
 

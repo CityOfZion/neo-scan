@@ -44,7 +44,7 @@ defmodule Neoscan.Transactions do
   """
   def get_transaction_by_hash(hash) do
     query = from(t in Transaction, where: t.hash == ^hash)
-    Repo.one!(query)
+    Repo.one(query)
   end
 
   @doc """

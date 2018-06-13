@@ -41,15 +41,11 @@ defmodule Neoscan.Addresses do
       nil
   """
   def get_address_by_hash_for_view(hash) do
-    query =
-      from(
-        e in Address,
-        where: e.hash == ^hash
-      )
+    query = from(e in Address, where: e.hash == ^hash)
 
     # %{:address => e.address, :tx_ids => e.histories,
     #  :balance => e.balance, :claimed => e.claimed}
-    Repo.one!(query)
+    Repo.one(query)
   end
 
   @doc """
