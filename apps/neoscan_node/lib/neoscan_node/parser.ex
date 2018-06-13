@@ -24,6 +24,7 @@ defmodule NeoscanNode.Parser do
 
   defp parse_float(nil), do: nil
   defp parse_float(string), do: elem(Float.parse(string), 0)
+  defp parse_integer(string), do: String.to_integer(string)
 
   defp parse_claims(nil), do: []
   defp parse_claims(claims), do: Enum.map(claims, &parse_vin/1)
@@ -58,7 +59,7 @@ defmodule NeoscanNode.Parser do
     %{
       addr_from: parse64(block_notification["addr_from"]),
       addr_to: parse64(block_notification["addr_to"]),
-      amount: block_notification["amount"],
+      amount: parse_integer(block_notification["amount"]),
       block: block_notification["block"],
       contract: parse16(block_notification["contract"]),
       notify_type: parse_notify_type(block_notification["notify_type"]),
