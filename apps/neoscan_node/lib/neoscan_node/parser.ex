@@ -14,6 +14,7 @@ defmodule NeoscanNode.Parser do
   defp parse_asset_type("Token"), do: :token
   defp parse_asset_type("Share"), do: :share
 
+  defp parse_transaction_type("PublishTransaction"), do: :publish_transaction
   defp parse_transaction_type("RegisterTransaction"), do: :register_transaction
   defp parse_transaction_type("IssueTransaction"), do: :issue_transaction
   defp parse_transaction_type("MinerTransaction"), do: :miner_transaction
@@ -21,6 +22,7 @@ defmodule NeoscanNode.Parser do
   defp parse_transaction_type("ClaimTransaction"), do: :claim_transaction
   defp parse_transaction_type("InvocationTransaction"), do: :invocation_transaction
   defp parse_transaction_type("EnrollmentTransaction"), do: :enrollment_transaction
+  defp parse_transaction_type("StateTransaction"), do: :state_transaction
 
   defp parse_float(nil), do: nil
   defp parse_float(string), do: elem(Float.parse(string), 0)
