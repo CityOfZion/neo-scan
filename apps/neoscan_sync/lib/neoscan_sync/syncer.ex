@@ -38,7 +38,8 @@ defmodule NeoscanSync.Syncer do
   @impl true
   def handle_info(:sync, missing_block_indexes) do
     Process.send_after(self(), :sync, @update_interval)
-    indexes = missing_block_indexes ++ get_available_block_index_range()
+    available_block_index_range = get_available_block_index_range()
+    indexes = missing_block_indexes ++ Enum.take(available_block_index_range, 5_000)
     sync_indexes(indexes)
     {:noreply, []}
   end
