@@ -80,10 +80,11 @@ defmodule Neoscan.Addresses do
   def get_transactions(hash) do
     Repo.all(
       from(
-        ah in AddressHistory,
-        join: t in Transaction,
+        t in Transaction,
+        join: ah in AddressHistory,
         on: ah.transaction_hash == t.hash,
         where: ah.address_hash == ^hash,
+        preload: [:vins, :vouts, :transfers, :claims],
         order_by: ah.block_time,
         select: t
       )

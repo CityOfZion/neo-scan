@@ -40,7 +40,7 @@ defmodule NeoscanWeb.AddressController do
           }
         end)
 
-      transactions = []
+      transactions = Addresses.get_transactions(binary_hash)
       graph_data = []
 
       render(

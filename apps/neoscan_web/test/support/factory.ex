@@ -12,6 +12,18 @@ defmodule NeoscanWeb.Factory do
   alias Neoscan.Transfer
   alias Neoscan.Asset
 
+  @transaction_type [
+    "contract_transaction",
+    "claim_transaction",
+    "invocation_transaction",
+    "enrollment_transaction",
+    "state_transaction",
+    "issue_transaction",
+    "register_transaction",
+    "publish_transaction",
+    "miner_transaction"
+  ]
+
   def block_factory do
     %Block{
       hash: :crypto.strong_rand_bytes(32),
@@ -46,7 +58,7 @@ defmodule NeoscanWeb.Factory do
       nonce: 5,
       scripts: [],
       size: 123,
-      type: "machin",
+      type: Enum.random(@transaction_type),
       version: 0
     }
   end

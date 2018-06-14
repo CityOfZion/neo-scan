@@ -31,6 +31,13 @@ defmodule NeoscanWeb.AddressControllerTest do
     # transaction = insert(:transaction, %{type: "contract_transaction"})
     # insert(:history, %{address_hash: address.address, txid: transaction.txid})
 
+    transaction = insert(:transaction)
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      transaction_hash: transaction.hash
+    })
+
     address_hash = Base58.encode(address_history.address_hash)
     conn = get(conn, "/address/#{address_hash}")
     assert html_response(conn, 200) =~ address_hash
@@ -38,9 +45,9 @@ defmodule NeoscanWeb.AddressControllerTest do
     assert html_response(conn, 200) =~ "9.5"
     assert html_response(conn, 200) =~ "token 1"
     assert html_response(conn, 200) =~ "token 2"
-    #
-    #    conn = get(conn, "/address/abc")
-    #    assert "/" == redirected_to(conn, 302)
+
+    conn = get(conn, "/address/abc")
+    assert "/" == redirected_to(conn, 302)
   end
 
   #  test "/address/:address/:page", %{conn: conn} do
