@@ -52,11 +52,9 @@ defmodule NeoscanWeb.ViewHelper do
     |> number_to_delimited()
   end
 
-  def compare_time_and_get_minutes(time) do
-    date_time =
-      time
-      |> DateTime.from_unix!()
+  def compare_time_and_get_minutes(_), do: "hello"
 
+  def get_minutes(date_time) do
     case Timex.before?(date_time, Timex.shift(Timex.now(), minutes: -1440)) do
       false ->
         {:ok, time_string} =

@@ -29,31 +29,31 @@
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
                 <span class="tablet-detail-text"><%= gettext "Transactions" %></span>
-                <%= number_to_delimited(address.tx_count) %>
+                <%= address.tx_count %>
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
                 <span class="tablet-detail-text"><%= gettext "Last transaction"%></span>
-                <%= compare_time_and_get_minutes(address.balance)%>
+                <%= get_minutes(address.last_transaction_time)%>
               </p>
             </div>
           </div>
           <div class="token-amount-wrapper col-2-width">
-            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span><%= gettext "NEO" %>: <%= get_NEO_balance(address.balance) %></p>
-            <%= get_GAS_balance(address.balance) %>
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span><%= gettext "NEO" %>: <%= address.balance.neo %></p>
+            <%= address.balance.gas %>
           </div>
         </div>
       <% end %>
     </div>
   </section>
 
-  <p  class="number-counter"><%= gettext "Addresses"%> <%= get_current_min_qtd(@page) %> <%= gettext "to"%> <%= get_current_max_qtd(@page) %> <%= gettext "of"%> <%= number_to_delimited(get_total()) %></p>
+  <p  class="number-counter"><%= gettext "Addresses"%> <%= get_current_min_qtd(@page, @total) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @total) %> <%= gettext "of"%> <%= @total %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
-      <%= if @page != "1" do %>
-        <%= get_previous_page(@conn, @page) %>
+      <%= if @page != 1 do %>
+        <a href="<%= addresses_path(@conn, :page, to_string(@page - 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>
       <% end %>
-      <%= if check_last(@page) do %>
-        <%= get_next_page(@conn, @page) %>
+      <%= if check_last(@page, @total) do %>
+        <a href="<%= addresses_path(@conn, :page, to_string(@page + 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>
       <% end %>
     </div>
   </div>

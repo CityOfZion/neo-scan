@@ -27,7 +27,7 @@ defmodule NeoscanWeb.AddressController do
         "address.html",
         address: %{
           hash: Base58.encode(address.hash),
-          tx_count: Addresses.get_transactions_count()
+          tx_count: address.tx_count
         },
         balance: balance,
         transactions: transactions,
