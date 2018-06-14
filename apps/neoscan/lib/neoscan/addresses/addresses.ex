@@ -9,6 +9,9 @@ defmodule Neoscan.Addresses do
 
   alias Neoscan.Repo
   alias Neoscan.Address
+  alias Neoscan.AddressBalance
+
+  alias Neoscan.Asset
 
   @doc """
   Returns a list of the latest updated addresses.
@@ -57,6 +60,20 @@ defmodule Neoscan.Addresses do
       nil
   """
   def get_address_by_hash(hash), do: get_address_by_hash_for_view(hash)
+
+  def get(hash), do: get_address_by_hash(hash)
+
+  def get_balances(hash) do
+    Repo.all(
+      from(
+        ab in AddressBalance,
+        join: a in Asset,
+        on: ab.asset == a.transaction_hash,
+        where: ab.address_hash == ^hash,
+        select: %{name: a.name, asset: ab.asset, value: ab.value, precision: a.precision}
+      )
+    )
+  end
 
   @doc """
   Returns the list of paginated addresses.

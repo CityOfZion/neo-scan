@@ -9,6 +9,8 @@ defmodule NeoscanWeb.HomeController do
   alias Neoscan.Transactions
   alias Neoscan.Addresses
 
+  alias NeoscanWeb.Helper
+
   # load last blocks and transactions from db
   def index(conn, _params) do
     render(conn, "index.html")
@@ -26,32 +28,12 @@ defmodule NeoscanWeb.HomeController do
           Blocks.get_block_by_height(integer)
 
         _ ->
-          Blocks.get_block_by_hash(safe_decode_16(value)) ||
-            Transactions.get_transaction_by_hash(safe_decode_16(value)) ||
-            Addresses.get_address_by_hash(safe_decode_58(value))
+          Blocks.get_block_by_hash(Helper.safe_decode_16(value)) ||
+            Transactions.get_transaction_by_hash(Helper.safe_decode_16(value)) ||
+            Addresses.get_address_by_hash(Helper.safe_decode_58(value))
       end
 
     redirect_search_result(conn, result)
-  end
-
-  def safe_decode_16(value) do
-    case Base.decode16(value) do
-      :error ->
-        <<0>>
-
-      {:ok, value} ->
-        value
-    end
-  end
-
-  def safe_decode_58(value) do
-    try do
-      Base58.decode(value)
-    rescue
-      _ -> <<0>>
-    catch
-      _ -> <<0>>
-    end
   end
 
   # redirect search results to correct page

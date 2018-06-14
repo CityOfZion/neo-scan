@@ -2,7 +2,7 @@
 <!-- Welcome -->
 <h1 class="content-title"><%= gettext "Address Information" %></h1>
 <%= content_tag :div, "", [{:data, [graph_data: Poison.encode!(@graph_data)]}, value: "value", id: "graph_data"] %>
-<p class="large-detail-text"><span class="fa fa-key address-icon"></span><span class="bold-text"><%= gettext "Address" %></span> <span class="golden">|</span> <span id="address_hash" class="golden-blue-text hash"><%= @address.address %></span></p>
+<p class="large-detail-text"><span class="fa fa-key address-icon"></span><span class="bold-text"><%= gettext "Address" %></span> <span class="golden">|</span> <span id="address_hash" class="golden-blue-text hash"><%= @address.hash %></span></p>
 <div class="wallet-navigation">
   <a href="<%= addresses_path(@conn, :index) %>" class="browse-wallet-back"> <%= gettext "Back to all addresses" %></a>
 </div>
@@ -12,21 +12,21 @@
   <div class="individual-wallet-wrapper">
     <div class="individual-wallet-box">
       <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i><%= gettext "NEO Balance" %></p>
-      <p class="balance-amount"><%= get_NEO_balance(@address.balance) %></p>
+      <p class="balance-amount"><%= @balance.neo %></p>
     </div>
     <div class="individual-wallet-box gas-balance last">
       <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> <%= gettext "GAS Balance" %></p>
       <div class="total-gas-balance">
-        <%= get_GAS_balance(@address.balance) %>
+        <%= @balance.gas %>
         <p class="loading-gas"><%= gettext "Loading Unclaimed Gas" %><span>.</span><span>.</span><span>.</span></p>
         <p class="unclaimed-GAS"></p>
       </div>
     </div>
-    <%= for {hash , token} <- get_tokens(@address.balance) do %>
+    <%= for %{name: name, value: value} <- @balance.tokens do %>
         <div class="individual-wallet-box last">
-          <p class="balance-label"> <i class="fa fa-university wallet-label-icon"></i> <%= CacheApi.get_asset_name(hash) %></p>
+          <p class="balance-label"> <i class="fa fa-university wallet-label-icon"></i> <%= name["en"] %></p>
           <div class="total-gas-balance">
-            <%= get_token_balance(token) %>
+            <%= value %>
           </div>
         </div>
       <% end %>
@@ -40,7 +40,7 @@
 </section>
 
 <!-- Transactions -->
-<h2 class="content-title"><%= gettext "Transactions" %> (<%= number_to_delimited(@address.tx_count) %>)</h2>
+<h2 class="content-title"><%= gettext "Transactions" %> (<%= @address.tx_count %>)</h2>
 <section id="all-transactions-wrapper">
 
   <div class="detail-bar">
@@ -171,10 +171,10 @@
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != "1" do %>
-        <%= get_previous_page(@conn, @address.address, @page) %>
+        <%= get_previous_page(@conn, @address.hash, @page) %>
       <% end %>
       <%= if check_last(@page, @address.tx_count) do %>
-        <%= get_next_page(@conn, @address.address, @page) %>
+        <%= get_next_page(@conn, @address.hash, @page) %>
       <% end %>
     </div>
   </div>

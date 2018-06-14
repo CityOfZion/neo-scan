@@ -10,5 +10,7 @@ defmodule Neoscan.Repo.Migrations.Addresses do
 
       timestamps()
     end
+
+    create(index(:addresses, [:last_transaction_time]))
   end
 end

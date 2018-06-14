@@ -26,7 +26,7 @@ defmodule NeoscanWeb.Router do
     get("/", HomeController, :index)
     post("/", HomeController, :search)
     get("/address/:address", AddressController, :index)
-    get("/address/:address/:page", AddressController, :go_to_page)
+    get("/address/:address/:page", AddressController, :page)
     get("/addresses/1", AddressesController, :index)
     get("/addresses/:page", AddressesController, :go_to_page)
     get("/block/:hash", BlockController, :index)

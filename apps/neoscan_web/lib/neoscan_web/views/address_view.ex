@@ -101,7 +101,7 @@ defmodule NeoscanWeb.AddressView do
     if total < 15 do
       0
     else
-      (String.to_integer(page) - 1) * 15 + 1
+      (page - 1) * 15 + 1
     end
   end
 
@@ -109,43 +109,27 @@ defmodule NeoscanWeb.AddressView do
     if total < 15 do
       total
     else
-      if String.to_integer(page) * 15 > total do
+      if page * 15 > total do
         total
       else
-        String.to_integer(page) * 15
+        page * 15
       end
     end
   end
 
   def get_previous_page(conn, address, page) do
-    int =
-      page
-      |> String.to_integer()
-
-    num =
-      (int - 1)
-      |> Integer.to_string()
-
     raw(
-      '<a href="#{address_path(conn, :go_to_page, address, num)}" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
+      '<a href="#{address_path(conn, :page, address, to_string(page - 1))}" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
     )
   end
 
   def get_next_page(conn, address, page) do
-    int =
-      page
-      |> String.to_integer()
-
-    num =
-      (int + 1)
-      |> Integer.to_string()
-
     raw(
-      '<a href="#{address_path(conn, :go_to_page, address, num)}" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
+      '<a href="#{address_path(conn, :page, address, to_string(page + 1))}" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
     )
   end
 
-  def check_last(page, total), do: String.to_integer(page) * 15 < total
+  def check_last(page, total), do: page * 15 < total
 
   def apply_precision(asset, amount) do
     precision = Assets.get_asset_precision_by_hash(asset)
