@@ -86,7 +86,7 @@
 						<a href="<%= transfers_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_transfers_path(@conn), do: " active" %>"><%= gettext "Transfers" %></a>
 					</li> -->
 					<li>
-						<a href="<%= addresses_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_addresses_path(@conn), do: " active" %>"><%= gettext "Wallet Addresses" %></a>
+						<a href="<%= addresses_path(@conn, :page, "1") %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_addresses_path(@conn), do: " active" %>"><%= gettext "Wallet Addresses" %></a>
 					</li>
 					<li>
 						<a href="<%= blocks_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_blocks_path(@conn), do: " active" %>"><%= gettext "Blocks" %></a>

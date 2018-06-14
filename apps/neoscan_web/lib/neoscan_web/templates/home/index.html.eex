@@ -33,7 +33,7 @@
       <p class="large-detail-text stat-detail"><%= gettext "Wallet addresses created" %></p>
       <p class="large-stat-number" id= "total-addresses"></p>
     </div>
-    <a href="<%= addresses_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all addresses"%>"><%= gettext "View all addresses" %> <i class="fa fa-arrow-right"></i></a>
+    <a href="<%= addresses_path(@conn, :page, "1") %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all addresses"%>"><%= gettext "View all addresses" %> <i class="fa fa-arrow-right"></i></a>
   </div>
 </section>
 

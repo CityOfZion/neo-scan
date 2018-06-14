@@ -57,7 +57,7 @@ defmodule NeoscanNode.Parser do
 
   defp parse_notify_type("transfer"), do: :transfer
 
-  def parse_block_notification(block_notification) do
+  def parse_block_notification(block_notification = %{"notify_type" => "transfer"}) do
     %{
       addr_from: parse64(block_notification["addr_from"]),
       addr_to: parse64(block_notification["addr_to"]),
@@ -68,6 +68,10 @@ defmodule NeoscanNode.Parser do
       transaction_hash: parse16(block_notification["tx"]),
       type: block_notification["type"]
     }
+  end
+
+  def parse_block_notification(_) do
+    %{notify_type: :others}
   end
 
   def parse_contract(contract = %{"code" => code}) do

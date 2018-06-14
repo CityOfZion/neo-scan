@@ -20,18 +20,12 @@
         <div class="full-width-bar wallet-address">
           <div class="information-wrapper">
             <p class="fa fa-key medium-detail-text"></p>
-            <a href="<%= address_path(@conn, :go_to_page, address.address, 1)%>" alt="<%= gettext "View address"%>" title="<%= gettext "View address"%>" class="large-blue-link col-4-width"><%= address.address %></a>
+            <a href="<%= address_path(@conn, :page, Base.encode16(address.hash), 1)%>" alt="<%= gettext "View address"%>" title="<%= gettext "View address"%>" class="large-blue-link col-4-width"><%= Base.encode16(address.hash) %></a>
             <div class="secondary-info-wrapper">
               <p class="medium-detail-text col-2-width remove-760px">
                 <span class="tablet-detail-text"><%= gettext "Created" %></span>
-                <%=
-                  {:ok, date_time} = DateTime.from_unix(address.time, :second)
-                  DateTime.to_date(date_time)
-                %> |
-                <%=
-                  {:ok, date_time} = DateTime.from_unix(address.time, :second)
-                  DateTime.to_time(date_time)
-                %>
+                <%= DateTime.to_date(address.first_transaction_time) %> |
+                <%= DateTime.to_time(address.first_transaction_time) %>
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
                 <span class="tablet-detail-text"><%= gettext "Transactions" %></span>

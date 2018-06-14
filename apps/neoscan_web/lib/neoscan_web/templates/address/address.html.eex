@@ -4,7 +4,7 @@
 <%= content_tag :div, "", [{:data, [graph_data: Poison.encode!(@graph_data)]}, value: "value", id: "graph_data"] %>
 <p class="large-detail-text"><span class="fa fa-key address-icon"></span><span class="bold-text"><%= gettext "Address" %></span> <span class="golden">|</span> <span id="address_hash" class="golden-blue-text hash"><%= @address.hash %></span></p>
 <div class="wallet-navigation">
-  <a href="<%= addresses_path(@conn, :index) %>" class="browse-wallet-back"> <%= gettext "Back to all addresses" %></a>
+  <a href="<%= addresses_path(@conn, :page, "1") %>" class="browse-wallet-back"> <%= gettext "Back to all addresses" %></a>
 </div>
 
 <!-- Market graph -->
