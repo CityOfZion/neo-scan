@@ -83,6 +83,7 @@ defmodule Neoscan.Factory do
   def address_history_factory do
     %AddressHistory{
       address_hash: :crypto.strong_rand_bytes(32),
+      transaction_hash: :crypto.strong_rand_bytes(32),
       asset: :crypto.strong_rand_bytes(32),
       value: 5.0,
       block_time: DateTime.utc_now()

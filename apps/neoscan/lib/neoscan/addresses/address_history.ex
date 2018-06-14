@@ -4,6 +4,7 @@ defmodule Neoscan.AddressHistory do
   """
   use Ecto.Schema
   alias Neoscan.Address
+  alias Neoscan.Transaction
 
   @primary_key false
   schema "address_histories" do
@@ -11,6 +12,14 @@ defmodule Neoscan.AddressHistory do
       :address,
       Address,
       foreign_key: :address_hash,
+      references: :hash,
+      type: :binary
+    )
+
+    belongs_to(
+      :transaction,
+      Transaction,
+      foreign_key: :transaction_hash,
       references: :hash,
       type: :binary
     )

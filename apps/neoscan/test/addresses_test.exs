@@ -26,4 +26,18 @@ defmodule Neoscan.AddressesTest do
     balances = Addresses.get_balances(address_history.address_hash)
     assert 1 == Enum.count(balances)
   end
+
+  test "get_transactions/1" do
+    transaction1 = insert(:transaction)
+    transaction2 = insert(:transaction)
+    address_history = insert(:address_history, %{transaction_hash: transaction1.hash})
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      transaction_hash: transaction2.hash
+    })
+
+    transactions = Addresses.get_transactions(address_history.address_hash)
+    assert 2 == Enum.count(transactions)
+  end
 end

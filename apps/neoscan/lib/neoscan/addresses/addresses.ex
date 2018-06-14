@@ -9,9 +9,11 @@ defmodule Neoscan.Addresses do
 
   alias Neoscan.Repo
   alias Neoscan.Address
+  alias Neoscan.AddressHistory
   alias Neoscan.AddressBalance
 
   alias Neoscan.Asset
+  alias Neoscan.Transaction
 
   @doc """
   Returns a list of the latest updated addresses.
@@ -71,6 +73,19 @@ defmodule Neoscan.Addresses do
         on: ab.asset == a.transaction_hash,
         where: ab.address_hash == ^hash,
         select: %{name: a.name, asset: ab.asset, value: ab.value, precision: a.precision}
+      )
+    )
+  end
+
+  def get_transactions(hash) do
+    Repo.all(
+      from(
+        ah in AddressHistory,
+        join: t in Transaction,
+        on: ah.transaction_hash == t.hash,
+        where: ah.address_hash == ^hash,
+        order_by: ah.block_time,
+        select: t
       )
     )
   end
