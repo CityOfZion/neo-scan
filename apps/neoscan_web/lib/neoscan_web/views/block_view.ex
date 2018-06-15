@@ -68,61 +68,14 @@ defmodule NeoscanWeb.BlockView do
     ver
   end
 
-  def get_current_min_qtd(page, total) do
-    if total < 15 do
-      1
-    else
-      (String.to_integer(page) - 1) * 15 + 1
-    end
-  end
+  def get_current_min_qtd(_page, total) when total < 15, do: 0
+  def get_current_min_qtd(page, _total), do: (page - 1) * 15 + 1
 
-  def get_current_max_qtd(page, total) do
-    cond do
-      total < 15 -> total
-      String.to_integer(page) * 15 > total -> total
-      true -> String.to_integer(page) * 15
-    end
-  end
+  def get_current_max_qtd(_page, total) when total < 15, do: total
+  def get_current_max_qtd(page, total) when page * 15 > total, do: total
+  def get_current_max_qtd(page, _total), do: page * 15
 
-  def get_previous_page(conn, hash, page) do
-    int =
-      page
-      |> String.to_integer()
-
-    num =
-      (int - 1)
-      |> Integer.to_string()
-
-    raw(
-      '<a href="#{block_path(conn, :go_to_page, hash, num)}" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
-    )
-  end
-
-  def get_next_page(conn, hash, page) do
-    int =
-      page
-      |> String.to_integer()
-
-    num =
-      (int + 1)
-      |> Integer.to_string()
-
-    raw(
-      '<a href="#{block_path(conn, :go_to_page, hash, num)}" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
-    )
-  end
-
-  def check_last(page, total) do
-    int =
-      page
-      |> String.to_integer()
-
-    if int * 15 < total do
-      true
-    else
-      false
-    end
-  end
+  def check_last(page, total), do: page * 15 < total
 
   def get_class("ContractTransaction"), do: 'neo-transaction'
   def get_class("ClaimTransaction"), do: 'gas-transaction'

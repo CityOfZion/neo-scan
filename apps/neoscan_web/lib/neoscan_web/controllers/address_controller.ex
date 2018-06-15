@@ -8,7 +8,7 @@ defmodule NeoscanWeb.AddressController do
     page(conn, parameters)
   end
 
-  def page(conn, parameters = %{"address" => address_hash}) do
+  def page(conn, parameters = %{"hash" => address_hash}) do
     page = if is_nil(parameters["page"]), do: 1, else: String.to_integer(parameters["page"])
     binary_hash = Helper.safe_decode_58(address_hash)
     address = Addresses.get(binary_hash)

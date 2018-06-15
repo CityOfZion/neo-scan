@@ -45,6 +45,8 @@ defmodule Neoscan.Blocks do
     Repo.one(query)
   end
 
+  def get(hash) when is_binary(hash), do: get_block_by_hash(hash)
+
   @doc """
   Returns the list of paginated blocks.
   ## Examples
