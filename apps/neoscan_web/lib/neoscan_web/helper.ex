@@ -12,6 +12,7 @@ defmodule NeoscanWeb.Helper do
   def safe_decode_58(value) do
     try do
       Base58.decode(value)
+      # {:ok, value} = Base.decode64(value, padding: false)
     rescue
       _ -> <<0>>
     catch

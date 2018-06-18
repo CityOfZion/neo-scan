@@ -7,7 +7,8 @@ defmodule NeoscanNode.Parser do
     |> Base.decode16!()
   end
 
-  defp parse64(string), do: Base.decode64!(string, padding: false)
+  # Base.decode64!(string, padding: false)
+  defp parse58(string), do: Base58.decode(string)
 
   defp parse_asset_type("GoverningToken"), do: :governing_token
   defp parse_asset_type("UtilityToken"), do: :utility_token
@@ -40,7 +41,7 @@ defmodule NeoscanNode.Parser do
 
   defp parse_vout(vout) do
     %{
-      address: parse64(vout["address"]),
+      address: parse58(vout["address"]),
       asset: parse16(vout["asset"]),
       n: vout["n"],
       value: parse_float(vout["value"])
@@ -59,8 +60,8 @@ defmodule NeoscanNode.Parser do
 
   def parse_block_notification(block_notification = %{"notify_type" => "transfer"}) do
     %{
-      addr_from: parse64(block_notification["addr_from"]),
-      addr_to: parse64(block_notification["addr_to"]),
+      addr_from: parse58(block_notification["addr_from"]),
+      addr_to: parse58(block_notification["addr_to"]),
       amount: parse_integer(block_notification["amount"]),
       block: block_notification["block"],
       contract: parse16(block_notification["contract"]),
@@ -98,13 +99,13 @@ defmodule NeoscanNode.Parser do
 
   def parse_asset(asset) do
     %{
-      admin: parse64(asset["admin"]),
+      admin: parse58(asset["admin"]),
       amount: parse_float(asset["amount"]),
       available: parse_float(asset["available"]),
       expiration: asset["expiration"],
       frozen: asset["frozen"],
       transaction_hash: parse16(asset["id"]),
-      issuer: parse64(asset["issuer"]),
+      issuer: parse58(asset["issuer"]),
       name: asset["name"],
       owner: asset["owner"],
       precision: asset["precision"],
@@ -122,7 +123,7 @@ defmodule NeoscanNode.Parser do
       next_block_hash:
         if(is_nil(block["nextblockhash"]), do: nil, else: parse16(block["nextblockhash"])),
       previous_block_hash: parse16(block["previousblockhash"]),
-      next_consensus: parse64(block["nextconsensus"]),
+      next_consensus: parse58(block["nextconsensus"]),
       version: block["version"],
       nonce: parse16(block["nonce"]),
       script: block["script"],
@@ -160,7 +161,7 @@ defmodule NeoscanNode.Parser do
 
   defp parse_token_token(token) do
     %{
-      contract_address: parse64(token["contract_address"]),
+      contract_address: parse58(token["contract_address"]),
       decimals: token["decimals"],
       name: token["name"],
       script_hash: parse16(token["script_hash"]),

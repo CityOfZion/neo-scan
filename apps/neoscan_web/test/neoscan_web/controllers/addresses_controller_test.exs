@@ -8,12 +8,12 @@ defmodule NeoscanWeb.AddressesControllerTest do
 
     conn = get(conn, "/addresses/1")
     body = html_response(conn, 200)
-    assert body =~ Base.encode16(Enum.at(addresses, 15).hash)
-    assert not (body =~ Base.encode16(Enum.at(addresses, 2).hash))
+    assert body =~ Base58.encode(Enum.at(addresses, 15).hash)
+    assert not (body =~ Base58.encode(Enum.at(addresses, 2).hash))
 
     conn = get(conn, "/addresses/2")
     body = html_response(conn, 200)
-    assert not (body =~ Base.encode16(Enum.at(addresses, 15).hash))
-    assert body =~ Base.encode16(Enum.at(addresses, 2).hash)
+    assert not (body =~ Base58.encode(Enum.at(addresses, 15).hash))
+    assert body =~ Base58.encode(Enum.at(addresses, 2).hash)
   end
 end

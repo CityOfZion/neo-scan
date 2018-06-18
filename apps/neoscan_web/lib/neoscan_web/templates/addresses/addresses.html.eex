@@ -20,7 +20,7 @@
         <div class="full-width-bar wallet-address">
           <div class="information-wrapper">
             <p class="fa fa-key medium-detail-text"></p>
-            <a href="<%= address_path(@conn, :page, Base.encode16(address.hash), 1)%>" alt="<%= gettext "View address"%>" title="<%= gettext "View address"%>" class="large-blue-link col-4-width"><%= Base.encode16(address.hash) %></a>
+            <a href="<%= address_path(@conn, :page, Base58.encode(address.hash), 1)%>" alt="<%= gettext "View address"%>" title="<%= gettext "View address"%>" class="large-blue-link col-4-width"><%= Base58.encode(address.hash) %></a>
             <div class="secondary-info-wrapper">
               <p class="medium-detail-text col-2-width remove-760px">
                 <span class="tablet-detail-text"><%= gettext "Created" %></span>
