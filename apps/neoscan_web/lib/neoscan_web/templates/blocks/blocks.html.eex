@@ -22,7 +22,7 @@
         <div class="full-width-bar block-number">
           <div class="information-wrapper">
             <p class="fa fa-signal medium-detail-text"></p>
-            <a href="<%= block_path( @conn, :index, block.hash) %>" alt="<%= gettext "View block"%>" title="<%= gettext "View block"%>" class="large-blue-link col-4-width">
+            <a href="<%= block_path( @conn, :index, Base.encode16(block.hash)) %>" alt="<%= gettext "View block"%>" title="<%= gettext "View block"%>" class="large-blue-link col-4-width">
               <span class="tablet-detail-text"><%= gettext "Block"%>: </span>
               <%=number_to_delimited(block.index)%>
             </a>
@@ -37,14 +37,7 @@
               </p>
               <p class="medium-detail-text col-3-width">
                 <span class="tablet-detail-text"><%= gettext "Created"%>: </span>
-                <%=
-                  {:ok, date_time} = DateTime.from_unix(block.time, :second)
-                  DateTime.to_date(date_time)
-                %> |
-                <%=
-                  {:ok, date_time} = DateTime.from_unix(block.time, :second)
-                  DateTime.to_time(date_time)
-                %>
+                <%= DateTime.to_date(block.time) %> | <%= DateTime.to_time(block.time) %>
               </p>
               <p class="medium-detail-text col-1-width">
                 <span class="tablet-detail-text"><%= gettext "Block Time"%>: </span>
@@ -59,14 +52,14 @@
 
   </section>
 
-  <p  class="number-counter"><%= gettext "Blocks"%> <%= get_current_min_qtd(@page) %> <%= gettext "to"%> <%= get_current_max_qtd(@page) %> <%= gettext "of"%> <%= number_to_delimited(get_total()) %></p>
+  <p  class="number-counter"><%= gettext "Blocks"%> <%= get_current_min_qtd(@page, @total) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @total) %> <%= gettext "of"%> <%= number_to_delimited(@total) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
-      <%= if @page != "1" do %>
-        <%= get_previous_page(@conn, @page) %>
+      <%= if @page != 1 do %>
+        <a href="<%= blocks_path(@conn, :page, to_string(@page - 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>
       <% end %>
-      <%= if check_last(@page) do %>
-        <%= get_next_page(@conn, @page) %>
+      <%= if check_last(@page, @total) do %>
+      <a href="<%= blocks_path(@conn, :page, to_string(@page + 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>
       <% end %>
     </div>
   </div>

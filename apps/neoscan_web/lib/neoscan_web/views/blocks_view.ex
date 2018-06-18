@@ -1,85 +1,23 @@
 defmodule NeoscanWeb.BlocksView do
   use NeoscanWeb, :view
   import Number.Delimit
-  alias NeoscanCache.Api, as: CacheApi
 
-  def get_current_min_qtd(page) do
-    %{:total_blocks => total} = CacheApi.get_stats()
+  def get_current_min_qtd(_page, total) when total < 15, do: 0
+  def get_current_min_qtd(page, _total), do: (page - 1) * 15 + 1
 
-    if total < 15 do
-      0
-    else
-      (String.to_integer(page) - 1) * 15 + 1
-    end
-  end
+  def get_current_max_qtd(_page, total) when total < 15, do: total
+  def get_current_max_qtd(page, total) when page * 15 > total, do: total
+  def get_current_max_qtd(page, _total), do: page * 15
 
-  def get_current_max_qtd(page) do
-    %{:total_blocks => total} = CacheApi.get_stats()
-
-    cond do
-      total < 15 ->
-        total
-
-      String.to_integer(page) * 15 > total ->
-        total
-
-      true ->
-        String.to_integer(page) * 15
-    end
-  end
-
-  def get_previous_page(conn, page) do
-    int =
-      page
-      |> String.to_integer()
-
-    num =
-      (int - 1)
-      |> Integer.to_string()
-
-    raw(
-      '<a href="#{blocks_path(conn, :go_to_page, num)}" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>'
-    )
-  end
-
-  def get_next_page(conn, page) do
-    int =
-      page
-      |> String.to_integer()
-
-    num =
-      (int + 1)
-      |> Integer.to_string()
-
-    raw(
-      '<a href="#{blocks_path(conn, :go_to_page, num)}" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>'
-    )
-  end
-
-  def check_last(page) do
-    %{:total_blocks => total} = CacheApi.get_stats()
-
-    int =
-      page
-      |> String.to_integer()
-
-    if int * 15 < total, do: true, else: false
-  end
-
-  def get_total do
-    %{:total_blocks => total} = CacheApi.get_stats()
-    total
-  end
+  def check_last(page, total), do: page * 15 < total
 
   def get_block_time(block, blocks) do
     previous_block = Enum.find(blocks, fn %{:index => index} -> index == block.index - 1 end)
 
-    case previous_block do
-      nil ->
-        "no data"
-
-      map ->
-        to_string(block.time - Map.get(map, :time)) <> " seconds"
+    if is_nil(previous_block) do
+      "not data"
+    else
+      "#{DateTime.diff(block.time, previous_block.time)} seconds"
     end
   end
 end

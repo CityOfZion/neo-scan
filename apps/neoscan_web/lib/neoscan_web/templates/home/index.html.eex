@@ -26,7 +26,7 @@
       <p class="large-detail-text stat-detail"><%= gettext "Last block" %></p>
       <p class="large-stat-number" id= "total-blocks"></p>
     </div>
-    <a href="<%= blocks_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all blocks"%>"><%= gettext "View all blocks" %> <i class="fa fa-arrow-right"></i></a>
+    <a href="<%= blocks_path(@conn, :page, "1") %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all blocks"%>"><%= gettext "View all blocks" %> <i class="fa fa-arrow-right"></i></a>
   </div>
   <div class="individual-jump-link-box">
     <div class="jump-links-information">
@@ -112,6 +112,6 @@
   <section id="blocks-wrapper"></section>
 
   <div class="see-all-button-container">
-    <a href="<%= blocks_path(@conn, :index) %>" class="btn-primary btn-see-all" alt="<%= gettext "See all blocks"%>"><%= gettext "See all blocks" %> <i class="fa fa-arrow-right"></i></a>
+    <a href="<%= blocks_path(@conn, :page, "1") %>" class="btn-primary btn-see-all" alt="<%= gettext "See all blocks"%>"><%= gettext "See all blocks" %> <i class="fa fa-arrow-right"></i></a>
   </div>
 </section>

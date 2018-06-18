@@ -9,14 +9,9 @@ defmodule NeoscanWeb.BlockControllerTest do
     conn = get(conn, "/block/#{block_hash}")
     body = html_response(conn, 200)
     assert body =~ block_hash
-  end
 
-  #  test "/block/:hash/:page", %{conn: conn} do
-  #    block = insert(:block)
-  #    transaction = insert(:transaction, %{block_id: block.id, type: "ContractTransaction"})
-  #    insert(:transfer, %{txid: transaction.txid})
-  #    conn = get(conn, "/block/#{block.hash}/1")
-  #    body = html_response(conn, 200)
-  #    assert body =~ block.hash
-  #  end
+    conn = get(conn, "/block/#{block_hash}/1")
+    body = html_response(conn, 200)
+    assert body =~ block_hash
+  end
 end

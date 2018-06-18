@@ -1,7 +1,7 @@
 <h1 class="content-title"><%= gettext "Block Information"%></h1>
 <p class="large-detail-text"><span class="fa fa-signal"></span><span class="bold-text"><%= gettext "Block"%></span> <span class="teal-bar">|</span> <span class="eggshell-blue-text"><%= Base.encode16(@block.hash) %></span></p>
 <div class="block-navigation">
- <a href="<%= blocks_path(@conn, :index) %>" class="browse-wallet-back"><%= gettext "Back to all blocks"%></a>
+ <a href="<%= blocks_path(@conn, :page, "1") %>" class="browse-wallet-back"><%= gettext "Back to all blocks"%></a>
   <div class="address-navigation">
   	<a href="<%= block_path( @conn, :index, Base.encode16(@block.next_block_hash)) %>" class="browse-wallet-next"><%= gettext "Next block"%></a>
   	<a href="<%= block_path( @conn, :index, Base.encode16(@block.previous_block_hash)) %>" class="browse-wallet-previous"><%= gettext "Previous block"%></a>
