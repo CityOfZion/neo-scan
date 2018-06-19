@@ -19,7 +19,7 @@ defmodule NeoscanWeb.Factory do
     "enrollment_transaction",
     "state_transaction",
     "issue_transaction",
-    "register_transaction",
+    # "register_transaction",
     "publish_transaction",
     "miner_transaction"
   ]
@@ -136,7 +136,7 @@ defmodule NeoscanWeb.Factory do
       transaction_hash: :crypto.strong_rand_bytes(32),
       admin: :crypto.strong_rand_bytes(32),
       amount: 5.0,
-      name: [%{"en" => "truc"}],
+      name: [%{"lang" => "en", "name" => "truc"}],
       owner: :crypto.strong_rand_bytes(32),
       precision: 12,
       type: "token",

@@ -20,7 +20,9 @@ defmodule NeoscanWeb.TransactionsControllerTest do
             "enrollment_transaction",
             "state_transaction"
           ] do
-        insert(:transaction, %{type: type})
+        transaction = insert(:transaction, %{type: type})
+        insert(:asset, %{transaction_hash: transaction.hash})
+        transaction
       end
 
     transactions = transactions ++ transactions2

@@ -123,7 +123,13 @@ defmodule Neoscan.Transactions do
         order_by: [
           desc: t.block_index
         ],
-        preload: [{:vins, ^vin_query}, {:vouts, ^vout_query}, :transfers, {:claims, ^claim_query}]
+        preload: [
+          {:vins, ^vin_query},
+          {:vouts, ^vout_query},
+          :transfers,
+          {:claims, ^claim_query},
+          :asset
+        ]
       )
 
     Repo.paginate(transaction_query, page: pag, page_size: 15)
