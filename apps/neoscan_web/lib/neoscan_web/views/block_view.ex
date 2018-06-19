@@ -7,6 +7,7 @@ defmodule NeoscanWeb.BlockView do
   alias NeoscanWeb.ViewHelper
   alias Neoscan.Assets
   alias NeoscanCache.Api, as: CacheApi
+  import NeoscanWeb.CommonView
 
   def compare_time_and_get_minutes(unix_time) do
     ViewHelper.compare_time_and_get_minutes(unix_time)
@@ -67,25 +68,6 @@ defmodule NeoscanWeb.BlockView do
   def get_ver({"verification", ver}) do
     ver
   end
-
-  def get_current_min_qtd(_page, total) when total < 15, do: 0
-  def get_current_min_qtd(page, _total), do: (page - 1) * 15 + 1
-
-  def get_current_max_qtd(_page, total) when total < 15, do: total
-  def get_current_max_qtd(page, total) when page * 15 > total, do: total
-  def get_current_max_qtd(page, _total), do: page * 15
-
-  def check_last(page, total), do: page * 15 < total
-
-  def get_class("ContractTransaction"), do: 'neo-transaction'
-  def get_class("ClaimTransaction"), do: 'gas-transaction'
-  def get_class("IssueTransaction"), do: 'issue-transaction'
-  def get_class("RegisterTransaction"), do: 'register-transaction'
-  def get_class("InvocationTransaction"), do: 'invocation-transaction'
-  def get_class("EnrollmentTransaction"), do: 'invocation-transaction'
-  def get_class("StateTransaction"), do: 'invocation-transaction'
-  def get_class("PublishTransaction"), do: 'publish-transaction'
-  def get_class("MinerTransaction"), do: 'miner-transaction'
 
   def get_explanation(topic) do
     Explanations.get(topic)

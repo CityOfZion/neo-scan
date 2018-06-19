@@ -1,22 +1,5 @@
 <h1 class="transactions-content-title"><%= gettext "Transactions"%></h1>
 
-<!-- <div class="transactions-dropdown-wrapper">
-  <div id="transactions-dropdown">
-    <div class="selected-transaction-text"><%= if @type, do: String.capitalize(@type), else: gettext "Any" %></div>
-  </div>
-  <ul class="transactions-dropdown-options">
-    <li value="any" class="<%= if @type == nil do %>active-trans<% end %>"><%= gettext "Any" %></li>
-    <li value="contract" class="<%= if @type == "contract" do %>active-trans<% end %>"><%= gettext "Contract" %></li>
-    <li value="invocation" class="<%= if @type == "invocation" do %>active-trans<% end %>"><%= gettext "Invocation" %></li>
-    <li value="publish" class="<%= if @type == "publish" do %>active-trans<% end %>"><%= gettext "Publish" %></li>
-    <li value="issue" class="<%= if @type == "issue" do %>active-trans<% end %>"><%= gettext "Issue" %></li>
-    <li value="register" class="<%= if @type == "register" do %>active-trans<% end %>"><%= gettext "Register" %></li>
-    <li value="claim" class="<%= if @type == "claim" do %>active-trans<% end %>"><%= gettext "Claim" %></li>
-    <li value="enrollment" class="<%= if @type == "enrollment" do %>active-trans<% end %>"><%= gettext "Enrollment" %></li>
-    <li value="state" class="<%= if @type == "state" do %>active-trans<% end %>"><%= gettext "State" %></li>
-  </ul>
-</div> -->
-
 <!-- All transactions content -->
 <section id="all-transactions-wrapper">
 
@@ -84,7 +67,7 @@
                 <%= for vin <- transaction.vin do %>
                   <div class="individual-transaction">
                     <a href='<%= address_path(@conn, :index, vin.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vin.address_hash %></a>
-                    <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vin.value) %> <%= CacheApi.get_asset_name(vin.asset) %></p>
+                    <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vin.value) %> <%= get_asset_name(vin.asset) %></p>
                   </div>
                 <% end %>
               <% end %>
@@ -92,7 +75,7 @@
                 <%= for transfer <- transaction.transfers do %>
                   <div class="individual-transaction">
                     <a href='<%= address_path(@conn, :index, transfer.address_from)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_from %></a>
-                    <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= CacheApi.get_asset_name(transfer.contract) %></p>
+                    <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= get_asset_name(transfer.contract) %></p>
                   </div>
                 <% end %>
               <% end %>
@@ -101,7 +84,7 @@
                 <%= for claim <- transaction.claims do %>
                   <div class="individual-transaction">
                     <a href='<%= address_path(@conn, :index, claim.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= claim.address_hash %></a>
-                    <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(claim.value) %> <%= CacheApi.get_asset_name(claim.asset) %></p>
+                    <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(claim.value) %> <%= get_asset_name(claim.asset) %></p>
                   </div>
                 <% end %>
               <% end %>
@@ -114,7 +97,7 @@
                   <%= for vout <- transaction.vouts do %>
                     <div class="individual-transaction">
                       <a href='<%= address_path(@conn, :index, vout.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vout.address_hash %></a>
-                      <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vout.value) %> <%= CacheApi.get_asset_name(vout.asset) %></p>
+                      <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vout.value) %> <%= get_asset_name(vout.asset) %></p>
                     </div>
                   <% end %>
                 <% end %>
@@ -122,7 +105,7 @@
                   <%= for transfer <- transaction.transfers do %>
                     <div class="individual-transaction">
                       <a href='<%= address_path(@conn, :index, transfer.address_to)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_to %></a>
-                      <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= CacheApi.get_asset_name(transfer.contract) %></p>
+                      <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= get_asset_name(transfer.contract) %></p>
                     </div>
                   <% end %>
                 <% end %>
@@ -131,7 +114,7 @@
                 <p class="large-detail-text"><%= gettext "Registered" %></p>
                 <div class="individual-transaction">
                   <a href='<%= address_path(@conn, :index, transaction.asset.admin)%>' alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transaction.asset.admin %></a>
-                  <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(transaction.asset.amount) %> <%= CacheApi.get_asset_name(transaction.txid) %></p>
+                  <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(transaction.asset.amount) %> <%= get_asset_name(transaction.txid) %></p>
                 </div>
               <% end %>
             </div>
@@ -146,14 +129,14 @@
 
   </section>
 
-  <p  class="number-counter"><%= gettext "Transactions"%> <%= get_current_min_qtd(@page, @type) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @type) %> <%= gettext "of"%> <%= number_to_delimited(get_total(@type)) %></p>
+  <p  class="number-counter"><%= gettext "Transactions"%> <%= get_current_min_qtd(@page, @total) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @total) %> <%= gettext "of"%> <%= number_to_delimited(@total) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
-      <%= if @page != "1" do %>
-        <%= get_previous_page(@conn, @page, @type) %>
+      <%= if @page != 1 do %>
+        <a href="<%= transactions_path(@conn, :go_to_page, to_string(@page - 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>
       <% end %>
-      <%= if check_last(@page, @type) do %>
-        <%= get_next_page(@conn, @page, @type) %>
+      <%= if check_last(@page, @total) do %>
+        <a href="<%= transactions_path(@conn, :go_to_page, to_string(@page + 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>
       <% end %>
     </div>
   </div>
