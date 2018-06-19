@@ -5,6 +5,8 @@ defmodule Neoscan.Transactions do
   The boundary for the Transactions system.
   """
 
+  @page_size 15
+
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.Vout
@@ -125,5 +127,35 @@ defmodule Neoscan.Transactions do
       )
 
     Repo.paginate(transaction_query, page: pag, page_size: 15)
+  end
+
+  def get_for_block(block_hash, page) do
+    vin_query =
+      from(
+        vin in Vin,
+        join: vout in Vout,
+        on: vin.vout_n == vout.n and vin.vout_transaction_hash == vout.transaction_hash,
+        select: vout
+      )
+
+    claim_query =
+      from(
+        claim in Claim,
+        join: vout in Vout,
+        on: claim.vout_n == vout.n and claim.vout_transaction_hash == vout.transaction_hash,
+        select: vout
+      )
+
+    transaction_query =
+      from(
+        t in Transaction,
+        where: t.block_hash == ^block_hash,
+        preload: [{:vins, ^vin_query}, :vouts, :transfers, {:claims, ^claim_query}],
+        order_by: t.block_time,
+        select: t,
+        limit: @page_size
+      )
+
+    Repo.paginate(transaction_query, page: page, page_size: @page_size)
   end
 end
