@@ -7,7 +7,7 @@
   <span class="eggshell-blue-text hash"><%= @transaction.txid %></span>
 </p>
 
-<a href="<%= transactions_path(@conn, :index) %>" alt="<%= gettext "Back to all transactions"%>" title="<%= gettext "Back to all transactions"%>" class="back-link"><%= gettext "Back to all transactions" %></a>
+<a href="<%= transactions_path(@conn, :page, "1") %>" alt="<%= gettext "Back to all transactions"%>" title="<%= gettext "Back to all transactions"%>" class="back-link"><%= gettext "Back to all transactions" %></a>
 
 <section id="asset-information" class="corner-box bar-left-transactions">
 

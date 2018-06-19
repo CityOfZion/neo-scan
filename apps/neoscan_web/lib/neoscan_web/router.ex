@@ -34,9 +34,7 @@ defmodule NeoscanWeb.Router do
     get("/doc", DocController, :index)
     get("/price/:from/:to/:graph", PriceController, :index)
     get("/transaction/:txid", TransactionController, :index)
-    get("/transactions/1", TransactionsController, :index)
-    get("/transactions/:page", TransactionsController, :go_to_page)
-    get("/transactions/type/:type/:page", TransactionsController, :filtered_transactions)
+    get("/transactions/:page", TransactionsController, :page)
   end
 
   scope "/api/main_net/v1", NeoscanWeb do

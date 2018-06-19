@@ -82,11 +82,11 @@ defmodule Neoscan.Transactions do
   def paginate_transactions(pag, _) do
     transaction_query =
       from(
-        e in Transaction,
+        t in Transaction,
         order_by: [
-          desc: e.id
+          desc: t.block_index
         ],
-        preload: [:vouts]
+        preload: [:vins, :vouts, :transfers, :claims]
       )
 
     Repo.paginate(transaction_query, page: pag, page_size: 15)

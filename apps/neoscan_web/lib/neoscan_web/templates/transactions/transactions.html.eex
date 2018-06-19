@@ -18,53 +18,20 @@
       <%= for transaction <- @transactions do %>
         <div class="full-width-bar <%= get_class(transaction.type)%>">
           <div class="information-wrapper">
-            <%= if transaction.type == "ContractTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract" %></p>
-            <% end %>
-            <%= if transaction.type == "ClaimTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cubes"></span><%= gettext "Gas Claim" %></p>
-            <% end %>
-            <%= if transaction.type == "InvocationTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Invocation" %></p>
-            <% end %>
-            <%= if transaction.type == "EnrollmentTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "Enrollment" %></p>
-            <% end %>
-            <%= if transaction.type == "StateTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-paper-plane"></span><%= gettext "State" %></p>
-            <% end %>
-            <%= if transaction.type == "IssueTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-handshake-o"></span><%= gettext "Asset Issue" %></p>
-            <% end %>
-            <%= if transaction.type == "RegisterTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-list-alt"></span><%= gettext "Asset Register" %></p>
-            <% end %>
-            <%= if transaction.type == "PublishTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-cube"></span><%= gettext "Contract Publish" %></p>
-            <% end %>
-            <%= if transaction.type == "MinerTransaction" do %>
-              <p class="medium-detail-text col-2-width"><span class="fa fa-user-circle-o"></span><%= gettext "Miner" %></p>
-            <% end %>
+            <p class="medium-detail-text col-2-width"><span class="fa <%= get_transaction_style(transaction.type) %>"></span><%= Gettext.gettext(NeoscanWeb.Gettext, get_transaction_name(transaction.type)) %></p>
             <div class="secondary-info-wrapper">
-              <a href="<%=transaction_path(@conn, :index, transaction.txid )%>" alt="<%= gettext "View transaction"%>" title="<%= gettext "View transaction"%>" class="large-blue-link col-6-width"><%=transaction.txid%>&#8230;</a>
+              <a href="<%=transaction_path(@conn, :index, Base.encode16(transaction.hash) )%>" alt="<%= gettext "View transaction"%>" title="<%= gettext "View transaction"%>" class="large-blue-link col-6-width"><%= Base.encode16(transaction.hash) %>&#8230;</a>
               <p class="medium-detail-text col-2-width remove-550px">
-                <%=
-                  {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
-                  DateTime.to_date(date_time)
-                %> |
-                <%=
-                  {:ok, date_time} = DateTime.from_unix(transaction.time, :second)
-                  DateTime.to_time(date_time)
-                %>
+                <%= DateTime.to_date(transaction.block_time) %> | <%= DateTime.to_time(transaction.block_time) %>
               </p>
             </div>
           </div>
           <button class="btn-accordion"><img src="<%= static_path(@conn, "/images/ICON_DownArrow.svg") %>" class="accordion-down-arrow" width="13px" height="8px" /></button>
           <div class="transaction-panel">
             <div class="sent-from-wrapper">
-              <%= if transaction.type != "ClaimTransaction" and transaction.vin != []  do %>
+              <%= if transaction.type != "claim_transaction" and transaction.vins != []  do %>
                 <p class="large-detail-text"><%= gettext "Sent from" %></p>
-                <%= for vin <- transaction.vin do %>
+                <%= for vin <- transaction.vins do %>
                   <div class="individual-transaction">
                     <a href='<%= address_path(@conn, :index, vin.address_hash)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= vin.address_hash %></a>
                     <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vin.value) %> <%= get_asset_name(vin.asset) %></p>
@@ -79,7 +46,7 @@
                   </div>
                 <% end %>
               <% end %>
-              <%= if transaction.type == "ClaimTransaction" do %>
+              <%= if transaction.type == "claim_transaction" do %>
                 <p class="large-detail-text"><%= gettext "Claimed from" %></p>
                 <%= for claim <- transaction.claims do %>
                   <div class="individual-transaction">
@@ -133,10 +100,10 @@
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != 1 do %>
-        <a href="<%= transactions_path(@conn, :go_to_page, to_string(@page - 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>
+        <a href="<%= transactions_path(@conn, :page, to_string(@page - 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>
       <% end %>
       <%= if check_last(@page, @total) do %>
-        <a href="<%= transactions_path(@conn, :go_to_page, to_string(@page + 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>
+        <a href="<%= transactions_path(@conn, :page, to_string(@page + 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>
       <% end %>
     </div>
   </div>

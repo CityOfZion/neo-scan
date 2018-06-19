@@ -1,59 +1,11 @@
 defmodule NeoscanWeb.TransactionsController do
   use NeoscanWeb, :controller
 
-  alias NeoscanCache.Api, as: CacheApi
   alias Neoscan.Transactions
-  alias Neoscan.Transfers
 
-  def index(conn, _params) do
-    transactions =
-      CacheApi.get_transactions()
-      |> Enum.map(fn transaction ->
-        {:ok, result} = Morphix.atomorphiform(transaction)
-        result
-      end)
-
-    transfers =
-      Enum.map(transactions, fn tx -> tx.txid end)
-      |> Transfers.get_transactions_transfers()
-
-    transactions =
-      transactions
-      |> Enum.map(fn tx ->
-        Map.merge(tx, %{
-          :transfers =>
-            Enum.filter(transfers, fn transfer ->
-              transfer.txid == tx.txid
-            end) || []
-        })
-      end)
-
-    render(conn, "transactions.html", transactions: transactions, page: "1", type: nil)
-  end
-
-  def go_to_page(conn, %{"page" => page}) do
-    transactions =
-      Transactions.paginate_transactions(page)
-      |> Enum.map(fn transaction ->
-        {:ok, result} = Morphix.atomorphiform(transaction)
-        result
-      end)
-
-    transfers =
-      Enum.map(transactions, fn tx -> tx.txid end)
-      |> Transfers.get_transactions_transfers()
-
-    transactions =
-      transactions
-      |> Enum.map(fn tx ->
-        Map.merge(tx, %{
-          :transfers =>
-            Enum.filter(transfers, fn transfer ->
-              transfer.txid == tx.txid
-            end) || []
-        })
-      end)
-
-    render(conn, "transactions.html", transactions: transactions, page: page, type: nil)
+  def page(conn, params) do
+    page = if is_nil(params["page"]), do: 1, else: String.to_integer(params["page"])
+    transactions = Transactions.paginate_transactions(page)
+    render(conn, "transactions.html", transactions: transactions, page: page, total: 123)
   end
 end
