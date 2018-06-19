@@ -46,6 +46,14 @@ defmodule NeoscanWeb.CommonView do
 
   def check_last(page, total), do: page * 15 < total
 
+  def render_asset_style(asset_hash) do
+    if render_asset_name(asset_hash) == "GAS" do
+      "fa-cubes"
+    else
+      "fa-cube"
+    end
+  end
+
   def render_asset_name(asset_hash) do
     NeoscanCache.Api.get_asset_name(asset_hash)
   end
