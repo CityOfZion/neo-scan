@@ -25,10 +25,7 @@ defmodule NeoscanWeb.AddressController do
       render(
         conn,
         "address.html",
-        address: %{
-          hash: Base58.encode(address.hash),
-          tx_count: address.tx_count
-        },
+        address: address,
         balance: balance,
         transactions: transactions,
         page: page,

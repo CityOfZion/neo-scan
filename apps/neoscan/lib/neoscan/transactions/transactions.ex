@@ -8,6 +8,7 @@ defmodule Neoscan.Transactions do
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.Vout
+  alias Neoscan.Vin
   alias Neoscan.Transaction
 
   @doc """
@@ -89,13 +90,29 @@ defmodule Neoscan.Transactions do
   def paginate_transactions(pag), do: paginate_transactions(pag, nil)
 
   def paginate_transactions(pag, _) do
+    vout_query =
+      from(
+        v in Vout,
+        order_by: [
+          asc: v.n
+        ]
+      )
+
+    vin_query =
+      from(
+        vin in Vin,
+        join: vout in Vout,
+        on: vin.vout_n == vout.n and vin.vout_transaction_hash == vout.transaction_hash,
+        select: vout
+      )
+
     transaction_query =
       from(
         t in Transaction,
         order_by: [
           desc: t.block_index
         ],
-        preload: [:vins, :vouts, :transfers, :claims]
+        preload: [{:vins, ^vin_query}, {:vouts, ^vout_query}, :transfers, :claims]
       )
 
     Repo.paginate(transaction_query, page: pag, page_size: 15)

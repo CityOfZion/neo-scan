@@ -3,6 +3,7 @@ defmodule Neoscan.Vout do
   use Ecto.Schema
   alias Neoscan.Transaction
   alias Neoscan.Address
+  alias Neoscan.Asset
 
   @primary_key false
   schema "vouts" do

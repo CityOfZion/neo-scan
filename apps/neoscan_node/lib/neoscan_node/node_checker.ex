@@ -10,6 +10,8 @@ defmodule NeoscanNode.NodeChecker do
 
   use GenServer
 
+  require Logger
+
   # starts the genserver
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -64,10 +66,16 @@ defmodule NeoscanNode.NodeChecker do
     {status, height} = Blockchain.get_current_height(url)
 
     if status == :ok do
-      {status, _block} = Blockchain.get_block_by_height(url, height - 1)
+      try do
+        {status, _block} = Blockchain.get_block_by_height(url, height - 1)
 
-      if status == :ok do
-        {url, height}
+        if status == :ok do
+          {url, height}
+        end
+      rescue
+        e in FunctionClauseError ->
+          Logger.error("error: #{url} #{inspect(e)}}")
+          nil
       end
     end
   end
