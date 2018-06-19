@@ -8,26 +8,7 @@ defmodule NeoscanWeb.TransactionView do
   alias NeoscanWeb.ViewHelper
   alias Neoscan.Assets
   alias NeoscanCache.Api, as: CacheApi
-
-  def get_type("MinerTransaction"), do: 'Miner'
-  def get_type("ContractTransaction"), do: 'Contract'
-  def get_type("ClaimTransaction"), do: 'GAS Claim'
-  def get_type("IssueTransaction"), do: 'Asset Issue'
-  def get_type("RegisterTransaction"), do: 'Asset Register'
-  def get_type("InvocationTransaction"), do: 'Contract Invocation'
-  def get_type("PublishTransaction"), do: 'Contract Publish'
-  def get_type("EnrollmentTransaction"), do: 'Enrollment'
-  def get_type("StateTransaction"), do: 'State'
-
-  def get_icon("MinerTransaction"), do: 'fa-user-circle-o'
-  def get_icon("ContractTransaction"), do: 'fa-cube'
-  def get_icon("ClaimTransaction"), do: 'fa-cubes'
-  def get_icon("IssueTransaction"), do: 'fa-handshake-o'
-  def get_icon("RegisterTransaction"), do: 'fa-list-alt'
-  def get_icon("InvocationTransaction"), do: 'fa-paper-plane'
-  def get_icon("EnrollmentTransaction"), do: 'fa-paper-plane'
-  def get_icon("StateTransaction"), do: 'fa-list-alt'
-  def get_icon("PublishTransaction"), do: 'Contract Publish'
+  import NeoscanWeb.CommonView
 
   def compare_time_and_get_minutes(time) do
     ViewHelper.compare_time_and_get_minutes(time)

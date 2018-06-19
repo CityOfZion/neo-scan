@@ -20,20 +20,27 @@ defmodule NeoscanWeb.Router do
   forward("/wobserver", Wobserver.Web.Router)
 
   scope "/", NeoscanWeb do
-    # Use the default browser stack
     pipe_through(:browser)
 
     get("/", HomeController, :index)
     post("/", HomeController, :search)
+
     get("/address/:hash", AddressController, :index)
     get("/address/:hash/:page", AddressController, :page)
+
     get("/addresses/:page", AddressesController, :page)
+
     get("/block/:hash", BlockController, :index)
     get("/block/:hash/:page", BlockController, :page)
+
     get("/blocks/:page", BlocksController, :page)
+
     get("/doc", DocController, :index)
+
     get("/price/:from/:to/:graph", PriceController, :index)
-    get("/transaction/:txid", TransactionController, :index)
+
+    get("/transaction/:hash", TransactionController, :index)
+
     get("/transactions/:page", TransactionsController, :page)
   end
 

@@ -1,10 +1,10 @@
 <h1 class="content-title"><%= gettext "Transaction Information"%></h1>
 
 <p class="large-detail-text">
-  <span class="fa <%= get_icon(@transaction.type) %>"></span>
-  <span class="bold-text"><%= get_type(@transaction.type) %></span>
+  <span class="fa <%= get_transaction_style(@transaction.type) %>"></span>
+  <span class="bold-text"><%= get_transaction_name(@transaction.type) %></span>
   <span class="green-bar">|</span> <span class="bold-text">Hash:</span>
-  <span class="eggshell-blue-text hash"><%= @transaction.txid %></span>
+  <span class="eggshell-blue-text hash"><%= render_hash(@transaction.hash) %></span>
 </p>
 
 <a href="<%= transactions_path(@conn, :page, "1") %>" alt="<%= gettext "Back to all transactions"%>" title="<%= gettext "Back to all transactions"%>" class="back-link"><%= gettext "Back to all transactions" %></a>
@@ -13,7 +13,7 @@
 
 	<!-- Transaction panel -->
 	<div class="transaction-panel">
-    <%= if @transaction.vin != [] or @transaction.claims != [] or @transaction.vouts != [] do %>
+    <%= if @transaction.vins != [] or @transaction.claims != [] or @transaction.vouts != [] do %>
   		<div class="sent-from-wrapper">
         <%= if @transaction.type == "ClaimTransaction" do %>
           <p class="large-detail-text"><%= gettext "Claimed from" %></p>
@@ -24,9 +24,9 @@
             </div>
           <% end %>
         <% end %>
-        <%= if @transaction.type != "ClaimTransaction" and @transaction.vin != []  do %>
+        <%= if @transaction.type != "ClaimTransaction" and @transaction.vins != []  do %>
     			<p class="large-detail-text"><%= gettext "Sent from" %></p>
-          <%= for input <- @transaction.vin do %>
+          <%= for input <- @transaction.vins do %>
       			<div class="individual-transaction">
       				<a href="<%= address_path(@conn, :index, input.address_hash)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= input.address_hash %></a>
       				<p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(input.value) %> <%= CacheApi.get_asset_name(input.asset) %></p>
@@ -49,7 +49,7 @@
           <p class="large-detail-text"><%= gettext "Registered" %></p>
           <div class="individual-transaction">
             <a href="<%= address_path(@conn, :index, @transaction.asset.admin)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= @transaction.asset.admin %></a>
-            <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(@transaction.asset.amount) %> <%= CacheApi.get_asset_name(@transaction.txid) %></p>
+            <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(@transaction.asset.amount) %> <%= CacheApi.get_asset_name(@transaction.hash) %></p>
           </div>
         <% end %>
       </div>
@@ -60,7 +60,7 @@
 	<ul id="extra-information">
 		<li class="border-right border-bottom border-right-smaller min-height-97px remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
 			<p class="small-detail-text"><%= gettext "Time" %></p>
-			<p class="large-detail-text"><%= compare_time_and_get_minutes(@transaction.time) %></p>
+			<p class="large-detail-text"><%= compare_time_and_get_minutes(@transaction.block_time) %></p>
       <span class="tooltiptext"><%= get_explanation("transaction_time") %></span>
 		</li>
 		<li class="border-right border-bottom min-height-97px tooltip">
@@ -75,7 +75,7 @@
 		</li>
 		<li class="border-right border-right-smaller min-height-97px remove-border-right-660px">
 			<p class="small-detail-text"><%= gettext "Included in Block" %></p>
-			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash) %>" alt="<%= gettext "View block"%>" title="<%= gettext "View block"%>" class="large-blue-link col-4-width"><%= number_to_delimited(@transaction.block_height) %></a></p>
+			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash) %>" alt="<%= gettext "View block"%>" title="<%= gettext "View block"%>" class="large-blue-link col-4-width"><%= number_to_delimited(@transaction.block_index) %></a></p>
 		</li>
 		<li class="min-height-97px border-right remove-border-bottom-660px border-bottom-smaller tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
 			<p class="small-detail-text"><%= gettext "Size" %></p>
@@ -97,7 +97,7 @@
           <p class="large-detail-text"><%= gettext "Sent from" %></p>
           <div class="individual-transaction">
             <a href="<%= address_path(@conn, :index, transfer.address_from)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_from %></a>
-            <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= CacheApi.get_asset_name(transfer.contract) %></p>
+            <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= transfer.amount %> <%= transfer.contract %></p>
           </div>
         </div>
         <img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" class="transaction-sent-arrow" />
@@ -105,7 +105,7 @@
           <p class="large-detail-text"><%= gettext "Sent to" %></p>
           <div class="individual-transaction">
             <a href="<%= address_path(@conn, :index, transfer.address_to)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_to %></a>
-            <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= CacheApi.get_asset_name(transfer.contract) %></p>
+            <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= transfer.amount %> <%= transfer.contract %></p>
           </div>
         </div>
       </div>
@@ -114,11 +114,11 @@
 <% end %>
 
 <ul id="bytecode-invocation-list">
-  <%= if @transaction.contract != nil do %>
+  <%= if nil != nil do %>
 		<li class="corner-box">
 			<h2><%= gettext "Contract" %></h2>
 			<div class="corner-box">
-				<p class="small-detail-text bar-left-transactions"><%= Poison.encode!(@transaction.contract) %></p>
+				<p class="small-detail-text bar-left-transactions"><%= 1234 %></p>
 			</div>
 		</li>
   <% end %>
@@ -160,11 +160,11 @@
 			</li>
 		<% end %>
   <% end %>
-  <%= if @transaction.script != nil do %>
+  <%= if nil != nil do %>
 		<li class="corner-box">
 			<h2><%= gettext "Bytecode Script" %></h2>
 			<div class="corner-box">
-				<p class="small-detail-text bar-left-transactions"><%= @transaction.script %></p>
+				<p class="small-detail-text bar-left-transactions"><%= 1235 %></p>
 			</div>
 		</li>
   <% end %>
@@ -204,12 +204,12 @@
 </ul>
 
 <ul id="bytecode-invocation-list">
-  <%= if @transaction.script != nil do %>
+  <%= if nil != nil do %>
 		<li class="corner-box remove-margin-left">
 			<h2><%= gettext "Opcode Script" %></h2>
 			<div class="corner-box">
         <p class="small-detail-text bar-left-transactions">
-          <%= for operation <- Disassembler.parse_script(@transaction.script) do %>
+          <%= for operation <- Disassembler.parse_script(<<0>>) do %>
   				  <span class="script-new-line"><%= operation %></span>
           <% end %>
         </p>

@@ -45,4 +45,10 @@ defmodule NeoscanWeb.CommonView do
   def get_current_max_qtd(page, _total), do: page * 15
 
   def check_last(page, total), do: page * 15 < total
+
+  def render_hash(hash), do: Base.encode16(hash)
+
+  def render_date_time(date_time) do
+    to_string(DateTime.to_date(date_time)) <> "|" <> to_string(DateTime.to_time(date_time))
+  end
 end

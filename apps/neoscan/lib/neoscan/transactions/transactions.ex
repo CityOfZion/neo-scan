@@ -56,19 +56,28 @@ defmodule Neoscan.Transactions do
       nil
   """
   def get_transaction_by_hash_for_view(hash) do
-    vout_query = from(v in Vout, order_by: [asc: v.n])
+    vout_query =
+      from(
+        v in Vout,
+        order_by: [
+          asc: v.n
+        ]
+      )
 
     query =
       from(
         e in Transaction,
-        where: e.txid == ^hash,
+        where: e.hash == ^hash,
         preload: [
-          vouts: ^vout_query
+          {:vouts, ^vout_query},
+          :vins,
+          :claims,
+          :transfers
         ],
         select: e
       )
 
-    Repo.one!(query)
+    Repo.one(query)
   end
 
   @doc """
