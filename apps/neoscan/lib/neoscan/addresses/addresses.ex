@@ -79,9 +79,9 @@ defmodule Neoscan.Addresses do
       from(
         ab in AddressBalance,
         join: a in Asset,
-        on: ab.asset == a.transaction_hash,
+        on: ab.asset_hash == a.transaction_hash,
         where: ab.address_hash == ^hash,
-        select: %{name: a.name, asset: ab.asset, value: ab.value, precision: a.precision}
+        select: %{name: a.name, asset: ab.asset_hash, value: ab.value, precision: a.precision}
       )
     )
   end

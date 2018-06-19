@@ -53,7 +53,7 @@ defmodule Neoscan.SchemaTest do
     address_history =
       Repo.one(from(a in AddressHistory, where: a.address_hash == ^vout.address_hash))
 
-    assert vout.asset == address_history.asset
+    assert vout.value == address_history.value
 
     address_balance =
       Repo.one(from(a in AddressBalance, where: a.address_hash == ^vout.address_hash))
@@ -107,12 +107,11 @@ defmodule Neoscan.SchemaTest do
 
     assert address_balance.address_hash == address_history.address_hash
     assert address_balance.value == address_history.value
-    assert address_balance.asset == address_history.asset
 
     address_history2 =
       insert(:address_history, %{
         address_hash: address_history.address_hash,
-        asset: address_history.asset
+        asset_hash: address_history.asset_hash
       })
 
     address = Repo.one(from(a in Address, where: a.hash == ^address_history.address_hash))
@@ -126,6 +125,5 @@ defmodule Neoscan.SchemaTest do
 
     assert address_balance.address_hash == address_history.address_hash
     assert address_balance.value == address_history.value + address_history2.value
-    assert address_balance.asset == address_history.asset
   end
 end

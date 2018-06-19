@@ -8,17 +8,17 @@ defmodule Neoscan.AddressesTest do
                     175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
 
   test "get_balances/1" do
-    address_history = insert(:address_history, %{asset: <<1, 2, 3>>, value: 1.0})
+    address_history = insert(:address_history, %{asset_hash: <<1, 2, 3>>, value: 1.0})
 
     insert(:address_history, %{
       address_hash: address_history.address_hash,
-      asset: <<4, 5, 6>>,
+      asset_hash: <<4, 5, 6>>,
       value: 2.0
     })
 
     insert(:address_history, %{
       address_hash: address_history.address_hash,
-      asset: @neo_asset_hash,
+      asset_hash: @neo_asset_hash,
       value: 3.0
     })
 

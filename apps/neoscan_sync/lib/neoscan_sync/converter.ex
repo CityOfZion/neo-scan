@@ -56,7 +56,7 @@ defmodule NeoscanSync.Converter do
       n: vout_raw.n,
       address_hash: vout_raw.address,
       value: vout_raw.value,
-      asset: vout_raw.asset,
+      asset_hash: vout_raw.asset,
       block_time: block_raw.time
     }
   end

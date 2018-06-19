@@ -4,6 +4,7 @@ defmodule Neoscan.AddressBalance do
   """
   use Ecto.Schema
   alias Neoscan.Address
+  alias Neoscan.Asset
 
   @primary_key false
   schema "address_balances" do
@@ -16,7 +17,15 @@ defmodule Neoscan.AddressBalance do
       primary_key: true
     )
 
-    field(:asset, :binary, primary_key: true)
+    belongs_to(
+      :asset,
+      Asset,
+      foreign_key: :asset_hash,
+      references: :transaction_hash,
+      type: :binary,
+      primary_key: true
+    )
+
     field(:value, :float)
 
     timestamps()

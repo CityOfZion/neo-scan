@@ -68,7 +68,7 @@ defmodule NeoscanWeb.Factory do
       transaction_hash: :crypto.strong_rand_bytes(32),
       n: sequence(1, & &1),
       address_hash: :crypto.strong_rand_bytes(32),
-      asset: :crypto.strong_rand_bytes(32),
+      asset_hash: :crypto.strong_rand_bytes(32),
       value: 1.23,
       block_time: DateTime.utc_now()
     }
@@ -96,7 +96,7 @@ defmodule NeoscanWeb.Factory do
     %AddressHistory{
       address_hash: :crypto.strong_rand_bytes(32),
       transaction_hash: :crypto.strong_rand_bytes(32),
-      asset: :crypto.strong_rand_bytes(32),
+      asset_hash: :crypto.strong_rand_bytes(32),
       value: 5.0,
       block_time: DateTime.utc_now()
     }
@@ -105,7 +105,7 @@ defmodule NeoscanWeb.Factory do
   def address_balance_factory do
     %AddressBalance{
       address_hash: :crypto.strong_rand_bytes(32),
-      asset: :crypto.strong_rand_bytes(32),
+      asset_hash: :crypto.strong_rand_bytes(32),
       value: 5.0
     }
   end

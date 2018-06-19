@@ -4,7 +4,7 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
   def change do
     create table(:address_balances, primary_key: false) do
       add(:address_hash, :binary, primary_key: true)
-      add(:asset, :binary, primary_key: true)
+      add(:asset_hash, :binary, primary_key: true)
       add(:value, :float, null: false)
 
       timestamps()
@@ -13,8 +13,8 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vouts() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO address_histories (address_hash, transaction_hash, asset, value, block_time, inserted_at, updated_at)
-        VALUES (NEW.address_hash, NEW.transaction_hash, NEW.asset, NEW.value, NEW.block_time, NEW.inserted_at, NEW.updated_at);
+        INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.transaction_hash, NEW.asset_hash, NEW.value, NEW.block_time, NEW.inserted_at, NEW.updated_at);
         RETURN NULL;
       END;
       $body$;
@@ -29,8 +29,8 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vouts2() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO address_histories (address_hash, transaction_hash, asset, value, block_time, inserted_at, updated_at)
-        SELECT NEW.address_hash, NEW.transaction_hash, NEW.asset, NEW.value * -1.0, block_time, inserted_at, updated_at FROM vins
+        INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
+        SELECT NEW.address_hash, NEW.transaction_hash, NEW.asset_hash, NEW.value * -1.0, block_time, inserted_at, updated_at FROM vins
         WHERE vout_n = NEW.n and vout_transaction_hash = NEW.transaction_hash;
         RETURN NULL;
       END;
@@ -46,8 +46,8 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vins() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO address_histories (address_hash, transaction_hash, asset, value, block_time, inserted_at, updated_at)
-        SELECT address_hash, NEW.transaction_hash, asset, value * -1.0, NEW.block_time, NEW.inserted_at, NEW.updated_at FROM vouts
+        INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
+        SELECT address_hash, NEW.transaction_hash, asset_hash, value * -1.0, NEW.block_time, NEW.inserted_at, NEW.updated_at FROM vouts
         WHERE n = NEW.vout_n and transaction_hash = NEW.vout_transaction_hash;
         RETURN NULL;
       END;
@@ -63,8 +63,8 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_balances_from_address_history() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO address_balances (address_hash, asset, value, inserted_at, updated_at)
-        VALUES (NEW.address_hash, NEW.asset, NEW.value, NEW.inserted_at, NEW.updated_at)
+        INSERT INTO address_balances (address_hash, asset_hash, value, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.asset_hash, NEW.value, NEW.inserted_at, NEW.updated_at)
         ON CONFLICT ON CONSTRAINT address_balances_pkey DO
         UPDATE SET
         value = address_balances.value + EXCLUDED.value,
