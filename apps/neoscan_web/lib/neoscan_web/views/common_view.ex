@@ -46,6 +46,10 @@ defmodule NeoscanWeb.CommonView do
 
   def check_last(page, total), do: page * 15 < total
 
+  def render_asset_name(asset_hash) do
+    NeoscanCache.Api.get_asset_name(asset_hash)
+  end
+
   def render_hash(hash), do: Base.encode16(hash)
 
   def render_address_hash(hash), do: Base58.encode(hash)

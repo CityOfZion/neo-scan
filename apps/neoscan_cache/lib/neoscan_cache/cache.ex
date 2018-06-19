@@ -6,6 +6,7 @@ defmodule NeoscanCache.Cache do
 
   use GenServer
   alias Neoscan.Blocks
+  alias Neoscan.Assets
   alias Neoscan.Transactions
   alias Neoscan.Transfers
   alias Neoscan.Addresses
@@ -118,7 +119,7 @@ defmodule NeoscanCache.Cache do
     transfers = Transfers.home_transfers()
 
     # Assets.list_assets()
-    assets = []
+    assets = Assets.get_all()
 
     stats = get_general_stats()
 

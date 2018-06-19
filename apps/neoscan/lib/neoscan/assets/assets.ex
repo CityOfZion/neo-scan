@@ -1,6 +1,10 @@
 defmodule Neoscan.Assets do
   @moduledoc false
 
+  alias Neoscan.Asset
+  import Ecto.Query
+  alias Neoscan.Repo
+
   #  @doc """
   #  Gets asset  by its hash value
   #
@@ -89,33 +93,16 @@ defmodule Neoscan.Assets do
     #    |> List.first()
   end
 
-  #  @doc """
-  #  Returns the list of assets.
-  #
-  #  ## Examples
-  #
-  #      iex> list_assets()
-  #      [%Asset{}, ...]
-  #
-  #  """
-  #  def list_assets do
-  #    query =
-  #      from(
-  #        e in Asset,
-  #        select: %{
-  #          :txid => e.txid,
-  #          :admin => e.admin,
-  #          :amount => e.amount,
-  #          :issued => e.issued,
-  #          :type => e.type,
-  #          :time => e.time,
-  #          :name => e.name,
-  #          :owner => e.owner,
-  #          :precision => e.precision,
-  #          :contract => e.contract
-  #        }
-  #      )
-  #
-  #    Repo.all(query)
-  #  end
+  @doc """
+  Returns the list of assets.
+
+  ## Examples
+
+      iex> list_assets()
+      [%Asset{}, ...]
+
+  """
+  def get_all do
+    Repo.all(from(e in Asset))
+  end
 end

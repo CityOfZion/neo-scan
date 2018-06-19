@@ -73,7 +73,7 @@
                 <%= for vin <- transaction.vins do %>
                   <div class="individual-transaction">
                     <a href='<%= address_path(@conn, :index, render_address_hash(vin.address_hash))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(vin.address_hash) %></a>
-                    <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vin.value) %> <%= CacheApi.get_asset_name(vin.asset) %></p>
+                    <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vin.value) %> <%= render_asset_name(vin.asset_hash) %></p>
                   </div>
                 <% end %>
               <% end %>
@@ -81,7 +81,7 @@
                 <%= for transfer <- transaction.transfers do %>
                   <div class="individual-transaction">
                     <a href='<%= address_path(@conn, :index, render_address_hash(transfer.address_from))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(transfer.address_from) %></a>
-                    <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= CacheApi.get_asset_name(transfer.contract) %></p>
+                    <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= render_asset_name(transfer.contract) %></p>
                   </div>
                 <% end %>
               <% end %>
@@ -90,7 +90,7 @@
                 <%= for claim <- transaction.claims do %>
                   <div class="individual-transaction">
                     <a href='<%= address_path(@conn, :index, render_address_hash(claim.address_hash))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(claim.address_hash) %></a>
-                    <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(claim.value) %> <%= CacheApi.get_asset_name(claim.asset) %></p>
+                    <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= Helpers.round_or_not(claim.value) %> <%= render_asset_name(claim.asset_hash) %></p>
                   </div>
                 <% end %>
               <% end %>
@@ -103,7 +103,7 @@
                   <%= for vout <- transaction.vouts do %>
                     <div class="individual-transaction">
                       <a href='<%= address_path(@conn, :index, render_address_hash(vout.address_hash))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(vout.address_hash) %></a>
-                      <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vout.value) %> <%= CacheApi.get_asset_name(vout.asset) %></p>
+                      <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(vout.value) %> <%= render_asset_name(vout.asset_hash) %></p>
                     </div>
                   <% end %>
                 <% end %>
@@ -111,16 +111,16 @@
                   <%= for transfer <- transaction.transfers do %>
                     <div class="individual-transaction">
                       <a href='<%= address_path(@conn, :index, render_address_hash(transfer.address_to))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(transfer.address_to) %></a>
-                      <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= CacheApi.get_asset_name(transfer.contract) %></p>
+                      <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(apply_precision(transfer.contract,transfer.amount)) %> <%= render_asset_name(transfer.contract) %></p>
                     </div>
                   <% end %>
                 <% end %>
               <% end %>
-              <%= if transaction.type == "2register_transaction" do %>
+              <%= if transaction.type == "register_transaction" do %>
                 <p class="large-detail-text"><%= gettext "Registered" %></p>
                 <div class="individual-transaction">
                   <a href='<%= address_path(@conn, :index, transaction.asset.admin)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transaction.asset.admin %></a>
-                  <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(transaction.asset.amount) %> <%= CacheApi.get_asset_name(transaction.txid) %></p>
+                  <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= Helpers.round_or_not(transaction.asset.amount) %> <%= render_asset_name(transaction.hash) %></p>
                 </div>
               <% end %>
             </div>
@@ -138,10 +138,10 @@
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != 1 do %>
-        <a href="<%= address_path(@conn, :page, @address.hash, to_string(@page - 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>
+        <a href="<%= address_path(@conn, :page, render_address_hash(@address.hash), to_string(@page - 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>
       <% end %>
       <%= if check_last(@page, @address.tx_count) do %>
-        <a href="<%= address_path(@conn, :page, @address.hash, to_string(@page + 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>
+        <a href="<%= address_path(@conn, :page, render_address_hash(@address.hash), to_string(@page + 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>
       <% end %>
     </div>
   </div>

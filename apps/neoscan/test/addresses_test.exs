@@ -37,7 +37,7 @@ defmodule Neoscan.AddressesTest do
       transaction_hash: transaction2.hash
     })
 
-    transactions = Addresses.get_transactions(address_history.address_hash)
+    transactions = Addresses.get_transactions(address_history.address_hash, 1)
     assert 2 == Enum.count(transactions)
   end
 end

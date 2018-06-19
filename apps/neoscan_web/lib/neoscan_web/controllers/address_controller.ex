@@ -19,7 +19,7 @@ defmodule NeoscanWeb.AddressController do
       |> put_flash(:info, "Not Found in DB!")
       |> redirect(to: home_path(conn, :index))
     else
-      transactions = Addresses.get_transactions(binary_hash)
+      transactions = Addresses.get_transactions(binary_hash, page)
       graph_data = []
 
       render(

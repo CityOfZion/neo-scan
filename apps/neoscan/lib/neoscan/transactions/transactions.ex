@@ -9,6 +9,7 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Repo
   alias Neoscan.Vout
   alias Neoscan.Vin
+  alias Neoscan.Claim
   alias Neoscan.Transaction
 
   @doc """
@@ -106,13 +107,21 @@ defmodule Neoscan.Transactions do
         select: vout
       )
 
+    claim_query =
+      from(
+        claim in Claim,
+        join: vout in Vout,
+        on: claim.vout_n == vout.n and claim.vout_transaction_hash == vout.transaction_hash,
+        select: vout
+      )
+
     transaction_query =
       from(
         t in Transaction,
         order_by: [
           desc: t.block_index
         ],
-        preload: [{:vins, ^vin_query}, {:vouts, ^vout_query}, :transfers, :claims]
+        preload: [{:vins, ^vin_query}, {:vouts, ^vout_query}, :transfers, {:claims, ^claim_query}]
       )
 
     Repo.paginate(transaction_query, page: pag, page_size: 15)

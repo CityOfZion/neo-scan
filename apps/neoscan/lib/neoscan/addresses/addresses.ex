@@ -9,6 +9,8 @@ defmodule Neoscan.Addresses do
   @gas_asset_hash <<96, 44, 121, 113, 139, 22, 228, 66, 222, 88, 119, 142, 20, 141, 11, 16, 132,
                     227, 178, 223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45, 231>>
 
+  @page_size 15
+
   import Ecto.Query, warn: false
 
   require Logger
@@ -86,7 +88,7 @@ defmodule Neoscan.Addresses do
     )
   end
 
-  def get_transactions(hash) do
+  def get_transactions(hash, page) do
     vin_query =
       from(
         vin in Vin,
@@ -103,7 +105,7 @@ defmodule Neoscan.Addresses do
         select: vout
       )
 
-    Repo.all(
+    transaction_query =
       from(
         t in Transaction,
         join: ah in AddressHistory,
@@ -111,9 +113,11 @@ defmodule Neoscan.Addresses do
         where: ah.address_hash == ^hash,
         preload: [{:vins, ^vin_query}, :vouts, :transfers, {:claims, ^claim_query}],
         order_by: ah.block_time,
-        select: t
+        select: t,
+        limit: @page_size
       )
-    )
+
+    Repo.paginate(transaction_query, page: page, page_size: @page_size)
   end
 
   def get_split_balance(nil), do: nil
@@ -158,7 +162,7 @@ defmodule Neoscan.Addresses do
         order_by: [
           desc: e.last_transaction_time
         ],
-        limit: 15
+        limit: @page_size
       )
 
     Repo.paginate(addresses_query, page: page, page_size: 15)
