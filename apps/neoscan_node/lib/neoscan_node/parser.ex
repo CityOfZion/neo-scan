@@ -32,6 +32,8 @@ defmodule NeoscanNode.Parser do
   defp parse_claims(nil), do: []
   defp parse_claims(claims), do: Enum.map(claims, &parse_vin/1)
 
+  defp ensure_integer(integer) when is_integer(integer), do: integer
+
   defp parse_vin(vin) do
     %{
       vout_transaction_hash: parse16(vin["txid"]),
@@ -127,7 +129,7 @@ defmodule NeoscanNode.Parser do
       version: block["version"],
       nonce: parse16(block["nonce"]),
       script: block["script"],
-      size: block["size"],
+      size: ensure_integer(block["size"]),
       time: DateTime.from_unix!(block["time"]),
       tx: Enum.map(block["tx"], &parse_block_transaction(&1, block))
     }
