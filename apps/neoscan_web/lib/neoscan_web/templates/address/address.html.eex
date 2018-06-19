@@ -61,7 +61,7 @@
             <div class="secondary-info-wrapper">
               <a href="<%=transaction_path(@conn, :index, base16(transaction.hash) )%>" alt="<%= gettext "View transaction"%>" title="<%= gettext "View transaction" %>" class="large-blue-link col-6-width"><%= base16(transaction.hash) %>&#8230;</a>
               <p class="medium-detail-text col-2-width remove-550px">
-                <%= DateTime.to_date(transaction.block_time) %> | <%= DateTime.to_time(transaction.block_time) %>
+                <%= render_date_time(transaction.block_time) %>
               </p>
             </div>
           </div>

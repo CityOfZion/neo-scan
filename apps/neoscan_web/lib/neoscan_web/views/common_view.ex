@@ -48,7 +48,17 @@ defmodule NeoscanWeb.CommonView do
 
   def render_hash(hash), do: Base.encode16(hash)
 
+  def render_address_hash(hash), do: Base58.encode(hash)
+
+  def render_amount(amount) do
+    to_string(amount)
+    |> String.trim_trailing("0")
+    |> String.trim_trailing(".")
+  end
+
   def render_date_time(date_time) do
-    to_string(DateTime.to_date(date_time)) <> "|" <> to_string(DateTime.to_time(date_time))
+    "#{DateTime.to_date(date_time)} | #{DateTime.to_time(date_time)}"
+    |> String.trim_trailing("0")
+    |> String.trim_trailing(".")
   end
 end

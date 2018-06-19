@@ -20,12 +20,11 @@
         <div class="full-width-bar wallet-address">
           <div class="information-wrapper">
             <p class="fa fa-key medium-detail-text"></p>
-            <a href="<%= address_path(@conn, :page, Base58.encode(address.hash), 1)%>" alt="<%= gettext "View address"%>" title="<%= gettext "View address"%>" class="large-blue-link col-4-width"><%= Base58.encode(address.hash) %></a>
+            <a href="<%= address_path(@conn, :page, render_address_hash(address.hash), 1)%>" alt="<%= gettext "View address"%>" title="<%= gettext "View address"%>" class="large-blue-link col-4-width"><%= render_address_hash(address.hash) %></a>
             <div class="secondary-info-wrapper">
               <p class="medium-detail-text col-2-width remove-760px">
                 <span class="tablet-detail-text"><%= gettext "Created" %></span>
-                <%= DateTime.to_date(address.first_transaction_time) %> |
-                <%= DateTime.to_time(address.first_transaction_time) %>
+                <%= render_date_time(address.first_transaction_time) %>
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
                 <span class="tablet-detail-text"><%= gettext "Transactions" %></span>
@@ -38,8 +37,8 @@
             </div>
           </div>
           <div class="token-amount-wrapper col-2-width">
-            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span><%= gettext "NEO" %>: <%= address.balance.neo %></p>
-            <%= address.balance.gas %>
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span><%= gettext "NEO" %>: <%= render_amount(address.balance.neo) %></p>
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cubes fa-cube-small"></span><%= gettext "GAS" %>: <%= render_amount(address.balance.gas) %></p>
           </div>
         </div>
       <% end %>

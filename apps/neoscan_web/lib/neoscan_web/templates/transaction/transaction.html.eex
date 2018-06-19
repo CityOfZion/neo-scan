@@ -75,7 +75,7 @@
 		</li>
 		<li class="border-right border-right-smaller min-height-97px remove-border-right-660px">
 			<p class="small-detail-text"><%= gettext "Included in Block" %></p>
-			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, @transaction.block_hash) %>" alt="<%= gettext "View block"%>" title="<%= gettext "View block"%>" class="large-blue-link col-4-width"><%= number_to_delimited(@transaction.block_index) %></a></p>
+			<p class="large-detail-text"><a href="<%= block_path( @conn, :index, render_hash(@transaction.block_hash)) %>" alt="<%= gettext "View block"%>" title="<%= gettext "View block"%>" class="large-blue-link col-4-width"><%= number_to_delimited(@transaction.block_index) %></a></p>
 		</li>
 		<li class="min-height-97px border-right remove-border-bottom-660px border-bottom-smaller tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
 			<p class="small-detail-text"><%= gettext "Size" %></p>

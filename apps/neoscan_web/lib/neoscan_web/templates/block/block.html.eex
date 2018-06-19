@@ -1,10 +1,10 @@
 <h1 class="content-title"><%= gettext "Block Information"%></h1>
-<p class="large-detail-text"><span class="fa fa-signal"></span><span class="bold-text"><%= gettext "Block"%></span> <span class="teal-bar">|</span> <span class="eggshell-blue-text"><%= Base.encode16(@block.hash) %></span></p>
+<p class="large-detail-text"><span class="fa fa-signal"></span><span class="bold-text"><%= gettext "Block"%></span> <span class="teal-bar">|</span> <span class="eggshell-blue-text"><%= render_hash(@block.hash) %></span></p>
 <div class="block-navigation">
  <a href="<%= blocks_path(@conn, :page, "1") %>" class="browse-wallet-back"><%= gettext "Back to all blocks"%></a>
   <div class="address-navigation">
-  	<a href="<%= block_path( @conn, :index, Base.encode16(@block.next_block_hash)) %>" class="browse-wallet-next"><%= gettext "Next block"%></a>
-  	<a href="<%= block_path( @conn, :index, Base.encode16(@block.previous_block_hash)) %>" class="browse-wallet-previous"><%= gettext "Previous block"%></a>
+  	<a href="<%= block_path( @conn, :index, render_hash(@block.next_block_hash)) %>" class="browse-wallet-next"><%= gettext "Next block"%></a>
+  	<a href="<%= block_path( @conn, :index, render_hash(@block.previous_block_hash)) %>" class="browse-wallet-previous"><%= gettext "Previous block"%></a>
   </div>
 </div>
 
@@ -24,7 +24,7 @@
     </li>
     <li class="border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Hash" %></p>
-      <p class="large-detail-text"><%= Base.encode16(@block.hash) %></p>
+      <p class="large-detail-text"><%= render_hash(@block.hash) %></p>
       <span class="tooltiptext"><%= get_explanation("block_hash") %></span>
     </li>
     <li class="border-right border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
@@ -39,12 +39,12 @@
     </li>
     <li class="border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Merkle root" %></p>
-      <p class="large-detail-text"><%= Base.encode16(@block.merkle_root) %></p>
+      <p class="large-detail-text"><%= render_hash(@block.merkle_root) %></p>
       <span class="tooltiptext"><%= get_explanation("block_merkle_root") %></span>
     </li>
     <li class="border-right border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Validator"%></p>
-      <p class=" wallet-address"><%= Base.encode16(@block.next_consensus) %></a>
+      <p class=" wallet-address"><%= render_hash(@block.next_consensus) %></a>
       <span class="tooltiptext"><%= get_explanation("block_validator") %></span>
     </li>
     <li class="border-right remove-border-right-660px remove-border-bottom-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
@@ -188,10 +188,10 @@
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != 1 do %>
-        <a href="<%=  block_path(@conn, :page, Base.encode16(@block.hash), to_string(@page - 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>
+        <a href="<%=  block_path(@conn, :page, render_hash(@block.hash), to_string(@page - 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>
       <% end %>
       <%= if check_last(@page, @block.tx_count) do %>
-        <a href="<%=  block_path(@conn, :page, Base.encode16(@block.hash), to_string(@page + 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>
+        <a href="<%=  block_path(@conn, :page, render_hash(@block.hash), to_string(@page + 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>
       <% end %>
     </div>
   </div>

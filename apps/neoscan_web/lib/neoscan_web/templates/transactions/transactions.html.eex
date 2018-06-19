@@ -20,7 +20,7 @@
           <div class="information-wrapper">
             <p class="medium-detail-text col-2-width"><span class="fa <%= get_transaction_style(transaction.type) %>"></span><%= Gettext.gettext(NeoscanWeb.Gettext, get_transaction_name(transaction.type)) %></p>
             <div class="secondary-info-wrapper">
-              <a href="<%=transaction_path(@conn, :index, Base.encode16(transaction.hash) )%>" alt="<%= gettext "View transaction"%>" title="<%= gettext "View transaction"%>" class="large-blue-link col-6-width"><%= Base.encode16(transaction.hash) %>&#8230;</a>
+              <a href="<%=transaction_path(@conn, :index, render_hash(transaction.hash) )%>" alt="<%= gettext "View transaction"%>" title="<%= gettext "View transaction"%>" class="large-blue-link col-6-width"><%= render_hash(transaction.hash) %>&#8230;</a>
               <p class="medium-detail-text col-2-width remove-550px">
                 <%= render_date_time(transaction.block_time) %>
               </p>

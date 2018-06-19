@@ -22,7 +22,7 @@
         <div class="full-width-bar block-number">
           <div class="information-wrapper">
             <p class="fa fa-signal medium-detail-text"></p>
-            <a href="<%= block_path( @conn, :index, Base.encode16(block.hash)) %>" alt="<%= gettext "View block"%>" title="<%= gettext "View block"%>" class="large-blue-link col-4-width">
+            <a href="<%= block_path( @conn, :index, render_hash(block.hash)) %>" alt="<%= gettext "View block"%>" title="<%= gettext "View block"%>" class="large-blue-link col-4-width">
               <span class="tablet-detail-text"><%= gettext "Block"%>: </span>
               <%=number_to_delimited(block.index)%>
             </a>
@@ -37,7 +37,7 @@
               </p>
               <p class="medium-detail-text col-3-width">
                 <span class="tablet-detail-text"><%= gettext "Created"%>: </span>
-                <%= DateTime.to_date(block.time) %> | <%= DateTime.to_time(block.time) %>
+                <%= render_date_time(block.time) %>
               </p>
               <p class="medium-detail-text col-1-width">
                 <span class="tablet-detail-text"><%= gettext "Block Time"%>: </span>
