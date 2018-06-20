@@ -12,12 +12,12 @@
   <div class="individual-wallet-wrapper">
     <div class="individual-wallet-box">
       <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i><%= gettext "NEO Balance" %></p>
-      <p class="balance-amount"><%= @balance.neo %></p>
+      <p class="balance-amount"><%= render_balance(@balance.neo, 0) %></p>
     </div>
     <div class="individual-wallet-box gas-balance last">
       <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> <%= gettext "GAS Balance" %></p>
       <div class="total-gas-balance">
-        <%= @balance.gas %>
+        <%= render_balance(@balance.gas, 8) %>
         <p class="loading-gas"><%= gettext "Loading Unclaimed Gas" %><span>.</span><span>.</span><span>.</span></p>
         <p class="unclaimed-GAS"></p>
       </div>

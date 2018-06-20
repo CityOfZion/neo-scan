@@ -41,7 +41,7 @@ defmodule NeoscanWeb.AddressControllerTest do
     address_hash = Base58.encode(address_history.address_hash)
     conn = get(conn, "/address/#{address_hash}")
     assert html_response(conn, 200) =~ address_hash
-    assert html_response(conn, 200) =~ "5.0"
+    assert html_response(conn, 200) =~ "5"
     assert html_response(conn, 200) =~ "9.5"
     assert html_response(conn, 200) =~ "token 1"
     assert html_response(conn, 200) =~ "token 2"

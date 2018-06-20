@@ -62,6 +62,15 @@ defmodule NeoscanWeb.CommonView do
 
   def render_address_hash(hash), do: Base58.encode(hash)
 
+  def render_balance(amount, precision) when is_integer(precision) do
+    Number.Delimit.number_to_delimited(amount, precision: precision)
+  end
+
+  def render_balance(amount, asset_hash) do
+    precision = NeoscanCache.Api.get_asset_precision(asset_hash)
+    render_balance(amount, precision)
+  end
+
   def render_amount(amount) do
     to_string(amount)
     |> String.trim_trailing("0")

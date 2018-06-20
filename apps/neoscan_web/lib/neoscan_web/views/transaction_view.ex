@@ -7,7 +7,6 @@ defmodule NeoscanWeb.TransactionView do
   alias Neoscan.Explanations
   alias NeoscanWeb.ViewHelper
   alias Neoscan.Assets
-  alias NeoscanCache.Api, as: CacheApi
   import NeoscanWeb.CommonView
 
   def compare_time_and_get_minutes(time) do

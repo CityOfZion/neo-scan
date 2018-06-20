@@ -68,15 +68,32 @@ defmodule Neoscan.Transactions do
         ]
       )
 
+    vin_query =
+      from(
+        vin in Vin,
+        join: vout in Vout,
+        on: vin.vout_n == vout.n and vin.vout_transaction_hash == vout.transaction_hash,
+        select: vout
+      )
+
+    claim_query =
+      from(
+        claim in Claim,
+        join: vout in Vout,
+        on: claim.vout_n == vout.n and claim.vout_transaction_hash == vout.transaction_hash,
+        select: vout
+      )
+
     query =
       from(
         e in Transaction,
         where: e.hash == ^hash,
         preload: [
+          {:vins, ^vin_query},
           {:vouts, ^vout_query},
-          :vins,
-          :claims,
-          :transfers
+          :transfers,
+          {:claims, ^claim_query},
+          :asset
         ],
         select: e
       )

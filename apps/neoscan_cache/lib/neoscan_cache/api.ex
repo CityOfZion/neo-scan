@@ -26,6 +26,13 @@ defmodule NeoscanCache.Api do
     |> Enum.find(fn %{:txid => txid} -> txid == hash end)
   end
 
+  def get_asset_precision(asset_hash) do
+    Cache.get(:assets)
+    |> Enum.find(fn %{transaction_hash: transaction_hash} -> transaction_hash == asset_hash end)
+    |> (&if(is_nil(&1), do: %{precision: 0}, else: &1)).()
+    |> Map.get(:precision)
+  end
+
   def get_asset_name(asset_hash) do
     Cache.get(:assets)
     |> Enum.find(fn %{transaction_hash: transaction_hash} -> transaction_hash == asset_hash end)
