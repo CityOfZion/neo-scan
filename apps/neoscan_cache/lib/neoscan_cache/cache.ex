@@ -32,7 +32,8 @@ defmodule NeoscanCache.Cache do
   def init(:ok) do
     EtsProcess.create_table(__MODULE__)
     Process.send_after(self(), :broadcast, 30_000)
-    {:ok, sync(%{tokens: []})}
+    sync()
+    {:ok, :ok}
   end
 
   def set(key, value) do
@@ -55,23 +56,42 @@ defmodule NeoscanCache.Cache do
     end
   end
 
+  defp get_blocks do
+    blocks = Enum.take(get(:blocks), 5)
+
+    Enum.map(
+      blocks,
+      &%{
+        hash: Base.encode16(&1.hash),
+        index: &1.index,
+        size: &1.size,
+        time: DateTime.to_unix(&1.time),
+        tx_count: &1.tx_count
+      }
+    )
+  end
+
+  defp get_transactions do
+    transactions = Enum.take(get(:transactions), 5)
+
+    Enum.map(
+      transactions,
+      &%{
+        txid: Base.encode16(&1.hash),
+        type: &1.type,
+        time: DateTime.to_unix(&1.block_time)
+      }
+    )
+  end
+
   def handle_info(:broadcast, state) do
-    {blocks, _} =
-      get(:blocks)
-      |> Enum.split(5)
-
-    {transactions, _} =
-      get(:transactions)
-      |> Enum.split(5)
-
-    {transfers, _} =
-      get(:transfers)
-      |> Enum.split(5)
+    blocks = get_blocks()
+    transactions = get_transactions()
 
     payload = %{
       "blocks" => blocks,
       "transactions" => transactions,
-      "transfers" => transfers,
+      "transfers" => [],
       "price" => get(:price),
       "stats" => get(:stats)
     }
@@ -85,14 +105,9 @@ defmodule NeoscanCache.Cache do
     {:noreply, state}
   end
 
-  #  # repair blocks on startup
-  #  def handle_info(:repair, state) do
-  #    Unclaimed.repair_blocks()
-  #    {:noreply, state}
-  #  end
-
-  def handle_info(:sync, state) do
-    {:noreply, sync(state)}
+  def handle_info(:sync, _) do
+    sync()
+    {:noreply, :ok}
   end
 
   # handles misterious messages received by unknown caller
@@ -110,15 +125,14 @@ defmodule NeoscanCache.Cache do
   end
 
   # update nodes and stats information
-  def sync(_) do
+  def sync() do
     Process.send_after(self(), :sync, @update_interval)
     blocks = Blocks.home_blocks()
 
-    transactions = Transactions.home_transactions()
+    transactions = Transactions.paginate_transactions(1).entries
 
     transfers = Transfers.home_transfers()
 
-    # Assets.list_assets()
     assets = Assets.get_all()
 
     stats = get_general_stats()
@@ -136,8 +150,6 @@ defmodule NeoscanCache.Cache do
       }
     }
 
-    tokens = []
-
     set(:blocks, blocks)
     set(:transactions, transactions)
     set(:transfers, transfers)
@@ -145,16 +157,5 @@ defmodule NeoscanCache.Cache do
     set(:stats, stats)
     set(:addresses, addresses)
     set(:price, price)
-
-    %{
-      :blocks => blocks,
-      :transactions => transactions,
-      :transfers => transfers,
-      :assets => assets,
-      :stats => stats,
-      :addresses => addresses,
-      :price => price,
-      :tokens => tokens
-    }
   end
 end

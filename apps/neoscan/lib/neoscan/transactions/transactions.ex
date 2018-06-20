@@ -16,30 +16,6 @@ defmodule Neoscan.Transactions do
   alias Neoscan.AddressHistory
 
   @doc """
-  Returns the list of transactions in the home page.
-
-  ## Examples
-
-      iex> home_transactions()
-      [%Transaction{}, ...]
-
-  """
-  def home_transactions do
-    transaction_query =
-      from(
-        e in Transaction,
-        order_by: [
-          desc: e.block_time
-        ],
-        where: e.type != "miner_transaction",
-        limit: @page_size,
-        preload: [:vouts]
-      )
-
-    Repo.all(transaction_query)
-  end
-
-  @doc """
   Gets a single transaction by its hash value
   ## Examples
       iex> get_block_by_hash(123)

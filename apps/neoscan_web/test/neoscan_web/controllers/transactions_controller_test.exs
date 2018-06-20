@@ -29,7 +29,7 @@ defmodule NeoscanWeb.TransactionsControllerTest do
     insert(:transfer, %{transaction_hash: Enum.at(transactions, 15).hash})
     insert(:transfer, %{transaction_hash: Enum.at(transactions, 2).hash})
 
-    Cache.sync(%{tokens: []})
+    Cache.sync()
 
     conn = get(conn, "/transactions/1")
     body = html_response(conn, 200)
