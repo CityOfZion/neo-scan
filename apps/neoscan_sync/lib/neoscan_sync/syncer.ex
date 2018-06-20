@@ -9,7 +9,7 @@ defmodule NeoscanSync.Syncer do
 
   require Logger
 
-  # @parallelism 16
+  @parallelism 16
   @update_interval 1_000
 
   def start_link do
@@ -78,8 +78,7 @@ defmodule NeoscanSync.Syncer do
   end
 
   def sync_indexes(indexes) do
-    # System.schedulers_online() * @parallelism
-    concurrency = 1
+    concurrency = System.schedulers_online() * @parallelism
 
     indexes
     |> Task.async_stream(
