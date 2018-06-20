@@ -13,6 +13,7 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Vin
   alias Neoscan.Claim
   alias Neoscan.Transaction
+  alias Neoscan.AddressHistory
 
   @doc """
   Returns the list of transactions in the home page.
@@ -175,6 +176,38 @@ defmodule Neoscan.Transactions do
         where: t.block_hash == ^block_hash,
         preload: [{:vins, ^vin_query}, :vouts, :transfers, {:claims, ^claim_query}],
         order_by: t.block_time,
+        select: t,
+        limit: @page_size
+      )
+
+    Repo.paginate(transaction_query, page: page, page_size: @page_size)
+  end
+
+  def get_for_address(address_hash, page) do
+    vin_query =
+      from(
+        vin in Vin,
+        join: vout in Vout,
+        on: vin.vout_n == vout.n and vin.vout_transaction_hash == vout.transaction_hash,
+        select: vout
+      )
+
+    claim_query =
+      from(
+        claim in Claim,
+        join: vout in Vout,
+        on: claim.vout_n == vout.n and claim.vout_transaction_hash == vout.transaction_hash,
+        select: vout
+      )
+
+    transaction_query =
+      from(
+        t in Transaction,
+        join: ah in AddressHistory,
+        on: ah.transaction_hash == t.hash,
+        where: ah.address_hash == ^address_hash,
+        preload: [{:vins, ^vin_query}, :vouts, :transfers, {:claims, ^claim_query}, :asset],
+        order_by: ah.block_time,
         select: t,
         limit: @page_size
       )

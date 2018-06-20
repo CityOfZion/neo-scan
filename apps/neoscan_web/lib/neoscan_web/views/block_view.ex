@@ -8,10 +8,6 @@ defmodule NeoscanWeb.BlockView do
   alias Neoscan.Assets
   import NeoscanWeb.CommonView
 
-  def compare_time_and_get_minutes(unix_time) do
-    ViewHelper.compare_time_and_get_minutes(unix_time)
-  end
-
   def check_if_invocation({"invocation", _hash}) do
     true
   end

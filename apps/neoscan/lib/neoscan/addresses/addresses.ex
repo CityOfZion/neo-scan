@@ -17,14 +17,8 @@ defmodule Neoscan.Addresses do
 
   alias Neoscan.Repo
   alias Neoscan.Address
-  alias Neoscan.AddressHistory
   alias Neoscan.AddressBalance
-
   alias Neoscan.Asset
-  alias Neoscan.Transaction
-  alias Neoscan.Vin
-  alias Neoscan.Vout
-  alias Neoscan.Claim
 
   @doc """
   Returns a list of the latest updated addresses.
@@ -86,38 +80,6 @@ defmodule Neoscan.Addresses do
         select: %{name: a.name, asset: ab.asset_hash, value: ab.value, precision: a.precision}
       )
     )
-  end
-
-  def get_transactions(hash, page) do
-    vin_query =
-      from(
-        vin in Vin,
-        join: vout in Vout,
-        on: vin.vout_n == vout.n and vin.vout_transaction_hash == vout.transaction_hash,
-        select: vout
-      )
-
-    claim_query =
-      from(
-        claim in Claim,
-        join: vout in Vout,
-        on: claim.vout_n == vout.n and claim.vout_transaction_hash == vout.transaction_hash,
-        select: vout
-      )
-
-    transaction_query =
-      from(
-        t in Transaction,
-        join: ah in AddressHistory,
-        on: ah.transaction_hash == t.hash,
-        where: ah.address_hash == ^hash,
-        preload: [{:vins, ^vin_query}, :vouts, :transfers, {:claims, ^claim_query}],
-        order_by: ah.block_time,
-        select: t,
-        limit: @page_size
-      )
-
-    Repo.paginate(transaction_query, page: page, page_size: @page_size)
   end
 
   def get_split_balance(nil), do: nil

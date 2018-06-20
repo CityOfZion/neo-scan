@@ -1,6 +1,4 @@
 defmodule NeoscanWeb.CommonView do
-  alias NeoscanWeb.ViewHelper
-
   def get_transaction_name("contract_transaction"), do: "Contract"
   def get_transaction_name("claim_transaction"), do: "Gas Claim"
   def get_transaction_name("invocation_transaction"), do: "Invocation"
@@ -35,7 +33,18 @@ defmodule NeoscanWeb.CommonView do
     Base.encode16(binary)
   end
 
-  def get_minutes(date_time), do: ViewHelper.get_minutes(date_time)
+  def get_minutes(date_time) do
+    if Timex.before?(date_time, Timex.shift(Timex.now(), minutes: -1440)) do
+      render_date_time(date_time)
+    else
+      {:ok, time_string} =
+        date_time
+        |> Timex.shift([])
+        |> Timex.format("{relative}", :relative)
+
+      time_string
+    end
+  end
 
   def get_current_min_qtd(_page, total) when total < 15, do: 0
   def get_current_min_qtd(page, _total), do: (page - 1) * 15 + 1
@@ -47,10 +56,15 @@ defmodule NeoscanWeb.CommonView do
   def check_last(page, total), do: page * 15 < total
 
   def render_asset_style(asset_hash) do
-    if render_asset_name(asset_hash) == "GAS" do
-      "fa-cubes"
-    else
-      "fa-cube"
+    case render_asset_name(asset_hash) do
+      "GAS" ->
+        "fa-cubes"
+
+      "NEO" ->
+        "fa-cube"
+
+      _ ->
+        "fa-university"
     end
   end
 
@@ -61,6 +75,8 @@ defmodule NeoscanWeb.CommonView do
   def render_hash(hash), do: Base.encode16(hash)
 
   def render_address_hash(hash), do: Base58.encode(hash)
+
+  def render_balance(-0.00000001, _), do: "∞"
 
   def render_balance(amount, precision) when is_integer(precision) do
     Number.Delimit.number_to_delimited(amount, precision: precision)

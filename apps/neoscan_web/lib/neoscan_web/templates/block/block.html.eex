@@ -29,7 +29,7 @@
     </li>
     <li class="border-right border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Time" %></p>
-      <p class="large-detail-text"><%= compare_time_and_get_minutes(@block.time)%></p>
+      <p class="large-detail-text"><%= get_minutes(@block.time)%></p>
       <span class="tooltiptext"><%= get_explanation("block_time") %></span>
     </li>
     <li class="border-right border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">

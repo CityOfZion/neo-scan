@@ -9,10 +9,6 @@ defmodule NeoscanWeb.TransactionView do
   alias Neoscan.Assets
   import NeoscanWeb.CommonView
 
-  def compare_time_and_get_minutes(time) do
-    ViewHelper.compare_time_and_get_minutes(time)
-  end
-
   def parse_invocation(nil) do
     "No Invocation Script"
   end

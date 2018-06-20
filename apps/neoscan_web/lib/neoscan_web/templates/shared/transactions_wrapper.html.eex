@@ -71,8 +71,8 @@
               <%= if transaction.type == "register_transaction" do %>
                 <p class="large-detail-text"><%= gettext "Registered" %></p>
                 <div class="individual-transaction">
-                  <a href='<%= address_path(@conn, :index, transaction.asset.admin)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transaction.asset.admin %></a>
-                  <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= render_balance(transaction.asset.amount, transaction.hash) %> <%= render_asset_name(transaction.hash) %></p>
+                  <a href='<%= address_path(@conn, :index, transaction.asset.admin)%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(transaction.asset.admin) %></a>
+                  <p class="gas-amount large-blue-link"><span class="fa <%= render_asset_style(transaction.hash) %>"></span><%= render_balance(transaction.asset.amount, transaction.hash) %> <%= render_asset_name(transaction.hash) %></p>
                 </div>
               <% end %>
             </div>
