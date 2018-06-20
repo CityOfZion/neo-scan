@@ -102,7 +102,7 @@ defmodule Neoscan.Transactions do
         ]
       )
 
-    Repo.paginate(transaction_query, page: pag, page_size: 15)
+    Repo.paginate(transaction_query, page: pag, page_size: @page_size)
   end
 
   def get_for_block(block_hash, page) do

@@ -16,6 +16,7 @@ defmodule NeoscanWeb.TransactionControllerTest do
           "state_transaction"
         ] do
       transaction = insert(:transaction, %{type: type})
+      insert(:asset, %{transaction_hash: transaction.hash})
       conn = get(conn, "/transaction/#{Base.encode16(transaction.hash)}")
       body = html_response(conn, 200)
       assert body =~ Base.encode16(transaction.hash)
