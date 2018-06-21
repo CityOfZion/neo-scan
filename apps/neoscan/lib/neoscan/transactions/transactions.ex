@@ -92,7 +92,7 @@ defmodule Neoscan.Transactions do
       from(
         t in Transaction,
         where: t.block_hash == ^block_hash,
-        preload: [{:vins, ^vin_query()}, :vouts, :transfers, {:claims, ^claim_query()}],
+        preload: [{:vins, ^vin_query()}, :vouts, :transfers, {:claims, ^claim_query()}, :asset],
         order_by: t.block_time,
         select: t,
         limit: @page_size

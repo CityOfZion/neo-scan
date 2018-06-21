@@ -3,6 +3,7 @@ defmodule NeoscanWeb.ApiController do
 
   alias Neoscan.Api
   alias NeoscanCache.Api, as: CacheApi
+  alias Neoscan.Stats
 
   defmacro cache(key, value, ttl \\ 10_000) do
     quote do
@@ -129,7 +130,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_height(conn, %{}) do
-    height = cache({:get_height}, Api.get_height())
+    height = cache({:get_height}, Stats.count_blocks() - 1)
     json(conn, height)
   end
 
