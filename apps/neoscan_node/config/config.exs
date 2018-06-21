@@ -45,7 +45,21 @@ config :neoscan_node,
     "https://seed2.redpulse.com:10331",
     "http://seed1.o3node.org:10332",
     "http://seed2.o3node.org:10332",
-    "http://54.66.154.140:10332"
+    "http://54.66.154.140:10332",
+    "http://seed3.aphelion-neo.com:10332",
+    "http://seed4.aphelion-neo.com:10332",
+    "http://seed1.aphelion-neo.com:10332",
+    "http://node1.ams2.bridgeprotocol.io:10332",
+    "http://node1.sgp1.bridgeprotocol.io:10332",
+    "http://node1.nyc3.bridgeprotocol.io:10332",
+    "http://seed2.travala.com:10332",
+    "http://seed3.travala.com:10332",
+    "https://seed1.spotcoin.com:10332",
+    "http://seed3.o3node.org:10332",
+    "https://seed3.switcheo.network:10331",
+    "https://seed4.switcheo.network:10331",
+    "https://seed2.switcheo.network:10331",
+    "http://seed1.travala.com:10332"
   ]
 
 if Mix.env() == :test do
