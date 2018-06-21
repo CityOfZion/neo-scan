@@ -45,7 +45,7 @@
   <!-- Transactions -->
   <%= render NeoscanWeb.SharedView, "transactions_wrapper.html", assigns %>
 
-  <p  class="number-counter"><%= gettext "Transactions"%> <%= get_current_min_qtd(@page, @address.tx_count) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @address.tx_count) %></p>
+  <p  class="number-counter"><%= gettext "Transactions"%> <%= get_current_min_qtd(@page, @address.tx_count) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @address.tx_count) %> of <%= number_to_delimited(@address.tx_count) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != 1 do %>
