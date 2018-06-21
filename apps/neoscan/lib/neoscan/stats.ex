@@ -1,12 +1,20 @@
 defmodule Neoscan.Stats do
   @moduledoc false
 
+  import Ecto.Query, warn: false
+  alias Neoscan.Repo
+  alias Neoscan.Counter
+
   def count_addresses do
-    0
+    Repo.one(from(c in Counter, where: c.name == "addresses", select: c.value))
   end
 
   def count_blocks do
-    0
+    Repo.one(from(c in Counter, where: c.name == "blocks", select: c.value))
+  end
+
+  def _count_transactions do
+    Repo.one(from(c in Counter, where: c.name == "transactions", select: c.value))
   end
 
   def count_transfers do
@@ -26,7 +34,7 @@ defmodule Neoscan.Stats do
         "EnrollmentTransaction" => 0,
         "StateTransaction" => 0
       },
-      0,
+      _count_transactions(),
       0
     ]
   end
