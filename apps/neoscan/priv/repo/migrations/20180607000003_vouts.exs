@@ -13,10 +13,6 @@ defmodule Neoscan.Repo.Migrations.Vouts do
       timestamps()
     end
 
-#    create(unique_index(:vouts, [:query]))
-#    create(index(:vouts, [:transaction_id]))
-#    create(index(:vouts, [:address_id]))
-#    create(index(:vouts, [:address_id, :asset]))
-#    create(index(:vouts, [:address_hash, :asset, :end_height]))
+    create(index(:vouts, [:transaction_hash]))
   end
 end

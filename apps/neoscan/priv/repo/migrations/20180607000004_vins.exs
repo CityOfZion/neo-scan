@@ -12,5 +12,6 @@ defmodule Neoscan.Repo.Migrations.Vins do
     end
 
     create(unique_index(:vins, [:vout_transaction_hash, :vout_n]))
+    create(index(:vins, [:transaction_hash]))
   end
 end

@@ -13,5 +13,7 @@ defmodule Neoscan.Repo.Migrations.Transfers do
 
       timestamps()
     end
+
+    create(index(:transfers, [:transaction_hash]))
   end
 end

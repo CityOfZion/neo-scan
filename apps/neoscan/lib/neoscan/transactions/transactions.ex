@@ -78,7 +78,13 @@ defmodule Neoscan.Transactions do
         ]
       )
 
-    Repo.paginate(transaction_query, page: pag, page_size: @page_size)
+    # override total entries to avoid counting the whole set
+    Repo.paginate(
+      transaction_query,
+      page: pag,
+      page_size: @page_size,
+      options: [total_entries: 10_000]
+    )
   end
 
   def get_for_block(block_hash, page) do

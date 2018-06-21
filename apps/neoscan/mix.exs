@@ -52,7 +52,7 @@ defmodule Neoscan.Mixfile do
       {:excoveralls, "~> 0.8", only: :test},
       {:neoscan_node, in_umbrella: true},
       {:poison, "~> 3.1"},
-      {:scrivener_ecto, "~> 1.0"}
+      {:scrivener_ecto, "~> 1.3"}
     ]
   end
 
