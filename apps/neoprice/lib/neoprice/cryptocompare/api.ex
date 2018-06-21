@@ -10,8 +10,11 @@ defmodule Neoprice.Cryptocompare.Api do
   def last_price(from_symbol, to_symbol) do
     params = "fsym=#{from_symbol}&tsyms=#{to_symbol}"
     url = "https://" <> @url <> "/data/price?#{params}"
-    {:ok, %{status_code: 200, body: body}} = Helper.retry_get(url)
-
+    body = case Helper.retry_get(url) do
+      {:ok, %{status_code: 200, body: body}} -> body
+      _ -> {:error}
+    end
+    
     case Poison.decode(body) do
       {:ok, map} -> map[to_symbol]
       _ -> nil
@@ -21,14 +24,16 @@ defmodule Neoprice.Cryptocompare.Api do
   def last_price_full(from_symbol, to_symbol) do
     params = "fsyms=#{from_symbol}&tsyms=#{to_symbol}"
     url = "https://" <> @url <> "/data/pricemultifull?#{params}"
-    {:ok, %{status_code: 200, body: body}} = Helper.retry_get(url)
+    case Helper.retry_get(url) do
+      {:ok, %{status_code: 200, body: body}} ->
+        case Poison.decode(body) do
+          {:ok, map} ->
+            map["RAW"][from_symbol][to_symbol]
 
-    case Poison.decode(body) do
-      {:ok, map} ->
-        map["RAW"][from_symbol][to_symbol]
-
-      _ ->
-        nil
+          _ -> nil
+        end
+      
+      _ -> nil
     end
   end
 
