@@ -86,8 +86,7 @@ defmodule Neoscan.Transactions do
         order_by: [
           desc: e.id
         ],
-        where:
-          e.type != "MinerTransaction",
+        where: e.type != "MinerTransaction",
         select: %{
           :id => e.id,
           :type => e.type,
