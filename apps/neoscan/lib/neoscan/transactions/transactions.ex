@@ -138,10 +138,14 @@ defmodule Neoscan.Transactions do
         where: ah.address_hash == ^address_hash,
         preload: [{:vins, ^vin_query()}, :vouts, :transfers, {:claims, ^claim_query()}, :asset],
         order_by: ah.block_time,
-        select: t,
-        limit: @page_size
+        select: t
       )
 
-    Repo.paginate(transaction_query, page: page, page_size: @page_size)
+    Repo.paginate(
+      transaction_query,
+      page: page,
+      page_size: @page_size,
+      options: [total_entries: 10_000]
+    )
   end
 end
