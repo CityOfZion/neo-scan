@@ -87,11 +87,7 @@ defmodule Neoscan.Transactions do
           desc: e.id
         ],
         where:
-          e.inserted_at >
-            ago(
-              1,
-              "hour"
-            ) and e.type != "MinerTransaction",
+          e.type != "MinerTransaction",
         select: %{
           :id => e.id,
           :type => e.type,
