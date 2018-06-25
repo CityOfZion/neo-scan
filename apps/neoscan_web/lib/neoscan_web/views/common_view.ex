@@ -100,14 +100,21 @@ defmodule NeoscanWeb.CommonView do
   def render_amount(amount) do
     amount
     |> to_string()
-    |> String.trim_trailing("0")
-    |> String.trim_trailing(".")
+    |> remove_trailing()
     |> (&if(&1 == "", do: "0", else: &1)).()
   end
 
+  defp remove_trailing(string) do
+    if String.contains?(string, ".") do
+      string
+      |> String.trim_trailing("0")
+      |> String.trim_trailing(".")
+    else
+      string
+    end
+  end
+
   def render_date_time(date_time) do
-    "#{DateTime.to_date(date_time)} | #{DateTime.to_time(date_time)}"
-    |> String.trim_trailing("0")
-    |> String.trim_trailing(".")
+    remove_trailing("#{DateTime.to_date(date_time)} | #{DateTime.to_time(date_time)}")
   end
 end
