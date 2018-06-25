@@ -49,8 +49,10 @@ defmodule NeoscanNode.Notifications do
     end
   end
 
-  defp check({:ok, _result, current_height}, height, _url) when current_height - 1 < height do
-    get_block_notifications(height)
+  defp check({:ok, _result, current_height}, height, [url | _] = urls)
+       when current_height - 1 < height do
+    Logger.warn("server is outdated #{url}")
+    get_block_notifications(height, urls)
   end
 
   defp check({:ok, result, _}, _, _), do: result
