@@ -44,33 +44,6 @@
 
 </section>
 
-
-<!-- Transfers panel -->
-<%= if @transaction.transfers != [] do %>
-  <h2><%= gettext "Transfers" %></h2>
-  <section id="asset-information" class="corner-box bar-left-transactions">
-    <%= for transfer <- @transaction.transfers do %>
-      <div class="transaction-panel">
-        <div class="sent-from-wrapper">
-          <p class="large-detail-text"><%= gettext "Sent from" %></p>
-          <div class="individual-transaction">
-            <a href="<%= address_path(@conn, :index, transfer.address_from)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_from %></a>
-            <p class="neo-amount large-blue-link"><span class="fa fa-cubes"></span><%= transfer.amount %> <%= transfer.contract %></p>
-          </div>
-        </div>
-        <img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" class="transaction-sent-arrow" />
-        <div class="sent-to-wrapper">
-          <p class="large-detail-text"><%= gettext "Sent to" %></p>
-          <div class="individual-transaction">
-            <a href="<%= address_path(@conn, :index, transfer.address_to)%>" alt="<%= gettext "View wallet address"%>" title="<%= gettext "View wallet address"%>" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= transfer.address_to %></a>
-            <p class="gas-amount large-blue-link"><span class="fa fa-cube"></span><%= transfer.amount %> <%= transfer.contract %></p>
-          </div>
-        </div>
-      </div>
-    <% end %>
-  </section>
-<% end %>
-
 <ul id="bytecode-invocation-list">
   <%= if nil != nil do %>
 		<li class="corner-box">
