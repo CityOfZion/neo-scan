@@ -6,8 +6,6 @@ defmodule Neoscan.Repo.Migrations.Blocks do
       add(:hash, :binary, primary_key: true)
       add(:index, :integer, null: false)
       add(:merkle_root, :binary, null: false)
-      add(:previous_block_hash, :binary, null: false)
-      add(:next_block_hash, :binary, null: false)
       add(:next_consensus, :binary, null: false)
       add(:nonce, :binary, null: false)
       add(:script, {:map, :string}, null: false)

@@ -96,8 +96,6 @@ defmodule NeoscanSync.Converter do
       hash: block_raw.hash,
       index: block_raw.index,
       merkle_root: block_raw.merkle_root,
-      previous_block_hash: block_raw.previous_block_hash,
-      next_block_hash: block_raw.next_block_hash,
       next_consensus: block_raw.next_consensus,
       nonce: block_raw.nonce,
       script: block_raw.script,

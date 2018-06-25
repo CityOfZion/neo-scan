@@ -3,8 +3,8 @@
 <div class="block-navigation">
  <a href="<%= blocks_path(@conn, :page, "1") %>" class="browse-wallet-back"><%= gettext "Back to all blocks"%></a>
   <div class="address-navigation">
-  	<a href="<%= block_path( @conn, :index, render_hash(@block.next_block_hash)) %>" class="browse-wallet-next"><%= gettext "Next block"%></a>
-  	<a href="<%= block_path( @conn, :index, render_hash(@block.previous_block_hash)) %>" class="browse-wallet-previous"><%= gettext "Previous block"%></a>
+  	<a href="<%= block_path( @conn, :index, to_string(@block.index + 1)) %>" class="browse-wallet-next"><%= gettext "Next block"%></a>
+  	<a href="<%= block_path( @conn, :index, to_string(@block.index - 1)) %>" class="browse-wallet-previous"><%= gettext "Previous block"%></a>
   </div>
 </div>
 

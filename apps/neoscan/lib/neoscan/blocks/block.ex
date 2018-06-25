@@ -11,8 +11,6 @@ defmodule Neoscan.Block do
   schema "blocks" do
     field(:index, :integer)
     field(:merkle_root, :binary)
-    field(:previous_block_hash, :binary)
-    field(:next_block_hash, :binary)
     field(:next_consensus, :binary)
     field(:nonce, :binary)
     field(:script, {:map, :string})

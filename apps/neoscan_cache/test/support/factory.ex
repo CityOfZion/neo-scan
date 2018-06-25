@@ -17,8 +17,6 @@ defmodule NeoscanCache.Factory do
       hash: :crypto.strong_rand_bytes(32),
       index: sequence(1, & &1),
       merkle_root: :crypto.strong_rand_bytes(32),
-      previous_block_hash: :crypto.strong_rand_bytes(32),
-      next_block_hash: :crypto.strong_rand_bytes(32),
       next_consensus: :crypto.strong_rand_bytes(32),
       nonce: :crypto.strong_rand_bytes(32),
       script: %{

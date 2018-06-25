@@ -46,6 +46,7 @@ defmodule Neoscan.Blocks do
   end
 
   def get(hash) when is_binary(hash), do: get_block_by_hash(hash)
+  def get(index) when is_integer(index), do: get_block_by_height(index)
 
   @doc """
   Returns the list of paginated blocks.
