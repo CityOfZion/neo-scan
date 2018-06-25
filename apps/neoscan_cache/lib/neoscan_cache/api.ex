@@ -8,10 +8,6 @@ defmodule NeoscanCache.Api do
     Cache.get(:blocks)
   end
 
-  def get_transfers do
-    Cache.get(:transfers)
-  end
-
   def get_transactions do
     Cache.get(:transactions)
   end

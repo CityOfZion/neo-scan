@@ -8,7 +8,6 @@ defmodule NeoscanCache.Cache do
   alias Neoscan.Blocks
   alias Neoscan.Assets
   alias Neoscan.Transactions
-  alias Neoscan.Transfers
   alias Neoscan.Addresses
   alias Neoscan.Stats
 
@@ -131,8 +130,6 @@ defmodule NeoscanCache.Cache do
 
     transactions = Transactions.paginate_transactions(1).entries
 
-    transfers = Transfers.home_transfers()
-
     assets = Assets.get_all()
 
     stats = get_general_stats()
@@ -152,7 +149,6 @@ defmodule NeoscanCache.Cache do
 
     set(:blocks, blocks)
     set(:transactions, transactions)
-    set(:transfers, transfers)
     set(:assets, assets)
     set(:stats, stats)
     set(:addresses, addresses)
