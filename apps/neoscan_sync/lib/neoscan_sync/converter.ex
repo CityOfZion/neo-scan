@@ -64,7 +64,7 @@ defmodule NeoscanSync.Converter do
   # this function is a hack to prevent hash collision on miner transaction hash of the block 1826259 and 2000357, using
   # this hack prevent us from changing the data model (transaction hash is supposed to be unique), it might need to be
   # reviewed at a later time.
-  def get_transaction_hash(%{type: "miner_transaction", hash: hash}, %{index: 2_000_357}) do
+  def get_transaction_hash(%{type: :miner_transaction, hash: hash}, %{index: 2_000_357}) do
     :binary.encode_unsigned(:binary.decode_unsigned(hash) + 1)
   end
 
