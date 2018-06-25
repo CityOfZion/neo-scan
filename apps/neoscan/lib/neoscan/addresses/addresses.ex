@@ -96,7 +96,10 @@ defmodule Neoscan.Addresses do
       Enum.map(token_balances, fn balance ->
         %{
           balance
-          | name: Enum.reduce(balance.name, %{}, fn name, acc -> Map.merge(acc, name) end)
+          | name:
+              Enum.reduce(balance.name, %{}, fn %{"lang" => lang, "name" => name}, acc ->
+                Map.put(acc, lang, name)
+              end)
         }
       end)
 

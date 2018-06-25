@@ -76,10 +76,20 @@ defmodule NeoscanWeb.CommonView do
 
   def render_address_hash(hash), do: Base58.encode(hash)
 
+  def render_token_balance(amount, precision) when is_integer(precision) do
+    render_balance(amount / :math.pow(10, precision), precision)
+  end
+
+  def render_token_balance(amount, asset_hash) do
+    precision = NeoscanCache.Api.get_asset_precision(asset_hash)
+    render_token_balance(amount, precision)
+  end
+
   def render_balance(-0.00000001, _), do: "∞"
 
   def render_balance(amount, precision) when is_integer(precision) do
-    Number.Delimit.number_to_delimited(amount, precision: precision)
+    balance = Number.Delimit.number_to_delimited(amount, precision: precision)
+    render_amount(balance)
   end
 
   def render_balance(amount, asset_hash) do
@@ -88,9 +98,11 @@ defmodule NeoscanWeb.CommonView do
   end
 
   def render_amount(amount) do
-    to_string(amount)
+    amount
+    |> to_string()
     |> String.trim_trailing("0")
     |> String.trim_trailing(".")
+    |> (&if(&1 == "", do: "0", else: &1)).()
   end
 
   def render_date_time(date_time) do

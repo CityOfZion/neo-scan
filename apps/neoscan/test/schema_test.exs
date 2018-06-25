@@ -100,6 +100,7 @@ defmodule Neoscan.SchemaTest do
     assert address.hash == address_history.address_hash
     assert address.first_transaction_time == address_history.block_time
     assert address.last_transaction_time == address_history.block_time
+
     assert 1 == address.tx_count
 
     address_balance =

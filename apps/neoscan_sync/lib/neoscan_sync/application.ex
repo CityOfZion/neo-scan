@@ -5,6 +5,7 @@ defmodule NeoscanSync.Application do
 
   use Application
   alias NeoscanSync.Syncer
+  alias NeoscanSync.TokenSyncer
 
   @should_start Application.get_env(:neoscan_sync, :should_start)
 
@@ -12,7 +13,7 @@ defmodule NeoscanSync.Application do
     import Supervisor.Spec, warn: false
 
     # Define workers and child supervisors to be supervised
-    children = [worker(Syncer, [])]
+    children = [worker(Syncer, []), worker(TokenSyncer, [])]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options

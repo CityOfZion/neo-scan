@@ -36,9 +36,9 @@ defmodule NeoscanCache.ApiTest do
     assert "Asset not Found" == Api.get_asset_name("1234567890123456789012345678901234567890")
   end
 
-  test "check_asset/1" do
-    assert not Api.check_asset("random")
-  end
+  #  test "check_asset/1" do
+  #    assert not Api.check_asset("random")
+  #  end
 
   test "get_addresses/0" do
     assert is_list(Api.get_addresses())

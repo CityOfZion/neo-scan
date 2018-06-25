@@ -84,10 +84,9 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
     CREATE OR REPLACE FUNCTION generate_address_from_address_history() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
         INSERT INTO addresses (hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at)
-        VALUES (NEW.address_hash, NEW.block_time, NEW.block_time, 1, NEW.inserted_at, NEW.updated_at)
+        VALUES (NEW.address_hash, NEW.block_time, NEW.block_time, 0, NEW.inserted_at, NEW.updated_at)
         ON CONFLICT ON CONSTRAINT addresses_pkey DO
         UPDATE SET
-        tx_count = addresses.tx_count + EXCLUDED.tx_count,
         first_transaction_time = LEAST(addresses.first_transaction_time, EXCLUDED.first_transaction_time),
         last_transaction_time = GREATEST(addresses.last_transaction_time, EXCLUDED.last_transaction_time),
         updated_at = EXCLUDED.updated_at;

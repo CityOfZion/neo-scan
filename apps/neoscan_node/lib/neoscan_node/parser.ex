@@ -2,9 +2,7 @@ defmodule NeoscanNode.Parser do
   defp parse16("0x" <> rest), do: parse16(rest)
 
   defp parse16(string) do
-    string
-    |> String.upcase()
-    |> Base.decode16!()
+    Base.decode16!(string, case: :mixed)
   end
 
   # Base.decode64!(string, padding: false)
@@ -94,7 +92,7 @@ defmodule NeoscanNode.Parser do
       parameters: contract["parameters"],
       properties: contract["properties"],
       return_type: contract["returntype"],
-      script: parse16(contract["script"]),
+      script: if(is_nil(contract["script"]), do: nil, else: parse16(contract["script"])),
       version: contract["version"]
     }
   end

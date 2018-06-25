@@ -24,10 +24,26 @@ defmodule NeoscanWeb.AddressControllerTest do
     balance_2 =
       insert(:address_history, %{address_hash: address_history.address_hash, value: 432.5})
 
-    insert(:asset, %{transaction_hash: @neo_asset_hash, name: [%{"en" => "NEO"}]})
-    insert(:asset, %{transaction_hash: @gas_asset_hash, name: [%{"en" => "GAS"}]})
-    insert(:asset, %{transaction_hash: balance_1.asset_hash, name: [%{"en" => "token 1"}]})
-    insert(:asset, %{transaction_hash: balance_2.asset_hash, name: [%{"en" => "token 2"}]})
+    insert(:asset, %{
+      transaction_hash: @neo_asset_hash,
+      name: [%{"lang" => "en", "name" => "NEO"}]
+    })
+
+    insert(:asset, %{
+      transaction_hash: @gas_asset_hash,
+      name: [%{"lang" => "en", "name" => "GAS"}]
+    })
+
+    insert(:asset, %{
+      transaction_hash: balance_1.asset_hash,
+      name: [%{"lang" => "en", "name" => "token 1"}]
+    })
+
+    insert(:asset, %{
+      transaction_hash: balance_2.asset_hash,
+      name: [%{"lang" => "en", "name" => "token 2"}]
+    })
+
     # transaction = insert(:transaction, %{type: "contract_transaction"})
     # insert(:history, %{address_hash: address.address, txid: transaction.txid})
 
