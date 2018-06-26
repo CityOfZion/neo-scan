@@ -13,7 +13,6 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Vin
   alias Neoscan.Claim
   alias Neoscan.Transaction
-  alias Neoscan.AddressHistory
   alias Neoscan.AddressTransaction
 
   @doc """

@@ -2192,7 +2192,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
   def contract_data("0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9"), do: @contract
   def contract_data(_), do: nil
 
-  def get("http://notifications1.neeeo.org/v1/notifications/block/1444843", _, _) do
+  def get("http://notifications1.neeeo.org/v1/notifications/block/1444843?page=1", _, _) do
     {
       :ok,
       %HTTPoison.Response{
@@ -2204,7 +2204,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
             "page_len" => 500,
             "results" => [
               %{
-                "addr_from" => "AFmseVrdL9f9oyCzZefL9tG6UbvhPbdYzM",
+                "addr_from" => "",
                 "addr_to" => "ATuT3d1cM4gtg6HezpFrgMppAV3wC5Pjd9",
                 "amount" => "5065200000000000",
                 "block" => 1_444_843,
@@ -2214,7 +2214,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
                 "type" => "SmartContract.Runtime.Notify"
               },
               %{
-                "addr_from" => "AFmseVrdL9f9oyCzZefL9tG6UbvhPbdYzM",
+                "addr_from" => "",
                 "addr_to" => "AHWaJejUjvez5R6SW5kbWrMoLA9vSzTpW9",
                 "amount" => "9096780000000000",
                 "block" => 1_444_843,
@@ -2224,7 +2224,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
                 "type" => "SmartContract.Runtime.Notify"
               },
               %{
-                "addr_from" => "AFmseVrdL9f9oyCzZefL9tG6UbvhPbdYzM",
+                "addr_from" => "",
                 "addr_to" => "AN8cLUwpv7UEWTVxXgGKeuWvwoT2psMygA",
                 "amount" => "3500000000000000",
                 "block" => 1_444_843,
@@ -2234,7 +2234,8 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
                 "type" => "SmartContract.Runtime.Notify"
               }
             ],
-            "total" => 3
+            "total" => 3,
+            "total_pages" => 1
           }),
         headers: [],
         status_code: 200
@@ -2242,7 +2243,42 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     }
   end
 
-  def get("http://notifications1.neeeo.org/v1/notifications/block/1444801", _, _) do
+  def get("http://notifications1.neeeo.org/v1/notifications/block/1444902?page=" <> page, _, _) do
+    page = String.to_integer(page)
+
+    {
+      :ok,
+      %HTTPoison.Response{
+        body:
+          Poison.encode!(%{
+            "current_height" => 2_326_473,
+            "message" => "",
+            "page" => page,
+            "page_len" => 500,
+            "results" =>
+              List.duplicate(
+                %{
+                  "addr_from" => "",
+                  "addr_to" => "AN8cLUwpv7UEWTVxXgGKeuWvwoT2psMygA",
+                  "amount" => "3500000000000000",
+                  "block" => 1_444_843,
+                  "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
+                  "notify_type" => "transfer",
+                  "tx" => "0xc920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2",
+                  "type" => "SmartContract.Runtime.Notify"
+                },
+                if(page < 6, do: 500, else: 271)
+              ),
+            "total" => 2771,
+            "total_pages" => 6
+          }),
+        headers: [],
+        status_code: 200
+      }
+    }
+  end
+
+  def get("http://notifications1.neeeo.org/v1/notifications/block/1444801?page=1", _, _) do
     {
       :ok,
       %HTTPoison.Response{
@@ -2253,7 +2289,8 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
             "page" => 0,
             "page_len" => 500,
             "results" => [],
-            "total" => 0
+            "total" => 0,
+            "total_pages" => 0
           }),
         headers: [],
         status_code: 200
@@ -2261,7 +2298,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     }
   end
 
-  def get("http://notifications1.neeeo.org/v1/notifications/block/1", _, _) do
+  def get("http://notifications1.neeeo.org/v1/notifications/block/1?page=1", _, _) do
     {
       :ok,
       %HTTPoison.Response{
@@ -2272,7 +2309,8 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
             "page" => 0,
             "page_len" => 500,
             "results" => [],
-            "total" => 0
+            "total" => 0,
+            "total_pages" => 0
           }),
         headers: [],
         status_code: 200

@@ -26,9 +26,9 @@ defmodule NeoscanSync.SyncerTest do
 
     assert 2 == Enum.count(Repo.all(from(Block)))
     assert 42 == Enum.count(Repo.all(from(Transaction)))
-    assert 49 == Enum.count(Repo.all(from(Address)))
-    assert 49 == Enum.count(Repo.all(from(AddressBalance)))
-    assert 51 == Enum.count(Repo.all(from(AddressHistory)))
+    assert 48 == Enum.count(Repo.all(from(Address)))
+    assert 48 == Enum.count(Repo.all(from(AddressBalance)))
+    assert 48 == Enum.count(Repo.all(from(AddressHistory)))
     assert 3 == Enum.count(Repo.all(from(Transfer)))
   end
 end

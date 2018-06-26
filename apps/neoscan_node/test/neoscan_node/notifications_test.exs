@@ -10,9 +10,7 @@ defmodule Neoscan.Notifications.NotificationsTest do
 
     assert [
              %{
-               addr_from:
-                 <<23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 86, 123, 108,
-                   90>>,
+               addr_from: <<0>>,
                addr_to:
                  <<23, 133, 16, 77, 11, 27, 194, 133, 40, 155, 23, 113, 122, 111, 172, 170, 44,
                    189, 23, 18, 179, 85, 111, 82, 40>>,
@@ -28,9 +26,7 @@ defmodule Neoscan.Notifications.NotificationsTest do
                type: "SmartContract.Runtime.Notify"
              },
              %{
-               addr_from:
-                 <<23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 86, 123, 108,
-                   90>>,
+               addr_from: <<0>>,
                addr_to:
                  <<23, 19, 11, 137, 29, 197, 52, 27, 206, 249, 60, 7, 127, 199, 236, 86, 36, 238,
                    135, 118, 248, 220, 36, 91, 182>>,
@@ -46,9 +42,7 @@ defmodule Neoscan.Notifications.NotificationsTest do
                type: "SmartContract.Runtime.Notify"
              },
              %{
-               addr_from:
-                 <<23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 86, 123, 108,
-                   90>>,
+               addr_from: <<0>>,
                addr_to:
                  <<23, 69, 188, 181, 144, 227, 224, 251, 0, 16, 215, 191, 222, 111, 124, 211, 147,
                    130, 253, 134, 233, 108, 158, 22, 159>>,
@@ -64,6 +58,8 @@ defmodule Neoscan.Notifications.NotificationsTest do
                type: "SmartContract.Runtime.Notify"
              }
            ] == Notifications.get_block_notifications(1_444_843)
+
+    assert 2771 == Enum.count(Notifications.get_block_notifications(1_444_902))
   end
 
   test "get_token_notifications/1" do

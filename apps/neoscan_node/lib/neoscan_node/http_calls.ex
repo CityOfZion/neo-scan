@@ -49,6 +49,12 @@ defmodule NeoscanNode.HttpCalls do
   # handles a sucessful response
   defp handle_body({:ok, %{"result" => result}}), do: {:ok, result}
 
+  defp handle_body(
+         {:ok,
+          %{"results" => result, "current_height" => current_height, "total_pages" => total_pages}}
+       ),
+       do: {:ok, result, current_height, total_pages}
+
   defp handle_body({:ok, %{"results" => result, "current_height" => current_height}}),
     do: {:ok, result, current_height}
 
