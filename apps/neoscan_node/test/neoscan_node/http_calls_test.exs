@@ -14,7 +14,7 @@ defmodule Neoscan.HttpCalls.HttpCallsTest do
   end
 
   test "get/3" do
-    assert {:ok, [_ | _], _} = HttpCalls.get(@token_url)
+    assert {:ok, [_ | _], _, _} = HttpCalls.get(@token_url)
 
     assert capture_log(fn ->
              assert {:error, _} = HttpCalls.get("error")

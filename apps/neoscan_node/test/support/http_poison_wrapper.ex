@@ -2048,7 +2048,8 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
         "type" => "SmartContract.Contract.Create"
       }
     ],
-    "total" => 1
+    "total" => 1,
+    "total_pages" => 1
   }
 
   def post(url, data, headers, opts) do

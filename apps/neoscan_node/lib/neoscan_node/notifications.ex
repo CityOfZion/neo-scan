@@ -46,7 +46,7 @@ defmodule NeoscanNode.Notifications do
 
   def get_token_notifications do
     url = get_random_server()
-    {:ok, tokens, _current_height} = HttpCalls.get("#{url}/tokens")
+    {:ok, tokens, _current_height, _total_pages} = HttpCalls.get("#{url}/tokens")
     Enum.map(tokens, &Parser.parse_token/1)
   end
 
