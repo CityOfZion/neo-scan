@@ -21,7 +21,7 @@ defmodule NeoscanWeb.AddressController do
       |> redirect(to: home_path(conn, :index))
     else
       transactions = Transactions.get_for_address(binary_hash, page)
-      graph_data = []
+      graph_data = Addresses.get_balance_history(binary_hash)
 
       render(
         conn,

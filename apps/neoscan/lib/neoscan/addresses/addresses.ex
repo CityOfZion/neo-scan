@@ -18,6 +18,7 @@ defmodule Neoscan.Addresses do
   alias Neoscan.Repo
   alias Neoscan.Address
   alias Neoscan.AddressBalance
+  alias Neoscan.AddressHistory
   alias Neoscan.Asset
 
   @doc """
@@ -131,5 +132,75 @@ defmodule Neoscan.Addresses do
       )
 
     Repo.paginate(addresses_query, page: page, page_size: 15)
+  end
+
+  def get_balance_history(hash) do
+    balances = get_balances(hash)
+
+    balances =
+      Enum.reduce(balances, %{}, fn %{value: value, name: name}, acc ->
+        Map.put(acc, filter_name(name), value)
+      end)
+
+    address_history =
+      Repo.all(
+        from(
+          ah in AddressHistory,
+          where: ah.address_hash == ^hash,
+          order_by: [desc: ah.block_time],
+          preload: [:asset],
+          limit: 200
+        )
+      )
+
+    address_history =
+      address_history
+      |> Enum.group_by(& &1.block_time)
+      |> Enum.map(fn {time, balances} ->
+        %{time: DateTime.to_unix(time), assets: reduce_balance_to_assets(balances)}
+      end)
+      |> Enum.reverse()
+
+    address_history
+    |> Enum.reduce({[], balances}, fn %{assets: assets, time: time}, {acc, current} ->
+      new_balances =
+        Enum.reduce(assets, current, fn {name, value}, acc ->
+          Map.update!(acc, name, &(&1 - value))
+        end)
+
+      elem = %{
+        assets: Enum.map(assets, fn {name, _} -> %{name => Map.get(current, name)} end),
+        time: time
+      }
+
+      {[elem | acc], new_balances}
+    end)
+    |> elem(0)
+  end
+
+  defp reduce_balance_to_assets(balances) do
+    balances
+    |> Enum.filter(&(not is_nil(&1.asset)))
+    |> Enum.map(&{filter_name(&1.asset.name), &1.value})
+    |> Enum.group_by(fn {asset_name, _} -> asset_name end, fn {_, value} -> value end)
+    |> Enum.map(fn {asset_name, value_list} -> {asset_name, Enum.sum(value_list)} end)
+    |> Enum.into(%{})
+  end
+
+  defp filter_name(asset) do
+    case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
+      %{"name" => "AntShare"} ->
+        "NEO"
+
+      %{"name" => "AntCoin"} ->
+        "GAS"
+
+      %{"name" => name} ->
+        name
+
+      nil ->
+        %{"name" => name} = Enum.at(asset, 0)
+        name
+    end
   end
 end
