@@ -14,6 +14,7 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Claim
   alias Neoscan.Transaction
   alias Neoscan.AddressHistory
+  alias Neoscan.AddressTransaction
 
   @doc """
   Gets a single transaction by its hash value
@@ -132,12 +133,11 @@ defmodule Neoscan.Transactions do
     transaction_query =
       from(
         t in Transaction,
-        distinct: t.hash,
-        join: ah in AddressHistory,
-        on: ah.transaction_hash == t.hash,
-        where: ah.address_hash == ^address_hash,
+        join: at in AddressTransaction,
+        on: at.transaction_hash == t.hash,
+        where: at.address_hash == ^address_hash,
         preload: [{:vins, ^vin_query()}, :vouts, :transfers, {:claims, ^claim_query()}, :asset],
-        order_by: ah.block_time,
+        order_by: [desc: at.block_time],
         select: t
       )
 
