@@ -8,6 +8,8 @@ defmodule Neoscan.Api do
   alias Neoscan.AddressBalance
   alias Neoscan.Repo
   alias Neoscan.Block
+  alias Neoscan.Blocks
+  alias Neoscan.Counters
   import Ecto.Query
 
   @doc """
@@ -1083,8 +1085,7 @@ defmodule Neoscan.Api do
       }
   """
   def get_height do
-    {:ok, height} = NeoscanNode.get_height()
-    %{:height => height}
+    %{:height => Counters.count_blocks() - 1}
   end
 
   @doc """
@@ -1102,9 +1103,12 @@ defmodule Neoscan.Api do
     if Enum.count(range) != 2 do
       "wrong input"
     else
-      #      [height1, height2] = range
-      #      Blocks.get_fees_in_range(height1, height2)
-      %{total_net_fee: 0, total_sys_fee: 0}
+      [min, max] =
+        range
+        |> Enum.map(&String.to_integer/1)
+        |> Enum.sort()
+
+      Blocks.get_fees_in_range(min, max)
     end
   end
 

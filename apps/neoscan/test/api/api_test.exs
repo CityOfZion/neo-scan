@@ -189,17 +189,18 @@ defmodule Neoscan.Api.ApiTest do
   end
 
   test "get_height/0" do
-    assert %{height: 200} == Api.get_height()
+    insert(:counter, %{name: "blocks", value: 156})
+    assert %{height: 155} == Api.get_height()
   end
 
   test "get_fees_in_range/1" do
-    #      block = insert(:block, %{total_net_fee: 10.0, total_sys_fee: 5.0})
-    #      insert(:block, %{total_net_fee: 3.0, total_sys_fee: 7.0})
+    insert(:block, %{total_net_fee: 2.3, total_sys_fee: 1.4, index: 1})
+    insert(:block, %{total_net_fee: 2.3, total_sys_fee: 1.4, index: 750})
+    insert(:block, %{total_net_fee: 2.4, total_sys_fee: 1.5, index: 751})
 
-    #      assert %{total_net_fee: 13.0, total_sys_fee: 12.0} ==
-    #               Api.get_fees_in_range("#{block.index}-1000")
+    assert %{total_net_fee: 4.699999999999999, total_sys_fee: 2.9} ==
+             Api.get_fees_in_range("500-1000")
 
-    assert %{total_net_fee: 0, total_sys_fee: 0} == Api.get_fees_in_range("500-1000")
     assert "wrong input" == Api.get_fees_in_range("50022")
   end
 

@@ -28,10 +28,6 @@ defmodule NeoscanWeb.LayoutView do
     Controller.controller_module(conn) == NeoscanWeb.TransactionsController
   end
 
-  def is_transfers_path(conn) do
-    Controller.controller_module(conn) == NeoscanWeb.TransfersController
-  end
-
   def is_addresses_path(conn) do
     Controller.controller_module(conn) == NeoscanWeb.AddressesController
   end

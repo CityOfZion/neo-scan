@@ -52,4 +52,18 @@ defmodule Neoscan.Blocks do
     max_index = Repo.one(from(b in Block, order_by: [desc: b.index], limit: 1, select: b.index))
     if is_nil(max_index), do: -1, else: max_index
   end
+
+  def get_fees_in_range(min, max) do
+    query =
+      from(
+        b in Block,
+        where: b.index >= ^min and b.index < ^max,
+        select: %{
+          :total_sys_fee => sum(b.total_sys_fee),
+          :total_net_fee => sum(b.total_net_fee)
+        }
+      )
+
+    Repo.one(query)
+  end
 end
