@@ -74,8 +74,18 @@ defmodule NeoscanWeb.ApiController do
     json(conn, asset)
   end
 
+  defp parse_index_or_hash(value) do
+    case Integer.parse(value) do
+      {integer, ""} ->
+        integer
+
+      _ ->
+        Base.decode16!(value, case: :mixed)
+    end
+  end
+
   def get_block(conn, %{"hash" => hash}) do
-    block = cache({:get_block, hash}, Api.get_block(hash))
+    block = cache({:get_block, hash}, Api.get_block(parse_index_or_hash(hash)))
     json(conn, block)
   end
 

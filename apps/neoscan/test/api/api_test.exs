@@ -99,27 +99,25 @@ defmodule Neoscan.Api.ApiTest do
   end
 
   test "get_block/1" do
-    #      block = insert(:block)
-    #      block1 = Api.get_block(block.hash)
-    #      block2 = Api.get_block("#{block.index}")
-    #      assert block1 == block2
+    block = insert(:block, %{transactions: [insert(:transaction)]})
+    [%{hash: transaction_hash}] = block.transactions
 
     assert %{
-             confirmations: nil,
-             hash: "not found",
-             index: nil,
-             merkleroot: nil,
-             nextblockhash: nil,
-             nextconcensus: nil,
-             nonce: nil,
-             previousblockhash: nil,
-             scrip: nil,
-             size: nil,
-             time: nil,
-             transactions: nil,
-             tx_count: nil,
-             version: nil
-           } == Api.get_block("notexisting")
+             :confirmations => 1,
+             :hash => Base.encode16(block.hash, case: :lower),
+             :index => block.index,
+             :merkleroot => Base.encode16(block.merkle_root, case: :lower),
+             :nextblockhash => "",
+             :nextconsensus => Base.encode16(block.next_consensus, case: :lower),
+             :nonce => Base.encode16(block.nonce, case: :lower),
+             :previousblockhash => "",
+             :script => block.script,
+             :size => block.size,
+             :time => DateTime.to_unix(block.time),
+             :transactions => [Base.encode16(transaction_hash, case: :lower)],
+             :tx_count => block.tx_count,
+             :version => block.version
+           } == Api.get_block(block.hash)
   end
 
   test "get_last_blocks/0" do

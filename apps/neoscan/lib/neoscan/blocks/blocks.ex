@@ -6,6 +6,7 @@ defmodule Neoscan.Blocks do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Block
+  alias Neoscan.Transaction
   require Logger
 
   @page_size 15
@@ -18,8 +19,21 @@ defmodule Neoscan.Blocks do
       iex> get(456)
       nill
   """
-  def get(hash) when is_binary(hash), do: Repo.one(from(e in Block, where: e.hash == ^hash))
-  def get(index) when is_integer(index), do: Repo.one(from(e in Block, where: e.index == ^index))
+  def get(hash) when is_binary(hash) do
+    Repo.one(
+      from(e in Block, where: e.hash == ^hash, preload: [transactions: ^transaction_query()])
+    )
+  end
+
+  def get(index) when is_integer(index) do
+    Repo.one(
+      from(e in Block, where: e.index == ^index, preload: [transactions: ^transaction_query()])
+    )
+  end
+
+  defp transaction_query do
+    from(t in Transaction, select: t.hash)
+  end
 
   @doc """
   Returns the list of paginated blocks.
@@ -49,7 +63,18 @@ defmodule Neoscan.Blocks do
   end
 
   def get_max_index do
-    max_index = Repo.one(from(b in Block, order_by: [desc: b.index], limit: 1, select: b.index))
+    max_index =
+      Repo.one(
+        from(
+          b in Block,
+          order_by: [
+            desc: b.index
+          ],
+          limit: 1,
+          select: b.index
+        )
+      )
+
     if is_nil(max_index), do: -1, else: max_index
   end
 

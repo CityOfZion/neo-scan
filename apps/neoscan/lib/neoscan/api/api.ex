@@ -501,78 +501,25 @@ defmodule Neoscan.Api do
         "confirmations": integer
       }
   """
-  def get_block(_hash_or_integer) do
-    %{
-      :hash => "not found",
-      :confirmations => nil,
-      :index => nil,
-      :merkleroot => nil,
-      :nextblockhash => nil,
-      :nextconcensus => nil,
-      :nonce => nil,
-      :previousblockhash => nil,
-      :scrip => nil,
-      :size => nil,
-      :time => nil,
-      :version => nil,
-      :tx_count => nil,
-      :transactions => nil
-    }
+  def get_block(hash_or_integer) do
+    block = Blocks.get(hash_or_integer)
 
-    #    tran_query = from(t in Transaction, select: t.txid)
-    #    trans_query = from(t in Transfer, select: t.txid)
-    #
-    #    query =
-    #      try do
-    #        String.to_integer(hash_or_integer)
-    #      rescue
-    #        ArgumentError ->
-    #          from(
-    #            e in Block,
-    #            where: e.hash == ^hash_or_integer,
-    #            preload: [
-    #              transactions: ^tran_query,
-    #              transfers: ^trans_query
-    #            ]
-    #          )
-    #      else
-    #        hash_or_integer ->
-    #          from(
-    #            e in Block,
-    #            where: e.index == ^hash_or_integer,
-    #            preload: [
-    #              transactions: ^tran_query,
-    #              transfers: ^trans_query
-    #            ]
-    #          )
-    #      end
-    #
-    #    result =
-    #      case Repo.all(query)
-    #           |> List.first() do
-    #        nil ->
-    #          %{
-    #            :hash => "not found",
-    #            :confirmations => nil,
-    #            :index => nil,
-    #            :merkleroot => nil,
-    #            :nextblockhash => nil,
-    #            :nextconcensus => nil,
-    #            :nonce => nil,
-    #            :previousblockhash => nil,
-    #            :scrip => nil,
-    #            :size => nil,
-    #            :time => nil,
-    #            :version => nil,
-    #            :tx_count => nil,
-    #            :transactions => nil
-    #          }
-    #
-    #        %{} = block ->
-    #          block
-    #      end
-    #
-    #    Map.drop(result, [:inserted_at, :updated_at, :id, :__meta__, :__struct__])
+    %{
+      :hash => Base.encode16(block.hash, case: :lower),
+      :confirmations => 1,
+      :index => block.index,
+      :merkleroot => Base.encode16(block.merkle_root, case: :lower),
+      :nextblockhash => "",
+      :nextconsensus => Base.encode16(block.next_consensus, case: :lower),
+      :nonce => Base.encode16(block.nonce, case: :lower),
+      :previousblockhash => "",
+      :script => block.script,
+      :size => block.size,
+      :time => DateTime.to_unix(block.time),
+      :version => block.version,
+      :tx_count => block.tx_count,
+      :transactions => Enum.map(block.transactions, &Base.encode16(&1, case: :lower))
+    }
   end
 
   @doc """

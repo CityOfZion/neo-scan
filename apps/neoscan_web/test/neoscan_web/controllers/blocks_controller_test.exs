@@ -4,6 +4,8 @@ defmodule NeoscanWeb.BlocksControllerTest do
 
   test "/blocks/:page", %{conn: conn} do
     block = insert(:block)
+    insert(:block)
+    insert(:block)
     conn = get(conn, "/blocks/1")
     body = html_response(conn, 200)
     assert body =~ Base.encode16(block.hash)

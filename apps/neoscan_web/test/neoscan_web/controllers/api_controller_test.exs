@@ -105,12 +105,29 @@ defmodule NeoscanWeb.ApiControllerTest do
   #    assert is_list(json_response(conn, 200))
   #  end
   #
-  #  test "get_block/:hash", %{conn: conn} do
-  #    block = insert(:block)
-  #    conn = get(conn, "/api/main_net/v1/get_block/#{block.hash}")
-  #
-  #    assert block.hash == json_response(conn, 200)["hash"]
-  #  end
+  test "get_block/:hash", %{conn: conn} do
+    block = insert(:block, %{transactions: [insert(:transaction)]})
+    [%{hash: transaction_hash}] = block.transactions
+    conn = get(conn, "/api/main_net/v1/get_block/#{Base.encode16(block.hash)}")
+
+    assert %{
+             "confirmations" => 1,
+             "hash" => Base.encode16(block.hash, case: :lower),
+             "index" => block.index,
+             "merkleroot" => Base.encode16(block.merkle_root, case: :lower),
+             "nextblockhash" => "",
+             "nextconsensus" => Base.encode16(block.next_consensus, case: :lower),
+             "nonce" => Base.encode16(block.nonce, case: :lower),
+             "previousblockhash" => "",
+             "script" => block.script,
+             "size" => block.size,
+             "time" => DateTime.to_unix(block.time),
+             "transactions" => [Base.encode16(transaction_hash, case: :lower)],
+             "tx_count" => block.tx_count,
+             "version" => block.version
+           } == json_response(conn, 200)
+  end
+
   #
   #  test "get_last_blocks", %{conn: conn} do
   #    insert(:block)
