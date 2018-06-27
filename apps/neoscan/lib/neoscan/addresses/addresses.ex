@@ -10,6 +10,7 @@ defmodule Neoscan.Addresses do
                     227, 178, 223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45, 231>>
 
   @page_size 15
+  @balance_history_size 200
 
   import Ecto.Query, warn: false
 
@@ -22,54 +23,17 @@ defmodule Neoscan.Addresses do
   alias Neoscan.Asset
 
   @doc """
-  Returns a list of the latest updated addresses.
-
-  ## Examples
-
-      iex> list_latest()
-      [%Address{}, ...]
-
-  """
-  def list_latest do
-    query =
-      from(
-        a in Address,
-        order_by: [
-          desc: a.last_transaction_time
-        ],
-        limit: 15
-      )
-
-    Repo.all(query)
-  end
-
-  @doc """
   Gets a single address by its hash and send it as a map
   ## Examples
-      iex> get_address_by_hash_for_view(123)
+      iex> get(123)
       %{}
-      iex> get_address_by_hash_for_view(456)
+      iex> get(456)
       nil
   """
-  def get_address_by_hash_for_view(hash) do
+  def get(hash) do
     query = from(e in Address, where: e.hash == ^hash)
-
-    # %{:address => e.address, :tx_ids => e.histories,
-    #  :balance => e.balance, :claimed => e.claimed}
     Repo.one(query)
   end
-
-  @doc """
-  Gets a single address by its hash and send it as a map
-  ## Examples
-      iex> get_address_by_hash(123)
-      %{}
-      iex> get_address_by_hash(456)
-      nil
-  """
-  def get_address_by_hash(hash), do: get_address_by_hash_for_view(hash)
-
-  def get(hash), do: get_address_by_hash(hash)
 
   def get_balances(hash) do
     Repo.all(
@@ -111,17 +75,13 @@ defmodule Neoscan.Addresses do
     }
   end
 
-  def get_transactions_count do
-    123
-  end
-
   @doc """
   Returns the list of paginated addresses.
   ## Examples
-      iex> paginate_addresses(page)
+      iex> paginate(page)
       [%Address{}, ...]
   """
-  def paginate_addresses(page) do
+  def paginate(page) do
     addresses_query =
       from(
         e in Address,
@@ -131,7 +91,7 @@ defmodule Neoscan.Addresses do
         limit: @page_size
       )
 
-    Repo.paginate(addresses_query, page: page, page_size: 15)
+    Repo.paginate(addresses_query, page: page, page_size: @page_size)
   end
 
   def get_balance_history(hash) do
@@ -149,7 +109,7 @@ defmodule Neoscan.Addresses do
           where: ah.address_hash == ^hash,
           order_by: [desc: ah.block_time],
           preload: [:asset],
-          limit: 200
+          limit: @balance_history_size
         )
       )
 

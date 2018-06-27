@@ -25,12 +25,12 @@ defmodule NeoscanWeb.HomeController do
     result =
       case Integer.parse(value) do
         {integer, ""} ->
-          Blocks.get_block_by_height(integer)
+          Blocks.get(integer)
 
         _ ->
-          Blocks.get_block_by_hash(Helper.safe_decode_16(value)) ||
-            Transactions.get_transaction_by_hash(Helper.safe_decode_16(value)) ||
-            Addresses.get_address_by_hash(Helper.safe_decode_58(value))
+          Blocks.get(Helper.safe_decode_16(value)) ||
+            Transactions.get(Helper.safe_decode_16(value)) ||
+            Addresses.get(Helper.safe_decode_58(value))
       end
 
     redirect_search_result(conn, result)

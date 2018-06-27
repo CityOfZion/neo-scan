@@ -8,9 +8,11 @@ defmodule Neoscan.Factory do
   alias Neoscan.Claim
   alias Neoscan.AddressHistory
   alias Neoscan.AddressBalance
+  alias Neoscan.AddressTransaction
   alias Neoscan.Address
   alias Neoscan.Transfer
   alias Neoscan.Asset
+  alias Neoscan.Counter
 
   def block_factory do
     %Block{
@@ -60,6 +62,13 @@ defmodule Neoscan.Factory do
     }
   end
 
+  def counter_factory do
+    %Counter{
+      name: sequence("name"),
+      value: sequence(1, & &1)
+    }
+  end
+
   def vin_factory do
     %Vin{
       transaction_hash: :crypto.strong_rand_bytes(32),
@@ -93,6 +102,14 @@ defmodule Neoscan.Factory do
       address_hash: :crypto.strong_rand_bytes(32),
       asset_hash: :crypto.strong_rand_bytes(32),
       value: 5.0
+    }
+  end
+
+  def address_transaction_factory do
+    %AddressTransaction{
+      address_hash: :crypto.strong_rand_bytes(32),
+      transaction_hash: :crypto.strong_rand_bytes(32),
+      block_time: DateTime.utc_now()
     }
   end
 

@@ -9,7 +9,7 @@ defmodule NeoscanCache.Cache do
   alias Neoscan.Assets
   alias Neoscan.Transactions
   alias Neoscan.Addresses
-  alias Neoscan.Stats
+  alias Neoscan.Counters
 
   alias Neoprice.NeoBtc
   alias Neoprice.NeoUsd
@@ -116,25 +116,25 @@ defmodule NeoscanCache.Cache do
 
   def get_general_stats do
     %{
-      :total_blocks => Stats.count_blocks(),
-      :total_transactions => Stats.count_transactions(),
-      :total_transfers => Stats.count_transfers(),
-      :total_addresses => Stats.count_addresses()
+      :total_blocks => Counters.count_blocks(),
+      :total_transactions => Counters.count_transactions(),
+      :total_transfers => 0,
+      :total_addresses => Counters.count_addresses()
     }
   end
 
   # update nodes and stats information
   def sync() do
     Process.send_after(self(), :sync, @update_interval)
-    blocks = Blocks.home_blocks()
+    blocks = Blocks.paginate(1).entries
 
-    transactions = Transactions.paginate_transactions(1).entries
+    transactions = Transactions.paginate(1).entries
 
     assets = Assets.get_all()
 
     stats = get_general_stats()
 
-    addresses = Addresses.list_latest()
+    addresses = Addresses.paginate(1).entries
 
     price = %{
       neo: %{

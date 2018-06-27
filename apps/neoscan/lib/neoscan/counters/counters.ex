@@ -1,4 +1,4 @@
-defmodule Neoscan.Stats do
+defmodule Neoscan.Counters do
   @moduledoc false
 
   import Ecto.Query, warn: false
@@ -17,10 +17,6 @@ defmodule Neoscan.Stats do
     Repo.one(from(c in Counter, where: c.name == "transactions", select: c.value))
   end
 
-  def count_transfers do
-    0
-  end
-
   def count_transactions do
     [
       %{
@@ -37,9 +33,5 @@ defmodule Neoscan.Stats do
       _count_transactions(),
       0
     ]
-  end
-
-  def count_transactions_for_asset(_) do
-    0
   end
 end

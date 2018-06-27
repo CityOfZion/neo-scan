@@ -83,12 +83,87 @@ defmodule Neoscan.AddressesTest do
       name: [%{"lang" => "en", "name" => "GAS"}]
     })
 
+    insert(:asset, %{
+      transaction_hash: <<4, 5, 6>>,
+      name: [%{"lang" => "zh", "name" => "My Token"}]
+    })
+
     balances = Addresses.get_balance_history(address_history.address_hash)
 
     assert [
              %{assets: [%{"NEO" => 2.0}], time: _},
              %{assets: [%{"GAS" => 0.213}, %{"NEO" => 5.0}], time: _},
-             %{assets: [%{"NEO" => 4.0}], time: _}
+             %{assets: [%{"My Token" => 2.0}, %{"NEO" => 4.0}], time: _}
            ] = balances
+  end
+
+  test "get/1" do
+    address = insert(:address)
+    assert address == Addresses.get(address.hash)
+  end
+
+  test "get_split_balance/1" do
+    block_time0 = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 22)
+
+    address_history =
+      insert(:address_history, %{asset_hash: @neo_asset_hash, value: 2.0, block_time: block_time0})
+
+    block_time = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 12)
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: @neo_asset_hash,
+      value: 3.0,
+      block_time: block_time
+    })
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: @gas_asset_hash,
+      value: 0.2130,
+      block_time: block_time
+    })
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: <<1, 2, 3>>,
+      value: 12302.0,
+      block_time: block_time
+    })
+
+    insert(:asset, %{
+      transaction_hash: @neo_asset_hash,
+      name: [%{"lang" => "en", "name" => "NEO"}]
+    })
+
+    insert(:asset, %{
+      transaction_hash: @gas_asset_hash,
+      name: [%{"lang" => "en", "name" => "GAS"}]
+    })
+
+    insert(:asset, %{
+      transaction_hash: <<1, 2, 3>>,
+      precision: 25,
+      name: [%{"lang" => "en", "name" => "my token"}]
+    })
+
+    assert %{
+             gas: 0.213,
+             neo: 5.0,
+             tokens: [
+               %{
+                 asset: <<1, 2, 3>>,
+                 name: %{"en" => "my token"},
+                 precision: 25,
+                 value: 12302.0
+               }
+             ]
+           } == Addresses.get_split_balance(address_history.address_hash)
+  end
+
+  test "paginate/1" do
+    for _ <- 1..20, do: insert(:address)
+    assert 15 == Enum.count(Addresses.paginate(1))
+    assert 5 == Enum.count(Addresses.paginate(2))
   end
 end

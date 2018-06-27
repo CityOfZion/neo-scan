@@ -39,12 +39,20 @@ defmodule Neoscan.SchemaTest do
     _address = insert(:address)
   end
 
+  test "create counter" do
+    _counter = insert(:counter)
+  end
+
   test "create address_balance" do
     _address_balance = insert(:address_balance)
   end
 
   test "create address_history" do
     _address_history = insert(:address_history)
+  end
+
+  test "create address_transaction" do
+    _address_transaction = insert(:address_transaction)
   end
 
   test "vout vin trigger (vin inserted after vout)" do

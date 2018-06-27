@@ -16,27 +16,14 @@ defmodule Neoscan.Transactions do
   alias Neoscan.AddressTransaction
 
   @doc """
-  Gets a single transaction by its hash value
-  ## Examples
-      iex> get_block_by_hash(123)
-      %Block{}
-      iex> get_block_by_hash(456)
-      nil
-  """
-  def get_transaction_by_hash(hash) do
-    query = from(t in Transaction, where: t.hash == ^hash)
-    Repo.one(query)
-  end
-
-  @doc """
   Gets a single transaction by its hash and send it as a map
   ## Examples
-      iex> get_block_by_hash_for_view(123)
+      iex> get(123)
       %{}
-      iex> get_block_by_hash_for_view(456)
+      iex> get(456)
       nil
   """
-  def get_transaction_by_hash_for_view(hash) do
+  def get(hash) do
     query =
       from(
         e in Transaction,
@@ -57,12 +44,10 @@ defmodule Neoscan.Transactions do
   @doc """
   Returns the list of paginated transactions.
   ## Examples
-      iex> paginate_transactions(page)
+      iex> paginate(page)
       [%Transaction{}, ...]
   """
-  def paginate_transactions(pag), do: paginate_transactions(pag, nil)
-
-  def paginate_transactions(pag, _) do
+  def paginate(page) do
     transaction_query =
       from(
         t in Transaction,
@@ -81,7 +66,7 @@ defmodule Neoscan.Transactions do
     # override total entries to avoid counting the whole set
     Repo.paginate(
       transaction_query,
-      page: pag,
+      page: page,
       page_size: @page_size,
       options: [total_entries: 10_000]
     )

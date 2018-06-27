@@ -184,6 +184,14 @@ defmodule Neoscan.Api.ApiTest do
     assert 5 == Enum.count(Api.get_all_nodes())
   end
 
+  test "get_nodes/0" do
+    assert 5 == Enum.count(Api.get_nodes().urls)
+  end
+
+  test "get_height/0" do
+    assert %{height: 200} == Api.get_height()
+  end
+
   test "get_fees_in_range/1" do
     #      block = insert(:block, %{total_net_fee: 10.0, total_sys_fee: 5.0})
     #      insert(:block, %{total_net_fee: 3.0, total_sys_fee: 7.0})
