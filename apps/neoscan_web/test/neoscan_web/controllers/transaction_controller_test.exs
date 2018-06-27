@@ -20,6 +20,10 @@ defmodule NeoscanWeb.TransactionControllerTest do
       conn = get(conn, "/transaction/#{Base.encode16(transaction.hash)}")
       body = html_response(conn, 200)
       assert body =~ Base.encode16(transaction.hash)
+
+      conn = get(conn, "/transaction/#{Base.encode16(transaction.hash, case: :lower)}")
+      body = html_response(conn, 200)
+      assert body =~ Base.encode16(transaction.hash)
     end
 
     #    conn = get(conn, "/transaction/random")

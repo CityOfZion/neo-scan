@@ -22,7 +22,7 @@ defmodule NeoscanWeb.BlockController do
         integer
 
       _ ->
-        Base.decode16!(value)
+        Base.decode16!(value, case: :mixed)
     end
   end
 end

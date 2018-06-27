@@ -4,7 +4,7 @@ defmodule NeoscanWeb.TransactionController do
   alias Neoscan.Transactions
 
   def index(conn, %{"hash" => transaction_hash}) do
-    transaction_hash = Base.decode16!(transaction_hash)
+    transaction_hash = Base.decode16!(transaction_hash, case: :mixed)
     transaction = Transactions.get(transaction_hash)
     render(conn, "transaction.html", transaction: transaction)
   end

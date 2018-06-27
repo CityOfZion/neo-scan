@@ -10,6 +10,11 @@ defmodule NeoscanWeb.BlockControllerTest do
     body = html_response(conn, 200)
     assert body =~ block_hash
 
+    block_hash_downcase = Base.encode16(block.hash, case: :lower)
+    conn = get(conn, "/block/#{block_hash_downcase}")
+    body = html_response(conn, 200)
+    assert body =~ block_hash
+
     conn = get(conn, "/block/#{block_hash}/1")
     body = html_response(conn, 200)
     assert body =~ block_hash
