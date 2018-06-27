@@ -10,6 +10,8 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
       timestamps()
     end
 
+    # generate address history on vouts insertion (+)
+
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vouts() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
@@ -25,6 +27,8 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
       AFTER INSERT ON vouts FOR each row
       EXECUTE PROCEDURE generate_address_history_from_vouts();
     """
+
+    # generate address history on vouts insert (-) if vin is already present
 
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vouts2() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
@@ -43,6 +47,8 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
       EXECUTE PROCEDURE generate_address_history_from_vouts2();
     """
 
+    # generate address history on vins insert (-) if vout is already present
+
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vins() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
@@ -59,6 +65,8 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
       AFTER INSERT ON vins FOR each row
       EXECUTE PROCEDURE generate_address_history_from_vins();
     """
+
+    # generate address balance from address history
 
     execute """
     CREATE OR REPLACE FUNCTION generate_address_balances_from_address_history() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
@@ -79,6 +87,8 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
       AFTER INSERT ON address_histories FOR each row
       EXECUTE PROCEDURE generate_address_balances_from_address_history();
     """
+
+    # generate address summary from address history
 
     execute """
     CREATE OR REPLACE FUNCTION generate_address_from_address_history() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
