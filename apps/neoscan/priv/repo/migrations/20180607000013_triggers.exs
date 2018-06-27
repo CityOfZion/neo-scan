@@ -25,6 +25,10 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vouts2() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
+        UPDATE vouts SET spent=(EXISTS(SELECT 1 FROM vins
+          WHERE vout_n = NEW.n AND vout_transaction_hash = NEW.transaction_hash))
+          WHERE n = NEW.n AND transaction_hash = NEW.transaction_hash;
+
         INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
         SELECT NEW.address_hash, NEW.transaction_hash, NEW.asset_hash, NEW.value * -1.0, block_time, inserted_at, updated_at FROM vins
         WHERE vout_n = NEW.n and vout_transaction_hash = NEW.transaction_hash;
@@ -44,6 +48,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vins() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
+        UPDATE vouts SET spent = true WHERE n = NEW.vout_n and transaction_hash = NEW.vout_transaction_hash;
+
         INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
         SELECT address_hash, NEW.transaction_hash, asset_hash, value * -1.0, NEW.block_time, NEW.inserted_at, NEW.updated_at FROM vouts
         WHERE n = NEW.vout_n and transaction_hash = NEW.vout_transaction_hash;

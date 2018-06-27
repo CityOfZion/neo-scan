@@ -6,6 +6,7 @@ defmodule Neoscan.SchemaTest do
   alias Neoscan.Address
   alias Neoscan.AddressHistory
   alias Neoscan.AddressBalance
+  alias Neoscan.Vout
 
   test "create block" do
     _block = insert(:block)
@@ -29,6 +30,39 @@ defmodule Neoscan.SchemaTest do
 
   test "create vin" do
     _vin = insert(:vin)
+  end
+
+  test "toggle vout spending" do
+    vin = insert(:vin)
+    insert(:vout, %{n: vin.vout_n, transaction_hash: vin.vout_transaction_hash})
+
+    vout =
+      Repo.one(
+        from(
+          v in Vout,
+          where: v.n == ^vin.vout_n and v.transaction_hash == ^vin.vout_transaction_hash
+        )
+      )
+
+    assert vout.spent
+
+    vout = insert(:vout)
+
+    vout =
+      Repo.one(
+        from(v in Vout, where: v.n == ^vout.n and v.transaction_hash == ^vout.transaction_hash)
+      )
+
+    assert not vout.spent
+
+    insert(:vin, %{vout_n: vout.n, vout_transaction_hash: vout.transaction_hash})
+
+    vout =
+      Repo.one(
+        from(v in Vout, where: v.n == ^vout.n and v.transaction_hash == ^vout.transaction_hash)
+      )
+
+    assert vout.spent
   end
 
   test "create claim" do
