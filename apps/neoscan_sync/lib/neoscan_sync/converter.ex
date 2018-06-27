@@ -20,6 +20,7 @@ defmodule NeoscanSync.Converter do
     %Vin{
       vout_n: vin_raw.vout_n,
       vout_transaction_hash: vin_raw.vout_transaction_hash,
+      block_index: block_raw.index,
       block_time: block_raw.time
     }
   end

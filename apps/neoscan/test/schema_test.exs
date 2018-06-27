@@ -45,6 +45,7 @@ defmodule Neoscan.SchemaTest do
       )
 
     assert vout.spent
+    assert vout.end_block_index == vin.block_index
 
     vout = insert(:vout)
 
@@ -54,8 +55,9 @@ defmodule Neoscan.SchemaTest do
       )
 
     assert not vout.spent
+    assert is_nil(vout.end_block_index)
 
-    insert(:vin, %{vout_n: vout.n, vout_transaction_hash: vout.transaction_hash})
+    vin = insert(:vin, %{vout_n: vout.n, vout_transaction_hash: vout.transaction_hash})
 
     vout =
       Repo.one(
@@ -63,6 +65,7 @@ defmodule Neoscan.SchemaTest do
       )
 
     assert vout.spent
+    assert vout.end_block_index == vin.block_index
   end
 
   test "create claim" do

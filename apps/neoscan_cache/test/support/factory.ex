@@ -82,6 +82,7 @@ defmodule NeoscanCache.Factory do
       transaction_hash: :crypto.strong_rand_bytes(32),
       vout_transaction_hash: :crypto.strong_rand_bytes(32),
       vout_n: sequence(1, & &1),
+      block_index: sequence(1, & &1),
       block_time: DateTime.utc_now()
     }
   end

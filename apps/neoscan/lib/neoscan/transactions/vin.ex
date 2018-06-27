@@ -15,6 +15,7 @@ defmodule Neoscan.Vin do
 
     field(:vout_transaction_hash, :binary)
     field(:vout_n, :integer)
+    field(:block_index, :integer)
     field(:block_time, :utc_datetime)
 
     timestamps()
