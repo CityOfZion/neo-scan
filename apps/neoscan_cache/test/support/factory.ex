@@ -8,9 +8,23 @@ defmodule NeoscanCache.Factory do
   alias Neoscan.Claim
   alias Neoscan.AddressHistory
   alias Neoscan.AddressBalance
+  alias Neoscan.AddressTransaction
   alias Neoscan.Address
   alias Neoscan.Transfer
   alias Neoscan.Asset
+  alias Neoscan.Counter
+
+  @transaction_type [
+    "contract_transaction",
+    "claim_transaction",
+    "invocation_transaction",
+    "enrollment_transaction",
+    "state_transaction",
+    "issue_transaction",
+    # "register_transaction",
+    "publish_transaction",
+    "miner_transaction"
+  ]
 
   def block_factory do
     %Block{
@@ -20,7 +34,7 @@ defmodule NeoscanCache.Factory do
       next_consensus: :crypto.strong_rand_bytes(32),
       nonce: :crypto.strong_rand_bytes(32),
       script: %{
-        sequence("scripthash") => sequence("scripthashinner")
+        "invocation" => Base.encode16(:crypto.strong_rand_bytes(32))
       },
       size: 1526,
       time: DateTime.utc_now(),
@@ -44,7 +58,7 @@ defmodule NeoscanCache.Factory do
       nonce: 5,
       scripts: [],
       size: 123,
-      type: "machin",
+      type: Enum.random(@transaction_type),
       version: 0
     }
   end
@@ -56,6 +70,9 @@ defmodule NeoscanCache.Factory do
       address_hash: :crypto.strong_rand_bytes(32),
       asset_hash: :crypto.strong_rand_bytes(32),
       value: 1.23,
+      claimed: false,
+      spent: false,
+      start_block_index: sequence(1, & &1),
       block_time: DateTime.utc_now()
     }
   end
@@ -96,6 +113,14 @@ defmodule NeoscanCache.Factory do
     }
   end
 
+  def address_transaction_factory do
+    %AddressTransaction{
+      address_hash: :crypto.strong_rand_bytes(32),
+      transaction_hash: :crypto.strong_rand_bytes(32),
+      block_time: DateTime.utc_now()
+    }
+  end
+
   def address_factory do
     %Address{
       hash: :crypto.strong_rand_bytes(32),
@@ -122,13 +147,20 @@ defmodule NeoscanCache.Factory do
       transaction_hash: :crypto.strong_rand_bytes(32),
       admin: :crypto.strong_rand_bytes(32),
       amount: 5.0,
-      name: [%{"en" => "truc"}],
+      name: [%{"lang" => "en", "name" => "truc"}],
       owner: :crypto.strong_rand_bytes(32),
       precision: 12,
       type: "token",
       issued: 1.0,
       contract: :crypto.strong_rand_bytes(32),
       block_time: DateTime.utc_now()
+    }
+  end
+
+  def counter_factory do
+    %Counter{
+      name: sequence("name"),
+      value: sequence(1, & &1)
     }
   end
 end

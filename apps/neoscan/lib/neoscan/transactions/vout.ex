@@ -36,6 +36,10 @@ defmodule Neoscan.Vout do
 
     field(:value, :float)
     field(:block_time, :utc_datetime)
+    field(:claimed, :boolean)
+    field(:spent, :boolean)
+    field(:start_block_index, :integer)
+    field(:end_block_index, :integer)
 
     timestamps()
   end

@@ -8,9 +8,11 @@ defmodule NeoscanWeb.Factory do
   alias Neoscan.Claim
   alias Neoscan.AddressHistory
   alias Neoscan.AddressBalance
+  alias Neoscan.AddressTransaction
   alias Neoscan.Address
   alias Neoscan.Transfer
   alias Neoscan.Asset
+  alias Neoscan.Counter
 
   @transaction_type [
     "contract_transaction",
@@ -68,6 +70,9 @@ defmodule NeoscanWeb.Factory do
       address_hash: :crypto.strong_rand_bytes(32),
       asset_hash: :crypto.strong_rand_bytes(32),
       value: 1.23,
+      claimed: false,
+      spent: false,
+      start_block_index: sequence(1, & &1),
       block_time: DateTime.utc_now()
     }
   end
@@ -108,6 +113,14 @@ defmodule NeoscanWeb.Factory do
     }
   end
 
+  def address_transaction_factory do
+    %AddressTransaction{
+      address_hash: :crypto.strong_rand_bytes(32),
+      transaction_hash: :crypto.strong_rand_bytes(32),
+      block_time: DateTime.utc_now()
+    }
+  end
+
   def address_factory do
     %Address{
       hash: :crypto.strong_rand_bytes(32),
@@ -141,6 +154,13 @@ defmodule NeoscanWeb.Factory do
       issued: 1.0,
       contract: :crypto.strong_rand_bytes(32),
       block_time: DateTime.utc_now()
+    }
+  end
+
+  def counter_factory do
+    %Counter{
+      name: sequence("name"),
+      value: sequence(1, & &1)
     }
   end
 end

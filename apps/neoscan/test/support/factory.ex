@@ -14,6 +14,18 @@ defmodule Neoscan.Factory do
   alias Neoscan.Asset
   alias Neoscan.Counter
 
+  @transaction_type [
+    "contract_transaction",
+    "claim_transaction",
+    "invocation_transaction",
+    "enrollment_transaction",
+    "state_transaction",
+    "issue_transaction",
+    # "register_transaction",
+    "publish_transaction",
+    "miner_transaction"
+  ]
+
   def block_factory do
     %Block{
       hash: :crypto.strong_rand_bytes(32),
@@ -22,7 +34,7 @@ defmodule Neoscan.Factory do
       next_consensus: :crypto.strong_rand_bytes(32),
       nonce: :crypto.strong_rand_bytes(32),
       script: %{
-        sequence("scripthash") => sequence("scripthashinner")
+        "invocation" => Base.encode16(:crypto.strong_rand_bytes(32))
       },
       size: 1526,
       time: DateTime.utc_now(),
@@ -46,7 +58,7 @@ defmodule Neoscan.Factory do
       nonce: 5,
       scripts: [],
       size: 123,
-      type: "machin",
+      type: Enum.random(@transaction_type),
       version: 0
     }
   end
@@ -58,14 +70,10 @@ defmodule Neoscan.Factory do
       address_hash: :crypto.strong_rand_bytes(32),
       asset_hash: :crypto.strong_rand_bytes(32),
       value: 1.23,
+      claimed: false,
+      spent: false,
+      start_block_index: sequence(1, & &1),
       block_time: DateTime.utc_now()
-    }
-  end
-
-  def counter_factory do
-    %Counter{
-      name: sequence("name"),
-      value: sequence(1, & &1)
     }
   end
 
@@ -139,13 +147,20 @@ defmodule Neoscan.Factory do
       transaction_hash: :crypto.strong_rand_bytes(32),
       admin: :crypto.strong_rand_bytes(32),
       amount: 5.0,
-      name: [%{"en" => "truc"}],
+      name: [%{"lang" => "en", "name" => "truc"}],
       owner: :crypto.strong_rand_bytes(32),
       precision: 12,
       type: "token",
       issued: 1.0,
       contract: :crypto.strong_rand_bytes(32),
       block_time: DateTime.utc_now()
+    }
+  end
+
+  def counter_factory do
+    %Counter{
+      name: sequence("name"),
+      value: sequence(1, & &1)
     }
   end
 end
