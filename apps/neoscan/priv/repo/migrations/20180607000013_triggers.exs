@@ -28,7 +28,9 @@ defmodule Neoscan.Repo.Migrations.Triggers do
         UPDATE vouts SET spent = (EXISTS(SELECT 1 FROM vins
           WHERE vout_n = NEW.n AND vout_transaction_hash = NEW.transaction_hash)),
           end_block_index = (SELECT block_index FROM vins
-          WHERE vout_n = NEW.n AND vout_transaction_hash = NEW.transaction_hash)
+          WHERE vout_n = NEW.n AND vout_transaction_hash = NEW.transaction_hash),
+          claimed = (EXISTS(SELECT 1 FROM claims
+          WHERE vout_n = NEW.n AND vout_transaction_hash = NEW.transaction_hash))
           WHERE n = NEW.n AND transaction_hash = NEW.transaction_hash;
 
         INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
@@ -65,6 +67,23 @@ defmodule Neoscan.Repo.Migrations.Triggers do
       CREATE TRIGGER generate_address_history_from_vins_trigger
       AFTER INSERT ON vins FOR each row
       EXECUTE PROCEDURE generate_address_history_from_vins();
+    """
+
+    # toggle vout claimed on claim insertion
+
+    execute """
+    CREATE OR REPLACE FUNCTION toggle_vout_claimed_on_claim_insertion() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        UPDATE vouts SET claimed = true WHERE n = NEW.vout_n and transaction_hash = NEW.vout_transaction_hash;
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER toggle_vout_claimed_on_claim_insertion_trigger
+      AFTER INSERT ON claims FOR each row
+      EXECUTE PROCEDURE toggle_vout_claimed_on_claim_insertion();
     """
 
     # generate address summary from address history
