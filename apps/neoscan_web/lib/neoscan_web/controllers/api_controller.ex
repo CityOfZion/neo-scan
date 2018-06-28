@@ -79,7 +79,7 @@ defmodule NeoscanWeb.ApiController do
 
   # for future use
   def get_claimed(conn, %{"hash" => hash}) do
-    claimed = cache({:get_claimed, hash}, Api.get_claimed(hash))
+    claimed = cache({:get_claimed, hash}, Api.get_claimed(parse_index_or_hash(hash)))
     json(conn, claimed)
   end
 

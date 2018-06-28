@@ -30,12 +30,38 @@ defmodule NeoscanWeb.ApiControllerTest do
   #           } == json_response(conn, 200)
   #  end
   #
-  #  test "get_claimed/:hash", %{conn: conn} do
-  #    address = insert(:address)
-  #    conn = get(conn, "/api/main_net/v1/get_claimed/#{address.address}")
-  #
-  #    assert address.address == json_response(conn, 200)["address"]
-  #  end
+  test "get_claimed/:hash", %{conn: conn} do
+    vout1 = insert(:vout)
+    insert(:vout, %{address_hash: vout1.address_hash})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash})
+    vout4 = insert(:vout, %{address_hash: vout1.address_hash})
+    insert(:claim, %{vout_n: vout1.n, vout_transaction_hash: vout1.transaction_hash})
+    claim3 = insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
+
+    insert(:claim, %{
+      transaction_hash: claim3.transaction_hash,
+      vout_n: vout4.n,
+      vout_transaction_hash: vout4.transaction_hash
+    })
+
+    conn = get(conn, "/api/main_net/v1/get_claimed/#{Base.encode16(vout1.address_hash)}")
+
+    assert %{
+             "address" => Base58.encode(vout1.address_hash),
+             "claimed" => [
+               %{
+                 "txids" => [Base.encode16(vout1.transaction_hash, case: :lower)]
+               },
+               %{
+                 "txids" => [
+                   Base.encode16(vout3.transaction_hash, case: :lower),
+                   Base.encode16(vout4.transaction_hash, case: :lower)
+                 ]
+               }
+             ]
+           } == json_response(conn, 200)
+  end
+
   #
   #  test "get_unclaimed/:hash", %{conn: conn} do
   #    address = insert(:address)

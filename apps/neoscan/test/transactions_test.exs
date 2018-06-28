@@ -43,4 +43,21 @@ defmodule Neoscan.TransactionsTest do
     transactions = Transactions.get_for_address(address_history.address_hash, 1)
     assert 2 == Enum.count(transactions)
   end
+
+  test "get_claimed_vouts/1" do
+    vout1 = insert(:vout)
+    insert(:vout, %{address_hash: vout1.address_hash})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash})
+    claim1 = insert(:claim, %{vout_n: vout1.n, vout_transaction_hash: vout1.transaction_hash})
+    insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
+
+    start_block_index = vout1.start_block_index
+    claim_transaction_hash = claim1.transaction_hash
+
+    assert [
+             {%{start_block_index: ^start_block_index},
+              %{transaction_hash: ^claim_transaction_hash}},
+             {%{}, %{}}
+           ] = Transactions.get_claimed_vouts(vout1.address_hash)
+  end
 end

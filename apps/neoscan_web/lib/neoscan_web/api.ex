@@ -74,40 +74,25 @@ defmodule NeoscanWeb.Api do
               "tx_id_string",
               "tx_id_string",
               ...
-            ],
-            "asset": "name_string",
-            "amount": "float",
+            ]
           },
           ...
         ],
         "address": "hash_string"
       }
   """
-  def get_claimed(_hash) do
-    %{:address => "not found", :claimed => nil}
-    #    claim_query = from(h in Claim, select: %{txids: h.txids})
-    #
-    #    query =
-    #      from(
-    #        e in Address,
-    #        where: e.address == ^hash,
-    #        preload: [
-    #          claimed: ^claim_query
-    #        ],
-    #        select: e
-    #      )
-    #
-    #    result =
-    #      case Repo.all(query)
-    #           |> List.first() do
-    #        nil ->
-    #          %{:address => "not found", :claimed => nil}
-    #
-    #        %{:address => hash, :claimed => claimed} ->
-    #          %{:address => hash, :claimed => claimed}
-    #      end
-    #
-    #    result
+  def get_claimed(address_hash) do
+    claimed = Transactions.get_claimed_vouts(address_hash)
+
+    claimed =
+      Enum.group_by(
+        claimed,
+        fn {_vout, claim} -> claim.transaction_hash end,
+        fn {vout, _claim} -> Base.encode16(vout.transaction_hash, case: :lower) end
+      )
+
+    claimed = Enum.map(claimed, fn {_, txids} -> %{txids: txids} end)
+    %{:address => Base58.encode(address_hash), :claimed => claimed}
   end
 
   @doc """

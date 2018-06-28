@@ -177,4 +177,16 @@ defmodule Neoscan.Transactions do
       options: [total_entries: 10_000]
     )
   end
+
+  def get_claimed_vouts(address_hash) do
+    Repo.all(
+      from(
+        vout in Vout,
+        join: claim in Claim,
+        on: claim.vout_n == vout.n and claim.vout_transaction_hash == vout.transaction_hash,
+        where: vout.address_hash == ^address_hash,
+        select: {vout, claim}
+      )
+    )
+  end
 end
