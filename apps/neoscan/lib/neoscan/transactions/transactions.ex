@@ -42,6 +42,51 @@ defmodule Neoscan.Transactions do
   end
 
   @doc """
+  Specific query for API
+  """
+
+  def api_get(hash) do
+    transaction = get(hash)
+
+    vouts =
+      Repo.all(
+        from(
+          v in Vout,
+          order_by: [asc: v.n],
+          where: v.transaction_hash == ^transaction.hash,
+          preload: [:asset]
+        )
+      )
+
+    vins =
+      Repo.all(
+        from(
+          v in Vout,
+          join: vin in Vin,
+          on: vin.vout_n == v.n and vin.vout_transaction_hash == v.transaction_hash,
+          where: vin.transaction_hash == ^transaction.hash,
+          preload: [:asset]
+        )
+      )
+
+    claims =
+      Repo.all(
+        from(
+          v in Vout,
+          join: claim in Claim,
+          on: claim.vout_n == v.n and claim.vout_transaction_hash == v.transaction_hash,
+          where: claim.transaction_hash == ^transaction.hash,
+          preload: [:asset]
+        )
+      )
+
+    transaction
+    |> Map.put(:vins, vins)
+    |> Map.put(:vouts, vouts)
+    |> Map.put(:claims, claims)
+  end
+
+  @doc """
   Returns the list of paginated transactions.
   ## Examples
       iex> paginate(page)

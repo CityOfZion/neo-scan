@@ -1,7 +1,7 @@
 defmodule NeoscanWeb.ApiController do
   use NeoscanWeb, :controller
 
-  alias Neoscan.Api
+  alias NeoscanWeb.Api
   alias NeoscanCache.Api, as: CacheApi
 
   defmacro cache(key, value, ttl \\ 10_000) do
@@ -85,7 +85,8 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_block(conn, %{"hash" => hash}) do
-    block = cache({:get_block, hash}, Api.get_block(parse_index_or_hash(hash)))
+    hash = parse_index_or_hash(hash)
+    block = cache({:get_block, hash}, Api.get_block(hash))
     json(conn, block)
   end
 
@@ -100,6 +101,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_transaction(conn, %{"hash" => hash}) do
+    hash = parse_index_or_hash(hash)
     transaction = cache({:get_transaction, hash}, Api.get_transaction(hash))
     json(conn, transaction)
   end

@@ -1,15 +1,14 @@
-defmodule Neoscan.Api do
+defmodule NeoscanWeb.Api do
   @moduledoc """
     Main API for accessing data from the explorer.
     All data is provided through GET requests in `/api/main_net/v1`.
     Testnet isn't currently available.
   """
 
-  alias Neoscan.AddressBalance
-  alias Neoscan.Repo
   alias Neoscan.Blocks
   alias Neoscan.Counters
-  import Ecto.Query
+  alias Neoscan.Transactions
+  alias Neoscan.Addresses
 
   @doc """
   Returns the balance for an address from its `hash_string`
@@ -35,8 +34,7 @@ defmodule Neoscan.Api do
       }
   """
   def get_balance(hash) do
-    query = from(e in AddressBalance, where: e.address_hash == ^hash)
-    balances = Repo.all(query)
+    balances = Addresses.get_balances(hash)
 
     if balances == [] do
       %{:address => "not found", :balance => nil, :unclaimed => 0}
@@ -55,8 +53,7 @@ defmodule Neoscan.Api do
       }
   """
   def get_unclaimed(hash) do
-    query = from(e in AddressBalance, where: e.address_hash == ^hash)
-    balances = Repo.all(query)
+    balances = Addresses.get_balances(hash)
 
     if balances == [] do
       %{:address => "not found", :unclaimed => 0}
@@ -640,93 +637,53 @@ defmodule Neoscan.Api do
         "asset": array
       }
   """
-  def get_transaction(_hash) do
+  def get_transaction(hash) do
+    transaction = Transactions.api_get(hash)
+    render_transaction(transaction)
+  end
+
+  defp render_vout(vout) do
     %{
-      :txid => "not found",
-      :attributes => nil,
-      :net_fee => nil,
-      :scripts => nil,
-      :size => nil,
-      :sys_fee => nil,
-      :type => nil,
-      :version => nil,
-      :vin => nil,
-      :vouts => nil,
-      :time => nil,
-      :block_hash => nil,
-      :block_height => nil,
+      value: vout.value,
+      n: vout.n,
+      asset: filter_name(vout.asset.name),
+      address_hash: Base58.encode(vout.address_hash),
+      txid: Base.encode16(vout.transaction_hash, case: :lower)
+    }
+  end
+
+  defp render_claim(vout) do
+    %{
+      value: vout.value,
+      n: vout.n,
+      asset: Base.encode16(vout.asset_hash, case: :lower),
+      address_hash: Base58.encode(vout.address_hash),
+      txid: Base.encode16(vout.transaction_hash, case: :lower)
+    }
+  end
+
+  defp render_transaction(transaction) do
+    %{
+      :txid => Base.encode16(transaction.hash, case: :lower),
+      :attributes => transaction.attributes,
+      :net_fee => transaction.net_fee,
+      :scripts => transaction.scripts,
+      :size => transaction.size,
+      :sys_fee => transaction.sys_fee,
+      :type => Macro.camelize(transaction.type),
+      :version => transaction.version,
+      :vin => Enum.map(transaction.vins, &render_vout/1),
+      :vouts => Enum.map(transaction.vouts, &render_vout/1),
+      :time => DateTime.to_unix(transaction.block_time),
+      :block_hash => Base.encode16(transaction.block_hash, case: :lower),
+      :block_height => transaction.block_index,
       :nonce => nil,
-      :claims => nil,
+      :claims => Enum.map(transaction.claims, &render_claim/1),
       :pubkey => nil,
       :asset => nil,
       :description => nil,
       :contract => nil
     }
-
-    #    vout_query =
-    #      from(
-    #        v in Vout,
-    #        select: %{
-    #          :asset => v.asset,
-    #          :address => v.address_hash,
-    #          :n => v.n,
-    #          :value => v.value
-    #        }
-    #      )
-    #
-    #    query =
-    #      from(
-    #        t in Transaction,
-    #        where: t.txid == ^hash,
-    #        preload: [
-    #          vouts: ^vout_query
-    #        ]
-    #      )
-    #
-    #    result =
-    #      case Repo.all(query)
-    #           |> List.first() do
-    #        nil ->
-    #          %{
-    #            :txid => "not found",
-    #            :attributes => nil,
-    #            :net_fee => nil,
-    #            :scripts => nil,
-    #            :size => nil,
-    #            :sys_fee => nil,
-    #            :type => nil,
-    #            :version => nil,
-    #            :vin => nil,
-    #            :vouts => nil,
-    #            :time => nil,
-    #            :block_hash => nil,
-    #            :block_height => nil,
-    #            :nonce => nil,
-    #            :claims => nil,
-    #            :pubkey => nil,
-    #            :asset => nil,
-    #            :description => nil,
-    #            :contract => nil
-    #          }
-    #
-    #        %{} = transaction ->
-    #          new_vouts =
-    #            Enum.map(transaction.vouts, fn %{:asset => asset} = x ->
-    #              Map.put(x, :asset, ChainAssets.get_asset_name_by_hash(asset))
-    #            end)
-    #
-    #          new_vins =
-    #            Enum.map(transaction.vin, fn %{"asset" => asset} = x ->
-    #              Map.put(x, "asset", ChainAssets.get_asset_name_by_hash(asset))
-    #            end)
-    #
-    #          Map.delete(transaction, :block)
-    #          |> Map.drop([:inserted_at, :updated_at, :id, :block_id, :__meta__, :__struct__])
-    #          |> Map.put(:vouts, new_vouts)
-    #          |> Map.put(:vin, new_vins)
-    #      end
-    #
-    #    result
   end
 
   @doc """
@@ -1065,5 +1022,22 @@ defmodule Neoscan.Api do
   def get_address_to_address_abstracts(_hash1, _hash2, _page) do
     %{entries: []}
     # TxAbstracts.get_address_to_address_abstracts(hash1, hash2, page)
+  end
+
+  defp filter_name(asset) do
+    case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
+      %{"name" => "AntShare"} ->
+        "NEO"
+
+      %{"name" => "AntCoin"} ->
+        "GAS"
+
+      %{"name" => name} ->
+        name
+
+      nil ->
+        %{"name" => name} = Enum.at(asset, 0)
+        name
+    end
   end
 end
