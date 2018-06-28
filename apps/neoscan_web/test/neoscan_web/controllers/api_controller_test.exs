@@ -142,28 +142,28 @@ defmodule NeoscanWeb.ApiControllerTest do
     assert [Base.encode16(transaction_hash, case: :lower)] == block1["transactions"]
   end
 
-  #
-  #  test "test concache", %{conn: conn} do
-  #    insert(:block)
-  #    insert(:block)
-  #    conn = get(conn, "/api/main_net/v1/get_last_blocks")
-  #    assert 2 == Enum.count(json_response(conn, 200))
-  #    insert(:block)
-  #    conn = get(conn, "/api/main_net/v1/get_last_blocks")
-  #    assert 2 == Enum.count(json_response(conn, 200))
-  #    Supervisor.terminate_child(NeoscanWeb.Supervisor, ConCache)
-  #    Supervisor.restart_child(NeoscanWeb.Supervisor, ConCache)
-  #    conn = get(conn, "/api/main_net/v1/get_last_blocks")
-  #    assert 3 == Enum.count(json_response(conn, 200))
-  #  end
-  #
-  #  test "get_highest_block", %{conn: conn} do
-  #    insert(:block)
-  #    block2 = insert(:block)
-  #    conn = get(conn, "/api/main_net/v1/get_highest_block")
-  #
-  #    assert block2.hash == json_response(conn, 200)["hash"]
-  #  end
+  test "test concache", %{conn: conn} do
+    insert(:block)
+    insert(:block)
+    conn = get(conn, "/api/main_net/v1/get_last_blocks")
+    assert 2 == Enum.count(json_response(conn, 200))
+    insert(:block)
+    conn = get(conn, "/api/main_net/v1/get_last_blocks")
+    assert 2 == Enum.count(json_response(conn, 200))
+    Supervisor.terminate_child(NeoscanWeb.Supervisor, ConCache)
+    Supervisor.restart_child(NeoscanWeb.Supervisor, ConCache)
+    conn = get(conn, "/api/main_net/v1/get_last_blocks")
+    assert 3 == Enum.count(json_response(conn, 200))
+  end
+
+  test "get_highest_block", %{conn: conn} do
+    insert(:block)
+    block2 = insert(:block)
+    conn = get(conn, "/api/main_net/v1/get_highest_block")
+
+    assert Base.encode16(block2.hash, case: :lower) == json_response(conn, 200)["hash"]
+  end
+
   #
   #  test "get_transaction/:hash", %{conn: conn} do
   #    transaction = insert(:transaction)

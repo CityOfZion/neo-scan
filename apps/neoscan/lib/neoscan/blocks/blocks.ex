@@ -62,6 +62,27 @@ defmodule Neoscan.Blocks do
     Enum.map(blocks, &Map.put(&1, :transfers, get_transfers_for_block(&1.index)))
   end
 
+  def get_highest_block do
+    query =
+      from(
+        b in Block,
+        order_by: [desc: b.index],
+        preload: [transactions: ^transaction_query()],
+        limit: 1
+      )
+
+    block = Repo.one(query)
+
+    unless is_nil(block) do
+      transfers =
+        Repo.all(
+          from(t in Transfer, where: t.block_index == ^block.index, select: t.transaction_hash)
+        )
+
+      Map.put(block, :transfers, transfers)
+    end
+  end
+
   def get_transfers_for_block(index) do
     transfer_query =
       from(t in Transfer, where: t.block_index == ^index, select: t.transaction_hash)

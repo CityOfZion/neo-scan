@@ -7,7 +7,6 @@ defmodule Neoscan.Api do
 
   alias Neoscan.AddressBalance
   alias Neoscan.Repo
-  alias Neoscan.Block
   alias Neoscan.Blocks
   alias Neoscan.Counters
   import Ecto.Query
@@ -589,32 +588,8 @@ defmodule Neoscan.Api do
       }
   """
   def get_highest_block do
-    query =
-      from(
-        e in Block,
-        order_by: [desc: e.index],
-        preload: [:transactions],
-        limit: 1
-      )
-
-    Repo.one!(query)
-    #    tran_query = from(t in Transaction, select: t.txid)
-    #    trans_query = from(t in Transfer, select: t.txid)
-    #
-    #    query =
-    #      from(
-    #        e in Block,
-    #        order_by: [fragment("? DESC NULLS LAST", e.index)],
-    #        preload: [
-    #          transactions: ^tran_query,
-    #          transfers: ^trans_query
-    #        ],
-    #        limit: 1
-    #      )
-    #
-    #    Repo.all(query)
-    #    |> List.first()
-    #    |> Map.drop([:inserted_at, :updated_at, :id, :__meta__, :__struct__])
+    block = Blocks.get_highest_block()
+    render_block(block)
   end
 
   @doc """
