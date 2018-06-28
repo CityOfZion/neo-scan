@@ -47,19 +47,12 @@ defmodule NeoscanWeb.Router do
   scope "/api/main_net/v1", NeoscanWeb do
     pipe_through(:api)
 
+    # used by neon-js / wallet
     get("/get_balance/:hash", ApiController, :get_balance)
-    get("/get_claimed/:hash", ApiController, :get_claimed)
     get("/get_unclaimed/:hash", ApiController, :get_unclaimed)
     get("/get_claimable/:hash", ApiController, :get_claimable)
     get("/get_address/:hash", ApiController, :get_address)
-    get("/get_address_neon/:hash", ApiController, :get_address_neon)
-    get("/get_assets", ApiController, :get_assets)
-    get("/get_asset/:hash", ApiController, :get_asset)
-    get("/get_block/:hash", ApiController, :get_block)
-    get("/get_last_blocks", ApiController, :get_last_blocks)
-    get("/get_highest_block", ApiController, :get_highest_block)
-    get("/get_last_transactions", ApiController, :get_last_transactions)
-    get("/get_last_transactions/:type", ApiController, :get_last_transactions)
+    get("/get_all_nodes", ApiController, :get_all_nodes)
 
     get(
       "/get_last_transactions_by_address/:hash/:page",
@@ -67,17 +60,11 @@ defmodule NeoscanWeb.Router do
       :get_last_transactions_by_address
     )
 
-    get(
-      "/get_last_transactions_by_address/:hash",
-      ApiController,
-      :get_last_transactions_by_address
-    )
-
-    get("/get_transaction/:hash", ApiController, :get_transaction)
-    get("/get_all_nodes", ApiController, :get_all_nodes)
+    # soon to be deprecated
+    get("/get_address_neon/:hash", ApiController, :get_address_neon)
     get("/get_height", ApiController, :get_height)
-    get("/get_nodes", ApiController, :get_nodes)
-    get("/get_fees_in_range/:range", ApiController, :get_fees_in_range)
+
+    # Used by NEX
     get("/get_address_abstracts/:hash/:page", ApiController, :get_address_abstracts)
 
     get(
@@ -85,6 +72,11 @@ defmodule NeoscanWeb.Router do
       ApiController,
       :get_address_to_address_abstracts
     )
+
+    # for future use
+    get("/get_claimed/:hash", ApiController, :get_claimed)
+    get("/get_block/:hash", ApiController, :get_block)
+    get("/get_transaction/:hash", ApiController, :get_transaction)
   end
 
   # Other scopes may use custom stacks.
