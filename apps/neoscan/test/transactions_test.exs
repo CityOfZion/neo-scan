@@ -11,6 +11,13 @@ defmodule Neoscan.TransactionsTest do
     assert transaction.hash == transaction2.hash
   end
 
+  test "api_get/1" do
+    transaction = insert(:transaction, %{vouts: [insert(:vout)]})
+    transaction2 = Transactions.api_get(transaction.hash)
+    assert 1 == Enum.count(transaction2.vouts)
+    assert transaction.hash == transaction2.hash
+  end
+
   test "paginate/1" do
     for _ <- 1..20, do: insert(:transaction)
     assert 15 == Enum.count(Transactions.paginate(1))
