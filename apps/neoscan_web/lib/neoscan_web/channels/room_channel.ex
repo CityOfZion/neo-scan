@@ -30,7 +30,7 @@ defmodule NeoscanWeb.RoomChannel do
   end
 
   defp get_blocks do
-    blocks = Enum.take(CacheApi.get_blocks().entries, 5)
+    blocks = Enum.take(CacheApi.get_blocks(), 5)
 
     Enum.map(
       blocks,

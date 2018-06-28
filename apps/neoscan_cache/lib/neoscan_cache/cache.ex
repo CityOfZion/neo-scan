@@ -17,7 +17,8 @@ defmodule NeoscanCache.Cache do
   alias Neoprice.GasUsd
   alias NeoscanCache.EtsProcess
 
-  @update_interval 5_000
+  @update_interval 1_000
+  @update_interval_price 5_000
 
   require Logger
 
@@ -32,6 +33,7 @@ defmodule NeoscanCache.Cache do
     EtsProcess.create_table(__MODULE__)
     Process.send_after(self(), :broadcast, 30_000)
     sync()
+    sync_price()
     {:ok, :ok}
   end
 
@@ -104,6 +106,11 @@ defmodule NeoscanCache.Cache do
     {:noreply, state}
   end
 
+  def handle_info(:sync_price, _) do
+    sync_price()
+    {:noreply, :ok}
+  end
+
   def handle_info(:sync, _) do
     sync()
     {:noreply, :ok}
@@ -127,14 +134,20 @@ defmodule NeoscanCache.Cache do
   def sync() do
     Process.send_after(self(), :sync, @update_interval)
     blocks = Blocks.paginate(1).entries
-
     transactions = Transactions.paginate(1).entries
-
+    addresses = Addresses.paginate(1).entries
     assets = Assets.get_all()
-
     stats = get_general_stats()
 
-    addresses = Addresses.paginate(1).entries
+    set(:blocks, blocks)
+    set(:transactions, transactions)
+    set(:assets, assets)
+    set(:stats, stats)
+    set(:addresses, addresses)
+  end
+
+  def sync_price() do
+    Process.send_after(self(), :sync_price, @update_interval_price)
 
     price = %{
       neo: %{
@@ -147,11 +160,6 @@ defmodule NeoscanCache.Cache do
       }
     }
 
-    set(:blocks, blocks)
-    set(:transactions, transactions)
-    set(:assets, assets)
-    set(:stats, stats)
-    set(:addresses, addresses)
     set(:price, price)
   end
 end
