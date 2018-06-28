@@ -60,4 +60,13 @@ defmodule Neoscan.TransactionsTest do
              {%{}, %{}}
            ] = Transactions.get_claimed_vouts(vout1.address_hash)
   end
+
+  test "get_unspent_vouts/1" do
+    vout1 = insert(:vout)
+    vout2 = insert(:vout, %{address_hash: vout1.address_hash})
+    insert(:vin, %{vout_n: vout2.n, vout_transaction_hash: vout2.transaction_hash})
+    insert(:vout, %{address_hash: vout1.address_hash})
+
+    assert 2 == Enum.count(Transactions.get_unspent_vouts(vout1.address_hash))
+  end
 end

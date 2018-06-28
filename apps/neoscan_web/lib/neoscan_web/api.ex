@@ -33,14 +33,27 @@ defmodule NeoscanWeb.Api do
         "address": "hash_string"
       }
   """
-  def get_balance(hash) do
-    balances = Addresses.get_balances(hash)
+  def get_balance(address_hash) do
+    balances = Addresses.get_balances(address_hash)
+    unspent = Transactions.get_unspent_vouts(address_hash)
 
-    if balances == [] do
-      %{:address => "not found", :balance => nil, :unclaimed => 0}
-    else
-      %{:address => Base.encode16(hash), :balance => 0, :unclaimed => 0}
-    end
+    balances =
+      Enum.map(balances, fn %{name: name, asset: asset_hash, value: value} ->
+        unspent2 =
+          unspent
+          |> Enum.filter(&(&1.asset_hash == asset_hash))
+          |> Enum.map(
+            &%{value: &1.value, txid: Base.encode16(&1.transaction_hash, case: :lower), n: &1.n}
+          )
+
+        %{
+          unspent: unspent2,
+          asset: filter_name(name),
+          amount: value
+        }
+      end)
+
+    %{:address => Base58.encode(address_hash), :balance => balances}
   end
 
   @doc """

@@ -3,33 +3,65 @@ defmodule NeoscanWeb.ApiControllerTest do
 
   import NeoscanWeb.Factory
 
+  @neo_asset_hash <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144,
+                    175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
+
   setup do
     Supervisor.terminate_child(NeoscanWeb.Supervisor, ConCache)
     Supervisor.restart_child(NeoscanWeb.Supervisor, ConCache)
     :ok
   end
 
-  #  test "get_balance/:hash", %{conn: conn} do
-  #    address =
-  #      insert(:address, %{
-  #        balance: %{
-  #          "assethash0" => %{
-  #            "amount" => 50,
-  #            "asset" => "assethash1"
-  #          }
-  #        }
-  #      })
-  #
-  #    conn = get(conn, "/api/main_net/v1/get_balance/#{address.address}")
-  #
-  #    assert %{
-  #             "address" => address.address,
-  #             "balance" => [
-  #               %{"amount" => 50, "asset" => "Asset not Found", "unspent" => []}
-  #             ]
-  #           } == json_response(conn, 200)
-  #  end
-  #
+  test "get_balance/:hash", %{conn: conn} do
+    vout1 = insert(:vout, %{asset_hash: @neo_asset_hash, value: 2.0})
+    vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
+    insert(:vin, %{vout_n: vout2.n, vout_transaction_hash: vout2.transaction_hash})
+
+    vout3 =
+      insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash, value: 5.0})
+
+    insert(:asset, %{
+      transaction_hash: @neo_asset_hash,
+      name: [%{"lang" => "en", "name" => "NEO"}]
+    })
+
+    insert(:address_history, %{
+      address_hash: vout1.address_hash,
+      asset_hash: <<4, 5, 6>>,
+      value: 2.0
+    })
+
+    insert(:asset, %{
+      transaction_hash: <<4, 5, 6>>,
+      name: [%{"lang" => "zh", "name" => "My Token"}]
+    })
+
+    conn = get(conn, "/api/main_net/v1/get_balance/#{Base58.encode(vout1.address_hash)}")
+
+    assert %{
+             "address" => Base58.encode(vout1.address_hash),
+             "balance" => [
+               %{
+                 "amount" => vout3.value + vout1.value,
+                 "asset" => "NEO",
+                 "unspent" => [
+                   %{
+                     "n" => vout3.n,
+                     "txid" => Base.encode16(vout3.transaction_hash, case: :lower),
+                     "value" => vout3.value
+                   },
+                   %{
+                     "n" => vout1.n,
+                     "txid" => Base.encode16(vout1.transaction_hash, case: :lower),
+                     "value" => vout1.value
+                   }
+                 ]
+               },
+               %{"amount" => 2.0, "asset" => "My Token", "unspent" => []}
+             ]
+           } == json_response(conn, 200)
+  end
+
   test "get_claimed/:hash", %{conn: conn} do
     vout1 = insert(:vout)
     insert(:vout, %{address_hash: vout1.address_hash})
@@ -44,7 +76,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       vout_transaction_hash: vout4.transaction_hash
     })
 
-    conn = get(conn, "/api/main_net/v1/get_claimed/#{Base.encode16(vout1.address_hash)}")
+    conn = get(conn, "/api/main_net/v1/get_claimed/#{Base58.encode(vout1.address_hash)}")
 
     assert %{
              "address" => Base58.encode(vout1.address_hash),

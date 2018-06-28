@@ -13,7 +13,7 @@ defmodule NeoscanWeb.ApiController do
 
   # used by neon-js
   def get_balance(conn, %{"hash" => hash}) do
-    balance = cache({:get_balance, hash}, Api.get_balance(hash))
+    balance = cache({:get_balance, hash}, Api.get_balance(Base58.decode(hash)))
     json(conn, balance)
   end
 
@@ -79,7 +79,7 @@ defmodule NeoscanWeb.ApiController do
 
   # for future use
   def get_claimed(conn, %{"hash" => hash}) do
-    claimed = cache({:get_claimed, hash}, Api.get_claimed(parse_index_or_hash(hash)))
+    claimed = cache({:get_claimed, hash}, Api.get_claimed(Base58.decode(hash)))
     json(conn, claimed)
   end
 

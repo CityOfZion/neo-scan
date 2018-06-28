@@ -189,4 +189,14 @@ defmodule Neoscan.Transactions do
       )
     )
   end
+
+  def get_unspent_vouts(address_hash) do
+    Repo.all(
+      from(
+        vout in Vout,
+        where: vout.address_hash == ^address_hash and vout.spent == false,
+        preload: [:asset]
+      )
+    )
+  end
 end
