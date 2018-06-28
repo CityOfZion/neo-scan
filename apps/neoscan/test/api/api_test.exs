@@ -101,6 +101,7 @@ defmodule Neoscan.Api.ApiTest do
   test "get_block/1" do
     block = insert(:block, %{transactions: [insert(:transaction)]})
     [%{hash: transaction_hash}] = block.transactions
+    transfer = insert(:transfer, %{block_index: block.index})
 
     assert %{
              :confirmations => 1,
@@ -115,15 +116,21 @@ defmodule Neoscan.Api.ApiTest do
              :size => block.size,
              :time => DateTime.to_unix(block.time),
              :transactions => [Base.encode16(transaction_hash, case: :lower)],
+             :transfers => [Base.encode16(transfer.transaction_hash, case: :lower)],
              :tx_count => block.tx_count,
              :version => block.version
            } == Api.get_block(block.hash)
   end
 
   test "get_last_blocks/0" do
+    block = insert(:block, %{transactions: [insert(:transaction)]})
+    [%{hash: transaction_hash}] = block.transactions
+    transfer = insert(:transfer, %{block_index: block.index})
     insert(:block)
-    insert(:block)
-    assert 0 == Enum.count(Api.get_last_blocks())
+    [_block2, block1] = Api.get_last_blocks()
+
+    assert [Base.encode16(transaction_hash, case: :lower)] == block1.transactions
+    assert [Base.encode16(transfer.transaction_hash, case: :lower)] == block1.transfers
   end
 
   test "get_highest_block/0" do

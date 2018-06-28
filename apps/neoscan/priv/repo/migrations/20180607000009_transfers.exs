@@ -15,5 +15,6 @@ defmodule Neoscan.Repo.Migrations.Transfers do
     end
 
     create(index(:transfers, [:transaction_hash]))
+    create(index(:transfers, [:block_index]))
   end
 end

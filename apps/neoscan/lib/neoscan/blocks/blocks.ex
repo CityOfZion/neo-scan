@@ -7,6 +7,7 @@ defmodule Neoscan.Blocks do
   alias Neoscan.Repo
   alias Neoscan.Block
   alias Neoscan.Transaction
+  alias Neoscan.Transfer
   require Logger
 
   @page_size 15
@@ -19,13 +20,26 @@ defmodule Neoscan.Blocks do
       iex> get(456)
       nill
   """
-  def get(hash) when is_binary(hash) do
+  def get(hash) do
+    block = _get(hash)
+
+    unless is_nil(block) do
+      transfers =
+        Repo.all(
+          from(t in Transfer, where: t.block_index == ^block.index, select: t.transaction_hash)
+        )
+
+      Map.put(block, :transfers, transfers)
+    end
+  end
+
+  defp _get(hash) when is_binary(hash) do
     Repo.one(
       from(e in Block, where: e.hash == ^hash, preload: [transactions: ^transaction_query()])
     )
   end
 
-  def get(index) when is_integer(index) do
+  defp _get(index) when is_integer(index) do
     Repo.one(
       from(e in Block, where: e.index == ^index, preload: [transactions: ^transaction_query()])
     )
@@ -33,6 +47,26 @@ defmodule Neoscan.Blocks do
 
   defp transaction_query do
     from(t in Transaction, select: t.hash)
+  end
+
+  def get_last_blocks(limit) do
+    query =
+      from(
+        b in Block,
+        order_by: [desc: b.index],
+        preload: [transactions: ^transaction_query()],
+        limit: ^limit
+      )
+
+    blocks = Repo.all(query)
+    Enum.map(blocks, &Map.put(&1, :transfers, get_transfers_for_block(&1.index)))
+  end
+
+  def get_transfers_for_block(index) do
+    transfer_query =
+      from(t in Transfer, where: t.block_index == ^index, select: t.transaction_hash)
+
+    Repo.all(transfer_query)
   end
 
   @doc """

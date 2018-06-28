@@ -22,7 +22,6 @@ defmodule Neoscan.Block do
     field(:total_net_fee, :float)
     field(:gas_generated, :float)
     has_many(:transactions, Transaction, foreign_key: :block_hash, references: :hash)
-    #    has_many(:transfers, Neoscan.Transfers.Transfer)
 
     timestamps()
   end

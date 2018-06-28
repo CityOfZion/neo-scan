@@ -503,7 +503,10 @@ defmodule Neoscan.Api do
   """
   def get_block(hash_or_integer) do
     block = Blocks.get(hash_or_integer)
+    render_block(block)
+  end
 
+  defp render_block(block) do
     %{
       :hash => Base.encode16(block.hash, case: :lower),
       :confirmations => 1,
@@ -518,7 +521,8 @@ defmodule Neoscan.Api do
       :time => DateTime.to_unix(block.time),
       :version => block.version,
       :tx_count => block.tx_count,
-      :transactions => Enum.map(block.transactions, &Base.encode16(&1, case: :lower))
+      :transactions => Enum.map(block.transactions, &Base.encode16(&1, case: :lower)),
+      :transfers => Enum.map(block.transfers, &Base.encode16(&1, case: :lower))
     }
   end
 
@@ -553,23 +557,8 @@ defmodule Neoscan.Api do
       ]
   """
   def get_last_blocks do
-    []
-    #    tran_query = from(t in Transaction, select: t.txid)
-    #    trans_query = from(t in Transfer, select: t.txid)
-    #
-    #    query =
-    #      from(
-    #        e in Block,
-    #        order_by: [fragment("? DESC NULLS LAST", e.index)],
-    #        preload: [
-    #          transactions: ^tran_query,
-    #          transfers: ^trans_query
-    #        ],
-    #        limit: 20
-    #      )
-    #
-    #    Repo.all(query)
-    #    |> Enum.map(fn x -> Map.drop(x, [:inserted_at, :updated_at, :id, :__meta__, :__struct__]) end)
+    blocks = Blocks.get_last_blocks(20)
+    Enum.map(blocks, &render_block/1)
   end
 
   @doc """

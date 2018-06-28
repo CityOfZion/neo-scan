@@ -108,6 +108,7 @@ defmodule NeoscanWeb.ApiControllerTest do
   test "get_block/:hash", %{conn: conn} do
     block = insert(:block, %{transactions: [insert(:transaction)]})
     [%{hash: transaction_hash}] = block.transactions
+    transfer = insert(:transfer, %{block_index: block.index})
     conn = get(conn, "/api/main_net/v1/get_block/#{Base.encode16(block.hash)}")
 
     assert %{
@@ -123,18 +124,24 @@ defmodule NeoscanWeb.ApiControllerTest do
              "size" => block.size,
              "time" => DateTime.to_unix(block.time),
              "transactions" => [Base.encode16(transaction_hash, case: :lower)],
+             "transfers" => [Base.encode16(transfer.transaction_hash, case: :lower)],
              "tx_count" => block.tx_count,
              "version" => block.version
            } == json_response(conn, 200)
   end
 
-  #
-  #  test "get_last_blocks", %{conn: conn} do
-  #    insert(:block)
-  #    insert(:block)
-  #    conn = get(conn, "/api/main_net/v1/get_last_blocks")
-  #    assert 2 == Enum.count(json_response(conn, 200))
-  #  end
+  test "get_last_blocks", %{conn: conn} do
+    block = insert(:block, %{transactions: [insert(:transaction)]})
+    [%{hash: transaction_hash}] = block.transactions
+    transfer = insert(:transfer, %{block_index: block.index})
+    insert(:block)
+    conn = get(conn, "/api/main_net/v1/get_last_blocks")
+    [_block2, block1] = json_response(conn, 200)
+
+    assert [Base.encode16(transfer.transaction_hash, case: :lower)] == block1["transfers"]
+    assert [Base.encode16(transaction_hash, case: :lower)] == block1["transactions"]
+  end
+
   #
   #  test "test concache", %{conn: conn} do
   #    insert(:block)
