@@ -140,7 +140,7 @@
 			<h2><%= gettext "Opcode Script" %></h2>
 			<div class="corner-box">
         <p class="small-detail-text bar-left-transactions">
-          <%= for operation <- Disassembler.parse_script(<<0>>) do %>
+          <%= for operation <- parse_script(<<0>>) do %>
   				  <span class="script-new-line"><%= operation %></span>
           <% end %>
         </p>

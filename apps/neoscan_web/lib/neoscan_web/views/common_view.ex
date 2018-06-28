@@ -1,4 +1,8 @@
 defmodule NeoscanWeb.CommonView do
+  alias Neoscan.Explanations
+  alias NeoscanWeb.ViewHelper
+  alias Neoscan.Vm.Disassembler
+
   def get_transaction_name("contract_transaction"), do: "Contract"
   def get_transaction_name("claim_transaction"), do: "Gas Claim"
   def get_transaction_name("invocation_transaction"), do: "Invocation"
@@ -28,10 +32,6 @@ defmodule NeoscanWeb.CommonView do
   def get_class("register_transaction"), do: "register-transaction"
   def get_class("publish_transaction"), do: "publish-transaction"
   def get_class("miner_transaction"), do: "miner-transaction"
-
-  def base16(binary) do
-    Base.encode16(binary)
-  end
 
   def get_minutes(date_time) do
     if Timex.before?(date_time, Timex.shift(Timex.now(), minutes: -1440)) do
@@ -117,4 +117,21 @@ defmodule NeoscanWeb.CommonView do
   def render_date_time(date_time) do
     remove_trailing("#{DateTime.to_date(date_time)} | #{DateTime.to_time(date_time)}")
   end
+
+  def parse_invocation(nil), do: "No Invocation Script"
+  def parse_invocation({"invocation", inv}), do: Disassembler.parse_script(inv)
+
+  def parse_verification(nil), do: "No Verification Script"
+  def parse_verification({"verification", ver}), do: Disassembler.parse_script(ver)
+
+  def get_inv(nil), do: "No Invocation Script"
+  def get_inv({"invocation", inv}), do: inv
+
+  def get_ver(nil), do: "No Verification Script"
+  def get_ver({"verification", ver}), do: ver
+
+  def get_explanation(topic), do: Explanations.get(topic)
+  def get_tooltips(conn), do: ViewHelper.get_tooltips(conn)
+
+  def parse_script(script), do: Disassembler.parse_script(script)
 end
