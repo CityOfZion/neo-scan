@@ -94,14 +94,42 @@ defmodule NeoscanWeb.ApiControllerTest do
            } == json_response(conn, 200)
   end
 
-  #
-  #  test "get_unclaimed/:hash", %{conn: conn} do
-  #    address = insert(:address)
-  #    conn = get(conn, "/api/main_net/v1/get_unclaimed/#{address.address}")
-  #
-  #    assert address.address == json_response(conn, 200)["address"]
-  #  end
-  #
+  test "get_unclaimed/:hash", %{conn: conn} do
+    vout1 = insert(:vout, %{start_block_index: 4, value: 5.0})
+    vout2 = insert(:vout, %{address_hash: vout1.address_hash, start_block_index: 3, value: 5.0})
+
+    insert(:vin, %{
+      vout_n: vout2.n,
+      vout_transaction_hash: vout2.transaction_hash,
+      block_index: 6
+    })
+
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash})
+    insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
+    insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
+
+    insert(:block, %{index: 2, gas_generated: 7.0, total_sys_fee: 6.8})
+    insert(:block, %{index: 4, gas_generated: 5.0, total_sys_fee: 1.9})
+    insert(:block, %{index: 5, gas_generated: 2.0, total_sys_fee: 5.0})
+    insert(:block, %{index: 6, gas_generated: 4.0, total_sys_fee: 44.2})
+    insert(:block, %{index: 9, gas_generated: 3.0, total_sys_fee: 12.0})
+    insert(:block, %{index: 10, gas_generated: 3.0, total_sys_fee: 12.0})
+    insert(:block, %{index: 11, gas_generated: 3.0, total_sys_fee: 12.0})
+    insert(:block, %{index: 12, gas_generated: 3.0, total_sys_fee: 12.0})
+    insert(:block, %{index: 13, gas_generated: 3.0, total_sys_fee: 12.0})
+    insert(:block, %{index: 14, gas_generated: 3.0, total_sys_fee: 12.0})
+    # current index will be 9
+
+    address_hash = Base58.encode(vout1.address_hash)
+
+    conn = get(conn, "/api/main_net/v1/get_unclaimed/#{address_hash}")
+
+    assert %{
+             "address" => address_hash,
+             "unclaimed" => 3.9e-6
+           } == json_response(conn, 200)
+  end
+
   test "get_claimable/:hash", %{conn: conn} do
     vout1 = insert(:vout)
     vout2 = insert(:vout, %{address_hash: vout1.address_hash, start_block_index: 3, value: 5.0})

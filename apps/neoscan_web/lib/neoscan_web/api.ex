@@ -67,14 +67,25 @@ defmodule NeoscanWeb.Api do
         "address": "hash_string"
       }
   """
-  def get_unclaimed(hash) do
-    balances = Addresses.get_balances(hash)
+  def get_unclaimed(address_hash) do
+    vouts = Transactions.get_unclaimed_vouts(address_hash)
+    current_index = Counters.count_blocks() - 1
 
-    if balances == [] do
-      %{:address => "not found", :unclaimed => 0}
-    else
-      %{:address => Base.encode16(hash), :unclaimed => 0}
-    end
+    unclaimed =
+      Enum.reduce(vouts, 0, fn vout, acc ->
+        value = round(vout.value)
+        start_index = vout.start_block_index
+        end_index = vout.end_block_index
+        end_index = if is_nil(end_index), do: current_index, else: end_index
+
+        generated =
+          value * Blocks.get_gas_generated_in_range(start_index + 1, end_index) / @total_neo
+
+        sys_fee = value * Blocks.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
+        acc + sys_fee + generated
+      end)
+
+    %{:address => Base58.encode(address_hash), :unclaimed => unclaimed}
   end
 
   @doc """

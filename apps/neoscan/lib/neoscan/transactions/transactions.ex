@@ -209,4 +209,13 @@ defmodule Neoscan.Transactions do
       )
     )
   end
+
+  def get_unclaimed_vouts(address_hash) do
+    Repo.all(
+      from(
+        vout in Vout,
+        where: vout.address_hash == ^address_hash and vout.claimed == false
+      )
+    )
+  end
 end
