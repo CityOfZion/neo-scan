@@ -363,7 +363,7 @@ defmodule NeoscanWeb.ApiControllerTest do
   end
 
   test "get_height", %{conn: conn} do
-    insert(:counter, %{name: "blocks", value: 156})
+    insert(:counter_cached, %{name: "blocks", value: 156})
     conn = get(conn, "/api/main_net/v1/get_height")
     assert 155 == json_response(conn, 200)["height"]
   end

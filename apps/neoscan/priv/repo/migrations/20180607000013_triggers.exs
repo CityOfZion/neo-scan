@@ -158,11 +158,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION block_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO counters (name, value)
-        VALUES ('blocks', 1), ('transactions', NEW.tx_count - 1)
-        ON CONFLICT ON CONSTRAINT counters_pkey DO
-        UPDATE SET
-        value = counters.value + EXCLUDED.value;
+        INSERT INTO counters_queue (name, value)
+        VALUES ('blocks', 1), ('transactions', NEW.tx_count - 1);
         RETURN NULL;
       END;
       $body$;
@@ -177,11 +174,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION address_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO counters (name, value)
-        VALUES ('addresses', 1)
-        ON CONFLICT ON CONSTRAINT counters_pkey DO
-        UPDATE SET
-        value = counters.value + EXCLUDED.value;
+        INSERT INTO counters_queue (name, value)
+        VALUES ('addresses', 1);
         RETURN NULL;
       END;
       $body$;

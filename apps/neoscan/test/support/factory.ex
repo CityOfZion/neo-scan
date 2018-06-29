@@ -12,7 +12,8 @@ defmodule Neoscan.Factory do
   alias Neoscan.Address
   alias Neoscan.Transfer
   alias Neoscan.Asset
-  alias Neoscan.Counter
+  alias Neoscan.CounterCached
+  alias Neoscan.CounterQueue
 
   @transaction_type [
     "contract_transaction",
@@ -158,8 +159,15 @@ defmodule Neoscan.Factory do
     }
   end
 
-  def counter_factory do
-    %Counter{
+  def counter_cached_factory do
+    %CounterCached{
+      name: sequence("name"),
+      value: sequence(1, & &1)
+    }
+  end
+
+  def counter_queue_factory do
+    %CounterQueue{
       name: sequence("name"),
       value: sequence(1, & &1)
     }
