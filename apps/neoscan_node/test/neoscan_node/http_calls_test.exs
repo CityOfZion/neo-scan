@@ -1,8 +1,6 @@
 defmodule Neoscan.HttpCalls.HttpCallsTest do
   use ExUnit.Case
 
-  import ExUnit.CaptureLog
-
   alias NeoscanNode.HttpCalls
 
   @node_url "http://seed1.cityofzion.io:8080"
@@ -15,9 +13,6 @@ defmodule Neoscan.HttpCalls.HttpCallsTest do
 
   test "get/3" do
     assert {:ok, [_ | _], _, _} = HttpCalls.get(@token_url)
-
-    assert capture_log(fn ->
-             assert {:error, _} = HttpCalls.get("error")
-           end) =~ ":error error"
+    assert {:error, _} = HttpCalls.get("error")
   end
 end
