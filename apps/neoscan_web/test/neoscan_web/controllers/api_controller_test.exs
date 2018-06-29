@@ -102,12 +102,65 @@ defmodule NeoscanWeb.ApiControllerTest do
   #    assert address.address == json_response(conn, 200)["address"]
   #  end
   #
-  #  test "get_claimable/:hash", %{conn: conn} do
-  #    address = insert(:address)
-  #    conn = get(conn, "/api/main_net/v1/get_claimable/#{address.address}")
-  #
-  #    assert address.address == json_response(conn, 200)["address"]
-  #  end
+  test "get_claimable/:hash", %{conn: conn} do
+    vout1 = insert(:vout)
+    vout2 = insert(:vout, %{address_hash: vout1.address_hash, start_block_index: 3, value: 5.0})
+
+    insert(:vin, %{
+      vout_n: vout2.n,
+      vout_transaction_hash: vout2.transaction_hash,
+      block_index: 6
+    })
+
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash})
+    insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
+    insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
+
+    vout4 = insert(:vout, %{address_hash: vout1.address_hash, start_block_index: 5, value: 2.0})
+
+    insert(:vin, %{
+      vout_n: vout4.n,
+      vout_transaction_hash: vout4.transaction_hash,
+      block_index: 8
+    })
+
+    insert(:block, %{index: 2, gas_generated: 7.0, total_sys_fee: 6.8})
+    insert(:block, %{index: 4, gas_generated: 5.0, total_sys_fee: 1.9})
+    insert(:block, %{index: 5, gas_generated: 2.0, total_sys_fee: 5.0})
+    insert(:block, %{index: 6, gas_generated: 4.0, total_sys_fee: 44.2})
+    insert(:block, %{index: 9, gas_generated: 3.0, total_sys_fee: 12.0})
+
+    address_hash = Base58.encode(vout1.address_hash)
+    conn = get(conn, "/api/main_net/v1/get_claimable/#{address_hash}")
+
+    assert %{
+             "address" => address_hash,
+             "claimable" => [
+               %{
+                 "end_height" => 8,
+                 "generated" => 8.0e-8,
+                 "n" => vout4.n,
+                 "start_height" => 5,
+                 "sys_fee" => 9.84e-7,
+                 "txid" => Base.encode16(vout4.transaction_hash, case: :lower),
+                 "unclaimed" => 1.064e-6,
+                 "value" => 2
+               },
+               %{
+                 "end_height" => 6,
+                 "generated" => 5.5e-7,
+                 "n" => vout2.n,
+                 "start_height" => 3,
+                 "sys_fee" => 3.45e-7,
+                 "txid" => Base.encode16(vout2.transaction_hash, case: :lower),
+                 "unclaimed" => 8.95e-7,
+                 "value" => 5
+               }
+             ],
+             "unclaimed" => 1.9590000000000002e-6
+           } == json_response(conn, 200)
+  end
+
   #
   #  test "get_address_neon/:hash", %{conn: conn} do
   #    address = insert(:address)

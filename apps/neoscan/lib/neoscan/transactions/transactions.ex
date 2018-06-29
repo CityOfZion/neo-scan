@@ -200,4 +200,13 @@ defmodule Neoscan.Transactions do
       )
     )
   end
+
+  def get_claimable_vouts(address_hash) do
+    Repo.all(
+      from(
+        vout in Vout,
+        where: vout.address_hash == ^address_hash and vout.spent == true and vout.claimed == false
+      )
+    )
+  end
 end

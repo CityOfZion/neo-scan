@@ -31,4 +31,22 @@ defmodule Neoscan.BlocksTest do
     insert(:block, %{index: 4})
     assert 4 == Blocks.get_max_index()
   end
+
+  test "get_sys_fees_in_range/2" do
+    insert(:block, %{index: 0, total_sys_fee: 1.0})
+    insert(:block, %{index: 2, total_sys_fee: 1.2})
+    insert(:block, %{index: 4, total_sys_fee: 1.4})
+    insert(:block, %{index: 5, total_sys_fee: 1.6})
+    insert(:block, %{index: 6, total_sys_fee: 1.7})
+    assert 1.2 + 1.4 + 1.6 == Blocks.get_sys_fees_in_range(2, 5)
+  end
+
+  test "get_gas_generated_in_range/2" do
+    insert(:block, %{index: 0, gas_generated: 1.0})
+    insert(:block, %{index: 2, gas_generated: 1.2})
+    insert(:block, %{index: 4, gas_generated: 1.4})
+    insert(:block, %{index: 5, gas_generated: 1.6})
+    insert(:block, %{index: 6, gas_generated: 1.7})
+    assert 1.2 + 1.4 + 1.6 == Blocks.get_gas_generated_in_range(2, 5)
+  end
 end

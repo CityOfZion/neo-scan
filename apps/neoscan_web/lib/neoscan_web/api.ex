@@ -5,6 +5,8 @@ defmodule NeoscanWeb.Api do
     Testnet isn't currently available.
   """
 
+  @total_neo 100_000_000
+
   alias Neoscan.Blocks
   alias Neoscan.Counters
   alias Neoscan.Transactions
@@ -131,36 +133,39 @@ defmodule NeoscanWeb.Api do
         "address": "hash_string"
       }
   """
-  def get_claimable(_hash) do
-    %{:address => "not found", :claimable => nil}
-    #    query =
-    #      from(
-    #        e in Address,
-    #        where: e.address == ^hash,
-    #        select: %{
-    #          :address => e.address,
-    #          :id => e.id
-    #        }
-    #      )
-    #
-    #    result =
-    #      case Repo.all(query)
-    #           |> List.first() do
-    #        nil ->
-    #          %{:address => "not found", :claimable => nil}
-    #
-    #        %{} = address ->
-    #          claimable = Unclaimed.calculate_vouts_bonus(address.id)
-    #
-    #          Map.merge(address, %{
-    #            claimable: claimable,
-    #            unclaimed:
-    #              Enum.reduce(claimable, 0, fn %{:unclaimed => amount}, acc -> amount + acc end)
-    #          })
-    #          |> Map.delete(:id)
-    #      end
-    #
-    #    result
+  def get_claimable(address_hash) do
+    vouts = Transactions.get_claimable_vouts(address_hash)
+
+    claimable =
+      Enum.map(vouts, fn vout ->
+        value = round(vout.value)
+        start_index = vout.start_block_index
+        end_index = vout.end_block_index
+
+        generated =
+          value * Blocks.get_gas_generated_in_range(start_index + 1, end_index) / @total_neo
+
+        sys_fee = value * Blocks.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
+        unclaimed = sys_fee + generated
+
+        %{
+          value: value,
+          unclaimed: unclaimed,
+          sys_fee: sys_fee,
+          start_height: start_index,
+          end_height: end_index,
+          generated: generated,
+          n: vout.n,
+          txid: Base.encode16(vout.transaction_hash, case: :lower)
+        }
+      end)
+
+    unclaimed =
+      claimable
+      |> Enum.map(& &1.unclaimed)
+      |> Enum.sum()
+
+    %{address: Base58.encode(address_hash), claimable: claimable, unclaimed: unclaimed}
   end
 
   @doc """

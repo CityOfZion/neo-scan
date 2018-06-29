@@ -62,28 +62,14 @@ defmodule NeoscanWeb.AddressControllerTest do
     assert html_response(conn, 200) =~ "token 1"
     assert html_response(conn, 200) =~ "token 2"
 
+    conn = get(conn, "/address/#{address_hash}/1")
+    assert html_response(conn, 200) =~ address_hash
+    assert html_response(conn, 200) =~ "5"
+    assert html_response(conn, 200) =~ "9.5"
+    assert html_response(conn, 200) =~ "token 1"
+    assert html_response(conn, 200) =~ "token 2"
+
     conn = get(conn, "/address/abc")
     assert "/" == redirected_to(conn, 302)
   end
-
-  #  test "/address/:address/:page", %{conn: conn} do
-  #    address =
-  #      insert(:address, %{
-  #        balance: %{
-  #          "assethash0" => %{
-  #            "amount" => 50,
-  #            "asset" => "assethash1"
-  #          }
-  #        }
-  #      })
-  #
-  #    conn = get(conn, "/address/#{address.address}/1")
-  #    assert html_response(conn, 200) =~ address.address
-  #
-  #    conn = get(conn, "/address/#{address.address}/2")
-  #    assert html_response(conn, 200) =~ address.address
-  #
-  #    conn = get(conn, "/address/abc/1")
-  #    assert "/" == redirected_to(conn, 302)
-  #  end
 end

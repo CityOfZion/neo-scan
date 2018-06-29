@@ -43,8 +43,9 @@ defmodule NeoscanWeb.ApiController do
   end
 
   # used by neon-js
-  def get_claimable(conn, %{"hash" => hash}) do
-    claimable = cache({:get_claimable, hash}, Api.get_claimable(hash))
+  def get_claimable(conn, %{"hash" => address_hash}) do
+    address_hash = Base58.decode(address_hash)
+    claimable = cache({:get_claimable, address_hash}, Api.get_claimable(address_hash))
     json(conn, claimable)
   end
 
