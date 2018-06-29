@@ -120,15 +120,19 @@ defmodule NeoscanWeb.CommonView do
 
   def parse_invocation(nil), do: "No Invocation Script"
   def parse_invocation({"invocation", inv}), do: Disassembler.parse_script(inv)
+  def parse_invocation(%{"invocation" => inv}), do: Disassembler.parse_script(inv)
 
   def parse_verification(nil), do: "No Verification Script"
   def parse_verification({"verification", ver}), do: Disassembler.parse_script(ver)
+  def parse_verification(%{"verification" => ver}), do: Disassembler.parse_script(ver)
 
   def get_inv(nil), do: "No Invocation Script"
   def get_inv({"invocation", inv}), do: inv
+  def get_inv(%{"invocation" => inv}), do: inv
 
   def get_ver(nil), do: "No Verification Script"
   def get_ver({"verification", ver}), do: ver
+  def get_ver(%{"verification" => ver}), do: ver
 
   def get_explanation(topic), do: Explanations.get(topic)
   def get_tooltips(conn), do: ViewHelper.get_tooltips(conn)
