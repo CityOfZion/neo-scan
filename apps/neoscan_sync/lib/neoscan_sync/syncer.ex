@@ -11,6 +11,7 @@ defmodule NeoscanSync.Syncer do
 
   @parallelism 16
   @update_interval 1_000
+  @block_chunk_size 5_000
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -39,7 +40,7 @@ defmodule NeoscanSync.Syncer do
   def handle_info(:sync, missing_block_indexes) do
     Process.send_after(self(), :sync, @update_interval)
     available_block_index_range = get_available_block_index_range()
-    indexes = missing_block_indexes ++ Enum.take(available_block_index_range, 5_000)
+    indexes = missing_block_indexes ++ Enum.take(available_block_index_range, @block_chunk_size)
     sync_indexes(indexes)
     {:noreply, []}
   end
@@ -62,7 +63,8 @@ defmodule NeoscanSync.Syncer do
 
   def insert_block(block) do
     try do
-      Repo.transaction(fn -> Repo.insert!(block) end)
+      # Repo.transaction(fn -> Repo.insert!(block) end)
+      Repo.insert!(block)
     catch
       error ->
         Logger.error("error while loading block #{inspect({block.index, error})}")
@@ -101,7 +103,7 @@ defmodule NeoscanSync.Syncer do
           "insert block #{block.index} #{Time.diff(Time.utc_now(), now, :microseconds)}}"
         )
       end,
-      max_concurrency: 1,
+      max_concurrency: concurrency,
       timeout: :infinity
     )
     |> Stream.run()
