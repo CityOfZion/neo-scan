@@ -110,8 +110,7 @@ defmodule Neoscan.SchemaTest do
   end
 
   test "create counter" do
-    _counter_cached = insert(:counter_cached)
-    _counter_queue = insert(:counter_queue)
+    _counter = insert(:counter)
   end
 
   test "create address_balance" do
