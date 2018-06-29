@@ -99,7 +99,7 @@ defmodule Neoscan.AddressesTest do
 
   test "get/1" do
     address = insert(:address)
-    assert address.hash == Addresses.get(address.hash).hash
+    assert address == Addresses.get(address.hash)
   end
 
   test "get_split_balance/1" do
