@@ -7,7 +7,7 @@ defmodule NeoscanWeb.RoomChannelTest do
 
   test "join room" do
     insert(:block)
-    insert(:transaction)
+    insert(:transaction, %{type: "contract_transaction"})
     Cache.sync()
 
     {:ok, payload, _socket} = subscribe_and_join(socket("user_id", %{}), RoomChannel, "room:home")

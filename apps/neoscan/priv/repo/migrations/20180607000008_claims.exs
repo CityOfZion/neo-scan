@@ -11,6 +11,8 @@ defmodule Neoscan.Repo.Migrations.Claims do
       timestamps()
     end
 
+    # investigate why this index cannot be unique
+    create(index(:claims, [:vout_transaction_hash, :vout_n]))
     create(index(:claims, [:transaction_hash]))
   end
 end

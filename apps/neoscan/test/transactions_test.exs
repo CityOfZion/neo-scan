@@ -19,7 +19,7 @@ defmodule Neoscan.TransactionsTest do
   end
 
   test "paginate/1" do
-    for _ <- 1..20, do: insert(:transaction)
+    for _ <- 1..20, do: insert(:transaction, %{type: "contract_transaction"})
     assert 15 == Enum.count(Transactions.paginate(1))
     assert 5 == Enum.count(Transactions.paginate(2))
   end

@@ -98,13 +98,16 @@ defmodule NeoscanWeb.Api do
     claimed = Transactions.get_claimed_vouts(address_hash)
 
     claimed =
-      Enum.group_by(
-        claimed,
+      claimed
+      |> Enum.group_by(
         fn {_vout, claim} -> claim.transaction_hash end,
-        fn {vout, _claim} -> Base.encode16(vout.transaction_hash, case: :lower) end
+        fn {vout, _claim} -> vout end
       )
+      |> Enum.sort_by(fn {_, [vout | _]} -> vout.start_block_index end)
+      |> Enum.map(fn {_, vouts} ->
+        %{txids: Enum.map(vouts, &Base.encode16(&1.transaction_hash, case: :lower))}
+      end)
 
-    claimed = Enum.map(claimed, fn {_, txids} -> %{txids: txids} end)
     %{:address => Base58.encode(address_hash), :claimed => claimed}
   end
 

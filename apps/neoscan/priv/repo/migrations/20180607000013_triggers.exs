@@ -159,7 +159,7 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     CREATE OR REPLACE FUNCTION block_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
         INSERT INTO counters (name, value)
-        VALUES ('blocks', 1), ('transactions', NEW.tx_count)
+        VALUES ('blocks', 1), ('transactions', NEW.tx_count - 1)
         ON CONFLICT ON CONSTRAINT counters_pkey DO
         UPDATE SET
         value = counters.value + EXCLUDED.value;

@@ -105,7 +105,8 @@ defmodule Neoscan.Transactions do
           :transfers,
           {:claims, ^claim_query()},
           :asset
-        ]
+        ],
+        where: t.type != "miner_transaction"
       )
 
     # override total entries to avoid counting the whole set

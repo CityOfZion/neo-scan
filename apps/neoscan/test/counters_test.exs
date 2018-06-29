@@ -5,7 +5,7 @@ defmodule Neoscan.CountersTest do
   alias Neoscan.Counters
 
   test "_count_transactions/0" do
-    for _ <- 1..18, do: insert(:block, tx_count: 2)
+    for _ <- 1..18, do: insert(:block, tx_count: 3)
     assert 36 == Counters._count_transactions()
     assert 36 == Enum.at(Counters.count_transactions(), 1)
   end
