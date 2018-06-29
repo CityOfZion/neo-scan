@@ -88,7 +88,8 @@ defmodule NeoscanSync.Syncer do
       fn n ->
         now = Time.utc_now()
         block = download_block(n)
-        Logger.warn("download block #{n} #{Time.diff(Time.utc_now(), now, :microseconds)}}")
+        Monitor.incr(:download_blocks_time, Time.diff(Time.utc_now(), now, :microseconds))
+        Monitor.incr(:download_blocks_count, 1)
         block
       end,
       max_concurrency: concurrency,
@@ -99,10 +100,8 @@ defmodule NeoscanSync.Syncer do
       fn {:ok, block} ->
         now = Time.utc_now()
         insert_block(block)
-
-        Logger.warn(
-          "insert block #{block.index} #{Time.diff(Time.utc_now(), now, :microseconds)}}"
-        )
+        Monitor.incr(:insert_blocks_time, Time.diff(Time.utc_now(), now, :microseconds))
+        Monitor.incr(:insert_blocks_count, 1)
       end,
       max_concurrency: concurrency,
       timeout: :infinity

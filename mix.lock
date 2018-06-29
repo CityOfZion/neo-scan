@@ -2,6 +2,7 @@
   "approximate_histogram": {:hex, :approximate_histogram, "0.1.1", "198eb36681e763ed4baab6ca0682acec4ef642f60ba272f251d3059052f4f378", [:mix], []},
   "base58": {:hex, :base58, "0.1.0", "ab34d1a4ef0f11ac61b9f5ad54c35826c3bdc541688a2f95183417272aa1fcfc", [:mix], [], "hexpm"},
   "bitmap": {:hex, :bitmap, "1.0.1", "37d913e4f36e65ffffc3e38ee2bd2e8d768aedec6973de4bdce5c3456ef8a86e", [:mix], [], "hexpm"},
+  "buffer": {:hex, :buffer, "0.3.12", "4231fe8d94dcfbb7bb3d8b242b87b2f2f14aea506bb9bc03e0e3d3b46f2b608c", [:mix], [], "hexpm"},
   "bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], []},
   "certifi": {:hex, :certifi, "2.0.0", "a0c0e475107135f76b8c1d5bc7efb33cd3815cb3cf3dea7aefdd174dabead064", [:rebar3], [], "hexpm"},
   "combine": {:hex, :combine, "0.10.0", "eff8224eeb56498a2af13011d142c5e7997a80c8f5b97c499f84c841032e429f", [:mix], [], "hexpm"},

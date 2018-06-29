@@ -42,7 +42,7 @@ defmodule NeoscanNode.HttpCalls do
 
   defp handle_response({_, result}, url) do
     message = "#{inspect(result)} #{url}"
-    Logger.warn(message)
+    Logger.debug(message)
     {:error, message}
   end
 
