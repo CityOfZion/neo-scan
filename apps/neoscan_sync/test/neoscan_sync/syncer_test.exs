@@ -13,7 +13,7 @@ defmodule NeoscanSync.SyncerTest do
   alias Neoscan.Transfer
 
   test "import_block/1" do
-    assert {:ok, _} = Syncer.insert_block(Syncer.download_block(0))
+    assert :ok = IO.inspect(Syncer.insert_block(Syncer.download_block(0)))
 
     assert 1 == Enum.count(Repo.all(from(Block)))
     assert 4 == Enum.count(Repo.all(from(Transaction)))
@@ -22,7 +22,7 @@ defmodule NeoscanSync.SyncerTest do
     assert 1 == Enum.count(Repo.all(from(AddressHistory)))
     assert 2 == Enum.count(Repo.all(from(Asset)))
 
-    assert {:ok, _} = Syncer.insert_block(Syncer.download_block(1_444_843))
+    assert :ok = Syncer.insert_block(Syncer.download_block(1_444_843))
 
     assert 2 == Enum.count(Repo.all(from(Block)))
     assert 42 == Enum.count(Repo.all(from(Transaction)))

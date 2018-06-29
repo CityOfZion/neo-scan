@@ -5,7 +5,7 @@ defmodule NeoscanWeb.BlockControllerTest do
 
   test "/block/:hash", %{conn: conn} do
     block = insert(:block)
-    block_hash = Base.encode16(block.hash)
+    block_hash = Base.encode16(block.hash, case: :lower)
     conn = get(conn, "/block/#{block_hash}")
     body = html_response(conn, 200)
     assert body =~ block_hash

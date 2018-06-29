@@ -65,6 +65,7 @@ defmodule NeoscanSync.Syncer do
     try do
       # Repo.transaction(fn -> Repo.insert!(block) end)
       Repo.insert!(block)
+      :ok
     catch
       error ->
         Logger.error("error while loading block #{inspect({block.index, error})}")

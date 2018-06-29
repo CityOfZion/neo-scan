@@ -19,11 +19,11 @@ defmodule NeoscanWeb.TransactionControllerTest do
       insert(:asset, %{transaction_hash: transaction.hash})
       conn = get(conn, "/transaction/#{Base.encode16(transaction.hash)}")
       body = html_response(conn, 200)
-      assert body =~ Base.encode16(transaction.hash)
+      assert body =~ Base.encode16(transaction.hash, case: :lower)
 
       conn = get(conn, "/transaction/#{Base.encode16(transaction.hash, case: :lower)}")
       body = html_response(conn, 200)
-      assert body =~ Base.encode16(transaction.hash)
+      assert body =~ Base.encode16(transaction.hash, case: :lower)
     end
 
     #    conn = get(conn, "/transaction/random")

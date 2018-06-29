@@ -33,12 +33,12 @@ defmodule NeoscanWeb.TransactionsControllerTest do
 
     conn = get(conn, "/transactions/1")
     body = html_response(conn, 200)
-    assert body =~ Base.encode16(Enum.at(transactions, 15).hash)
-    assert not (body =~ Base.encode16(Enum.at(transactions, 2).hash))
+    assert body =~ Base.encode16(Enum.at(transactions, 15).hash, case: :lower)
+    assert not (body =~ Base.encode16(Enum.at(transactions, 2).hash, case: :lower))
 
     conn = get(conn, "/transactions/2")
     body = html_response(conn, 200)
-    assert not (body =~ Base.encode16(Enum.at(transactions, 15).hash))
-    assert body =~ Base.encode16(Enum.at(transactions, 2).hash)
+    assert not (body =~ Base.encode16(Enum.at(transactions, 15).hash, case: :lower))
+    assert body =~ Base.encode16(Enum.at(transactions, 2).hash, case: :lower)
   end
 end

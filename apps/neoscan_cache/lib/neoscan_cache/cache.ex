@@ -63,7 +63,7 @@ defmodule NeoscanCache.Cache do
     Enum.map(
       blocks,
       &%{
-        hash: Base.encode16(&1.hash),
+        hash: Base.encode16(&1.hash, case: :lower),
         index: &1.index,
         size: &1.size,
         time: DateTime.to_unix(&1.time),
@@ -78,7 +78,7 @@ defmodule NeoscanCache.Cache do
     Enum.map(
       transactions,
       &%{
-        txid: Base.encode16(&1.hash),
+        txid: Base.encode16(&1.hash, case: :lower),
         type: &1.type,
         time: DateTime.to_unix(&1.block_time)
       }

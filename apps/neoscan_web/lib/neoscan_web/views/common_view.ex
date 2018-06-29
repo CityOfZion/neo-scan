@@ -72,7 +72,7 @@ defmodule NeoscanWeb.CommonView do
     NeoscanCache.Api.get_asset_name(asset_hash)
   end
 
-  def render_hash(hash), do: Base.encode16(hash)
+  def render_hash(hash), do: Base.encode16(hash, case: :lower)
 
   def render_address_hash(hash), do: Base58.encode(hash)
 
