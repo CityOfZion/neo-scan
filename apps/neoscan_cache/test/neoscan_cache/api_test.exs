@@ -10,9 +10,9 @@ defmodule NeoscanCache.ApiTest do
   end
 
   test "get_transactions/0" do
-    transaction = insert(:transaction)
+    transaction = insert(:transaction, %{type: "contract_transaction"})
     insert(:vout, %{transaction_hash: transaction.hash})
-    insert(:transaction)
+    insert(:transaction, %{type: "contract_transaction"})
     Cache.sync()
     assert [_, %{vouts: [_]}] = Api.get_transactions()
   end
