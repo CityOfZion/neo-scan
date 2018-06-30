@@ -18,13 +18,14 @@ defmodule NeoscanWeb.ApiController do
   end
 
   # used by neon-js
-  def get_last_transactions_by_address(conn, %{"hash" => hash} = params) do
+  def get_last_transactions_by_address(conn, %{"hash" => address_hash} = params) do
     page = if is_nil(params["page"]), do: 1, else: String.to_integer(params["page"])
+    address_hash = Base58.decode(address_hash)
 
     transactions =
       cache(
-        {:get_last_transactions_by_address, hash, page},
-        Api.get_last_transactions_by_address(hash, page)
+        {:get_last_transactions_by_address, address_hash, page},
+        Api.get_last_transactions_by_address(address_hash, page)
       )
 
     json(conn, transactions)

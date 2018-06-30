@@ -45,9 +45,17 @@ defmodule Neoscan.Transactions do
   Specific query for API
   """
 
-  def api_get(hash) do
-    transaction = get(hash)
+  def api_get(transaction_hash) do
+    transaction = get(transaction_hash)
+    add_extra(transaction)
+  end
 
+  def api_get_for_address(address_hash, page) do
+    transactions = get_for_address(address_hash, page)
+    Enum.map(transactions, &add_extra/1)
+  end
+
+  defp add_extra(transaction) do
     vouts =
       Repo.all(
         from(

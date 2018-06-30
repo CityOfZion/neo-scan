@@ -337,26 +337,35 @@ defmodule NeoscanWeb.ApiControllerTest do
            } == json_response(conn, 200)
   end
 
-  #  test "get_last_transactions_by_address/:hash/:page", %{conn: conn} do
-  #    transaction = insert(:transaction)
-  #    history = insert(:history, %{txid: transaction.txid})
-  #    transaction2 = insert(:transaction)
-  #    insert(:history, %{address_hash: history.address_hash, txid: transaction2.txid})
-  #    insert(:history)
-  #
-  #    conn =
-  #      get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{history.address_hash}/1")
-  #
-  #    assert 2 == Enum.count(json_response(conn, 200))
-  #
-  #    conn =
-  #      get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{history.address_hash}/2")
-  #
-  #    assert 0 == Enum.count(json_response(conn, 200))
-  #    conn = get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{history.address_hash}")
-  #    assert 2 == Enum.count(json_response(conn, 200))
-  #  end
-  #
+  test "get_last_transactions_by_address/:hash/:page", %{conn: conn} do
+    asset = insert(:asset)
+    transaction = insert(:transaction)
+    vout = insert(:vout, %{asset_hash: asset.transaction_hash})
+
+    insert(:vin, %{
+      transaction_hash: transaction.hash,
+      vout_n: vout.n,
+      vout_transaction_hash: vout.transaction_hash
+    })
+
+    _vout2 =
+      insert(:vout, %{transaction_hash: transaction.hash, asset_hash: asset.transaction_hash})
+
+    vout3 = insert(:vout, %{asset_hash: asset.transaction_hash})
+
+    insert(:claim, %{
+      transaction_hash: transaction.hash,
+      vout_n: vout3.n,
+      vout_transaction_hash: vout3.transaction_hash
+    })
+
+    address_hash = Base58.encode(vout.address_hash)
+
+    conn = get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{address_hash}/1")
+
+    assert 1 == Enum.count(json_response(conn, 200))
+  end
+
   test "get_all_nodes", %{conn: conn} do
     conn = get(conn, "/api/main_net/v1/get_all_nodes")
     assert [%{"height" => _, "url" => _} | _] = json_response(conn, 200)

@@ -526,15 +526,9 @@ defmodule NeoscanWeb.Api do
         ...
       ]
   """
-  def get_last_transactions_by_address(_hash_string, _page) do
-    []
-    #    transactions =
-    #      BalanceHistories.paginate_history_transactions(
-    #        hash_string,
-    #        page || 1
-    #      )
-    #
-    #    transactions
+  def get_last_transactions_by_address(address_hash, page) do
+    transactions = Transactions.api_get_for_address(address_hash, page)
+    Enum.map(transactions, &render_transaction/1)
   end
 
   @doc """
