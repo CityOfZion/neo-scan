@@ -618,9 +618,20 @@ defmodule NeoscanWeb.Api do
         ...
       ]
   """
-  def get_address_abstracts(_hash, _page) do
-    %{entries: []}
-    # TxAbstracts.get_address_abstracts(hash, page)
+  def get_address_abstracts(_address_hash, page) do
+    render_transaction_abstract(page)
+    %{total_pages: 1, total_entries: 19, page_size: 15, page_number: page, entries: []}
+  end
+
+  defp render_transaction_abstract(_transaction) do
+    %{
+      txid: "2323",
+      time: 121,
+      asset: "asset_hash",
+      amount: 23,
+      address_to: "34232",
+      address_from: "3423423"
+    }
   end
 
   @doc """
