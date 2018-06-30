@@ -20,6 +20,7 @@ defmodule Neoscan.Addresses do
   alias Neoscan.Address
   alias Neoscan.AddressBalance
   alias Neoscan.AddressHistory
+  alias Neoscan.AddressTransactionBalance
   alias Neoscan.Asset
 
   @doc """
@@ -163,4 +164,72 @@ defmodule Neoscan.Addresses do
         name
     end
   end
+
+  def get_transaction_abstracts(address_hash, page) do
+    transaction_query =
+      from(
+        atb in AddressTransactionBalance,
+        where: atb.address_hash == ^address_hash,
+        preload: [:transaction],
+        order_by: [desc: atb.block_time]
+      )
+
+    result = Repo.paginate(transaction_query, page: page, page_size: @page_size)
+    %{result | entries: create_transaction_abstracts(result.entries)}
+  end
+
+  defp get_related_transaction_abstracts(%{
+         transaction_hash: transaction_hash,
+         asset_hash: asset_hash,
+         value: value
+       }) do
+    atbs_query =
+      from(
+        atb in AddressTransactionBalance,
+        where: atb.transaction_hash == ^transaction_hash and atb.asset_hash == ^asset_hash
+      )
+
+    atbs_query =
+      if value < 0 do
+        from(atb in atbs_query, where: atb.value > 0.0)
+      else
+        from(atb in atbs_query, where: atb.value < 0.0)
+      end
+
+    Repo.all(atbs_query)
+  end
+
+  defp create_transaction_abstracts(transactions) do
+    transactions
+    |> Enum.map(&Map.put(&1, :related, get_related_transaction_abstracts(&1)))
+    |> Enum.map(&create_transaction_abstract/1)
+  end
+
+  defp create_transaction_abstract(abt) do
+    {address_from, address_to} = get_transaction_abstract_actors(abt)
+
+    %{
+      transaction_hash: abt.transaction_hash,
+      address_from: address_from,
+      address_to: address_to,
+      value: abs(abt.value),
+      asset_hash: abt.asset_hash,
+      block_time: abt.block_time,
+      block_index: abt.transaction.block_index
+    }
+  end
+
+  defp get_transaction_abstract_actors(abt) do
+    is_sender = abt.value < 0
+    original = abt.address_hash
+    other = get_transaction_abstract_other_actor(abt)
+    if is_sender, do: {original, other}, else: {other, original}
+  end
+
+  defp get_transaction_abstract_other_actor(%{related: []}), do: "claim"
+
+  defp get_transaction_abstract_other_actor(%{related: [%{address_hash: address_hash}]}),
+    do: address_hash
+
+  defp get_transaction_abstract_other_actor(_), do: "multi"
 end

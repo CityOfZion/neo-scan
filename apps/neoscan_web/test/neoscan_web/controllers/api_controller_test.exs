@@ -201,30 +201,149 @@ defmodule NeoscanWeb.ApiControllerTest do
   #
   test "get_address_abstracts/:hash/:page", %{conn: conn} do
     asset = insert(:asset)
-    transaction = insert(:transaction)
-    vout = insert(:vout, %{asset_hash: asset.transaction_hash})
+    asset_hash = asset.transaction_hash
+    asset_hash_str = Base.encode16(asset_hash, case: :lower)
+
+    # claim transaction (no vin, but 1 vout) address is receiver
+    transaction1 = insert(:transaction)
+
+    vout =
+      insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 5.0})
+
+    address_hash = vout.address_hash
+    address_hash_str = Base58.encode(address_hash)
+    insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 2.0})
+    insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 3.0})
+
+    # normal transaction (1 vin 2 vouts) address is receiver, receive 5.0
+    transaction2 = insert(:transaction)
+
+    vout4 =
+      insert(:vout, %{
+        address_hash: address_hash,
+        transaction_hash: transaction2.hash,
+        asset_hash: asset_hash,
+        value: 5.0
+      })
+
+    vout2 = insert(:vout, %{asset_hash: asset_hash, value: 7.0})
 
     insert(:vin, %{
-      transaction_hash: transaction.hash,
-      vout_n: vout.n,
-      vout_transaction_hash: vout.transaction_hash
+      transaction_hash: transaction2.hash,
+      vout_n: vout2.n,
+      vout_transaction_hash: vout2.transaction_hash
     })
 
-    _vout2 =
-      insert(:vout, %{transaction_hash: transaction.hash, asset_hash: asset.transaction_hash})
+    insert(:vout, %{transaction_hash: transaction2.hash, asset_hash: asset_hash, value: 2.0})
 
-    vout3 = insert(:vout, %{asset_hash: asset.transaction_hash})
+    # normal transaction address is sender
+    transaction3 = insert(:transaction)
 
-    insert(:claim, %{
-      transaction_hash: transaction.hash,
+    vout3 =
+      insert(:vout, %{transaction_hash: transaction3.hash, asset_hash: asset_hash, value: 5.0})
+
+    insert(:vin, %{
+      transaction_hash: transaction3.hash,
+      vout_n: vout4.n,
+      vout_transaction_hash: vout4.transaction_hash
+    })
+
+    # multi transaction (2 vins 1 vout)
+    transaction5 = insert(:transaction)
+
+    vout5 =
+      insert(:vout, %{transaction_hash: transaction5.hash, asset_hash: asset_hash, value: 9.0})
+
+    transaction4 = insert(:transaction)
+
+    vout6 =
+      insert(:vout, %{
+        address_hash: address_hash,
+        transaction_hash: transaction4.hash,
+        asset_hash: asset_hash,
+        value: 14.0
+      })
+
+    insert(:vin, %{
+      transaction_hash: transaction4.hash,
       vout_n: vout3.n,
       vout_transaction_hash: vout3.transaction_hash
     })
 
-    address_hash = Base58.encode(vout.address_hash)
+    insert(:vin, %{
+      transaction_hash: transaction4.hash,
+      vout_n: vout5.n,
+      vout_transaction_hash: vout5.transaction_hash
+    })
 
-    conn = get(conn, "/api/main_net/v1/get_address_abstracts/#{address_hash}/1")
-    assert 0 == Enum.count(json_response(conn, 200)["entries"])
+    # multi transaction (1 vin 2 vouts) where vin has the same address hash than 1 vout
+    transaction6 = insert(:transaction)
+
+    insert(:vout, %{
+      address_hash: address_hash,
+      transaction_hash: transaction6.hash,
+      asset_hash: asset_hash,
+      value: 13.0
+    })
+
+    vout7 =
+      insert(:vout, %{transaction_hash: transaction6.hash, asset_hash: asset_hash, value: 1.0})
+
+    insert(:vin, %{
+      transaction_hash: transaction6.hash,
+      vout_n: vout6.n,
+      vout_transaction_hash: vout6.transaction_hash
+    })
+
+    conn = get(conn, "/api/main_net/v1/get_address_abstracts/#{address_hash_str}/1")
+
+    assert [
+             %{
+               "address_from" => address_hash_str,
+               "address_to" => Base58.encode(vout7.address_hash),
+               "amount" => "1.0",
+               "asset" => asset_hash_str,
+               "block_height" => transaction6.block_index,
+               "time" => DateTime.to_unix(transaction6.block_time),
+               "txid" => Base.encode16(transaction6.hash, case: :lower)
+             },
+             %{
+               "address_from" => Base.encode16(transaction4.hash, case: :lower),
+               "address_to" => address_hash_str,
+               "amount" => "14.0",
+               "asset" => asset_hash_str,
+               "block_height" => transaction4.block_index,
+               "time" => DateTime.to_unix(transaction4.block_time),
+               "txid" => Base.encode16(transaction4.hash, case: :lower)
+             },
+             %{
+               "address_from" => address_hash_str,
+               "address_to" => Base58.encode(vout3.address_hash),
+               "amount" => "5.0",
+               "asset" => asset_hash_str,
+               "block_height" => transaction3.block_index,
+               "time" => DateTime.to_unix(transaction3.block_time),
+               "txid" => Base.encode16(transaction3.hash, case: :lower)
+             },
+             %{
+               "address_from" => Base58.encode(vout2.address_hash),
+               "address_to" => address_hash_str,
+               "amount" => "5.0",
+               "asset" => asset_hash_str,
+               "block_height" => transaction2.block_index,
+               "time" => DateTime.to_unix(transaction2.block_time),
+               "txid" => Base.encode16(transaction2.hash, case: :lower)
+             },
+             %{
+               "address_from" => "claim",
+               "address_to" => address_hash_str,
+               "amount" => "5.0",
+               "asset" => asset_hash_str,
+               "block_height" => transaction1.block_index,
+               "time" => DateTime.to_unix(transaction1.block_time),
+               "txid" => Base.encode16(transaction1.hash, case: :lower)
+             }
+           ] == json_response(conn, 200)["entries"]
   end
 
   #

@@ -229,88 +229,6 @@ defmodule NeoscanWeb.Api do
       :txids => nil,
       :claimed => nil
     }
-
-    #    his_query =
-    #      from(
-    #        h in History,
-    #        select: %{
-    #          txid: h.txid,
-    #          balance: h.balance,
-    #          block_height: h.block_height
-    #        }
-    #      )
-    #
-    #    claim_query =
-    #      from(
-    #        h in Claim,
-    #        select: %{
-    #          txids: h.txids
-    #        }
-    #      )
-    #
-    #    query =
-    #      from(
-    #        e in Address,
-    #        where: e.address == ^hash,
-    #        preload: [
-    #          histories: ^his_query,
-    #          claimed: ^claim_query
-    #        ],
-    #        select: e
-    #      )
-    #
-    #    result =
-    #      case Repo.all(query)
-    #           |> List.first() do
-    #        nil ->
-    #          %{
-    #            :address => "not found",
-    #            :balance => nil,
-    #            :txids => nil,
-    #            :claimed => nil
-    #          }
-    #
-    #        %{} = address ->
-    #          new_balance = filter_balance(address.address, address.balance)
-    #
-    #          new_tx =
-    #            address.histories
-    #            |> Stream.with_index()
-    #            |> Enum.map(fn {
-    #                             %{
-    #                               :txid => txid,
-    #                               :balance => balance,
-    #                               :block_height => block_height
-    #                             },
-    #                             index
-    #                           } ->
-    #              prev_tx =
-    #                case Enum.at(address.histories, index + 1) do
-    #                  nil -> %{balance: nil}
-    #                  map -> map
-    #                end
-    #
-    #              {:ok, prev_balance} = Map.fetch(prev_tx, :balance)
-    #              current_tx = Transactions.get_transaction_by_hash(txid)
-    #              asset_moved = Map.get(current_tx, :asset_moved)
-    #
-    #              %{
-    #                :txid => txid,
-    #                :balance => filter_balance(balance),
-    #                :block_height => block_height,
-    #                :asset_moved => asset_moved,
-    #                :amount_moved => calculate_amount_moved(asset_moved, balance, prev_balance)
-    #              }
-    #            end)
-    #
-    #          Map.merge(address, %{
-    #            :balance => new_balance,
-    #            :txids => new_tx
-    #          })
-    #          |> Map.drop([:inserted_at, :histories, :updated_at, :vouts, :id, :__meta__, :__struct__])
-    #      end
-    #
-    #    result
   end
 
   @doc """
@@ -618,21 +536,29 @@ defmodule NeoscanWeb.Api do
         ...
       ]
   """
-  def get_address_abstracts(_address_hash, page) do
-    render_transaction_abstract(page)
-    %{total_pages: 1, total_entries: 19, page_size: 15, page_number: page, entries: []}
+  def get_address_abstracts(address_hash, page) do
+    result = Addresses.get_transaction_abstracts(address_hash, page)
+    %{result | entries: Enum.map(result.entries, &render_transaction_abstract/1)}
   end
 
-  defp render_transaction_abstract(_transaction) do
+  defp render_transaction_abstract(abt) do
     %{
-      txid: "2323",
-      time: 121,
-      asset: "asset_hash",
-      amount: 23,
-      address_to: "34232",
-      address_from: "3423423"
+      txid: Base.encode16(abt.transaction_hash, case: :lower),
+      time: DateTime.to_unix(abt.block_time),
+      asset: Base.encode16(abt.asset_hash, case: :lower),
+      amount: to_string(abt.value),
+      address_to: render_transaction_abstract_address(abt.address_to, abt.transaction_hash),
+      address_from: render_transaction_abstract_address(abt.address_from, abt.transaction_hash),
+      block_height: abt.block_index
     }
   end
+
+  defp render_transaction_abstract_address("claim", _), do: "claim"
+
+  defp render_transaction_abstract_address("multi", transaction_hash),
+    do: Base.encode16(transaction_hash, case: :lower)
+
+  defp render_transaction_abstract_address(address_hash, _), do: Base58.encode(address_hash)
 
   @doc """
   Returns abstract models for an address, to an address from their `hash_string`, paginated

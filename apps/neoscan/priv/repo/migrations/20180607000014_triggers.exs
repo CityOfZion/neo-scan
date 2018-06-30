@@ -131,6 +131,28 @@ defmodule Neoscan.Repo.Migrations.Triggers do
       EXECUTE PROCEDURE generate_address_balances_from_address_history();
     """
 
+    # generate address transaction balance from address history
+
+    execute """
+    CREATE OR REPLACE FUNCTION generate_address_transaction_balances_from_address_history() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        INSERT INTO address_transaction_balances (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.transaction_hash, NEW.asset_hash, NEW.value, NEW.block_time, NEW.inserted_at, NEW.updated_at)
+        ON CONFLICT ON CONSTRAINT address_transaction_balances_pkey DO
+        UPDATE SET
+        value = address_transaction_balances.value + EXCLUDED.value,
+        updated_at = EXCLUDED.updated_at;
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER generate_address_transaction_balances_from_address_history_trigger
+      AFTER INSERT ON address_histories FOR each row
+      EXECUTE PROCEDURE generate_address_transaction_balances_from_address_history();
+    """
+
     # Generate address history from transfer
 
     execute """

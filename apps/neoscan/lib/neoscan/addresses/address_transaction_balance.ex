@@ -1,4 +1,4 @@
-defmodule Neoscan.TransactionAbstract do
+defmodule Neoscan.AddressTransactionBalance do
   @moduledoc """
   Represent a Address in Database.
   """
@@ -8,7 +8,7 @@ defmodule Neoscan.TransactionAbstract do
   alias Neoscan.Asset
 
   @primary_key false
-  schema "address_transaction_abstracts" do
+  schema "address_transaction_balances" do
     belongs_to(
       :address,
       Address,
@@ -36,6 +36,7 @@ defmodule Neoscan.TransactionAbstract do
       primary_key: true
     )
 
+    field(:value, :float)
     field(:block_time, :utc_datetime)
 
     timestamps()
