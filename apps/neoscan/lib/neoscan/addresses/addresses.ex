@@ -214,7 +214,7 @@ defmodule Neoscan.Addresses do
       address_to: address_to,
       value: abs(abt.value),
       asset_hash: abt.asset_hash,
-      block_time: abt.block_time,
+      block_time: abt.transaction.block_time,
       block_index: abt.transaction.block_index
     }
   end
