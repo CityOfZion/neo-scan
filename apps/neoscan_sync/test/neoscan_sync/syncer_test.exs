@@ -31,4 +31,8 @@ defmodule NeoscanSync.SyncerTest do
     assert 48 == Enum.count(Repo.all(from(AddressHistory)))
     assert 3 == Enum.count(Repo.all(from(Transfer)))
   end
+
+  test "sync_indexes/1" do
+    assert :ok == Syncer.sync_indexes([0])
+  end
 end
