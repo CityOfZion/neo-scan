@@ -219,6 +219,10 @@ defmodule Neoscan.Addresses do
     }
   end
 
+  # self transfer for gas claim
+  defp get_transaction_abstract_actors(%{value: 0.0, address_hash: address_hash}),
+    do: {address_hash, address_hash}
+
   defp get_transaction_abstract_actors(abt) do
     is_sender = abt.value < 0
     original = abt.address_hash

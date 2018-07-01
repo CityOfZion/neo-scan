@@ -245,12 +245,13 @@ defmodule Neoscan.AddressesTest do
     # multi transaction (1 vin 2 vouts) where vin has the same address hash than 1 vout
     transaction6 = insert(:transaction)
 
-    insert(:vout, %{
-      address_hash: address_hash,
-      transaction_hash: transaction6.hash,
-      asset_hash: asset_hash,
-      value: 13.0
-    })
+    vout8 =
+      insert(:vout, %{
+        address_hash: address_hash,
+        transaction_hash: transaction6.hash,
+        asset_hash: asset_hash,
+        value: 13.0
+      })
 
     vout7 =
       insert(:vout, %{transaction_hash: transaction6.hash, asset_hash: asset_hash, value: 1.0})
@@ -261,10 +262,35 @@ defmodule Neoscan.AddressesTest do
       vout_transaction_hash: vout6.transaction_hash
     })
 
-    assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 5, total_pages: 1} =
+    # transaction to itself
+    transaction7 = insert(:transaction)
+
+    insert(:vout, %{
+      address_hash: address_hash,
+      transaction_hash: transaction7.hash,
+      asset_hash: asset_hash,
+      value: 13.0
+    })
+
+    insert(:vin, %{
+      transaction_hash: transaction7.hash,
+      vout_n: vout8.n,
+      vout_transaction_hash: vout8.transaction_hash
+    })
+
+    assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 6, total_pages: 1} =
              Addresses.get_transaction_abstracts(address_hash, 1)
 
     assert entries == [
+             %{
+               address_from: address_hash,
+               address_to: address_hash,
+               value: 0.0,
+               asset_hash: asset_hash,
+               block_index: transaction7.block_index,
+               block_time: transaction7.block_time,
+               transaction_hash: transaction7.hash
+             },
              %{
                address_from: address_hash,
                address_to: vout7.address_hash,

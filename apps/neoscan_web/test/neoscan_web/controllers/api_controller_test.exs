@@ -208,7 +208,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     transaction1 = insert(:transaction)
 
     vout =
-      insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 5.0})
+      insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 5.1})
 
     address_hash = vout.address_hash
     address_hash_str = Base58.encode(address_hash)
@@ -301,7 +301,7 @@ defmodule NeoscanWeb.ApiControllerTest do
              %{
                "address_from" => address_hash_str,
                "address_to" => Base58.encode(vout7.address_hash),
-               "amount" => "1.0",
+               "amount" => "1",
                "asset" => asset_hash_str,
                "block_height" => transaction6.block_index,
                "time" => DateTime.to_unix(transaction6.block_time),
@@ -310,7 +310,7 @@ defmodule NeoscanWeb.ApiControllerTest do
              %{
                "address_from" => Base.encode16(transaction4.hash, case: :lower),
                "address_to" => address_hash_str,
-               "amount" => "14.0",
+               "amount" => "14",
                "asset" => asset_hash_str,
                "block_height" => transaction4.block_index,
                "time" => DateTime.to_unix(transaction4.block_time),
@@ -319,7 +319,7 @@ defmodule NeoscanWeb.ApiControllerTest do
              %{
                "address_from" => address_hash_str,
                "address_to" => Base58.encode(vout3.address_hash),
-               "amount" => "5.0",
+               "amount" => "5",
                "asset" => asset_hash_str,
                "block_height" => transaction3.block_index,
                "time" => DateTime.to_unix(transaction3.block_time),
@@ -328,7 +328,7 @@ defmodule NeoscanWeb.ApiControllerTest do
              %{
                "address_from" => Base58.encode(vout2.address_hash),
                "address_to" => address_hash_str,
-               "amount" => "5.0",
+               "amount" => "5",
                "asset" => asset_hash_str,
                "block_height" => transaction2.block_index,
                "time" => DateTime.to_unix(transaction2.block_time),
@@ -337,7 +337,7 @@ defmodule NeoscanWeb.ApiControllerTest do
              %{
                "address_from" => "claim",
                "address_to" => address_hash_str,
-               "amount" => "5.0",
+               "amount" => "5.1",
                "asset" => asset_hash_str,
                "block_height" => transaction1.block_index,
                "time" => DateTime.to_unix(transaction1.block_time),

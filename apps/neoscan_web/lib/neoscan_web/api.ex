@@ -546,11 +546,18 @@ defmodule NeoscanWeb.Api do
       txid: Base.encode16(abt.transaction_hash, case: :lower),
       time: DateTime.to_unix(abt.block_time),
       asset: Base.encode16(abt.asset_hash, case: :lower),
-      amount: to_string(abt.value),
+      amount: render_amount(abt.value),
       address_to: render_transaction_abstract_address(abt.address_to, abt.transaction_hash),
       address_from: render_transaction_abstract_address(abt.address_from, abt.transaction_hash),
       block_height: abt.block_index
     }
+  end
+
+  defp render_amount(value) do
+    value
+    |> to_string()
+    |> String.trim_trailing("0")
+    |> String.trim_trailing(".")
   end
 
   defp render_transaction_abstract_address("claim", _), do: "claim"
