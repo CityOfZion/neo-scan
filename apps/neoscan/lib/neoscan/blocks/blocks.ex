@@ -92,15 +92,17 @@ defmodule Neoscan.Blocks do
     if is_nil(max_index), do: -1, else: max_index
   end
 
-  def get_sys_fees_in_range(min, max) do
+  def get_total_sys_fee(min, max) when max < min, do: []
+
+  def get_total_sys_fee(min, max) do
     query =
       from(
         b in Block,
         where: b.index >= ^min and b.index <= ^max,
-        select: sum(b.total_sys_fee)
+        select: map(b, [:index, :total_sys_fee]),
+        order_by: :index
       )
 
-    sys_fee = Repo.one(query)
-    if is_nil(sys_fee), do: 0, else: sys_fee
+    Repo.all(query)
   end
 end

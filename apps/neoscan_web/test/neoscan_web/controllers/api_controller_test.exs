@@ -108,10 +108,10 @@ defmodule NeoscanWeb.ApiControllerTest do
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
-    insert(:block, %{index: 2, total_sys_fee: 6.8})
-    insert(:block, %{index: 4, total_sys_fee: 1.9})
+    insert(:block, %{index: 2, total_sys_fee: 6.0})
+    insert(:block, %{index: 4, total_sys_fee: 1.0})
     insert(:block, %{index: 5, total_sys_fee: 5.0})
-    insert(:block, %{index: 6, total_sys_fee: 44.2})
+    insert(:block, %{index: 6, total_sys_fee: 44.0})
     insert(:block, %{index: 9, total_sys_fee: 12.0})
     insert(:block, %{index: 10, total_sys_fee: 12.0})
     insert(:block, %{index: 11, total_sys_fee: 12.0})
@@ -126,7 +126,7 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     assert %{
              "address" => address_hash,
-             "unclaimed" => 6.099999999999999e-6
+             "unclaimed" => 6.0e-6
            } == json_response(conn, 200)
   end
 
@@ -152,10 +152,10 @@ defmodule NeoscanWeb.ApiControllerTest do
       block_index: 8
     })
 
-    insert(:block, %{index: 2, gas_generated: 7.0, total_sys_fee: 6.8})
-    insert(:block, %{index: 4, gas_generated: 5.0, total_sys_fee: 1.9})
+    insert(:block, %{index: 2, gas_generated: 7.0, total_sys_fee: 6.0})
+    insert(:block, %{index: 4, gas_generated: 5.0, total_sys_fee: 2.0})
     insert(:block, %{index: 5, gas_generated: 2.0, total_sys_fee: 5.0})
-    insert(:block, %{index: 6, gas_generated: 4.0, total_sys_fee: 44.2})
+    insert(:block, %{index: 6, gas_generated: 4.0, total_sys_fee: 44.0})
     insert(:block, %{index: 9, gas_generated: 3.0, total_sys_fee: 12.0})
 
     address_hash = Base58.encode(vout1.address_hash)
@@ -169,9 +169,9 @@ defmodule NeoscanWeb.ApiControllerTest do
                  "generated" => 4.8e-7,
                  "n" => vout4.n,
                  "start_height" => 5,
-                 "sys_fee" => 9.84e-7,
+                 "sys_fee" => 9.8e-7,
                  "txid" => Base.encode16(vout4.transaction_hash, case: :lower),
-                 "unclaimed" => 1.4639999999999999e-6,
+                 "unclaimed" => 1.46e-6,
                  "value" => 2
                },
                %{
@@ -179,13 +179,13 @@ defmodule NeoscanWeb.ApiControllerTest do
                  "generated" => 1.2e-6,
                  "n" => vout2.n,
                  "start_height" => 3,
-                 "sys_fee" => 3.45e-7,
+                 "sys_fee" => 3.5e-7,
                  "txid" => Base.encode16(vout2.transaction_hash, case: :lower),
-                 "unclaimed" => 1.545e-6,
+                 "unclaimed" => 1.55e-6,
                  "value" => 5
                }
              ],
-             "unclaimed" => 3.009e-6
+             "unclaimed" => 3.01e-6
            } == json_response(conn, 200)
   end
 

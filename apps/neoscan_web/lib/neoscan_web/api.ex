@@ -8,6 +8,7 @@ defmodule NeoscanWeb.Api do
   @total_neo 100_000_000
 
   alias Neoscan.Blocks
+  alias Neoscan.BlocksCache
   alias Neoscan.Counters
   alias Neoscan.Transactions
   alias Neoscan.Addresses
@@ -82,7 +83,9 @@ defmodule NeoscanWeb.Api do
         generated =
           value * BlockGasGeneration.get_range_amount(start_index, end_index - 1) / @total_neo
 
-        sys_fee = value * Blocks.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
+        sys_fee =
+          value * BlocksCache.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
+
         acc + sys_fee + generated
       end)
 
@@ -157,7 +160,9 @@ defmodule NeoscanWeb.Api do
         generated =
           value * BlockGasGeneration.get_range_amount(start_index, end_index - 1) / @total_neo
 
-        sys_fee = value * Blocks.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
+        sys_fee =
+          value * BlocksCache.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
+
         unclaimed = sys_fee + generated
 
         %{

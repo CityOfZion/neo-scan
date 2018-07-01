@@ -3,6 +3,7 @@ defmodule Neoscan.BlocksTest do
   import Neoscan.Factory
 
   alias Neoscan.Blocks
+  alias Neoscan.BlocksCache
 
   test "get/1" do
     block = insert(:block)
@@ -32,12 +33,62 @@ defmodule Neoscan.BlocksTest do
     assert 4 == Blocks.get_max_index()
   end
 
+  test "get_total_sys_fee/2" do
+    insert(:block, %{index: 0, total_sys_fee: 1.0})
+    insert(:block, %{index: 2, total_sys_fee: 2.0})
+    insert(:block, %{index: 4, total_sys_fee: 3.0})
+    insert(:block, %{index: 5, total_sys_fee: 4.0})
+    insert(:block, %{index: 6, total_sys_fee: 5.0})
+
+    assert [
+             %{index: 2, total_sys_fee: 2.0},
+             %{index: 4, total_sys_fee: 3.0},
+             %{index: 5, total_sys_fee: 4.0}
+           ] == Blocks.get_total_sys_fee(2, 5)
+
+    assert [
+             %{index: 2, total_sys_fee: 2.0},
+             %{index: 4, total_sys_fee: 3.0},
+             %{index: 5, total_sys_fee: 4.0}
+           ] == BlocksCache.get_total_sys_fee(2, 5)
+
+    insert(:block, %{index: 3, total_sys_fee: 2.0})
+
+    assert [
+             %{index: 2, total_sys_fee: 2.0},
+             %{index: 3, total_sys_fee: 2.0},
+             %{index: 4, total_sys_fee: 3.0},
+             %{index: 5, total_sys_fee: 4.0}
+           ] == BlocksCache.get_total_sys_fee(2, 5)
+
+    assert [
+             %{index: 0, total_sys_fee: 1.0},
+             %{index: 2, total_sys_fee: 2.0},
+             %{index: 3, total_sys_fee: 2.0},
+             %{index: 4, total_sys_fee: 3.0},
+             %{index: 5, total_sys_fee: 4.0},
+             %{index: 6, total_sys_fee: 5.0}
+           ] == BlocksCache.get_total_sys_fee(0, 7)
+
+    insert(:block, %{index: 1, total_sys_fee: 1.0})
+
+    assert [
+             %{index: 0, total_sys_fee: 1.0},
+             %{index: 1, total_sys_fee: 1.0},
+             %{index: 2, total_sys_fee: 2.0},
+             %{index: 3, total_sys_fee: 2.0},
+             %{index: 4, total_sys_fee: 3.0},
+             %{index: 5, total_sys_fee: 4.0},
+             %{index: 6, total_sys_fee: 5.0}
+           ] == BlocksCache.get_total_sys_fee(0, 6)
+  end
+
   test "get_sys_fees_in_range/2" do
     insert(:block, %{index: 0, total_sys_fee: 1.0})
-    insert(:block, %{index: 2, total_sys_fee: 1.2})
-    insert(:block, %{index: 4, total_sys_fee: 1.4})
-    insert(:block, %{index: 5, total_sys_fee: 1.6})
-    insert(:block, %{index: 6, total_sys_fee: 1.7})
-    assert 1.2 + 1.4 + 1.6 == Blocks.get_sys_fees_in_range(2, 5)
+    insert(:block, %{index: 2, total_sys_fee: 2.0})
+    insert(:block, %{index: 4, total_sys_fee: 3.0})
+    insert(:block, %{index: 5, total_sys_fee: 4.0})
+    insert(:block, %{index: 6, total_sys_fee: 5.0})
+    assert 9.0 == BlocksCache.get_sys_fees_in_range(2, 5)
   end
 end
