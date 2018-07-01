@@ -12,6 +12,8 @@ defmodule NeoscanSync.SyncerTest do
   alias Neoscan.Asset
   alias Neoscan.Transfer
 
+  import ExUnit.CaptureLog
+
   test "import_block/1" do
     assert :ok == Syncer.insert_block(Syncer.download_block(0))
 
@@ -34,5 +36,11 @@ defmodule NeoscanSync.SyncerTest do
 
   test "sync_indexes/1" do
     assert :ok == Syncer.sync_indexes([0])
+  end
+
+  test "init(:ok)" do
+    assert capture_log(fn ->
+             Syncer.init(:ok)
+           end) =~ "found 0 missing blocks"
   end
 end

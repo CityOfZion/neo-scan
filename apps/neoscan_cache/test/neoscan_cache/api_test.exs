@@ -26,8 +26,10 @@ defmodule NeoscanCache.ApiTest do
 
   test "get_asset_name/1" do
     asset = insert(:asset)
+    asset2 = insert(:asset, %{name: [%{"lang" => "fr", "name" => "piece"}]})
     Cache.sync()
     assert "truc" == Api.get_asset_name(asset.transaction_hash)
+    assert "piece" == Api.get_asset_name(asset2.transaction_hash)
     assert "Asset not Found" == Api.get_asset_name("1234567890123456789012345678901234567890")
   end
 

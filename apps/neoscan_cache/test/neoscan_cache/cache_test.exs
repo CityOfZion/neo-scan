@@ -10,4 +10,13 @@ defmodule NeoscanCache.CacheTest do
     Cache.sync()
     assert {:noreply, nil} == Cache.handle_info(:broadcast, nil)
   end
+
+  test "init/1" do
+    Cache.init(:ok)
+  end
+
+  test "handle_info(:sync_price, _)" do
+    Cache.handle_info(:sync_price, nil)
+    Cache.handle_info(:sync, nil)
+  end
 end

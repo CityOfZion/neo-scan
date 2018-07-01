@@ -351,7 +351,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     asset_hash = asset.transaction_hash
     asset_hash_str = Base.encode16(asset_hash, case: :lower)
 
-    # claim transaction (no vin, but 1 vout) address is receiver
+    # send 5 from an address to another
     transaction1 = insert(:transaction)
     transaction2 = insert(:transaction)
 
@@ -370,6 +370,23 @@ defmodule NeoscanWeb.ApiControllerTest do
       vout_transaction_hash: vout1.transaction_hash
     })
 
+    # send it back
+
+    transaction3 = insert(:transaction)
+
+    insert(:vout, %{
+      address_hash: vout1.address_hash,
+      transaction_hash: transaction3.hash,
+      asset_hash: asset_hash,
+      value: 5.0
+    })
+
+    insert(:vin, %{
+      transaction_hash: transaction3.hash,
+      vout_n: vout2.n,
+      vout_transaction_hash: vout2.transaction_hash
+    })
+
     conn =
       get(
         conn,
@@ -379,6 +396,15 @@ defmodule NeoscanWeb.ApiControllerTest do
       )
 
     assert [
+             %{
+               "address_from" => address_hash_str2,
+               "address_to" => address_hash_str,
+               "amount" => "5",
+               "asset" => asset_hash_str,
+               "block_height" => transaction3.block_index,
+               "time" => DateTime.to_unix(transaction3.block_time),
+               "txid" => Base.encode16(transaction3.hash, case: :lower)
+             },
              %{
                "address_from" => address_hash_str,
                "address_to" => address_hash_str2,
