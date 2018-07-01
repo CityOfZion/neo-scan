@@ -34,7 +34,7 @@ defmodule Neoscan.Repo.Migrations.Triggers do
           WHERE n = NEW.n AND transaction_hash = NEW.transaction_hash;
 
         INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
-        SELECT NEW.address_hash, NEW.transaction_hash, NEW.asset_hash, NEW.value * -1.0, block_time, inserted_at, updated_at FROM vins
+        SELECT NEW.address_hash, transaction_hash, NEW.asset_hash, NEW.value * -1.0, block_time, inserted_at, updated_at FROM vins
         WHERE vout_n = NEW.n and vout_transaction_hash = NEW.transaction_hash;
         RETURN NULL;
       END;

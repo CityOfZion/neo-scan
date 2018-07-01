@@ -212,7 +212,7 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     address_hash = vout.address_hash
     address_hash_str = Base58.encode(address_hash)
-    insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 2.0})
+    insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 2.1})
     insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 3.0})
 
     # normal transaction (1 vin 2 vouts) address is receiver, receive 5.0
@@ -346,21 +346,50 @@ defmodule NeoscanWeb.ApiControllerTest do
            ] == json_response(conn, 200)["entries"]
   end
 
-  #
-  #  test "get_address_to_address_abstracts/:hash1/:hash2/:page", %{conn: conn} do
-  #    address1 = insert(:address)
-  #    address2 = insert(:address)
-  #    insert(:tx_abstract, %{address_from: address1.address, address_to: address2.address})
-  #    insert(:tx_abstract, %{address_from: address2.address, address_to: address1.address})
-  #
-  #    conn =
-  #      get(
-  #        conn,
-  #        "/api/main_net/v1/get_address_to_address_abstracts/#{address1.address}/#{address2.address}/1"
-  #      )
-  #
-  #    assert 2 == Enum.count(json_response(conn, 200)["entries"])
-  #  end
+  test "get_address_to_address_abstracts/:hash1/:hash2/:page", %{conn: conn} do
+    asset = insert(:asset)
+    asset_hash = asset.transaction_hash
+    asset_hash_str = Base.encode16(asset_hash, case: :lower)
+
+    # claim transaction (no vin, but 1 vout) address is receiver
+    transaction1 = insert(:transaction)
+    transaction2 = insert(:transaction)
+
+    vout2 =
+      insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 5.0})
+
+    vout1 =
+      insert(:vout, %{transaction_hash: transaction2.hash, asset_hash: asset_hash, value: 5.0})
+
+    address_hash_str = Base58.encode(vout1.address_hash)
+    address_hash_str2 = Base58.encode(vout2.address_hash)
+
+    insert(:vin, %{
+      transaction_hash: transaction1.hash,
+      vout_n: vout1.n,
+      vout_transaction_hash: vout1.transaction_hash
+    })
+
+    conn =
+      get(
+        conn,
+        "/api/main_net/v1/get_address_to_address_abstracts/#{address_hash_str}/#{
+          address_hash_str2
+        }/1"
+      )
+
+    assert [
+             %{
+               "address_from" => address_hash_str,
+               "address_to" => address_hash_str2,
+               "amount" => "5",
+               "asset" => asset_hash_str,
+               "block_height" => transaction1.block_index,
+               "time" => DateTime.to_unix(transaction1.block_time),
+               "txid" => Base.encode16(transaction1.hash, case: :lower)
+             }
+           ] == json_response(conn, 200)["entries"]
+  end
 
   test "get_block/:hash", %{conn: conn} do
     block = insert(:block, %{transactions: [insert(:transaction)]})

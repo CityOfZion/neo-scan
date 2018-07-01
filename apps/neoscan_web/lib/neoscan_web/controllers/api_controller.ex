@@ -78,11 +78,18 @@ defmodule NeoscanWeb.ApiController do
   end
 
   # used by NEX
-  def get_address_to_address_abstracts(conn, %{"hash1" => hash1, "hash2" => hash2, "page" => page}) do
+  def get_address_to_address_abstracts(
+        conn,
+        %{"hash1" => address_hash1, "hash2" => address_hash2} = params
+      ) do
+    page = if is_nil(params["page"]), do: 1, else: String.to_integer(params["page"])
+    address_hash1 = Base58.decode(address_hash1)
+    address_hash2 = Base58.decode(address_hash2)
+
     abstracts =
       cache(
-        {:get_address_to_address_abstracts, hash1, hash2, page},
-        Api.get_address_to_address_abstracts(hash1, hash2, page)
+        {:get_address_to_address_abstracts, address_hash1, address_hash2, page},
+        Api.get_address_to_address_abstracts(address_hash1, address_hash2, page)
       )
 
     json(conn, abstracts)

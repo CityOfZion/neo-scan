@@ -585,9 +585,9 @@ defmodule NeoscanWeb.Api do
         ...
       ]
   """
-  def get_address_to_address_abstracts(_hash1, _hash2, _page) do
-    %{entries: []}
-    # TxAbstracts.get_address_to_address_abstracts(hash1, hash2, page)
+  def get_address_to_address_abstracts(address_hash1, address_hash2, page) do
+    result = Addresses.get_address_to_address_abstracts(address_hash1, address_hash2, page)
+    %{result | entries: Enum.map(result.entries, &render_transaction_abstract/1)}
   end
 
   defp filter_name(asset) do

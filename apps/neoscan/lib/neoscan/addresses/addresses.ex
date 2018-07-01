@@ -178,6 +178,23 @@ defmodule Neoscan.Addresses do
     %{result | entries: create_transaction_abstracts(result.entries)}
   end
 
+  def get_address_to_address_abstracts(address_hash1, address_hash2, page) do
+    transaction_query =
+      from(
+        atb in AddressTransactionBalance,
+        join: atb2 in AddressTransactionBalance,
+        on: atb.transaction_hash == atb2.transaction_hash and atb.asset_hash == atb2.asset_hash,
+        where:
+          atb.address_hash == ^address_hash1 and atb2.address_hash == ^address_hash2 and
+            fragment("sign(?)", atb.value) != fragment("sign(?)", atb2.value),
+        preload: [:transaction],
+        order_by: [desc: atb.block_time]
+      )
+
+    result = Repo.paginate(transaction_query, page: page, page_size: @page_size)
+    %{result | entries: create_transaction_abstracts(result.entries)}
+  end
+
   defp get_related_transaction_abstracts(%{
          transaction_hash: transaction_hash,
          asset_hash: asset_hash,
