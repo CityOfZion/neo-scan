@@ -17,11 +17,6 @@ defmodule NeoscanCache.Api do
     if is_nil(assets), do: [], else: assets
   end
 
-  def get_asset(hash) do
-    Cache.get(:assets)
-    |> Enum.find(fn %{:txid => txid} -> txid == hash end)
-  end
-
   def get_asset_precision(asset_hash) do
     Cache.get(:assets)
     |> Enum.find(fn %{transaction_hash: transaction_hash} -> transaction_hash == asset_hash end)
@@ -54,11 +49,6 @@ defmodule NeoscanCache.Api do
         %{"name" => name} = Enum.at(asset, 0)
         name
     end
-  end
-
-  def check_asset(hash) do
-    Cache.get(:assets)
-    |> Enum.any?(fn %{:txid => txid} -> txid == hash end)
   end
 
   def get_addresses do
