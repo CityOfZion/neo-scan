@@ -103,16 +103,4 @@ defmodule Neoscan.Blocks do
     sys_fee = Repo.one(query)
     if is_nil(sys_fee), do: 0, else: sys_fee
   end
-
-  def get_gas_generated_in_range(min, max) do
-    query =
-      from(
-        b in Block,
-        where: b.index >= ^min and b.index <= ^max,
-        select: sum(b.gas_generated)
-      )
-
-    gas_generated = Repo.one(query)
-    if is_nil(gas_generated), do: 0, else: gas_generated
-  end
 end

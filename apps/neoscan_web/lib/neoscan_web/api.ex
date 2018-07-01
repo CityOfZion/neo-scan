@@ -11,6 +11,7 @@ defmodule NeoscanWeb.Api do
   alias Neoscan.Counters
   alias Neoscan.Transactions
   alias Neoscan.Addresses
+  alias Neoscan.BlockGasGeneration
 
   @doc """
   Returns the balance for an address from its `hash_string`
@@ -79,7 +80,7 @@ defmodule NeoscanWeb.Api do
         end_index = if is_nil(end_index), do: current_index, else: end_index
 
         generated =
-          value * Blocks.get_gas_generated_in_range(start_index + 1, end_index) / @total_neo
+          value * BlockGasGeneration.get_range_amount(start_index, end_index - 1) / @total_neo
 
         sys_fee = value * Blocks.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
         acc + sys_fee + generated
@@ -154,7 +155,7 @@ defmodule NeoscanWeb.Api do
         end_index = vout.end_block_index
 
         generated =
-          value * Blocks.get_gas_generated_in_range(start_index + 1, end_index) / @total_neo
+          value * BlockGasGeneration.get_range_amount(start_index, end_index - 1) / @total_neo
 
         sys_fee = value * Blocks.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
         unclaimed = sys_fee + generated

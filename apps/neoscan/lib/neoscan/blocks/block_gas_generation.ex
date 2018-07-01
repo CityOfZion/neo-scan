@@ -13,11 +13,29 @@ defmodule Neoscan.BlockGasGeneration do
   def get_amount_generate_in_block(0), do: Enum.at(@generation_amount, 0) * 1.0
 
   def get_amount_generate_in_block(index) do
-    if Integer.floor_div(index - 1, @decrement_interval) > @generation_length do
+    if Integer.floor_div(index, @decrement_interval) > @generation_length do
       0.0
     else
-      position = Integer.floor_div(index - 1, @decrement_interval)
+      position = Integer.floor_div(index, @decrement_interval)
       Enum.at(@generation_amount, position) * 1.0
     end
+  end
+
+  def get_range_amount(min, max) do
+    generation =
+      for x <- 1..Enum.count(@generation_amount) do
+        {Enum.at(@generation_amount, x - 1), (x - 1) * @decrement_interval,
+         x * @decrement_interval - 1}
+      end
+
+    [{gas, _, rmax} | t] =
+      Enum.filter(generation, fn {_, rmin, rmax} -> min < rmax and max > rmin end)
+
+    [{gas, rmin, _} | t] = Enum.reverse([{gas, min, rmax} | t])
+    generation = Enum.reverse([{gas, rmin, max} | t])
+
+    Enum.reduce(generation, 0, fn {gas, min, max}, acc ->
+      acc + gas * (max - min + 1)
+    end)
   end
 end
