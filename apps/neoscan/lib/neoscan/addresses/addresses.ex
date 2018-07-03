@@ -164,16 +164,20 @@ defmodule Neoscan.Addresses do
     end
   end
 
-  def get_transaction_abstracts(address_hash, page) do
+  def get_transaction_abstracts_raw(address_hash, page) do
     transaction_query =
       from(
         atb in AddressTransactionBalance,
         where: atb.address_hash == ^address_hash,
-        preload: [:transaction],
+        preload: [:transaction, :asset],
         order_by: [desc: atb.block_time]
       )
 
-    result = Repo.paginate(transaction_query, page: page, page_size: @page_size)
+    Repo.paginate(transaction_query, page: page, page_size: @page_size)
+  end
+
+  def get_transaction_abstracts(address_hash, page) do
+    result = get_transaction_abstracts_raw(address_hash, page)
     %{result | entries: create_transaction_abstracts(result.entries)}
   end
 

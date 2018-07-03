@@ -228,13 +228,38 @@ defmodule NeoscanWeb.Api do
         "address": "hash_string"
       }
   """
-  def get_address_neon(_hash) do
+  def get_address_neon(address_hash) do
+    %{balance: balances} = get_balance(address_hash)
+    %{claimed: claimed} = get_claimed(address_hash)
+    transaction_abstracts = Addresses.get_transaction_abstracts_raw(address_hash, 1)
+    simple_balance = Enum.reduce(balances, %{}, fn b, acc -> Map.put(acc, b.asset, b.amount) end)
+    balance_history = render_neon_abstracts(transaction_abstracts.entries, simple_balance, [])
+    address = Addresses.get(address_hash)
+
     %{
-      :address => "not found",
-      :balance => nil,
-      :txids => nil,
-      :claimed => nil
+      txids: balance_history,
+      tx_count: address.tx_count,
+      time: DateTime.to_unix(address.last_transaction_time),
+      claimed: claimed,
+      balance: balances,
+      address: Base58.encode(address_hash)
     }
+  end
+
+  def render_neon_abstracts([], _, acc), do: Enum.reverse(acc)
+
+  def render_neon_abstracts([transaction | rest], balance, acc) do
+    balance = Map.update!(balance, filter_name(transaction.asset.name), &(&1 - transaction.value))
+
+    t = %{
+      txid: Base.encode16(transaction.transaction_hash, case: :lower),
+      block_height: transaction.transaction.block_index,
+      balance: Enum.map(balance, fn {asset, amount} -> %{asset: asset, amount: amount} end),
+      asset_moved: Base.encode16(transaction.asset_hash, case: :lower),
+      amount_moved: transaction.value
+    }
+
+    render_neon_abstracts(rest, balance, [t | acc])
   end
 
   @doc """
