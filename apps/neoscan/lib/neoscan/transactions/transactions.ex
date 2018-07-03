@@ -6,6 +6,8 @@ defmodule Neoscan.Transactions do
   """
 
   @page_size 15
+  @neo_asset_hash <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144,
+                    175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
 
   import Ecto.Query, warn: false
   alias Neoscan.Repo
@@ -213,7 +215,9 @@ defmodule Neoscan.Transactions do
     Repo.all(
       from(
         vout in Vout,
-        where: vout.address_hash == ^address_hash and vout.spent == true and vout.claimed == false
+        where:
+          vout.address_hash == ^address_hash and vout.spent == true and vout.claimed == false and
+            vout.asset_hash == ^@neo_asset_hash
       )
     )
   end
@@ -222,7 +226,9 @@ defmodule Neoscan.Transactions do
     Repo.all(
       from(
         vout in Vout,
-        where: vout.address_hash == ^address_hash and vout.claimed == false
+        where:
+          vout.address_hash == ^address_hash and vout.claimed == false and
+            vout.asset_hash == ^@neo_asset_hash
       )
     )
   end
