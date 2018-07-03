@@ -63,7 +63,7 @@ defmodule NeoscanSync.Syncer do
 
   def insert_block(block) do
     try do
-      Repo.transaction(fn -> Repo.insert!(block) end)
+      Repo.transaction(fn -> Repo.insert!(block, timeout: :infinity) end, timeout: :infinity)
       :ok
     catch
       error ->
