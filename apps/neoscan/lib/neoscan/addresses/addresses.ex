@@ -19,7 +19,6 @@ defmodule Neoscan.Addresses do
   alias Neoscan.Repo
   alias Neoscan.Address
   alias Neoscan.AddressBalance
-  alias Neoscan.AddressHistory
   alias Neoscan.AddressTransactionBalance
   alias Neoscan.Asset
 
@@ -106,9 +105,9 @@ defmodule Neoscan.Addresses do
     address_history =
       Repo.all(
         from(
-          ah in AddressHistory,
-          where: ah.address_hash == ^hash,
-          order_by: [desc: ah.block_time],
+          atb in AddressTransactionBalance,
+          where: atb.address_hash == ^hash,
+          order_by: [desc: atb.block_time],
           preload: [:asset],
           limit: @balance_history_size
         )
