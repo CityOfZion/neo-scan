@@ -95,8 +95,17 @@ defmodule NeoscanWeb.ApiControllerTest do
   end
 
   test "get_unclaimed/:hash", %{conn: conn} do
-    vout1 = insert(:vout, %{start_block_index: 4, value: 5.0})
-    vout2 = insert(:vout, %{address_hash: vout1.address_hash, start_block_index: 3, value: 5.0})
+    :ets.insert(Neoscan.BlocksCache, {:min, nil})
+    :ets.insert(Neoscan.BlocksCache, {:max, nil})
+    vout1 = insert(:vout, %{start_block_index: 4, value: 5.0, asset_hash: @neo_asset_hash})
+
+    vout2 =
+      insert(:vout, %{
+        address_hash: vout1.address_hash,
+        start_block_index: 3,
+        value: 5.0,
+        asset_hash: @neo_asset_hash
+      })
 
     insert(:vin, %{
       vout_n: vout2.n,
@@ -104,7 +113,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       block_index: 6
     })
 
-    vout3 = insert(:vout, %{address_hash: vout1.address_hash})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
@@ -131,8 +140,17 @@ defmodule NeoscanWeb.ApiControllerTest do
   end
 
   test "get_claimable/:hash", %{conn: conn} do
-    vout1 = insert(:vout)
-    vout2 = insert(:vout, %{address_hash: vout1.address_hash, start_block_index: 3, value: 5.0})
+    :ets.insert(Neoscan.BlocksCache, {:min, nil})
+    :ets.insert(Neoscan.BlocksCache, {:max, nil})
+    vout1 = insert(:vout, %{asset_hash: @neo_asset_hash})
+
+    vout2 =
+      insert(:vout, %{
+        address_hash: vout1.address_hash,
+        start_block_index: 3,
+        value: 5.0,
+        asset_hash: @neo_asset_hash
+      })
 
     insert(:vin, %{
       vout_n: vout2.n,
@@ -140,11 +158,17 @@ defmodule NeoscanWeb.ApiControllerTest do
       block_index: 6
     })
 
-    vout3 = insert(:vout, %{address_hash: vout1.address_hash})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
-    vout4 = insert(:vout, %{address_hash: vout1.address_hash, start_block_index: 5, value: 2.0})
+    vout4 =
+      insert(:vout, %{
+        address_hash: vout1.address_hash,
+        start_block_index: 5,
+        value: 2.0,
+        asset_hash: @neo_asset_hash
+      })
 
     insert(:vin, %{
       vout_n: vout4.n,
