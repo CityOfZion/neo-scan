@@ -119,23 +119,26 @@ defmodule Neoscan.Addresses do
       |> Enum.map(fn {time, balances} ->
         %{time: DateTime.to_unix(time), assets: reduce_balance_to_assets(balances)}
       end)
+      |> Enum.sort_by(& &1.time)
       |> Enum.reverse()
 
-    address_history
-    |> Enum.reduce({[], balances}, fn %{assets: assets, time: time}, {acc, current} ->
-      new_balances =
-        Enum.reduce(assets, current, fn {name, value}, acc ->
-          Map.update!(acc, name, &(&1 - value))
-        end)
+    reduce_address_history(address_history, balances, [])
+  end
 
-      elem = %{
-        assets: Enum.map(assets, fn {name, _} -> %{name => Map.get(current, name)} end),
-        time: time
-      }
+  defp reduce_address_history([], _, acc), do: acc
 
-      {[elem | acc], new_balances}
-    end)
-    |> elem(0)
+  defp reduce_address_history([%{assets: assets, time: time} | rest], balances, acc) do
+    new_balances =
+      Enum.reduce(assets, balances, fn {name, value}, acc ->
+        Map.update!(acc, name, &(&1 - value))
+      end)
+
+    elem = %{
+      assets: Enum.map(assets, fn {name, _} -> %{name => Map.get(balances, name)} end),
+      time: time
+    }
+
+    reduce_address_history(rest, new_balances, [elem | acc])
   end
 
   defp reduce_balance_to_assets(balances) do
