@@ -104,8 +104,8 @@ defmodule Neoscan.BlocksCache do
         blocks1 = Blocks.get_total_sys_fee(min, cache_min)
         blocks2 = Blocks.get_total_sys_fee(cache_max, max)
 
-        if Enum.count(blocks1) == cache_min - min + 1 and
-             Enum.count(blocks2) == max - cache_max + 1 do
+        if Enum.count(blocks1) == max(cache_min - min + 1, 0) and
+             Enum.count(blocks2) == max(max - cache_max + 1, 0) do
           set_cached_response(min, blocks1)
           {true, cache_max + set_cached_response(cache_max, blocks2) - 1}
         else
