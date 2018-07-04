@@ -223,6 +223,16 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                claims: []
              }
            } == Blockchain.get_transaction(txid)
+
+    assert {:ok, %{scripts: [%{}, %{"contract" => _}]}} =
+             Blockchain.get_transaction(
+               "fd161ccd87deab812daa433cbc0f8f6468de24f1d708187beef5ab9ada7050f3"
+             )
+
+    assert {:ok, %{scripts: [%{}, %{}, %{"script" => _}]}} =
+             Blockchain.get_transaction(
+               "45ced268026de0fcaf7035e4960e860b98fe1ae5122e716d9daac1163f13e534"
+             )
   end
 
   test "get_asset/2" do

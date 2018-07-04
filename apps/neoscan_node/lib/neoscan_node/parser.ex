@@ -144,7 +144,7 @@ defmodule NeoscanNode.Parser do
       asset: parse_transaction_asset(transaction["asset"], transaction),
       attributes: transaction["attributes"],
       nonce: transaction["nonce"],
-      scripts: transaction["scripts"],
+      scripts: parse_scripts(transaction),
       block_time: DateTime.from_unix!(transaction["blocktime"]),
       block_hash: parse16(transaction["blockhash"]),
       size: transaction["size"],
@@ -157,6 +157,16 @@ defmodule NeoscanNode.Parser do
       vouts: Enum.map(transaction["vout"], &parse_vout/1),
       claims: parse_claims(transaction["claims"])
     }
+  end
+
+  defp parse_scripts(transaction) do
+    scripts = transaction["scripts"]
+    contract = transaction["contract"]
+    script = transaction["script"]
+
+    scripts ++
+      if(is_nil(contract), do: [], else: [%{"contract" => contract}]) ++
+      if is_nil(script), do: [], else: [%{"script" => script}]
   end
 
   defp parse_token_token(token) do
