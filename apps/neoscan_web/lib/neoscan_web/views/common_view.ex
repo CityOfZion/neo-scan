@@ -118,6 +118,35 @@ defmodule NeoscanWeb.CommonView do
     remove_trailing("#{DateTime.to_date(date_time)} | #{DateTime.to_time(date_time)}")
   end
 
+  def has_script?(scripts), do: not is_nil(get_script(scripts))
+
+  def get_script(scripts) do
+    case Enum.find(scripts, fn script -> Map.has_key?(script, "script") end) do
+      %{"script" => script} -> script
+      _ -> nil
+    end
+  end
+
+  def has_contract?(scripts), do: not is_nil(get_contract(scripts))
+
+  def get_contract(scripts) do
+    contract = Enum.find(scripts, fn script -> Map.has_key?(script, "contract") end)
+
+    unless is_nil(contract) do
+      Poison.encode!(contract)
+    end
+  end
+
+  def check_if_invocation(map) when is_map(map), do: Map.has_key?(map, "invocation")
+  def check_if_invocation({"invocation", _hash}), do: true
+  def check_if_invocation({"verification", _hash}), do: false
+  def check_if_invocation(nil), do: true
+
+  def check_if_verification(map) when is_map(map), do: Map.has_key?(map, "verification")
+  def check_if_verification({"verification", _hash}), do: true
+  def check_if_verification({"invocation", _hash}), do: false
+  def check_if_verification(nil), do: true
+
   def parse_invocation(nil), do: "No Invocation Script"
   def parse_invocation({"invocation", inv}), do: Disassembler.parse_script(inv)
   def parse_invocation(%{"invocation" => inv}), do: Disassembler.parse_script(inv)

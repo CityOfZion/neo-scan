@@ -45,11 +45,11 @@
 </section>
 
 <ul id="bytecode-invocation-list">
-  <%= if nil != nil do %>
+  <%= if has_contract?(@transaction.scripts) do %>
 		<li class="corner-box">
 			<h2><%= gettext "Contract" %></h2>
 			<div class="corner-box">
-				<p class="small-detail-text bar-left-transactions"><%= 1234 %></p>
+				<p class="small-detail-text bar-left-transactions"><%= get_contract(@transaction.scripts) %></p>
 			</div>
 		</li>
   <% end %>
@@ -63,7 +63,9 @@
     </div>
 		<div class="corner-box">
 			<%= for script <- @transaction.scripts do %>
+              <%= if check_if_invocation(script) do %>
 			  <p class="small-detail-text bar-left-transactions"><%= get_inv(script) %></p>
+			  <% end %>
 			<% end %>
 		</div>
 	</li>
@@ -74,7 +76,9 @@
     </div>
 		<div class="corner-box">
 			<%= for script <- @transaction.scripts do %>
+			  <%= if check_if_verification(script) do %>
 			  <p class="small-detail-text bar-left-transactions"><%= get_ver(script) %></p>
+			  <% end %>
 			<% end %>
 		</div>
 	</li>
@@ -91,11 +95,11 @@
 			</li>
 		<% end %>
   <% end %>
-  <%= if nil != nil do %>
+  <%= if has_script?(@transaction.scripts) do %>
 		<li class="corner-box">
 			<h2><%= gettext "Bytecode Script" %></h2>
 			<div class="corner-box">
-				<p class="small-detail-text bar-left-transactions"><%= 1235 %></p>
+				<p class="small-detail-text bar-left-transactions"><%= get_script(@transaction.scripts) %></p>
 			</div>
 		</li>
   <% end %>
@@ -110,8 +114,10 @@
 		<div class="corner-box">
 			<p class="small-detail-text bar-left-transactions">
         <%= for script <- @transaction.scripts do %>
+          <%= if check_if_invocation(script) do %>
           <%= for operation <- parse_invocation(script) do %>
             <span class="script-new-line"><%= operation %></span>
+          <% end %>
           <% end %>
         <% end %>
       </p>
@@ -125,8 +131,10 @@
 		<div class="corner-box">
 			<p class="small-detail-text bar-left-transactions">
         <%= for script <- @transaction.scripts do %>
+          <%= if check_if_verification(script) do %>
           <%= for operation <- parse_verification(script) do %>
             <span class="script-new-line"><%= operation %></span>
+          <% end %>
           <% end %>
         <% end %>
       </p>
@@ -135,12 +143,12 @@
 </ul>
 
 <ul id="bytecode-invocation-list">
-  <%= if nil != nil do %>
+  <%= if has_script?(@transaction.scripts) do %>
 		<li class="corner-box remove-margin-left">
 			<h2><%= gettext "Opcode Script" %></h2>
 			<div class="corner-box">
         <p class="small-detail-text bar-left-transactions">
-          <%= for operation <- parse_script(<<0>>) do %>
+          <%= for operation <- parse_script(get_script(@transaction.scripts)) do %>
   				  <span class="script-new-line"><%= operation %></span>
           <% end %>
         </p>
