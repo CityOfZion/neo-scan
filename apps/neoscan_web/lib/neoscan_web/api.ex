@@ -412,6 +412,14 @@ defmodule NeoscanWeb.Api do
     }
   end
 
+  defp render_last_transaction(transaction) do
+    %{
+      render_transaction(transaction)
+      | vouts: Enum.map(transaction.vouts, &render_claim/1),
+        vin: Enum.map(transaction.vins, &render_claim/1)
+    }
+  end
+
   @doc """
   Returns the last 15 transaction models in the chain for the selected address
   from its hash_string, paginated.
@@ -477,7 +485,7 @@ defmodule NeoscanWeb.Api do
   """
   def get_last_transactions_by_address(address_hash, page) do
     transactions = Transactions.api_get_for_address(address_hash, page)
-    Enum.map(transactions, &render_transaction/1)
+    Enum.map(transactions, &render_last_transaction/1)
   end
 
   @doc """

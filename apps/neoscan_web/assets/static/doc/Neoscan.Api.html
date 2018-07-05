@@ -34,27 +34,6 @@
     </div>
 
   </a>
-
-  <!-- <form class="sidebar-search" action="search.html">
-    <button type="submit" class="search-button">
-      <span class="icon-search" aria-hidden="true"></span>
-    </button>
-    <input name="q" type="text" id="search-list" class="search-input" placeholder="search" aria-label="Search" autocomplete="off" />
-  </form>
-
-  <ul class="sidebar-listNav">
-    <li><a id="extras-list" href="#full-list">Pages</a></li>
-
-
-      <li><a id="modules-list" href="#full-list">Modules</a></li>
-
-
-
-
-
-  </ul>
-  <div class="gradient"></div>
-  <ul id="full-list" class="sidebar-fullList"></ul> -->
 </section>
 
 <section class="content">
@@ -141,24 +120,6 @@ Information is updated each minute</p>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#get_asset/1">get_asset(hash)</a>
-  </div>
-
-    <div class="summary-synopsis"><p>Returns asset model from its <code class="inline">hash_string</code></p>
-</div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_assets/0">get_assets()</a>
-  </div>
-
-    <div class="summary-synopsis"><p>Returns registered assets in the chain</p>
-</div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="#get_balance/1">get_balance(hash)</a>
   </div>
 
@@ -195,48 +156,11 @@ Information is updated each minute</p>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#get_fees_in_range/1">get_fees_in_range(height_string)</a>
-  </div>
-
-    <div class="summary-synopsis"><p>Returns the the total of spent fees in the network between a height range</p>
-</div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="#get_height/0">get_height()</a>
   </div>
 
     <div class="summary-synopsis"><p>Returns the blockchain current height, as determined by the majority of
 working nodes</p>
-</div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_highest_block/0">get_highest_block()</a>
-  </div>
-
-    <div class="summary-synopsis"><p>Returns the highest block model in the chain</p>
-</div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_last_blocks/0">get_last_blocks()</a>
-  </div>
-
-    <div class="summary-synopsis"><p>Returns the last 20 block models</p>
-</div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_last_transactions/1">get_last_transactions(type)</a>
-  </div>
-
-    <div class="summary-synopsis"><p>Returns the last 20 transaction models in the chain for the selected <code class="inline">type</code>.
-If no <code class="inline">type</code> is provided, returns all types</p>
 </div>
 
 </div>
@@ -275,24 +199,6 @@ from its hash_string, paginated</p>
 
     <div class="summary-synopsis"><p>Returns the unclaimed gas for an address from its <code class="inline">hash_string</code></p>
 </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#repair_block_counter/0">repair_block_counter()</a>
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#repair_blocks/0">repair_blocks()</a>
-  </div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#repair_trasfers/0">repair_trasfers()</a>
-  </div>
 
 </div>
 
@@ -582,89 +488,6 @@ Information is updated each minute.</p>
 
   </section>
 </div>
-<div class="detail" id="get_asset/1">
-
-
-  <div class="detail-header">
-    <a href="#get_asset/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_asset(hash)</span>
-
-
-
-  </div>
-  <section class="docstring">
-    <p>Returns asset model from its <code class="inline">hash_string</code></p>
-<h2 id="get_asset/1-examples" class="section-heading">
-  <a href="#get_asset/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
-
-<pre><code class="elixir">/api/main_net/v1/get_asset/{hash_string}
-{
-  &quot;type&quot;: &quot;type_string&quot;,
-  &quot;txid&quot;: &quot;tx_id_string&quot;,
-  &quot;precision&quot;: integer,
-  &quot;owner&quot;: &quot;hash_string&quot;,
-  &quot;name&quot;: [
-    {
-      &quot;name&quot;: &quot;name_string&quot;,
-      &quot;lang&quot;: &quot;language_code_string&quot;
-    },
-    ...
-  ],
-  &quot;issued&quot;: float,
-  &quot;amount&quot;: float,
-  &quot;admin&quot;: &quot;hash_string&quot;
-}</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="get_assets/0">
-
-
-  <div class="detail-header">
-    <a href="#get_assets/0" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_assets()</span>
-
-
-
-  </div>
-  <section class="docstring">
-    <p>Returns registered assets in the chain</p>
-<h2 id="get_assets/0-examples" class="section-heading">
-  <a href="#get_assets/0-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
-
-<pre><code class="elixir">/api/main_net/v1/get_assets
-[
-  {
-    &quot;type&quot;: &quot;type_string&quot;,
-    &quot;txid&quot;: &quot;tx_id_string&quot;,
-    &quot;precision&quot;: integer,
-    &quot;owner&quot;: &quot;hash_string&quot;,
-    &quot;name&quot;: [
-      {
-        &quot;name&quot;: &quot;name_string&quot;,
-        &quot;lang&quot;: &quot;language_code_string&quot;
-      },
-      ...
-    ],
-    &quot;issued&quot;: float,
-    &quot;amount&quot;: float,
-    &quot;admin&quot;: &quot;hash_string&quot;
-  },
-  ...
-]</code></pre>
-
-  </section>
-</div>
 <div class="detail" id="get_balance/1">
 
 
@@ -833,34 +656,6 @@ Information is updated each minute.</p>
 
   </section>
 </div>
-<div class="detail" id="get_fees_in_range/1">
-
-
-  <div class="detail-header">
-    <a href="#get_fees_in_range/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_fees_in_range(height_string)</span>
-
-
-
-  </div>
-  <section class="docstring">
-    <p>Returns the the total of spent fees in the network between a height range</p>
-<h2 id="get_fees_in_range/1-examples" class="section-heading">
-  <a href="#get_fees_in_range/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
-
-<pre><code class="elixir">/api/main_net/v1/get_fees_in_range/500-1000
-{
-  &quot;total_sys_fee&quot;: 0,
-  &quot;total_net_fee&quot;: 0
-}</code></pre>
-
-  </section>
-</div>
 <div class="detail" id="get_height/0">
 
 
@@ -886,172 +681,6 @@ working nodes.</p>
 {
   &quot;height&quot;: 1239809
 }</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="get_highest_block/0">
-
-
-  <div class="detail-header">
-    <a href="#get_highest_block/0" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_highest_block()</span>
-
-
-
-  </div>
-  <section class="docstring">
-    <p>Returns the highest block model in the chain</p>
-<h2 id="get_highest_block/0-examples" class="section-heading">
-  <a href="#get_highest_block/0-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
-
-<pre><code class="elixir">/api/main_net/v1/get_highest_block
-{
-  &quot;version&quot;: integer,
-  &quot;tx_count&quot;: integer,
-  &quot;transactions&quot;: [
-    &quot;tx_id_string&quot;,
-    ...
-  ],
-  &quot;time&quot;: unix_time,
-  &quot;size&quot;: integer,
-  &quot;script&quot;: {
-    &quot;verification&quot;: &quot;hash_string&quot;,
-    &quot;invocation&quot;: &quot;hash_string&quot;
-  },
-  &quot;previousblockhash&quot;: &quot;hash_string&quot;,
-  &quot;nonce&quot;: &quot;hash_string&quot;,
-  &quot;nextconsensus&quot;: &quot;hash_string&quot;,
-  &quot;nextblockhash&quot;: &quot;hash_string&quot;,
-  &quot;merkleroot&quot;: &quot;hash_string&quot;,
-  &quot;index&quot;: integer,
-  &quot;hash&quot;: &quot;hash_string&quot;,
-  &quot;confirmations&quot;: integer
-}</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="get_last_blocks/0">
-
-
-  <div class="detail-header">
-    <a href="#get_last_blocks/0" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_last_blocks()</span>
-
-
-
-  </div>
-  <section class="docstring">
-    <p>Returns the last 20 block models</p>
-<h2 id="get_last_blocks/0-examples" class="section-heading">
-  <a href="#get_last_blocks/0-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
-
-<pre><code class="elixir">/api/main_net/v1/get_last_blocks</code></pre>
-<p>   [</p>
-<pre><code class="elixir">  {
-    &quot;version&quot;: integer,
-    &quot;tx_count&quot;: integer,
-    &quot;transactions&quot;: [
-      &quot;tx_id_string&quot;,
-      ...
-    ],
-    &quot;time&quot;: unix_time,
-    &quot;size&quot;: integer,
-    &quot;script&quot;: {
-      &quot;verification&quot;: &quot;hash_string&quot;,
-      &quot;invocation&quot;: &quot;hash_string&quot;
-    },
-    &quot;previousblockhash&quot;: &quot;hash_string&quot;,
-    &quot;nonce&quot;: &quot;hash_string&quot;,
-    &quot;nextconsensus&quot;: &quot;hash_string&quot;,
-    &quot;nextblockhash&quot;: &quot;hash_string&quot;,
-    &quot;merkleroot&quot;: &quot;hash_string&quot;,
-    &quot;index&quot;: integer,
-    &quot;hash&quot;: &quot;hash_string&quot;,
-    &quot;confirmations&quot;: integer
-  },
-  ...
-]</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="get_last_transactions/1">
-
-
-  <div class="detail-header">
-    <a href="#get_last_transactions/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_last_transactions(type)</span>
-
-
-
-  </div>
-  <section class="docstring">
-    <p>Returns the last 20 transaction models in the chain for the selected <code class="inline">type</code>.
-If no <code class="inline">type</code> is provided, returns all types</p>
-<h2 id="get_last_transactions/1-examples" class="section-heading">
-  <a href="#get_last_transactions/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
-
-<pre><code class="elixir">/api/main_net/v1/get_last_transactions/{type}
-/api/main_net/v1/get_last_transactions
-[{
-    &quot;vouts&quot;: [
-      {
-        &quot;value&quot;: float,
-        &quot;n&quot;: integer,
-        &quot;asset&quot;: &quot;name_string&quot;,
-        &quot;address&quot;: &quot;hash_string&quot;
-      },
-      ...
-    ],
-    &quot;vin&quot;: [
-      {
-        &quot;value&quot;: float,
-        &quot;txid&quot;: &quot;tx_id_string&quot;,
-        &quot;n&quot;: integer,
-        &quot;asset&quot;: &quot;name_string&quot;,
-        &quot;address_hash&quot;: &quot;hash_string&quot;
-      },
-      ...
-    ],
-    &quot;version&quot;: integer,
-    &quot;type&quot;: &quot;type_string&quot;,
-    &quot;txid&quot;: &quot;tx_id_string&quot;,
-    &quot;time&quot;: unix_time,
-    &quot;sys_fee&quot;: &quot;string&quot;,
-    &quot;size&quot;: integer,
-    &quot;scripts&quot;: [
-      {
-        &quot;verification&quot;: &quot;hash_string&quot;,
-        &quot;invocation&quot;: &quot;hash_string&quot;
-      }
-    ],
-    &quot;pubkey&quot;: hash_string,
-    &quot;nonce&quot;: integer,
-    &quot;net_fee&quot;: &quot;string&quot;,
-    &quot;description&quot;: string,
-    &quot;contract&quot;: array,
-    &quot;claims&quot;: array,
-    &quot;block_height&quot;: integer,
-    &quot;block_hash&quot;: &quot;hash_string&quot;,
-    &quot;attributes&quot;: array,
-    &quot;asset&quot;: array
-  },
-  ...
-]</code></pre>
 
   </section>
 </div>
@@ -1259,57 +888,6 @@ from its hash_string, paginated.</p>
   &quot;unclaimed&quot;: float,
   &quot;address&quot;: &quot;hash_string&quot;
 }</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="repair_block_counter/0">
-
-
-  <div class="detail-header">
-    <a href="#repair_block_counter/0" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">repair_block_counter()</span>
-
-
-
-  </div>
-  <section class="docstring">
-
-  </section>
-</div>
-<div class="detail" id="repair_blocks/0">
-
-
-  <div class="detail-header">
-    <a href="#repair_blocks/0" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">repair_blocks()</span>
-
-
-
-  </div>
-  <section class="docstring">
-
-  </section>
-</div>
-<div class="detail" id="repair_trasfers/0">
-
-
-  <div class="detail-header">
-    <a href="#repair_trasfers/0" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">repair_trasfers()</span>
-
-
-
-  </div>
-  <section class="docstring">
 
   </section>
 </div>
