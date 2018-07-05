@@ -690,6 +690,8 @@ defmodule NeoscanWeb.ApiControllerTest do
     conn = get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{address_hash}/1")
 
     assert 1 == Enum.count(json_response(conn, 200))
+    conn = get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{address_hash}")
+    assert 1 == Enum.count(json_response(conn, 200))
   end
 
   test "get_all_nodes", %{conn: conn} do
