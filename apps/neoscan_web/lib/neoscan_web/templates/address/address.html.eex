@@ -17,7 +17,7 @@
     <div class="individual-wallet-box gas-balance last">
       <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> <%= gettext "GAS Balance" %></p>
       <div class="total-gas-balance">
-        <%= render_balance(@balance.gas, 8) %>
+        <p class="balance-amount"><%= render_balance(@balance.gas, 8) %></p>
         <p class="loading-gas"><%= gettext "Loading Unclaimed Gas" %><span>.</span><span>.</span><span>.</span></p>
         <p class="unclaimed-GAS"></p>
       </div>
@@ -26,7 +26,7 @@
         <div class="individual-wallet-box last">
           <p class="balance-label"> <i class="fa fa-university wallet-label-icon"></i> <%= name["en"] %></p>
           <div class="total-gas-balance">
-            <%= render_token_balance(value, precision) %>
+            <p class="balance-amount"><%= render_token_balance(value, precision) %></p>
           </div>
         </div>
       <% end %>
