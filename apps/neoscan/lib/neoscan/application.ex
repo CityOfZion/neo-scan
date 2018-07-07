@@ -9,7 +9,7 @@ defmodule Neoscan.Application do
   """
   use Application
 
-  alias Neoscan.Blocks.BlocksCache
+  alias Neoscan.BlocksCache
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false

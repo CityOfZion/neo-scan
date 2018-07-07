@@ -1,0 +1,341 @@
+defmodule Neoscan.AddressesTest do
+  use Neoscan.DataCase
+  import Neoscan.Factory
+
+  alias Neoscan.Addresses
+
+  @neo_asset_hash <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144,
+                    175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
+
+  @gas_asset_hash <<96, 44, 121, 113, 139, 22, 228, 66, 222, 88, 119, 142, 20, 141, 11, 16, 132,
+                    227, 178, 223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45, 231>>
+
+  test "get_balances/1" do
+    address_history = insert(:address_history, %{asset_hash: <<1, 2, 3>>, value: 1.0})
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: <<4, 5, 6>>,
+      value: 2.0
+    })
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: @neo_asset_hash,
+      value: 3.0
+    })
+
+    insert(:asset, %{transaction_hash: @neo_asset_hash, name: [%{"en" => "NEO"}]})
+    balances = Addresses.get_balances(address_history.address_hash)
+    assert 1 == Enum.count(balances)
+  end
+
+  test "get_balance_history/1" do
+    block_time0 = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 22)
+
+    address_history =
+      insert(:address_history, %{asset_hash: @neo_asset_hash, value: 2.0, block_time: block_time0})
+
+    block_time = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 12)
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: @neo_asset_hash,
+      value: 3.0,
+      block_time: block_time
+    })
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: @gas_asset_hash,
+      value: 0.2130,
+      block_time: block_time
+    })
+
+    address_history2 =
+      insert(:address_history, %{
+        address_hash: address_history.address_hash,
+        asset_hash: @neo_asset_hash,
+        value: -3.0
+      })
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: <<4, 5, 6>>,
+      block_time: address_history2.block_time,
+      value: 2.0
+    })
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: @neo_asset_hash,
+      block_time: address_history2.block_time,
+      value: 2.0
+    })
+
+    insert(:asset, %{
+      transaction_hash: @neo_asset_hash,
+      name: [%{"lang" => "en", "name" => "NEO"}]
+    })
+
+    insert(:asset, %{
+      transaction_hash: @gas_asset_hash,
+      name: [%{"lang" => "en", "name" => "GAS"}]
+    })
+
+    insert(:asset, %{
+      transaction_hash: <<4, 5, 6>>,
+      name: [%{"lang" => "zh", "name" => "My Token"}]
+    })
+
+    balances = Addresses.get_balance_history(address_history.address_hash)
+
+    assert [
+             %{assets: [%{"NEO" => 2.0}], time: _},
+             %{assets: [%{"GAS" => 0.213}, %{"NEO" => 5.0}], time: _},
+             %{assets: [%{"My Token" => 2.0}, %{"NEO" => 4.0}], time: _}
+           ] = balances
+  end
+
+  test "get/1" do
+    address = insert(:address)
+    assert address == Addresses.get(address.hash)
+  end
+
+  test "get_split_balance/1" do
+    block_time0 = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 22)
+
+    address_history =
+      insert(:address_history, %{asset_hash: @neo_asset_hash, value: 2.0, block_time: block_time0})
+
+    block_time = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 12)
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: @neo_asset_hash,
+      value: 3.0,
+      block_time: block_time
+    })
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: @gas_asset_hash,
+      value: 0.2130,
+      block_time: block_time
+    })
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: <<1, 2, 3>>,
+      value: 12302.0,
+      block_time: block_time
+    })
+
+    insert(:asset, %{
+      transaction_hash: @neo_asset_hash,
+      name: [%{"lang" => "en", "name" => "NEO"}]
+    })
+
+    insert(:asset, %{
+      transaction_hash: @gas_asset_hash,
+      name: [%{"lang" => "en", "name" => "GAS"}]
+    })
+
+    insert(:asset, %{
+      transaction_hash: <<1, 2, 3>>,
+      precision: 25,
+      name: [%{"lang" => "en", "name" => "my token"}]
+    })
+
+    assert %{
+             gas: 0.213,
+             neo: 5.0,
+             tokens: [
+               %{
+                 asset: <<1, 2, 3>>,
+                 name: %{"en" => "my token"},
+                 precision: 25,
+                 value: 12302.0
+               }
+             ]
+           } == Addresses.get_split_balance(address_history.address_hash)
+  end
+
+  test "paginate/1" do
+    for _ <- 1..20, do: insert(:address)
+    assert 15 == Enum.count(Addresses.paginate(1))
+    assert 5 == Enum.count(Addresses.paginate(2))
+  end
+
+  test "get_transaction_abstracts/2" do
+    asset = insert(:asset)
+    asset_hash = asset.transaction_hash
+
+    # claim transaction (no vin, but 1 vout) address is receiver
+    transaction1 = insert(:transaction)
+
+    vout =
+      insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 5.0})
+
+    address_hash = vout.address_hash
+    insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 2.0})
+    insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 3.0})
+
+    # normal transaction (1 vin 2 vouts) address is receiver, receive 5.0
+    transaction2 = insert(:transaction)
+
+    vout4 =
+      insert(:vout, %{
+        address_hash: address_hash,
+        transaction_hash: transaction2.hash,
+        asset_hash: asset_hash,
+        value: 5.0
+      })
+
+    vout2 = insert(:vout, %{asset_hash: asset_hash, value: 7.0})
+
+    insert(:vin, %{
+      transaction_hash: transaction2.hash,
+      vout_n: vout2.n,
+      vout_transaction_hash: vout2.transaction_hash
+    })
+
+    insert(:vout, %{transaction_hash: transaction2.hash, asset_hash: asset_hash, value: 2.0})
+
+    # normal transaction address is sender
+    transaction3 = insert(:transaction)
+
+    vout3 =
+      insert(:vout, %{transaction_hash: transaction3.hash, asset_hash: asset_hash, value: 5.0})
+
+    insert(:vin, %{
+      transaction_hash: transaction3.hash,
+      vout_n: vout4.n,
+      vout_transaction_hash: vout4.transaction_hash
+    })
+
+    # multi transaction (2 vins 1 vout)
+    transaction5 = insert(:transaction)
+
+    vout5 =
+      insert(:vout, %{transaction_hash: transaction5.hash, asset_hash: asset_hash, value: 9.0})
+
+    transaction4 = insert(:transaction)
+
+    vout6 =
+      insert(:vout, %{
+        address_hash: address_hash,
+        transaction_hash: transaction4.hash,
+        asset_hash: asset_hash,
+        value: 14.0
+      })
+
+    insert(:vin, %{
+      transaction_hash: transaction4.hash,
+      vout_n: vout3.n,
+      vout_transaction_hash: vout3.transaction_hash
+    })
+
+    insert(:vin, %{
+      transaction_hash: transaction4.hash,
+      vout_n: vout5.n,
+      vout_transaction_hash: vout5.transaction_hash
+    })
+
+    # multi transaction (1 vin 2 vouts) where vin has the same address hash than 1 vout
+    transaction6 = insert(:transaction)
+
+    vout8 =
+      insert(:vout, %{
+        address_hash: address_hash,
+        transaction_hash: transaction6.hash,
+        asset_hash: asset_hash,
+        value: 13.0
+      })
+
+    vout7 =
+      insert(:vout, %{transaction_hash: transaction6.hash, asset_hash: asset_hash, value: 1.0})
+
+    insert(:vin, %{
+      transaction_hash: transaction6.hash,
+      vout_n: vout6.n,
+      vout_transaction_hash: vout6.transaction_hash
+    })
+
+    # transaction to itself
+    transaction7 = insert(:transaction)
+
+    insert(:vout, %{
+      address_hash: address_hash,
+      transaction_hash: transaction7.hash,
+      asset_hash: asset_hash,
+      value: 13.0
+    })
+
+    insert(:vin, %{
+      transaction_hash: transaction7.hash,
+      vout_n: vout8.n,
+      vout_transaction_hash: vout8.transaction_hash
+    })
+
+    assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 6, total_pages: 1} =
+             Addresses.get_transaction_abstracts(address_hash, 1)
+
+    assert entries == [
+             %{
+               address_from: address_hash,
+               address_to: address_hash,
+               value: 0.0,
+               asset_hash: asset_hash,
+               block_index: transaction7.block_index,
+               block_time: transaction7.block_time,
+               transaction_hash: transaction7.hash
+             },
+             %{
+               address_from: address_hash,
+               address_to: vout7.address_hash,
+               value: 1.0,
+               asset_hash: asset_hash,
+               block_index: transaction6.block_index,
+               block_time: transaction6.block_time,
+               transaction_hash: transaction6.hash
+             },
+             %{
+               address_from: "multi",
+               address_to: address_hash,
+               value: 14.0,
+               asset_hash: asset_hash,
+               block_index: transaction4.block_index,
+               block_time: transaction4.block_time,
+               transaction_hash: transaction4.hash
+             },
+             %{
+               address_from: address_hash,
+               address_to: vout3.address_hash,
+               value: 5.0,
+               asset_hash: asset_hash,
+               block_index: transaction3.block_index,
+               block_time: transaction3.block_time,
+               transaction_hash: transaction3.hash
+             },
+             %{
+               address_from: vout2.address_hash,
+               address_to: address_hash,
+               value: 5.0,
+               asset_hash: asset_hash,
+               block_index: transaction2.block_index,
+               block_time: transaction2.block_time,
+               transaction_hash: transaction2.hash
+             },
+             %{
+               address_from: "claim",
+               address_to: address_hash,
+               value: 5.0,
+               asset_hash: asset_hash,
+               block_index: transaction1.block_index,
+               block_time: transaction1.block_time,
+               transaction_hash: transaction1.hash
+             }
+           ]
+  end
+end

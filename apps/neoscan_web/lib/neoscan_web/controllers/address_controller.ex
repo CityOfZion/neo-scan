@@ -2,44 +2,36 @@ defmodule NeoscanWeb.AddressController do
   use NeoscanWeb, :controller
 
   alias Neoscan.Addresses
-  alias Neoscan.BalanceHistories
+  alias NeoscanWeb.Helper
+  alias Neoscan.Transactions
 
-  def index(conn, %{"address" => address_hash}) do
-    Addresses.get_address_by_hash_for_view(address_hash)
-    |> route(conn, "1")
+  def index(conn, parameters) do
+    page(conn, parameters)
   end
 
-  def go_to_page(conn, %{"address" => address_hash, "page" => page}) do
-    Addresses.get_address_by_hash_for_view(address_hash)
-    |> route(conn, page)
-  end
+  def page(conn, parameters = %{"hash" => address_hash}) do
+    page = if is_nil(parameters["page"]), do: 1, else: String.to_integer(parameters["page"])
+    binary_hash = Helper.safe_decode_58(address_hash)
+    address = Addresses.get(binary_hash)
+    balance = Addresses.get_split_balance(binary_hash)
 
-  def route(nil, conn, _page) do
-    conn
-    |> put_flash(:info, "Not Found in DB!")
-    |> redirect(to: home_path(conn, :index))
-  end
+    if is_nil(address) do
+      conn
+      |> put_flash(:info, "Not Found in DB!")
+      |> redirect(to: home_path(conn, :index))
+    else
+      transactions = Transactions.get_for_address(binary_hash, page)
+      graph_data = Addresses.get_balance_history(binary_hash)
 
-  def route(address, conn, page) do
-    transactions =
-      BalanceHistories.paginate_history_transactions(
-        address.address,
-        page
+      render(
+        conn,
+        "address.html",
+        address: address,
+        balance: balance,
+        transactions: transactions,
+        page: page,
+        graph_data: graph_data
       )
-      |> Enum.map(fn tr ->
-        {:ok, result} = Morphix.atomorphiform(tr)
-        result
-      end)
-
-    graph_data = BalanceHistories.get_graph_data_for_address(address.address)
-
-    render(
-      conn,
-      "address.html",
-      address: address,
-      transactions: transactions,
-      page: page,
-      graph_data: graph_data
-    )
+    end
   end
 end

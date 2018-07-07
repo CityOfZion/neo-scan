@@ -5,19 +5,18 @@ defmodule NeoscanWeb.BlockControllerTest do
 
   test "/block/:hash", %{conn: conn} do
     block = insert(:block)
-    transaction = insert(:transaction, %{block_id: block.id, type: "ContractTransaction"})
-    insert(:transfer, %{txid: transaction.txid})
-    conn = get(conn, "/block/#{block.hash}")
+    block_hash = Base.encode16(block.hash, case: :lower)
+    conn = get(conn, "/block/#{block_hash}")
     body = html_response(conn, 200)
-    assert body =~ block.hash
-  end
+    assert body =~ block_hash
 
-  test "/block/:hash/:page", %{conn: conn} do
-    block = insert(:block)
-    transaction = insert(:transaction, %{block_id: block.id, type: "ContractTransaction"})
-    insert(:transfer, %{txid: transaction.txid})
-    conn = get(conn, "/block/#{block.hash}/1")
+    block_hash_downcase = Base.encode16(block.hash, case: :lower)
+    conn = get(conn, "/block/#{block_hash_downcase}")
     body = html_response(conn, 200)
-    assert body =~ block.hash
+    assert body =~ block_hash
+
+    conn = get(conn, "/block/#{block_hash}/1")
+    body = html_response(conn, 200)
+    assert body =~ block_hash
   end
 end

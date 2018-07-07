@@ -19,21 +19,21 @@
     <p class="large-detail-text stat-detail"><%= gettext "Total transactions" %></p>
     <p class="large-stat-number" id= "total-tx"></p>
    </div>
-    <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all transactions"%>"><%= gettext "View all transactions" %> <i class="fa fa-arrow-right"></i></a>
+    <a href="<%= transactions_path(@conn, :page, "1") %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all transactions"%>"><%= gettext "View all transactions" %> <i class="fa fa-arrow-right"></i></a>
   </div>
   <div class="individual-jump-link-box">
     <div class="jump-links-information">
       <p class="large-detail-text stat-detail"><%= gettext "Last block" %></p>
       <p class="large-stat-number" id= "total-blocks"></p>
     </div>
-    <a href="<%= blocks_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all blocks"%>"><%= gettext "View all blocks" %> <i class="fa fa-arrow-right"></i></a>
+    <a href="<%= blocks_path(@conn, :page, "1") %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all blocks"%>"><%= gettext "View all blocks" %> <i class="fa fa-arrow-right"></i></a>
   </div>
   <div class="individual-jump-link-box">
     <div class="jump-links-information">
       <p class="large-detail-text stat-detail"><%= gettext "Wallet addresses created" %></p>
       <p class="large-stat-number" id= "total-addresses"></p>
     </div>
-    <a href="<%= addresses_path(@conn, :index) %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all addresses"%>"><%= gettext "View all addresses" %> <i class="fa fa-arrow-right"></i></a>
+    <a href="<%= addresses_path(@conn, :page, "1") %>" class="btn-primary btn-jump-box" alt="<%= gettext "View all addresses"%>"><%= gettext "View all addresses" %> <i class="fa fa-arrow-right"></i></a>
   </div>
 </section>
 
@@ -92,7 +92,7 @@
   <section id="transactions-wrapper"></section>
 
   <div class="see-all-button-container">
-    <a href="<%= transactions_path(@conn, :index) %>" class="btn-primary btn-see-all" alt="<%= gettext "See all transactions"%>"><%= gettext "See all transactions" %> <i class="fa fa-arrow-right"></i></a>
+    <a href="<%= transactions_path(@conn, :page, "1") %>" class="btn-primary btn-see-all" alt="<%= gettext "See all transactions"%>"><%= gettext "See all transactions" %> <i class="fa fa-arrow-right"></i></a>
   </div>
 </section>
 
@@ -112,6 +112,6 @@
   <section id="blocks-wrapper"></section>
 
   <div class="see-all-button-container">
-    <a href="<%= blocks_path(@conn, :index) %>" class="btn-primary btn-see-all" alt="<%= gettext "See all blocks"%>"><%= gettext "See all blocks" %> <i class="fa fa-arrow-right"></i></a>
+    <a href="<%= blocks_path(@conn, :page, "1") %>" class="btn-primary btn-see-all" alt="<%= gettext "See all blocks"%>"><%= gettext "See all blocks" %> <i class="fa fa-arrow-right"></i></a>
   </div>
 </section>

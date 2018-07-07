@@ -1,0 +1,25 @@
+  <div class="detail-bar">
+    <p class="detail-type detail-type-first-2-col"><%= gettext "Type" %></p>
+    <p class="detail-type col-6-width"><%= gettext "Transaction ID" %></p>
+    <p class="detail-type col-2-width"><%= gettext "Completed on" %></p>
+    <p class="detail-type tablet-full-width"><%= gettext "All transaction information" %></p>
+  </div>
+<section id="transactions-wrapper">
+    <div class="transactions-list">
+      <%= for transaction <- @transactions do %>
+        <div class="full-width-bar <%= get_class(transaction.type)%>">
+          <div class="information-wrapper">
+            <p class="medium-detail-text col-2-width"><span class="fa <%= get_transaction_style(transaction.type) %>"></span><%= Gettext.gettext(NeoscanWeb.Gettext, get_transaction_name(transaction.type)) %></p>
+            <div class="secondary-info-wrapper">
+              <a href="<%=transaction_path(@conn, :index, render_hash(transaction.hash) )%>" alt="<%= gettext "View transaction"%>" title="<%= gettext "View transaction" %>" class="large-blue-link col-6-width"><%= render_hash(transaction.hash) %>&#8230;</a>
+              <p class="medium-detail-text col-2-width remove-550px">
+                <%= render_date_time(transaction.block_time) %>
+              </p>
+            </div>
+          </div>
+          <button class="btn-accordion"><img src="<%= static_path(@conn, "/images/ICON_DownArrow.svg") %>" alt="Accordion down arrow" title="Accordion down arrow" class="accordion-down-arrow" width="13px" height="8px" /></button>
+          <%= render NeoscanWeb.SharedView, "transaction_panel.html", conn: @conn, transaction: transaction, show_info: true %>
+        </div>
+      <%end%>
+    </div>
+</section>

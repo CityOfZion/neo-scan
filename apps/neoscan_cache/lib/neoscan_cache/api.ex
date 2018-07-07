@@ -3,14 +3,9 @@ defmodule NeoscanCache.Api do
   Interface between server and worker to communicate with external modules
   """
   alias NeoscanCache.Cache
-  alias Neoscan.ChainAssets
 
   def get_blocks do
     Cache.get(:blocks)
-  end
-
-  def get_transfers do
-    Cache.get(:transfers)
   end
 
   def get_transactions do
@@ -22,29 +17,38 @@ defmodule NeoscanCache.Api do
     if is_nil(assets), do: [], else: assets
   end
 
-  def get_asset(hash) do
+  def get_asset_precision(asset_hash) do
     Cache.get(:assets)
-    |> Enum.find(fn %{:txid => txid} -> txid == hash end)
+    |> Enum.find(fn %{transaction_hash: transaction_hash} -> transaction_hash == asset_hash end)
+    |> (&if(is_nil(&1), do: %{precision: 0}, else: &1)).()
+    |> Map.get(:precision)
   end
 
-  def get_asset_name(hash) do
-    filter_fun =
-      if String.length(hash) == 40 do
-        fn %{:contract => contract} -> contract == hash end
-      else
-        fn %{:txid => txid} -> txid == hash end
-      end
-
+  def get_asset_name(asset_hash) do
     Cache.get(:assets)
-    |> Enum.find(filter_fun)
+    |> Enum.find(fn %{transaction_hash: transaction_hash} -> transaction_hash == asset_hash end)
     |> (&if(is_nil(&1), do: %{}, else: &1)).()
     |> Map.get(:name)
-    |> ChainAssets.filter_name()
+    |> filter_name()
   end
 
-  def check_asset(hash) do
-    Cache.get(:assets)
-    |> Enum.any?(fn %{:txid => txid} -> txid == hash end)
+  defp filter_name(nil), do: "Asset not Found"
+
+  defp filter_name(asset) do
+    case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
+      %{"name" => "AntShare"} ->
+        "NEO"
+
+      %{"name" => "AntCoin"} ->
+        "GAS"
+
+      %{"name" => name} ->
+        name
+
+      nil ->
+        %{"name" => name} = Enum.at(asset, 0)
+        name
+    end
   end
 
   def get_addresses do

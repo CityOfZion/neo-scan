@@ -1,50 +1,25 @@
-defmodule Neoscan.Transfers.Transfer do
+defmodule Neoscan.Transfer do
   @moduledoc false
   use Ecto.Schema
-  import Ecto.Changeset
+  alias Neoscan.Transaction
 
+  @primary_key false
   schema "transfers" do
-    field(:address_from, :string)
-    field(:address_to, :string)
-    field(:amount, :float)
-    field(:block_height, :integer)
-    field(:txid, :string)
-    field(:contract, :string)
-    field(:time, :integer)
-    field(:check_hash, :string)
+    belongs_to(
+      :transaction,
+      Transaction,
+      foreign_key: :transaction_hash,
+      references: :hash,
+      type: :binary
+    )
 
-    belongs_to(:block, Neoscan.Blocks.Block)
+    field(:address_from, :binary)
+    field(:address_to, :binary)
+    field(:amount, :float)
+    field(:contract, :binary)
+    field(:block_index, :integer)
+    field(:block_time, :utc_datetime)
 
     timestamps()
-  end
-
-  @doc false
-  def changeset(block, attrs \\ %{}) do
-    check_hash = "#{attrs["txid"]}#{attrs["address_from"]}#{attrs["address_to"]}"
-    new_attrs = Map.put(attrs, "check_hash", check_hash)
-
-    block
-    |> Ecto.build_assoc(:transfers)
-    |> cast(new_attrs, [
-      :address_from,
-      :address_to,
-      :amount,
-      :block_height,
-      :txid,
-      :contract,
-      :time,
-      :check_hash
-    ])
-    |> assoc_constraint(:block, required: true)
-    |> validate_required([
-      :address_from,
-      :address_to,
-      :amount,
-      :block_height,
-      :txid,
-      :contract,
-      :time,
-      :check_hash
-    ])
   end
 end

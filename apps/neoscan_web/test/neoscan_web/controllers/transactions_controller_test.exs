@@ -6,54 +6,39 @@ defmodule NeoscanWeb.TransactionsControllerTest do
   import NeoscanWeb.Factory
 
   test "/transactions/:page", %{conn: conn} do
-    transactions = for _ <- 1..11, do: insert(:transaction, %{type: "ContractTransaction"})
+    transactions = for _ <- 1..11, do: insert(:transaction, %{type: "contract_transaction"})
 
     transactions2 =
       for type <- [
-            "MinerTransaction",
-            "ContractTransaction",
-            "ClaimTransaction",
-            "IssueTransaction",
-            "RegisterTransaction",
-            "InvocationTransaction",
-            "PublishTransaction",
-            "EnrollmentTransaction",
-            "StateTransaction"
+            "miner_transaction",
+            "contract_transaction",
+            "claim_transaction",
+            "issue_transaction",
+            "register_transaction",
+            "invocation_transaction",
+            "publish_transaction",
+            "enrollment_transaction",
+            "state_transaction"
           ] do
-        insert(:transaction, %{type: type})
+        transaction = insert(:transaction, %{type: type})
+        insert(:asset, %{transaction_hash: transaction.hash})
+        transaction
       end
 
     transactions = transactions ++ transactions2
-    insert(:transfer, %{txid: Enum.at(transactions, 15).txid})
-    insert(:transfer, %{txid: Enum.at(transactions, 2).txid})
+    insert(:transfer, %{transaction_hash: Enum.at(transactions, 15).hash})
+    insert(:transfer, %{transaction_hash: Enum.at(transactions, 2).hash})
 
-    Cache.sync(%{tokens: []})
+    Cache.sync()
 
     conn = get(conn, "/transactions/1")
     body = html_response(conn, 200)
-    assert body =~ Enum.at(transactions, 15).txid
-    assert not (body =~ Enum.at(transactions, 2).txid)
+    assert body =~ Base.encode16(Enum.at(transactions, 15).hash, case: :lower)
+    assert not (body =~ Base.encode16(Enum.at(transactions, 2).hash, case: :lower))
 
     conn = get(conn, "/transactions/2")
     body = html_response(conn, 200)
-    assert not (body =~ Enum.at(transactions, 15).txid)
-    assert body =~ Enum.at(transactions, 2).txid
-  end
-
-  test "/transactions/type/:type/:page", %{conn: conn} do
-    transactions = for _ <- 1..20, do: insert(:transaction, %{type: "ContractTransaction"})
-    for _ <- 1..3, do: insert(:transaction, %{type: "InvocationTransaction"})
-
-    insert(:transfer, %{txid: Enum.at(transactions, 2).txid})
-
-    conn = get(conn, "/transactions/type/contract/1")
-    body = html_response(conn, 200)
-    assert body =~ Enum.at(transactions, 15).txid
-    assert not (body =~ Enum.at(transactions, 2).txid)
-
-    conn = get(conn, "/transactions/type/contract/2")
-    body = html_response(conn, 200)
-    assert not (body =~ Enum.at(transactions, 15).txid)
-    assert body =~ Enum.at(transactions, 2).txid
+    assert not (body =~ Base.encode16(Enum.at(transactions, 15).hash, case: :lower))
+    assert body =~ Base.encode16(Enum.at(transactions, 2).hash, case: :lower)
   end
 end

@@ -3,9 +3,7 @@ defmodule NeoscanWeb.Plugs.Locale do
   alias Plug.Conn
   @languages ["en", "es", "nl", "fr", "pt_BR", "it", "de", "ru", "ro", "ja", "zh"]
 
-  def init(opts) do
-    opts
-  end
+  def init(opts), do: opts
 
   def call(conn, _opts) do
     locale = extract_locale(conn)

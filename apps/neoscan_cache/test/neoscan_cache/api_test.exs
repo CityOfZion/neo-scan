@@ -9,39 +9,34 @@ defmodule NeoscanCache.ApiTest do
     assert is_list(Api.get_blocks())
   end
 
-  test "get_transfers/0" do
-    assert is_list(Api.get_transfers())
-  end
-
   test "get_transactions/0" do
-    transaction = insert(:transaction)
-    insert(:vout, %{transaction_id: transaction.id})
-    insert(:transaction)
-    Cache.sync(%{tokens: []})
+    transaction = insert(:transaction, %{type: "contract_transaction"})
+    insert(:vout, %{transaction_hash: transaction.hash})
+    insert(:transaction, %{type: "contract_transaction"})
+    Cache.sync()
     assert [_, %{vouts: [_]}] = Api.get_transactions()
   end
 
   test "get_assets/0" do
     insert(:asset)
     insert(:asset)
-    Cache.sync(%{tokens: []})
+    Cache.sync()
     assert is_list(Api.get_assets())
   end
 
-  test "get_asset/1" do
-    Cache.sync(%{tokens: []})
-
-    assert %{type: "Token"} =
-             Api.get_asset("e708a3e7697d89b9d3775399dcee22ffffed9602c4077968a66e059a4cccbe25")
-  end
-
-  test "get_asset_name/0" do
-    assert "Asset not Found" == Api.get_asset_name("21he9812")
+  test "get_asset_name/1" do
+    asset = insert(:asset)
+    asset2 = insert(:asset, %{name: [%{"lang" => "fr", "name" => "piece"}]})
+    Cache.sync()
+    assert "truc" == Api.get_asset_name(asset.transaction_hash)
+    assert "piece" == Api.get_asset_name(asset2.transaction_hash)
     assert "Asset not Found" == Api.get_asset_name("1234567890123456789012345678901234567890")
   end
 
-  test "check_asset/1" do
-    assert not Api.check_asset("random")
+  test "get_asset_precision/1" do
+    asset = insert(:asset)
+    Cache.sync()
+    assert asset.precision == Api.get_asset_precision(asset.transaction_hash)
   end
 
   test "get_addresses/0" do

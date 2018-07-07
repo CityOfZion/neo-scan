@@ -5,20 +5,20 @@ defmodule NeoscanCache.Cache do
   """
 
   use GenServer
-  alias NeoscanCache.Utils
   alias Neoscan.Blocks
+  alias Neoscan.Assets
   alias Neoscan.Transactions
-  alias Neoscan.Transfers
   alias Neoscan.Addresses
-  alias Neoscan.ChainAssets
+  alias Neoscan.Counters
+
   alias Neoprice.NeoBtc
   alias Neoprice.NeoUsd
   alias Neoprice.GasBtc
   alias Neoprice.GasUsd
-  alias Neoscan.Claims.Unclaimed
   alias NeoscanCache.EtsProcess
 
-  @update_interval 5_000
+  @update_interval 1_000
+  @update_interval_price 5_000
 
   require Logger
 
@@ -32,8 +32,9 @@ defmodule NeoscanCache.Cache do
   def init(:ok) do
     EtsProcess.create_table(__MODULE__)
     Process.send_after(self(), :broadcast, 30_000)
-    Process.send(self(), :repair, [])
-    {:ok, sync(%{tokens: []})}
+    sync()
+    sync_price()
+    {:ok, :ok}
   end
 
   def set(key, value) do
@@ -56,23 +57,42 @@ defmodule NeoscanCache.Cache do
     end
   end
 
+  defp get_blocks do
+    blocks = Enum.take(get(:blocks), 5)
+
+    Enum.map(
+      blocks,
+      &%{
+        hash: Base.encode16(&1.hash, case: :lower),
+        index: &1.index,
+        size: &1.size,
+        time: DateTime.to_unix(&1.time),
+        tx_count: &1.tx_count
+      }
+    )
+  end
+
+  defp get_transactions do
+    transactions = Enum.take(get(:transactions), 5)
+
+    Enum.map(
+      transactions,
+      &%{
+        txid: Base.encode16(&1.hash, case: :lower),
+        type: &1.type,
+        time: DateTime.to_unix(&1.block_time)
+      }
+    )
+  end
+
   def handle_info(:broadcast, state) do
-    {blocks, _} =
-      get(:blocks)
-      |> Enum.split(5)
-
-    {transactions, _} =
-      get(:transactions)
-      |> Enum.split(5)
-
-    {transfers, _} =
-      get(:transfers)
-      |> Enum.split(5)
+    blocks = get_blocks()
+    transactions = get_transactions()
 
     payload = %{
       "blocks" => blocks,
       "transactions" => transactions,
-      "transfers" => transfers,
+      "transfers" => [],
       "price" => get(:price),
       "stats" => get(:stats)
     }
@@ -86,14 +106,14 @@ defmodule NeoscanCache.Cache do
     {:noreply, state}
   end
 
-  # repair blocks on startup
-  def handle_info(:repair, state) do
-    Unclaimed.repair_blocks()
-    {:noreply, state}
+  def handle_info(:sync_price, _) do
+    sync_price()
+    {:noreply, :ok}
   end
 
-  def handle_info(:sync, state) do
-    {:noreply, sync(state)}
+  def handle_info(:sync, _) do
+    sync()
+    {:noreply, :ok}
   end
 
   # handles misterious messages received by unknown caller
@@ -101,23 +121,33 @@ defmodule NeoscanCache.Cache do
     {:noreply, state}
   end
 
+  def get_general_stats do
+    %{
+      :total_blocks => Counters.count_blocks(),
+      :total_transactions => Counters.count_transactions(),
+      :total_transfers => 0,
+      :total_addresses => Counters.count_addresses()
+    }
+  end
+
   # update nodes and stats information
-  def sync(state) do
+  def sync() do
     Process.send_after(self(), :sync, @update_interval)
-    blocks = Blocks.home_blocks()
+    blocks = Blocks.paginate(1).entries
+    transactions = Transactions.paginate(1).entries
+    addresses = Addresses.paginate(1).entries
+    assets = Assets.get_all()
+    stats = get_general_stats()
 
-    transactions =
-      Transactions.home_transactions()
-      |> Utils.add_vouts()
+    set(:blocks, blocks)
+    set(:transactions, transactions)
+    set(:assets, assets)
+    set(:stats, stats)
+    set(:addresses, addresses)
+  end
 
-    transfers = Transfers.home_transfers()
-
-    assets = ChainAssets.list_assets()
-    #      |> Utils.get_stats()
-
-    stats = Utils.get_general_stats()
-
-    addresses = Addresses.list_latest()
+  def sync_price() do
+    Process.send_after(self(), :sync_price, @update_interval_price)
 
     price = %{
       neo: %{
@@ -130,25 +160,6 @@ defmodule NeoscanCache.Cache do
       }
     }
 
-    tokens = Utils.add_new_tokens(state.tokens)
-
-    set(:blocks, blocks)
-    set(:transactions, transactions)
-    set(:transfers, transfers)
-    set(:assets, assets)
-    set(:stats, stats)
-    set(:addresses, addresses)
     set(:price, price)
-
-    %{
-      :blocks => blocks,
-      :transactions => transactions,
-      :transfers => transfers,
-      :assets => assets,
-      :stats => stats,
-      :addresses => addresses,
-      :price => price,
-      :tokens => tokens
-    }
   end
 end

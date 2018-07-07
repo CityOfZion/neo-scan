@@ -1,4 +1,4 @@
-defmodule Neoscan.Blocks.BlocksCache do
+defmodule Neoscan.BlocksCache do
   @moduledoc """
   Provide a cache for the block fees, it uses a binary structure stored in a file for efficiency reason.
   """
@@ -91,26 +91,52 @@ defmodule Neoscan.Blocks.BlocksCache do
     cache_min = get(:min)
     cache_max = get(:max)
 
-    new_cache_max =
+    {is_cached, new_cache_max} =
       if is_nil(cache_max) or is_nil(cache_min) do
-        min + set_cached_response(min, Blocks.get_total_sys_fee(min, max)) - 1
+        blocks = Blocks.get_total_sys_fee(min, max)
+
+        if Enum.count(blocks) == max - min + 1 do
+          {true, min + set_cached_response(min, blocks) - 1}
+        else
+          {false, blocks}
+        end
       else
-        set_cached_response(min, Blocks.get_total_sys_fee(min, cache_min))
-        cache_max + set_cached_response(cache_max, Blocks.get_total_sys_fee(cache_max, max)) - 1
+        blocks1 = Blocks.get_total_sys_fee(min, cache_min)
+        blocks2 = Blocks.get_total_sys_fee(cache_max, max)
+
+        if Enum.count(blocks1) == max(cache_min - min + 1, 0) and
+             Enum.count(blocks2) == max(max - cache_max + 1, 0) do
+          set_cached_response(min, blocks1)
+          {true, cache_max + set_cached_response(cache_max, blocks2) - 1}
+        else
+          {false, Blocks.get_total_sys_fee(min, max)}
+        end
       end
 
-    # it is possible override will occur here, for example another process stores a smaller value of min
-    # or a higher value of max, however if data is queried again, it is not a serious problem, it would be better
-    # to update it atomically if and only if the value is lower or higher. But there is no easy way to do it wiht ets
-    new_cache_min = if min < cache_min, do: min, else: cache_min
-    set(:min, new_cache_min)
+    if is_cached do
+      # it is possible override will occur here, for example another process stores a smaller value of min
+      # or a higher value of max, however if data is queried again, it is not a serious problem, it would be better
+      # to update it atomically if and only if the value is lower or higher. But there is no easy way to do it wiht ets
+      new_cache_min = if min < cache_min, do: min, else: cache_min
+      set(:min, new_cache_min)
 
-    # current logic check the highest block so max can be ahead of the current database state, we need to put max to the
-    # real block number in the database
-    set(:max, new_cache_max)
+      # current logic check the highest block so max can be ahead of the current database state, we need to put max to the
+      # real block number in the database
+      set(:max, new_cache_max)
 
-    real_max = if new_cache_max > max, do: max, else: new_cache_max
+      real_max = if new_cache_max > max, do: max, else: new_cache_max
 
-    get_cached_response(min, real_max)
+      get_cached_response(min, real_max)
+    else
+      new_cache_max
+    end
+  end
+
+  def get_sys_fees_in_range(min, max) do
+    result = get_total_sys_fee(min, max)
+
+    result
+    |> Enum.map(& &1.total_sys_fee)
+    |> Enum.sum()
   end
 end

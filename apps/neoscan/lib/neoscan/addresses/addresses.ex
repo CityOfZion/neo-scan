@@ -3,647 +3,260 @@ defmodule Neoscan.Addresses do
   The boundary for the Addresses system.
   """
 
+  @neo_asset_hash <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144,
+                    175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
+
+  @gas_asset_hash <<96, 44, 121, 113, 139, 22, 228, 66, 222, 88, 119, 142, 20, 141, 11, 16, 132,
+                    227, 178, 223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45, 231>>
+
+  @page_size 15
+  @balance_history_size 200
+
   import Ecto.Query, warn: false
 
   require Logger
 
   alias Neoscan.Repo
-  alias Neoscan.Addresses.Address
-  alias Neoscan.BalanceHistories
-  alias Neoscan.BalanceHistories.History
-  alias Neoscan.Claims
-  alias Neoscan.Claims.Claim
-  alias Neoscan.Transfers
-  alias Neoscan.Helpers
-  alias Neoscan.Stats
-  alias Ecto.Multi
+  alias Neoscan.Address
+  alias Neoscan.AddressBalance
+  alias Neoscan.AddressTransactionBalance
+  alias Neoscan.Asset
 
   @doc """
-  Returns the list of addresses.
-
+  Gets a single address by its hash and send it as a map
   ## Examples
-
-      iex> list_addresses()
-      [%Address{}, ...]
-
+      iex> get(123)
+      %{}
+      iex> get(456)
+      nil
   """
-  def list_addresses do
-    from(a in Address, preload: :histories)
-    |> Repo.all()
+  def get(hash) do
+    query = from(e in Address, where: e.hash == ^hash)
+    Repo.one(query)
   end
 
-  @doc """
-  Returns a list of the latest updated addresses.
-
-  ## Examples
-
-      iex> list_latest()
-      [%Address{}, ...]
-
-  """
-  def list_latest do
-    query =
+  def get_balances(hash) do
+    Repo.all(
       from(
-        a in Address,
-        order_by: [
-          desc: a.updated_at
-        ],
-        select: %{
-          :address => a.address,
-          :balance => a.balance,
-          :time => a.time,
-          :tx_count => a.tx_count
-        },
-        limit: 15
+        ab in AddressBalance,
+        join: a in Asset,
+        on: ab.asset_hash == a.transaction_hash,
+        where: ab.address_hash == ^hash,
+        select: %{name: a.name, asset: ab.asset_hash, value: ab.value, precision: a.precision}
       )
-
-    Repo.all(query)
+    )
   end
 
-  @doc """
-  Count total addresses in DB.
+  def get_split_balance(nil), do: nil
 
-  ## Examples
+  def get_split_balance(binary_hash) do
+    balances = get_balances(binary_hash)
+    neo_balance = Enum.find(balances, &(&1.asset == @neo_asset_hash))
+    gas_balance = Enum.find(balances, &(&1.asset == @gas_asset_hash))
 
-      iex> count_addresses()
-      50
+    token_balances =
+      Enum.filter(balances, &(not (&1.asset in [@neo_asset_hash, @gas_asset_hash])))
 
-  """
-  def count_addresses do
-    Repo.aggregate(Address, :count, :id)
+    token_balances =
+      Enum.map(token_balances, fn balance ->
+        %{
+          balance
+          | name:
+              Enum.reduce(balance.name, %{}, fn %{"lang" => lang, "name" => name}, acc ->
+                Map.put(acc, lang, name)
+              end)
+        }
+      end)
+
+    %{
+      neo: if(is_nil(neo_balance), do: 0, else: neo_balance.value),
+      gas: if(is_nil(gas_balance), do: 0.0, else: gas_balance.value),
+      tokens: token_balances
+    }
   end
 
   @doc """
   Returns the list of paginated addresses.
-
   ## Examples
-
-      iex> paginate_addresses(page)
+      iex> paginate(page)
       [%Address{}, ...]
-
   """
-  def paginate_addresses(pag) do
+  def paginate(page) do
     addresses_query =
       from(
         e in Address,
         order_by: [
-          desc: e.updated_at
+          desc: e.last_transaction_time
         ],
-        select: %{
-          :address => e.address,
-          :balance => e.balance,
-          :time => e.time,
-          :tx_count => e.tx_count
-        },
-        limit: 15
+        limit: @page_size
       )
 
-    Repo.paginate(addresses_query, page: pag, page_size: 15)
+    Repo.paginate(addresses_query, page: page, page_size: @page_size)
   end
 
-  @doc """
-  Count total addresses in DB that have an especific asset.
+  def get_balance_history(hash) do
+    balances = get_balances(hash)
 
-  ## Examples
+    balances =
+      Enum.reduce(balances, %{}, fn %{value: value, name: name}, acc ->
+        Map.put(acc, filter_name(name), value)
+      end)
 
-      iex> count_addresses_for_asset()
-      20
-
-  """
-  def count_addresses_for_asset(asset_hash) do
-    query = from(a in Address, where: fragment("? \\? ?", a.balance, ^asset_hash))
-
-    Repo.aggregate(query, :count, :balance)
-  end
-
-  @doc """
-  Gets a single address.
-
-  Raises `Ecto.NoResultsError` if the Address does not exist.
-
-  ## Examples
-
-      iex> get_address!(123)
-      %Address{}
-
-      iex> get_address!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_address!(id) do
-    from(a in Address, where: a.id == ^id, preload: :histories)
-    |> Repo.all()
-  end
-
-  @doc """
-  Gets a single address by its hash and send it as a map
-
-  ## Examples
-
-      iex> get_address_by_hash_for_view(123)
-      %{}
-
-      iex> get_address_by_hash_for_view(456)
-      nil
-
-  """
-  def get_address_by_hash_for_view(hash) do
-    query =
-      from(
-        e in Address,
-        where: e.address == ^hash,
-        select: e
+    address_history =
+      Repo.all(
+        from(
+          atb in AddressTransactionBalance,
+          where: atb.address_hash == ^hash,
+          order_by: [desc: atb.block_time],
+          preload: [:asset],
+          limit: @balance_history_size
+        )
       )
 
-    # %{:address => e.address, :tx_ids => e.histories,
-    #  :balance => e.balance, :claimed => e.claimed}
-    Repo.all(query)
-    |> List.first()
+    address_history =
+      address_history
+      |> Enum.group_by(& &1.block_time)
+      |> Enum.map(fn {time, balances} ->
+        %{time: DateTime.to_unix(time), assets: reduce_balance_to_assets(balances)}
+      end)
+      |> Enum.sort_by(& &1.time)
+      |> Enum.reverse()
+
+    reduce_address_history(address_history, balances, [])
   end
 
-  @doc """
-  Gets a single address by its hash and send it as a map
+  defp reduce_address_history([], _, acc), do: acc
 
-  ## Examples
+  defp reduce_address_history([%{assets: assets, time: time} | rest], balances, acc) do
+    new_balances =
+      Enum.reduce(assets, balances, fn {name, value}, acc ->
+        Map.update!(acc, name, &(&1 - value))
+      end)
 
-      iex> get_address_by_hash(123)
-      %{}
-
-      iex> get_address_by_hash(456)
-      nil
-
-  """
-  def get_address_by_hash(hash) do
-    query =
-      from(
-        e in Address,
-        where: e.address == ^hash,
-        select: e
-      )
-
-    Repo.all(query)
-    |> List.first()
-  end
-
-  @doc """
-  Creates a address.
-
-  ## Examples
-
-      iex> create_address(%{field: value})
-      %Address{}
-
-      iex> create_address(%{field: bad_value})
-      no_return
-
-  """
-  def create_address(attrs \\ %{}) do
-    Stats.add_address_to_table()
-
-    %Address{}
-    |> Address.changeset(attrs)
-    |> Repo.insert!()
-  end
-
-  @doc """
-  Updates a address.
-
-  ## Examples
-
-      iex> update_address(address, %{field: new_value})
-      %Address{}
-
-      iex> update_address(address, %{field: bad_value})
-      no_return
-
-  """
-  def update_address(%Address{} = address, attrs) do
-    address
-    |> Address.update_changeset(attrs)
-    |> Repo.update()
-  end
-
-  # updates all addresses in the transactions with their
-  # respective changes/inserts
-  def update_multiple_addresses(list) do
-    list
-    |> Enum.map(fn {address, attrs} ->
-      verify_if_claim_and_call_changesets(address, attrs)
-    end)
-    |> create_multi
-    |> Repo.transaction()
-    |> check_repo_transaction_results()
-  end
-
-  # verify if there was claim operations for the address
-  defp verify_if_claim_and_call_changesets(
-         address,
-         %{:claimed => claim} = attrs
-       ) do
-    {
-      address,
-      Claims.change_claim(%Claim{}, address, claim),
-      BalanceHistories.change_history(%History{}, address, attrs.tx_ids),
-      change_address(address, attrs)
+    elem = %{
+      assets: Enum.map(assets, fn {name, _} -> %{name => Map.get(balances, name)} end),
+      time: time
     }
+
+    reduce_address_history(rest, new_balances, [elem | acc])
   end
 
-  defp verify_if_claim_and_call_changesets(address, attrs) do
-    {
-      address,
-      nil,
-      BalanceHistories.change_history(%History{}, address, attrs.tx_ids),
-      change_address(address, attrs)
-    }
+  defp reduce_balance_to_assets(balances) do
+    balances
+    |> Enum.filter(&(not is_nil(&1.asset)))
+    |> Enum.map(&{filter_name(&1.asset.name), &1.value})
+    |> Enum.group_by(fn {asset_name, _} -> asset_name end, fn {_, value} -> value end)
+    |> Enum.map(fn {asset_name, value_list} -> {asset_name, Enum.sum(value_list)} end)
+    |> Enum.into(%{})
   end
 
-  # creates new Ecto.Multi sequence for single DB transaction
-  defp create_multi(changesets) do
-    Enum.reduce(changesets, Multi.new(), fn tuple, acc -> insert_updates(tuple, acc) end)
-  end
+  defp filter_name(asset) do
+    case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
+      %{"name" => "AntShare"} ->
+        "NEO"
 
-  # Insert address updates in the Ecto.Multi
-  defp insert_updates(
-         {address, claim_changeset, history_changeset, address_changeset},
-         acc
-       ) do
-    acc
-    |> Multi.update(address.address, address_changeset, [])
-    |> Multi.insert("#{address.address}_history", history_changeset, [])
-    |> Claims.add_claim_if_claim("#{address.address}_claim", claim_changeset)
-  end
+      %{"name" => "AntCoin"} ->
+        "GAS"
 
-  # verify if DB transaction was sucessfull
-  defp check_repo_transaction_results({:ok, _any}) do
-    {:ok, "all operations were succesfull"}
-  end
+      %{"name" => name} ->
+        name
 
-  defp check_repo_transaction_results({:error, error}) do
-    Logger.error(inspect(error))
-    raise "error updating addresses"
-  end
-
-  @doc """
-  Deletes a Address.
-
-  ## Examples
-
-      iex> delete_address(address)
-      {:ok, %Address{}}
-
-      iex> delete_address(address)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_address(%Address{} = address) do
-    Repo.delete!(address)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking address changes.
-
-  ## Examples
-
-      iex> change_address(address)
-      %Ecto.Changeset{source: %Address{}}
-
-  """
-  def change_address(%Address{} = address, attrs) do
-    Address.update_changeset(address, attrs)
-  end
-
-  @doc """
-  Check if address exist in database
-
-  ## Examples
-
-      iex> check_if_exist(existing_address})
-      true
-
-      iex> check_if_exist(new_address})
-      false
-
-  """
-  def check_if_exist(address) do
-    query =
-      from(
-        e in Address,
-        where: e.address == ^address,
-        select: e.address
-      )
-
-    case Repo.all(query)
-         |> List.first() do
       nil ->
-        false
-
-      :string ->
-        true
+        %{"name" => name} = Enum.at(asset, 0)
+        name
     end
   end
 
-  # get all addresses involved in a transaction
-  def get_transaction_addresses(vins, vouts, time, asset) do
-    lookups =
-      (Helpers.map_vins(vins) ++
-         Helpers.map_vouts(vouts) ++
-         [
-           asset["admin"]
-         ])
-      |> Enum.filter(fn address -> address != nil end)
-      |> Enum.uniq()
-
-    query =
+  def get_transaction_abstracts_raw(address_hash, page) do
+    transaction_query =
       from(
-        e in Address,
-        where: e.address in ^lookups,
-        select: struct(e, [:id, :address, :balance, :tx_count])
+        atb in AddressTransactionBalance,
+        where: atb.address_hash == ^address_hash,
+        preload: [:transaction, :asset],
+        order_by: [desc: atb.block_time]
       )
 
-    Repo.all(query)
-    |> fetch_missing(lookups, time)
-    |> Helpers.gen_attrs()
+    Repo.paginate(transaction_query, page: page, page_size: @page_size)
   end
 
-  # get all addresses involved in a transaction
-  def get_transfer_addresses(addresses, time) do
-    query =
+  def get_transaction_abstracts(address_hash, page) do
+    result = get_transaction_abstracts_raw(address_hash, page)
+    %{result | entries: create_transaction_abstracts(result.entries)}
+  end
+
+  def get_address_to_address_abstracts(address_hash1, address_hash2, page) do
+    transaction_query =
       from(
-        e in Address,
-        where: e.address in ^addresses,
-        select: struct(e, [:id, :address, :balance, :tx_count])
+        atb in AddressTransactionBalance,
+        join: atb2 in AddressTransactionBalance,
+        on: atb.transaction_hash == atb2.transaction_hash and atb.asset_hash == atb2.asset_hash,
+        where:
+          atb.address_hash == ^address_hash1 and atb2.address_hash == ^address_hash2 and
+            fragment("sign(?)", atb.value) != fragment("sign(?)", atb2.value),
+        preload: [:transaction],
+        order_by: [desc: atb.block_time]
       )
 
-    Repo.all(query)
-    |> fetch_missing(addresses, time)
-    |> Helpers.gen_attrs()
+    result = Repo.paginate(transaction_query, page: page, page_size: @page_size)
+    %{result | entries: create_transaction_abstracts(result.entries)}
   end
 
-  # get all addresses involved in a list of previous transactions
-  def get_transactions_addresses(transactions) do
-    lookups =
-      Enum.reduce(transactions, [], fn %{:vin => vin, :vouts => vouts}, acc ->
-        acc ++ Helpers.map_vins(vin) ++ Helpers.map_vouts(vouts)
-      end)
-      |> Enum.uniq()
-
-    query =
+  defp get_related_transaction_abstracts(%{
+         transaction_hash: transaction_hash,
+         asset_hash: asset_hash,
+         value: value
+       }) do
+    atbs_query =
       from(
-        e in Address,
-        where: e.address in ^lookups,
-        order_by: [
-          desc: e.updated_at
-        ],
-        select: map(e, [:id, :address, :balance, :time, :tx_count]),
-        limit: 5
+        atb in AddressTransactionBalance,
+        where: atb.transaction_hash == ^transaction_hash and atb.asset_hash == ^asset_hash
       )
 
-    Repo.all(query)
-  end
-
-  # create missing addresses
-  defp fetch_missing(address_list, lookups, time) do
-    (lookups -- Enum.map(address_list, fn %{:address => address} -> address end))
-    |> Enum.map(fn address -> create_address(%{"address" => address, "time" => time}) end)
-    |> Enum.concat(address_list)
-  end
-
-  # Update vins and claims into addresses
-  def update_all_addresses(
-        address_list,
-        [],
-        nil,
-        _vouts,
-        txid,
-        index,
-        time
-      ) do
-    address_list
-    |> insert_tx_in_addresses(txid, index, time)
-  end
-
-  def update_all_addresses(
-        address_list,
-        [],
-        claims,
-        vouts,
-        _txid,
-        index,
-        time
-      ) do
-    address_list
-    |> Claims.separate_txids_and_insert_claims(claims, vouts, index, time)
-  end
-
-  def update_all_addresses(
-        address_list,
-        vins,
-        nil,
-        _vouts,
-        txid,
-        index,
-        time
-      ) do
-    address_list
-    |> group_vins_by_address_and_update(vins, txid, index, time)
-  end
-
-  def update_all_addresses(
-        address_list,
-        vins,
-        claims,
-        vouts,
-        txid,
-        index,
-        time
-      ) do
-    address_list
-    |> group_vins_by_address_and_update(vins, txid, index, time)
-    |> Claims.separate_txids_and_insert_claims(claims, vouts, index, time)
-  end
-
-  def update_all_addresses(
-        address_list,
-        transfers,
-        time,
-        block
-      ) do
-    address_list
-    |> add_transfers_to_addresses(transfers, time, block)
-  end
-
-  # separate vins by address hash, insert vins and update the address
-  defp group_vins_by_address_and_update(address_list, vins, txid, index, time) do
-    updates =
-      Enum.group_by(vins, fn %{:address_hash => address} -> address end)
-      |> Map.to_list()
-      |> Helpers.populate_groups(address_list)
-      |> Enum.map(fn {address, vins} ->
-        insert_vins_in_address(address, vins, txid, index, time)
-      end)
-
-    Enum.map(address_list, fn {address, attrs} ->
-      Helpers.substitute_if_updated(address, attrs, updates)
-    end)
-  end
-
-  # insert vins into address balance
-  defp insert_vins_in_address({address, attrs}, vins, txid, index, time) do
-    new_attrs =
-      Map.merge(attrs, %{
-        :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
-        :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
-      })
-      |> add_vins(vins, time)
-      |> BalanceHistories.add_tx_id(txid, index, time)
-
-    {address, new_attrs}
-  end
-
-  # add multiple vins
-  defp add_vins(attrs, vins, time) do
-    Enum.reduce(vins, attrs, fn vin, acc -> add_vin(acc, vin, time) end)
-  end
-
-  # add a single vin into adress
-  defp add_vin(%{:balance => balance} = attrs, vin, time) do
-    current_amount =
-      case balance[vin.asset]["amount"] do
-        nil ->
-          Logger.info("CORRUPTION - Vin not found in address balance")
-          vin.value
-
-        value ->
-          value
+    atbs_query =
+      if value < 0 do
+        from(atb in atbs_query, where: atb.value > 0.0)
+      else
+        from(atb in atbs_query, where: atb.value < 0.0)
       end
 
-    # if balance isn't found, assume that it is missing from the DB
-
-    new_balance = %{
-      "asset" => vin.asset,
-      "amount" => current_amount - vin.value,
-      "time" => time
-    }
-
-    %{attrs | balance: Map.put(attrs.balance || %{}, vin.asset, new_balance)}
+    Repo.all(atbs_query)
   end
 
-  defp insert_tx_in_addresses(address_list, txid, index, time) do
-    address_list
-    |> Enum.map(fn tuple -> insert_tx_in_address(tuple, txid, index, time) end)
+  defp create_transaction_abstracts(transactions) do
+    transactions
+    |> Enum.map(&Map.put(&1, :related, get_related_transaction_abstracts(&1)))
+    |> Enum.map(&create_transaction_abstract/1)
   end
 
-  defp insert_tx_in_address({address, attrs}, txid, index, time) do
-    new_attrs =
-      Map.merge(attrs, %{
-        :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
-        :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
-      })
-      |> BalanceHistories.add_tx_id(txid, index, time)
-
-    {address, new_attrs}
-  end
-
-  defp add_transfers_to_addresses(addresses, [], _time, _block) do
-    addresses
-  end
-
-  defp add_transfers_to_addresses(addresses, [head | tail], time, block) do
-    addresses
-    |> add_transfer(head, time, block)
-    |> add_transfers_to_addresses(tail, time, block)
-  end
-
-  defp add_transfer(addresses, transfer, time, block) do
-    update_from =
-      Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_from"] end)
-      |> List.first()
-      |> update_from_address(transfer, time)
-
-    update_to =
-      Enum.filter(addresses, fn {address, _attrs} -> address.address == transfer["addr_to"] end)
-      |> List.first()
-      |> update_to_address(transfer, time)
-
-    transfer
-    |> Transfers.create_transfer(time, block)
-
-    Enum.map(addresses, fn {address, attrs} ->
-      Helpers.substitute_if_updated(address, attrs, [update_from, update_to])
-    end)
-  end
-
-  defp update_from_address({address, attrs}, transfer, time) do
-    new_attrs =
-      Map.merge(attrs, %{
-        :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
-        :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
-      })
-      |> minus_transfer(transfer, time)
-      |> BalanceHistories.add_tx_id(
-        String.slice(to_string(transfer["tx"]), -64..-1),
-        transfer["block"],
-        time
-      )
-
-    {address, new_attrs}
-  end
-
-  defp update_to_address({address, attrs}, transfer, time) do
-    new_attrs =
-      Map.merge(attrs, %{
-        :balance => Helpers.check_if_attrs_balance_exists(attrs) || address.balance,
-        :tx_ids => Helpers.check_if_attrs_txids_exists(attrs) || %{}
-      })
-      |> plus_transfer(transfer, time)
-      |> BalanceHistories.add_tx_id(
-        String.slice(to_string(transfer["tx"]), -64..-1),
-        transfer["block"],
-        time
-      )
-
-    {address, new_attrs}
-  end
-
-  defp plus_transfer(%{:balance => balance} = attrs, transfer, time) do
-    current_amount =
-      balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
-
-    new_balance = %{
-      "asset" => String.slice(to_string(transfer["contract"]), -40..-1),
-      "amount" => current_amount + String.to_integer(transfer["amount"]),
-      "time" => time
-    }
+  defp create_transaction_abstract(abt) do
+    {address_from, address_to} = get_transaction_abstract_actors(abt)
 
     %{
-      attrs
-      | balance:
-          Map.put(
-            attrs.balance || %{},
-            String.slice(to_string(transfer["contract"]), -40..-1),
-            new_balance
-          )
+      transaction_hash: abt.transaction_hash,
+      address_from: address_from,
+      address_to: address_to,
+      value: abs(abt.value),
+      asset_hash: abt.asset_hash,
+      block_time: abt.transaction.block_time,
+      block_index: abt.transaction.block_index
     }
   end
 
-  defp minus_transfer(%{:balance => balance} = attrs, transfer, time) do
-    current_amount =
-      balance[String.slice(to_string(transfer["contract"]), -40..-1)]["amount"] || 0
+  # self transfer for gas claim
+  defp get_transaction_abstract_actors(%{value: 0.0, address_hash: address_hash}),
+    do: {address_hash, address_hash}
 
-    new_balance = %{
-      "asset" => String.slice(to_string(transfer["contract"]), -40..-1),
-      "amount" => current_amount - String.to_integer(transfer["amount"]),
-      "time" => time
-    }
-
-    %{
-      attrs
-      | balance:
-          Map.put(
-            attrs.balance || %{},
-            String.slice(to_string(transfer["contract"]), -40..-1),
-            new_balance
-          )
-    }
+  defp get_transaction_abstract_actors(abt) do
+    is_sender = abt.value < 0
+    original = abt.address_hash
+    other = get_transaction_abstract_other_actor(abt)
+    if is_sender, do: {original, other}, else: {other, original}
   end
+
+  defp get_transaction_abstract_other_actor(%{related: []}), do: "claim"
+
+  defp get_transaction_abstract_other_actor(%{related: [%{address_hash: address_hash}]}),
+    do: address_hash
+
+  defp get_transaction_abstract_other_actor(_), do: "multi"
 end

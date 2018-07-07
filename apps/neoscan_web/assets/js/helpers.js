@@ -24,91 +24,91 @@ export const formatBTCLarge = (num) => {
 }
 
 export function getClass (type) {
-  if (type === 'ContractTransaction') {
+  if (type === 'contract_transaction') {
     return 'neo-transaction'
   }
-  if (type === 'ClaimTransaction') {
+  if (type === 'claim_transaction') {
     return 'gas-transaction'
   }
-  if (type === 'MinerTransaction') {
+  if (type === 'miner_transaction') {
     return 'miner-transaction'
   }
-  if (type === 'RegisterTransaction') {
+  if (type === 'register_transaction') {
     return 'register-transaction'
   }
-  if (type === 'IssueTransaction') {
+  if (type === 'issue_transaction') {
     return 'issue-transaction'
   }
-  if (type === 'PublishTransaction') {
+  if (type === 'publish_transaction') {
     return 'publish-transaction'
   }
-  if (type === 'InvocationTransaction') {
+  if (type === 'invocation_transaction') {
     return 'invocation-transaction'
   }
-  if (type === 'EnrollmentTransaction') {
+  if (type === 'enrollment_transaction') {
     return 'invocation-transaction'
   }
-  if (type === 'StateTransaction') {
+  if (type === 'state_transaction') {
     return 'invocation-transaction'
   }
 }
 
 export function getName (type) {
-  if (type === 'ContractTransaction') {
+  if (type === 'contract_transaction') {
     return 'Contract'
   }
-  if (type === 'ClaimTransaction') {
+  if (type === 'claim_transaction') {
     return 'GAS Claim'
   }
-  if (type === 'MinerTransaction') {
+  if (type === 'miner_transaction') {
     return 'Miner'
   }
-  if (type === 'RegisterTransaction') {
+  if (type === 'register_transaction') {
     return 'Register'
   }
-  if (type === 'IssueTransaction') {
+  if (type === 'issue_transaction') {
     return 'Issue'
   }
-  if (type === 'PublishTransaction') {
+  if (type === 'publish_transaction') {
     return 'Publish'
   }
-  if (type === 'InvocationTransaction') {
+  if (type === 'invocation_transaction') {
     return 'Invocation'
   }
-  if (type === 'EnrollmentTransaction') {
+  if (type === 'enrollment_transaction') {
     return 'Enrollment'
   }
-  if (type === 'StateTransaction') {
+  if (type === 'state_transaction') {
     return 'Enrollment'
   }
 }
 
 export function getIcon (type) {
-  if (type === 'ContractTransaction') {
+  if (type === 'contract_transaction') {
     return 'fa-cube'
   }
-  if (type === 'ClaimTransaction') {
+  if (type === 'claim_transaction') {
     return 'fa-cubes'
   }
-  if (type === 'MinerTransaction') {
+  if (type === 'miner_transaction') {
     return 'fa-user-circle-o'
   }
-  if (type === 'RegisterTransaction') {
+  if (type === 'register_transaction') {
     return 'fa-list-alt'
   }
-  if (type === 'IssueTransaction') {
+  if (type === 'issue_transaction') {
     return 'fa-handshake-o'
   }
-  if (type === 'PublishTransaction') {
+  if (type === 'publish_transaction') {
     return 'fa-cube'
   }
-  if (type === 'InvocationTransaction') {
+  if (type === 'invocation_transaction') {
     return 'fa-paper-plane'
   }
-  if (type === 'EnrollmentTransaction') {
+  if (type === 'enrollment_transaction') {
     return 'fa-paper-plane'
   }
-  if (type === 'StateTransaction') {
+  if (type === 'state_transaction') {
     return 'fa-paper-plane'
   }
 }

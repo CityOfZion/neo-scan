@@ -1,49 +1,22 @@
-defmodule Neoscan.Claims.Claim do
+defmodule Neoscan.Claim do
   @moduledoc false
   use Ecto.Schema
-  import Ecto.Changeset
-  alias Neoscan.Claims.Claim
+  alias Neoscan.Transaction
 
+  @primary_key false
   schema "claims" do
-    field(:address_hash, :string)
-    field(:txids, {:array, :string})
-    field(:asset, :string)
-    field(:amount, :float)
+    belongs_to(
+      :transaction,
+      Transaction,
+      foreign_key: :transaction_hash,
+      references: :hash,
+      type: :binary
+    )
 
-    field(:block_height, :integer)
-    field(:time, :integer)
+    field(:vout_transaction_hash, :binary)
+    field(:vout_n, :integer)
+    field(:block_time, :utc_datetime)
 
-    belongs_to(:address, Neoscan.Addresses.Address)
     timestamps()
-  end
-
-  @doc false
-  def changeset(%Claim{} = claim, address, attrs) do
-    new_attrs =
-      Map.merge(attrs, %{
-        :address_id => address.id,
-        :address_hash => address.address
-      })
-
-    claim
-    |> cast(new_attrs, [
-      :address_hash,
-      :txids,
-      :asset,
-      :amount,
-      :block_height,
-      :address_id,
-      :time
-    ])
-    |> assoc_constraint(:address, required: true)
-    |> validate_required([
-      :address_hash,
-      :txids,
-      :asset,
-      :amount,
-      :block_height,
-      :address_id,
-      :time
-    ])
   end
 end
