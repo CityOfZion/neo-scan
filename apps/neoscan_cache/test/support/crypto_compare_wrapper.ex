@@ -136,4 +136,8 @@ defmodule NeoscanCache.CryptoCompareWrapper do
       }
     }
   end
+
+  def histo_day(_, _, _), do: {:ok, %{Data: [%{time: 123, open: 123}]}}
+  def histo_hour(_, _, _), do: {:ok, %{Data: [%{time: 123, open: 123}]}}
+  def histo_minute(_, _, _), do: {:ok, %{Data: [%{time: 123, open: 123}]}}
 end
