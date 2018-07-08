@@ -62,7 +62,11 @@ defmodule Neoscan.Blocks do
         order_by: [
           desc: e.index
         ],
-        limit: @page_size
+        limit: @page_size,
+        select:
+          merge(e, %{
+            lag: fragment("extract(second FROM (? - lead(?) OVER ()))::integer", e.time, e.time)
+          })
       )
 
     Repo.paginate(block_query, page: page, page_size: @page_size)

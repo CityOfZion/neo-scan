@@ -16,6 +16,7 @@ defmodule Neoscan.Block do
     field(:script, {:map, :string})
     field(:size, :integer)
     field(:time, :utc_datetime)
+    field(:lag, :integer, virtual: true)
     field(:version, :integer)
     field(:tx_count, :integer)
     field(:total_sys_fee, :float)
