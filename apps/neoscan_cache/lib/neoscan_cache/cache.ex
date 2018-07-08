@@ -10,12 +10,12 @@ defmodule NeoscanCache.Cache do
   alias Neoscan.Transactions
   alias Neoscan.Addresses
   alias Neoscan.Counters
+  alias Neoscan.BlockGasGeneration
+  alias NeoscanCache.CryptoCompareWrapper
 
-  alias Neoprice.NeoBtc
-  alias Neoprice.NeoUsd
-  alias Neoprice.GasBtc
-  alias Neoprice.GasUsd
   alias NeoscanCache.EtsProcess
+
+  require Logger
 
   @update_interval 1_000
   @update_interval_price 5_000
@@ -149,17 +149,29 @@ defmodule NeoscanCache.Cache do
   def sync_price() do
     Process.send_after(self(), :sync_price, @update_interval_price)
 
-    price = %{
-      neo: %{
-        btc: NeoBtc.last_price_full(),
-        usd: NeoUsd.last_price_full()
-      },
-      gas: %{
-        btc: GasBtc.last_price_full(),
-        usd: GasUsd.last_price_full()
-      }
-    }
+    case CryptoCompareWrapper.pricemultifull(["NEO", "GAS"], ["BTC", "USD"]) do
+      {:ok, price} ->
+        price = %{
+          neo: %{
+            btc: price[:RAW][:NEO][:BTC],
+            usd: price[:RAW][:NEO][:USD]
+          },
+          gas: %{
+            btc: add_gas_market_cap(price[:RAW][:GAS][:BTC]),
+            usd: add_gas_market_cap(price[:RAW][:GAS][:USD])
+          }
+        }
 
-    set(:price, price)
+        set(:price, price)
+
+      _ ->
+        Logger.warn("could not sync price")
+    end
+  end
+
+  defp add_gas_market_cap(info) do
+    current_index = Counters.count_blocks()
+    current_index = if is_nil(current_index), do: 0, else: current_index - 1
+    %{info | MKTCAP: info[:PRICE] * BlockGasGeneration.get_range_amount(0, current_index)}
   end
 end

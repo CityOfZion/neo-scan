@@ -10,7 +10,10 @@ defmodule NeoscanCache.Mixfile do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
-      elixirc_options: [warnings_as_errors: true],
+      elixirc_options: [
+        warnings_as_errors: true,
+        ignore_module_conflict: true
+      ],
       test_coverage: [
         tool: ExCoveralls
       ],

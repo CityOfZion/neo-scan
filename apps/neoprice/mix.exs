@@ -44,6 +44,7 @@ defmodule Neoprice.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:crypto_compare, "~> 0.1.1"},
       {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
       {:poison, "~> 2.0 or ~> 3.1"},
       {:excoveralls, "~> 0.8", only: :test}
