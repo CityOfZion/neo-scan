@@ -99,7 +99,7 @@ msgid "Assets"
 msgstr "Active"
 
 #: lib/neoscan_web/templates/transaction/transaction.html.eex:127
-msgid "Atributte"
+msgid "Attribute"
 msgstr "Atribut"
 
 #: lib/neoscan_web/templates/home/index.html.eex:62
