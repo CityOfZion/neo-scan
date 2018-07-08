@@ -41,7 +41,7 @@
               </p>
               <p class="medium-detail-text col-1-width">
                 <span class="tablet-detail-text"><%= gettext "Block Time"%>: </span>
-                <%= get_block_time(block, @blocks) %>
+                <%= block.lag %> seconds
               </p>
             </div>
           </div>
