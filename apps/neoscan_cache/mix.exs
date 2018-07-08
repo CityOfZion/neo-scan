@@ -56,9 +56,7 @@ defmodule NeoscanCache.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:morphix, "~> 0.0.7"},
       {:neoscan, in_umbrella: true},
-      {:neoprice, in_umbrella: true},
       {:excoveralls, "~> 0.8", only: :test}
     ]
   end
