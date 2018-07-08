@@ -19,4 +19,13 @@ defmodule NeoscanCache.CacheTest do
     Cache.handle_info(:sync_price, nil)
     Cache.handle_info(:sync, nil)
   end
+
+  test "price_history" do
+    Cache.sync_price_history("NEO", "USD", "1d")
+    Cache.sync_price_history("NEO", "USD", "1w")
+    Cache.sync_price_history("NEO", "USD", "1m")
+    Cache.sync_price_history("NEO", "USD", "3m")
+
+    assert is_map(Cache.get_price_history("NEO", "USD", "1d"))
+  end
 end

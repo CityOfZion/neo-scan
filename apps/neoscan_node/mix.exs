@@ -63,7 +63,6 @@ defmodule NeoscanNode.Mixfile do
       {:hackney, "~> 1.11", override: true},
       {:poison, "~> 3.1"},
       {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
-      # {:base58ex, "~> 0.1.0"},
       {:excoveralls, "~> 0.8", only: :test}
     ]
   end

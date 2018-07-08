@@ -29,7 +29,7 @@ defmodule Neoscan.BlockGasGeneration do
       end
 
     [{gas, _, rmax} | t] =
-      Enum.filter(generation, fn {_, rmin, rmax} -> min < rmax and max > rmin end)
+      Enum.filter(generation, fn {_, rmin, rmax} -> min <= rmax and max >= rmin end)
 
     [{gas, rmin, _} | t] = Enum.reverse([{gas, min, rmax} | t])
     generation = Enum.reverse([{gas, rmin, max} | t])

@@ -1,0 +1,143 @@
+defmodule NeoscanCache.CryptoCompareWrapper do
+  def pricemultifull(_, _) do
+    {
+      :ok,
+      %{
+        RAW: %{
+          GAS: %{
+            BTC: %{
+              CHANGE24HOUR: -4.999999999999796e-6,
+              CHANGEDAY: 4.9e-5,
+              CHANGEPCT24HOUR: -0.24618414574100428,
+              CHANGEPCTDAY: 2.4785027819929186,
+              FLAGS: "1",
+              FROMSYMBOL: "GAS",
+              HIGH24HOUR: 0.00212,
+              HIGHDAY: 0.002116,
+              LASTMARKET: "HuobiPro",
+              LASTTRADEID: "117635040887360720000",
+              LASTUPDATE: 1_531_050_224,
+              LASTVOLUME: 0.2614,
+              LASTVOLUMETO: 5.295964e-4,
+              LOW24HOUR: 0.001926,
+              LOWDAY: 0.001973,
+              MARKET: "CCCAGG",
+              MKTCAP: 0,
+              OPEN24HOUR: 0.002031,
+              OPENDAY: 0.001977,
+              PRICE: 0.002026,
+              SUPPLY: 0,
+              TOSYMBOL: "BTC",
+              TOTALVOLUME24H: 348_137.57971800014,
+              TOTALVOLUME24HTO: 703.9702293519149,
+              TYPE: "5",
+              VOLUME24HOUR: 124_825.37333975786,
+              VOLUME24HOURTO: 251.53969922959598,
+              VOLUMEDAY: 61768.58454268779,
+              VOLUMEDAYTO: 126.84202128301594
+            },
+            USD: %{
+              CHANGE24HOUR: -0.03366815000000045,
+              CHANGEDAY: 0.3299478699999998,
+              CHANGEPCT24HOUR: -0.2461841457410176,
+              CHANGEPCTDAY: 2.4785027819929173,
+              FLAGS: "1",
+              FROMSYMBOL: "GAS",
+              HIGH24HOUR: 14.2752956,
+              HIGHDAY: 14.24836108,
+              LASTMARKET: "HuobiPro",
+              LASTTRADEID: 0,
+              LASTUPDATE: 1_531_050_230,
+              LASTVOLUME: 0,
+              LASTVOLUMETO: 0,
+              LOW24HOUR: 12.96897138,
+              LOWDAY: 13.28545199,
+              MARKET: "CCCAGG",
+              MKTCAP: 0,
+              OPEN24HOUR: 13.67600253,
+              OPENDAY: 13.31238651,
+              PRICE: 13.64233438,
+              SUPPLY: 0,
+              TOSYMBOL: "USD",
+              TOTALVOLUME24H: 348_137.57971800014,
+              TOTALVOLUME24HTO: 4_749_409.272756863,
+              TYPE: "5",
+              VOLUME24HOUR: 0,
+              VOLUME24HOURTO: 0,
+              VOLUMEDAY: 0,
+              VOLUMEDAYTO: 0
+            }
+          },
+          NEO: %{
+            BTC: %{
+              CHANGE24HOUR: 2.340000000000007e-4,
+              CHANGEDAY: 1.3500000000000057e-4,
+              CHANGEPCT24HOUR: 4.160739687055489,
+              CHANGEPCTDAY: 2.3589026734230396,
+              FLAGS: "4",
+              FROMSYMBOL: "NEO",
+              HIGH24HOUR: 0.006106,
+              HIGHDAY: 0.006103,
+              LASTMARKET: "HuobiPro",
+              LASTTRADEID: "117635100977360720000",
+              LASTUPDATE: 1_531_050_230,
+              LASTVOLUME: 0.1678,
+              LASTVOLUMETO: 9.809588e-4,
+              LOW24HOUR: 0.005544,
+              LOWDAY: 0.005723,
+              MARKET: "CCCAGG",
+              MKTCAP: 380_770,
+              OPEN24HOUR: 0.005624,
+              OPENDAY: 0.005723,
+              PRICE: 0.005858,
+              SUPPLY: 65_000_000,
+              TOSYMBOL: "BTC",
+              TOTALVOLUME24H: 2_451_013.2050620653,
+              TOTALVOLUME24HTO: 14283.351368479322,
+              TYPE: "5",
+              VOLUME24HOUR: 868_869.5673016311,
+              VOLUME24HOURTO: 5015.153938478698,
+              VOLUMEDAY: 485_552.59160089534,
+              VOLUMEDAYTO: 2857.2458507080983
+            },
+            USD: %{
+              CHANGE24HOUR: 2.4299999999999997,
+              CHANGEDAY: 0.6600000000000037,
+              CHANGEPCT24HOUR: 6.574675324675323,
+              CHANGEPCTDAY: 1.7041053446940453,
+              FLAGS: "1",
+              FROMSYMBOL: "NEO",
+              HIGH24HOUR: 40.99,
+              HIGHDAY: 40.99,
+              LASTMARKET: "Bitfinex",
+              LASTTRADEID: "266443681",
+              LASTUPDATE: 1_531_050_217,
+              LASTVOLUME: 7.94165387,
+              LASTVOLUMETO: 312.79792097769,
+              LOW24HOUR: 36.18,
+              LOWDAY: 38.66,
+              MARKET: "CCCAGG",
+              MKTCAP: 2_560_350_000,
+              OPEN24HOUR: 36.96,
+              OPENDAY: 38.73,
+              PRICE: 39.39,
+              SUPPLY: 65_000_000,
+              TOSYMBOL: "USD",
+              TOTALVOLUME24H: 2_451_013.2050620653,
+              TOTALVOLUME24HTO: 96_391_871.66801497,
+              TYPE: "5",
+              VOLUME24HOUR: 283_503.9407737,
+              VOLUME24HOURTO: 11_013_681.747696271,
+              VOLUMEDAY: 219_125.48687756975,
+              VOLUMEDAYTO: 8_679_924.882407717
+            }
+          }
+        }
+      }
+    }
+  end
+
+  def histo_day(_, _, _), do: {:ok, %{Data: [%{time: 123, open: 123}]}}
+  def histo_hour(_, _, _), do: {:ok, %{Data: [%{time: 123, open: 123}]}}
+  def histo_minute(_, _, _), do: {:ok, %{Data: [%{time: 123, open: 123}]}}
+end

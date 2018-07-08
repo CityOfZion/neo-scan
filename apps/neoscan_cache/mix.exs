@@ -10,7 +10,10 @@ defmodule NeoscanCache.Mixfile do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
-      elixirc_options: [warnings_as_errors: true],
+      elixirc_options: [
+        warnings_as_errors: true,
+        ignore_module_conflict: true
+      ],
       test_coverage: [
         tool: ExCoveralls
       ],
@@ -53,9 +56,8 @@ defmodule NeoscanCache.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:morphix, "~> 0.0.7"},
+      {:crypto_compare, "~> 0.1.1"},
       {:neoscan, in_umbrella: true},
-      {:neoprice, in_umbrella: true},
       {:excoveralls, "~> 0.8", only: :test}
     ]
   end
