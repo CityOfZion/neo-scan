@@ -55,7 +55,7 @@ defmodule NeoscanWeb.CommonView do
 
   def check_last(page, total), do: page * 15 < total
 
-  def render_asset_style(map) when is_map(map), do: render_asset_style(filter_name(map))
+  def render_asset_style(list) when is_list(list), do: render_asset_style(filter_name(list))
   def render_asset_style("GAS"), do: "fa-cubes"
   def render_asset_style("NEO"), do: "fa-cube"
   def render_asset_style(_), do: "fa-university"
