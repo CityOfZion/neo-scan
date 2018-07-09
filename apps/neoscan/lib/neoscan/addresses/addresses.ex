@@ -42,7 +42,13 @@ defmodule Neoscan.Addresses do
         join: a in Asset,
         on: ab.asset_hash == a.transaction_hash,
         where: ab.address_hash == ^hash,
-        select: %{name: a.name, asset: ab.asset_hash, value: ab.value, precision: a.precision}
+        select: %{
+          name: a.name,
+          asset: ab.asset_hash,
+          value: ab.value,
+          precision: a.precision,
+          type: a.type
+        }
       )
     )
   end

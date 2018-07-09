@@ -37,8 +37,8 @@
             </div>
           </div>
           <div class="token-amount-wrapper col-2-width">
-            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span><%= gettext "NEO" %>: <%= render_balance(address.balance.neo, 0) %></p>
-            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cubes fa-cube-small"></span><%= gettext "GAS" %>: <%= render_balance(address.balance.gas, 8) %></p>
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cube fa-cube-small"></span><%= gettext "NEO" %>: <%= render_balance(address.balance.neo, 0, nil) %></p>
+            <p class="medium-detail-text add-margin-bottom"><span class="fa fa-cubes fa-cube-small"></span><%= gettext "GAS" %>: <%= render_balance(address.balance.gas, 8, nil) %></p>
           </div>
         </div>
       <% end %>

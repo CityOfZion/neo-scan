@@ -64,13 +64,13 @@ defmodule NeoscanWeb.CommonView do
 
   def render_address_hash(hash), do: Base58.encode(hash)
 
-  def render_token_balance(amount, precision) when is_integer(precision) do
-    render_balance(amount / :math.pow(10, precision), precision)
+  def render_balance(-0.00000001, _, _), do: "∞"
+
+  def render_balance(amount, precision, "NEP5") do
+    render_balance(amount / :math.pow(10, precision), precision, nil)
   end
 
-  def render_balance(-0.00000001, _), do: "∞"
-
-  def render_balance(amount, precision) when is_integer(precision) do
+  def render_balance(amount, precision, _) when is_integer(precision) do
     balance = Number.Delimit.number_to_delimited(amount, precision: precision)
     render_amount(balance)
   end
