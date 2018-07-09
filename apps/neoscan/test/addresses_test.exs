@@ -155,6 +155,7 @@ defmodule Neoscan.AddressesTest do
                  asset: <<1, 2, 3>>,
                  name: %{"en" => "my token"},
                  precision: 25,
+                 type: "token",
                  value: 12302.0
                }
              ]
