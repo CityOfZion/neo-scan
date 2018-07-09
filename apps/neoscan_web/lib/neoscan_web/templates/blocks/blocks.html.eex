@@ -37,7 +37,7 @@
               </p>
               <p class="medium-detail-text col-3-width">
                 <span class="tablet-detail-text"><%= gettext "Created"%>: </span>
-                <%= render_date_time(block.time) %>
+                <span class="utc_time"><%= render_date_time(block.time) %></span>
               </p>
               <p class="medium-detail-text col-1-width">
                 <span class="tablet-detail-text"><%= gettext "Block Time"%>: </span>
