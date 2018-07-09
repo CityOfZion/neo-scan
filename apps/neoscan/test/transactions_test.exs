@@ -14,13 +14,6 @@ defmodule Neoscan.TransactionsTest do
     assert transaction.hash == transaction2.hash
   end
 
-  test "api_get/1" do
-    transaction = insert(:transaction, %{vouts: [insert(:vout)]})
-    transaction2 = Transactions.api_get(transaction.hash)
-    assert 1 == Enum.count(transaction2.vouts)
-    assert transaction.hash == transaction2.hash
-  end
-
   test "paginate/1" do
     for _ <- 1..20, do: insert(:transaction, %{type: "contract_transaction"})
     assert 15 == Enum.count(Transactions.paginate(1))
@@ -85,20 +78,6 @@ defmodule Neoscan.TransactionsTest do
 
     assert [%{transaction_hash: ^transaction_hash}] =
              Transactions.get_claimable_vouts(vout1.address_hash)
-  end
-
-  test "api_get_for_address/2" do
-    transaction1 = insert(:transaction)
-    transaction2 = insert(:transaction)
-    address_history = insert(:address_history, %{transaction_hash: transaction1.hash})
-
-    insert(:address_history, %{
-      address_hash: address_history.address_hash,
-      transaction_hash: transaction2.hash
-    })
-
-    transactions = Transactions.api_get_for_address(address_history.address_hash, 1)
-    assert 2 == Enum.count(transactions)
   end
 
   test "get_unclaimed_vouts/1" do

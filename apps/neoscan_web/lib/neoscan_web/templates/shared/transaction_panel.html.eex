@@ -5,7 +5,7 @@
         <%= for vin <- @transaction.vins do %>
           <div class="individual-transaction">
             <a href='<%= address_path(@conn, :index, render_address_hash(vin.address_hash))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(vin.address_hash) %></a>
-            <p class="neo-amount large-blue-link"><span class="fa <%= render_asset_style(vin.asset_hash) %>"></span><%= render_balance(vin.value, vin.asset_hash) %> <%= render_asset_name(vin.asset_hash) %></p>
+            <p class="neo-amount large-blue-link"><span class="fa <%= render_asset_style(vin.asset.name) %>"></span><%= render_balance(vin.value, vin.asset.precision) %> <%= filter_name(vin.asset.name) %></p>
           </div>
         <% end %>
       <% end %>
@@ -15,7 +15,7 @@
             <%= if transfer.address_from != <<0>> do %>
             <a href='<%= address_path(@conn, :index, render_address_hash(transfer.address_from))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(transfer.address_from) %></a>
             <% end %>
-            <p class="neo-amount large-blue-link"><span class="fa <%= render_asset_style(transfer.contract) %>"></span><%= render_token_balance(transfer.amount, transfer.contract) %> <%= render_asset_name(transfer.contract) %></p>
+            <p class="neo-amount large-blue-link"><span class="fa <%= render_asset_style(transfer.asset.name) %>"></span><%= render_token_balance(transfer.amount, transfer.asset.precision) %> <%= filter_name(transfer.asset.name) %></p>
           </div>
         <% end %>
       <% end %>
@@ -24,7 +24,7 @@
         <%= for claim <- @transaction.claims do %>
           <div class="individual-transaction">
             <a href='<%= address_path(@conn, :index, render_address_hash(claim.address_hash))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(claim.address_hash) %></a>
-            <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= render_balance(claim.value, claim.asset_hash) %> <%= render_asset_name(claim.asset_hash) %></p>
+            <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= render_balance(claim.value, claim.asset.precision) %> <%= filter_name(claim.asset.name) %></p>
           </div>
         <% end %>
       <% end %>
@@ -37,7 +37,7 @@
           <%= for vout <- @transaction.vouts do %>
             <div class="individual-transaction">
               <a href='<%= address_path(@conn, :index, render_address_hash(vout.address_hash))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(vout.address_hash) %></a>
-              <p class="gas-amount large-blue-link"><span class="fa <%= render_asset_style(vout.asset_hash) %>"></span><%= render_balance(vout.value, vout.asset_hash) %> <%= render_asset_name(vout.asset_hash) %></p>
+              <p class="gas-amount large-blue-link"><span class="fa <%= render_asset_style(vout.asset.name) %>"></span><%= render_balance(vout.value, vout.asset.precision) %> <%= filter_name(vout.asset.name) %></p>
             </div>
           <% end %>
         <% end %>
@@ -45,7 +45,7 @@
           <%= for transfer <- @transaction.transfers do %>
             <div class="individual-transaction">
               <a href='<%= address_path(@conn, :index, render_address_hash(transfer.address_to))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(transfer.address_to) %></a>
-              <p class="neo-amount large-blue-link"><span class="fa <%= render_asset_style(transfer.contract) %>"></span><%= render_token_balance(transfer.amount, transfer.contract) %> <%= render_asset_name(transfer.contract) %></p>
+              <p class="neo-amount large-blue-link"><span class="fa <%= render_asset_style(transfer.asset.name) %>"></span><%= render_token_balance(transfer.amount, transfer.asset.precision) %> <%= filter_name(transfer.asset.name) %></p>
             </div>
           <% end %>
         <% end %>
@@ -54,7 +54,7 @@
         <p class="large-detail-text"><%= gettext "Registered" %></p>
         <div class="individual-transaction">
           <a href='<%= address_path(@conn, :index, render_address_hash(@transaction.asset.admin))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(@transaction.asset.admin) %></a>
-          <p class="gas-amount large-blue-link"><span class="fa <%= render_asset_style(@transaction.hash) %>"></span><%= render_balance(@transaction.asset.amount, @transaction.hash) %> <%= render_asset_name(@transaction.hash) %></p>
+          <p class="gas-amount large-blue-link"><span class="fa <%= render_asset_style(@transaction.asset.name) %>"></span><%= render_balance(@transaction.asset.amount, @transaction.asset.precision) %> <%= filter_name(@transaction.asset.name) %></p>
         </div>
       <% end %>
     </div>

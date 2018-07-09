@@ -15,6 +15,7 @@ defmodule Neoscan.Transactions do
   alias Neoscan.Vin
   alias Neoscan.Claim
   alias Neoscan.Transaction
+  alias Neoscan.Transfer
   alias Neoscan.AddressTransaction
 
   @doc """
@@ -31,31 +32,86 @@ defmodule Neoscan.Transactions do
         e in Transaction,
         where: e.hash == ^hash,
         preload: [
-          {:vins, ^vin_query()},
-          {:vouts, ^vout_query()},
-          :transfers,
-          {:claims, ^claim_query()},
+          {:transfers, ^transfer_query()},
           :asset
         ],
         select: e
       )
 
-    Repo.one(query)
+    add_extra(Repo.one(query))
   end
 
   @doc """
-  Specific query for API
+  Returns the list of paginated transactions.
+  ## Examples
+      iex> paginate(page)
+      [%Transaction{}, ...]
   """
+  def paginate(page) do
+    transaction_query =
+      from(
+        t in Transaction,
+        order_by: [
+          desc: t.block_index
+        ],
+        preload: [
+          {:transfers, ^transfer_query()},
+          :asset
+        ],
+        where: t.type != "miner_transaction"
+      )
 
-  def api_get(transaction_hash) do
-    transaction = get(transaction_hash)
-    add_extra(transaction)
+    # override total entries to avoid counting the whole set
+    result =
+      Repo.paginate(
+        transaction_query,
+        page: page,
+        page_size: @page_size,
+        options: [total_entries: 10_000]
+      )
+
+    %{result | entries: Enum.map(result.entries, &add_extra/1)}
   end
 
-  def api_get_for_address(address_hash, page) do
-    transactions = get_for_address(address_hash, page)
-    Enum.map(transactions, &add_extra/1)
+  def get_for_block(block_hash, page) do
+    transaction_query =
+      from(
+        t in Transaction,
+        where: t.block_hash == ^block_hash,
+        preload: [{:transfers, ^transfer_query()}, :asset],
+        order_by: t.block_time,
+        select: t,
+        limit: @page_size
+      )
+
+    result = Repo.paginate(transaction_query, page: page, page_size: @page_size)
+    %{result | entries: Enum.map(result.entries, &add_extra/1)}
   end
+
+  def get_for_address(address_hash, page) do
+    transaction_query =
+      from(
+        t in Transaction,
+        join: at in AddressTransaction,
+        on: at.transaction_hash == t.hash,
+        where: at.address_hash == ^address_hash,
+        preload: [{:transfers, ^transfer_query()}, :asset],
+        order_by: [desc: at.block_time],
+        select: t
+      )
+
+    result =
+      Repo.paginate(
+        transaction_query,
+        page: page,
+        page_size: @page_size,
+        options: [total_entries: 10_000]
+      )
+
+    %{result | entries: Enum.map(result.entries, &add_extra/1)}
+  end
+
+  defp add_extra(nil), do: nil
 
   defp add_extra(transaction) do
     vouts =
@@ -96,96 +152,10 @@ defmodule Neoscan.Transactions do
     |> Map.put(:claims, claims)
   end
 
-  @doc """
-  Returns the list of paginated transactions.
-  ## Examples
-      iex> paginate(page)
-      [%Transaction{}, ...]
-  """
-  def paginate(page) do
-    transaction_query =
-      from(
-        t in Transaction,
-        order_by: [
-          desc: t.block_index
-        ],
-        preload: [
-          {:vins, ^vin_query()},
-          {:vouts, ^vout_query()},
-          :transfers,
-          {:claims, ^claim_query()},
-          :asset
-        ],
-        where: t.type != "miner_transaction"
-      )
-
-    # override total entries to avoid counting the whole set
-    Repo.paginate(
-      transaction_query,
-      page: page,
-      page_size: @page_size,
-      options: [total_entries: 10_000]
-    )
-  end
-
-  def get_for_block(block_hash, page) do
-    transaction_query =
-      from(
-        t in Transaction,
-        where: t.block_hash == ^block_hash,
-        preload: [{:vins, ^vin_query()}, :vouts, :transfers, {:claims, ^claim_query()}, :asset],
-        order_by: t.block_time,
-        select: t,
-        limit: @page_size
-      )
-
-    Repo.paginate(transaction_query, page: page, page_size: @page_size)
-  end
-
-  defp claim_query do
+  defp transfer_query do
     from(
-      claim in Claim,
-      join: vout in Vout,
-      on: claim.vout_n == vout.n and claim.vout_transaction_hash == vout.transaction_hash,
-      select: vout
-    )
-  end
-
-  defp vin_query do
-    from(
-      vin in Vin,
-      join: vout in Vout,
-      on: vin.vout_n == vout.n and vin.vout_transaction_hash == vout.transaction_hash,
-      select: vout
-    )
-  end
-
-  defp vout_query do
-    from(
-      v in Vout,
-      order_by: [
-        asc: v.n
-      ]
-    )
-  end
-
-  def get_for_address(address_hash, page) do
-    transaction_query =
-      from(
-        t in Transaction,
-        join: at in AddressTransaction,
-        on: at.transaction_hash == t.hash,
-        where: at.address_hash == ^address_hash,
-        preload: [{:vins, ^vin_query()}, :vouts, :transfers, {:claims, ^claim_query()}, :asset],
-        order_by: [desc: at.block_time],
-        select: t
-      )
-
-    Repo.paginate(
-      transaction_query,
-      page: page,
-      page_size: @page_size,
-      options: [total_entries: 10_000]
+      transfer in Transfer,
+      preload: [:asset]
     )
   end
 

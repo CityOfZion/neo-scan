@@ -364,7 +364,7 @@ defmodule NeoscanWeb.Api do
       }
   """
   def get_transaction(hash) do
-    transaction = Transactions.api_get(hash)
+    transaction = Transactions.get(hash)
     render_transaction(transaction)
   end
 
@@ -484,7 +484,7 @@ defmodule NeoscanWeb.Api do
       ]
   """
   def get_last_transactions_by_address(address_hash, page) do
-    transactions = Transactions.api_get_for_address(address_hash, page)
+    transactions = Transactions.get_for_address(address_hash, page)
     Enum.map(transactions, &render_last_transaction/1)
   end
 
