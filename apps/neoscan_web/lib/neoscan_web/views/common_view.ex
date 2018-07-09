@@ -114,9 +114,7 @@ defmodule NeoscanWeb.CommonView do
     end
   end
 
-  def render_date_time(date_time) do
-    remove_trailing("#{DateTime.to_date(date_time)} | #{DateTime.to_time(date_time)}")
-  end
+  def render_date_time(date_time), do: DateTime.to_unix(date_time)
 
   def has_script?(scripts), do: not is_nil(get_script(scripts))
 

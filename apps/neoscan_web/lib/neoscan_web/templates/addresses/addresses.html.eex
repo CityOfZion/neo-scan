@@ -24,7 +24,7 @@
             <div class="secondary-info-wrapper">
               <p class="medium-detail-text col-2-width remove-760px">
                 <span class="tablet-detail-text"><%= gettext "Created" %></span>
-                <%= render_date_time(address.first_transaction_time) %>
+                <span class="utc_time"><%= render_date_time(address.first_transaction_time) %></span>
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
                 <span class="tablet-detail-text"><%= gettext "Transactions" %></span>
@@ -32,7 +32,7 @@
               </p>
               <p class="medium-detail-text col-2-width remove-550px">
                 <span class="tablet-detail-text"><%= gettext "Last transaction"%></span>
-                <%= get_minutes(address.last_transaction_time)%>
+                <span class="utc_time"><%= get_minutes(address.last_transaction_time)%></span>
               </p>
             </div>
           </div>
