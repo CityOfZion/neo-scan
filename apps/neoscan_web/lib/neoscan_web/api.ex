@@ -594,7 +594,7 @@ defmodule NeoscanWeb.Api do
 
   defp render_amount(value) do
     value
-    |> to_string()
+    |> :erlang.float_to_binary([:compact, {:decimals, 10}])
     |> String.trim_trailing("0")
     |> String.trim_trailing(".")
   end
