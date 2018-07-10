@@ -13,6 +13,8 @@ defmodule Neoscan.TransactionsTest do
     transaction =
       insert(:transaction, %{vouts: [insert(:vout, %{asset_hash: asset.transaction_hash})]})
 
+    insert(:asset, %{transaction_hash: transaction.hash})
+
     transaction2 = Transactions.get(transaction.hash)
     assert 1 == Enum.count(transaction2.vouts)
     assert transaction.hash == transaction2.hash

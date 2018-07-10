@@ -1,5 +1,5 @@
 defmodule NeoscanWeb.CommonView do
-  alias Neoscan.Explanations
+  alias NeoscanWeb.Explanations
   alias NeoscanWeb.ViewHelper
   alias Neoscan.Vm.Disassembler
 
