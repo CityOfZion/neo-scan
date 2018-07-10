@@ -25,9 +25,19 @@ defmodule NeoscanWeb.TransactionsControllerTest do
         transaction
       end
 
+    asset = insert(:asset)
+
     transactions = transactions ++ transactions2
-    insert(:transfer, %{transaction_hash: Enum.at(transactions, 15).hash})
-    insert(:transfer, %{transaction_hash: Enum.at(transactions, 2).hash})
+
+    insert(:transfer, %{
+      contract: asset.transaction_hash,
+      transaction_hash: Enum.at(transactions, 15).hash
+    })
+
+    insert(:transfer, %{
+      contract: asset.transaction_hash,
+      transaction_hash: Enum.at(transactions, 2).hash
+    })
 
     Cache.sync()
 

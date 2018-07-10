@@ -25,7 +25,11 @@ defmodule Neoscan.AddressesTest do
       value: 3.0
     })
 
-    insert(:asset, %{transaction_hash: @neo_asset_hash, name: [%{"en" => "NEO"}]})
+    insert(:asset, %{
+      transaction_hash: @neo_asset_hash,
+      name: [%{"lang" => "en", "name" => "NEO"}]
+    })
+
     balances = Addresses.get_balances(address_history.address_hash)
     assert 1 == Enum.count(balances)
   end
@@ -85,6 +89,8 @@ defmodule Neoscan.AddressesTest do
 
     insert(:asset, %{
       transaction_hash: <<4, 5, 6>>,
+      type: "NEP5",
+      precision: 8,
       name: [%{"lang" => "zh", "name" => "My Token"}]
     })
 
@@ -93,7 +99,7 @@ defmodule Neoscan.AddressesTest do
     assert [
              %{assets: [%{"NEO" => 2.0}], time: _},
              %{assets: [%{"GAS" => 0.213}, %{"NEO" => 5.0}], time: _},
-             %{assets: [%{"My Token" => 2.0}, %{"NEO" => 4.0}], time: _}
+             %{assets: [%{"My Token" => 2.0e-8}, %{"NEO" => 4.0}], time: _}
            ] = balances
   end
 
@@ -153,8 +159,9 @@ defmodule Neoscan.AddressesTest do
              tokens: [
                %{
                  asset: <<1, 2, 3>>,
-                 name: %{"en" => "my token"},
+                 name: "my token",
                  precision: 25,
+                 type: "token",
                  value: 12302.0
                }
              ]
@@ -335,6 +342,21 @@ defmodule Neoscan.AddressesTest do
                block_index: transaction1.block_index,
                block_time: transaction1.block_time,
                transaction_hash: transaction1.hash
+             }
+           ]
+
+    assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 1, total_pages: 1} =
+             Addresses.get_address_to_address_abstracts(address_hash, vout7.address_hash, 1)
+
+    assert entries == [
+             %{
+               address_from: address_hash,
+               address_to: vout7.address_hash,
+               value: 1.0,
+               asset_hash: asset_hash,
+               block_index: transaction6.block_index,
+               block_time: transaction6.block_time,
+               transaction_hash: transaction6.hash
              }
            ]
   end

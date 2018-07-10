@@ -52,7 +52,7 @@ defmodule NeoscanWeb.Api do
 
         %{
           unspent: unspent2,
-          asset: filter_name(name),
+          asset: name,
           amount: value
         }
       end)
@@ -249,7 +249,7 @@ defmodule NeoscanWeb.Api do
   def render_neon_abstracts([], _, acc), do: Enum.reverse(acc)
 
   def render_neon_abstracts([transaction | rest], balance, acc) do
-    balance = Map.update!(balance, filter_name(transaction.asset.name), &(&1 - transaction.value))
+    balance = Map.update!(balance, transaction.asset.name, &(&1 - transaction.value))
 
     t = %{
       txid: Base.encode16(transaction.transaction_hash, case: :lower),
@@ -364,7 +364,7 @@ defmodule NeoscanWeb.Api do
       }
   """
   def get_transaction(hash) do
-    transaction = Transactions.api_get(hash)
+    transaction = Transactions.get(hash)
     render_transaction(transaction)
   end
 
@@ -372,7 +372,7 @@ defmodule NeoscanWeb.Api do
     %{
       value: vout.value,
       n: vout.n,
-      asset: filter_name(vout.asset.name),
+      asset: vout.asset.name,
       address_hash: Base58.encode(vout.address_hash),
       txid: Base.encode16(vout.transaction_hash, case: :lower)
     }
@@ -484,7 +484,7 @@ defmodule NeoscanWeb.Api do
       ]
   """
   def get_last_transactions_by_address(address_hash, page) do
-    transactions = Transactions.api_get_for_address(address_hash, page)
+    transactions = Transactions.get_for_address(address_hash, page)
     Enum.map(transactions, &render_last_transaction/1)
   end
 
@@ -594,7 +594,7 @@ defmodule NeoscanWeb.Api do
 
   defp render_amount(value) do
     value
-    |> to_string()
+    |> :erlang.float_to_binary([:compact, {:decimals, 10}])
     |> String.trim_trailing("0")
     |> String.trim_trailing(".")
   end
@@ -626,22 +626,5 @@ defmodule NeoscanWeb.Api do
   def get_address_to_address_abstracts(address_hash1, address_hash2, page) do
     result = Addresses.get_address_to_address_abstracts(address_hash1, address_hash2, page)
     %{result | entries: Enum.map(result.entries, &render_transaction_abstract/1)}
-  end
-
-  defp filter_name(asset) do
-    case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
-      %{"name" => "AntShare"} ->
-        "NEO"
-
-      %{"name" => "AntCoin"} ->
-        "GAS"
-
-      %{"name" => name} ->
-        name
-
-      nil ->
-        %{"name" => name} = Enum.at(asset, 0)
-        name
-    end
   end
 end

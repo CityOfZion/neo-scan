@@ -2,6 +2,7 @@ defmodule Neoscan.Transfer do
   @moduledoc false
   use Ecto.Schema
   alias Neoscan.Transaction
+  alias Neoscan.Asset
 
   @primary_key false
   schema "transfers" do
@@ -16,7 +17,15 @@ defmodule Neoscan.Transfer do
     field(:address_from, :binary)
     field(:address_to, :binary)
     field(:amount, :float)
-    field(:contract, :binary)
+
+    belongs_to(
+      :asset,
+      Asset,
+      foreign_key: :contract,
+      references: :transaction_hash,
+      type: :binary
+    )
+
     field(:block_index, :integer)
     field(:block_time, :utc_datetime)
 
