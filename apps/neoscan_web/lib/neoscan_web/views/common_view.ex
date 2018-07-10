@@ -55,7 +55,6 @@ defmodule NeoscanWeb.CommonView do
 
   def check_last(page, total), do: page * 15 < total
 
-  def render_asset_style(list) when is_list(list), do: render_asset_style(filter_name(list))
   def render_asset_style("GAS"), do: "fa-cubes"
   def render_asset_style("NEO"), do: "fa-cube"
   def render_asset_style(_), do: "fa-university"
@@ -64,13 +63,9 @@ defmodule NeoscanWeb.CommonView do
 
   def render_address_hash(hash), do: Base58.encode(hash)
 
-  def render_balance(-0.00000001, _, _), do: "∞"
+  def render_balance(-0.00000001, _), do: "∞"
 
-  def render_balance(amount, precision, "NEP5") do
-    render_balance(amount / :math.pow(10, precision), precision, nil)
-  end
-
-  def render_balance(amount, precision, _) when is_integer(precision) do
+  def render_balance(amount, precision) do
     balance = Number.Delimit.number_to_delimited(amount, precision: precision)
     render_amount(balance)
   end
@@ -143,21 +138,4 @@ defmodule NeoscanWeb.CommonView do
   def get_tooltips(conn), do: ViewHelper.get_tooltips(conn)
 
   def parse_script(script), do: Disassembler.parse_script(script)
-
-  def filter_name(asset) do
-    case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
-      %{"name" => "AntShare"} ->
-        "NEO"
-
-      %{"name" => "AntCoin"} ->
-        "GAS"
-
-      %{"name" => name} ->
-        name
-
-      nil ->
-        %{"name" => name} = Enum.at(asset, 0)
-        name
-    end
-  end
 end

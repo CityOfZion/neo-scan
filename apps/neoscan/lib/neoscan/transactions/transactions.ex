@@ -11,6 +11,7 @@ defmodule Neoscan.Transactions do
 
   import Ecto.Query, warn: false
   alias Neoscan.Repo
+  alias Neoscan.Asset
   alias Neoscan.Vout
   alias Neoscan.Vin
   alias Neoscan.Claim
@@ -146,10 +147,18 @@ defmodule Neoscan.Transactions do
         )
       )
 
+    vouts = Enum.map(vouts, &Asset.update_struct/1)
+    vins = Enum.map(vins, &Asset.update_struct/1)
+    claims = Enum.map(claims, &Asset.update_struct/1)
+    transfers = Enum.map(transaction.transfers, &Asset.update_struct/1)
+    asset = Asset.update_name(transaction.asset)
+
     transaction
     |> Map.put(:vins, vins)
     |> Map.put(:vouts, vouts)
     |> Map.put(:claims, claims)
+    |> Map.put(:transfers, transfers)
+    |> Map.put(:asset, asset)
   end
 
   defp transfer_query do
@@ -160,46 +169,61 @@ defmodule Neoscan.Transactions do
   end
 
   def get_claimed_vouts(address_hash) do
-    Repo.all(
-      from(
-        vout in Vout,
-        join: claim in Claim,
-        on: claim.vout_n == vout.n and claim.vout_transaction_hash == vout.transaction_hash,
-        where: vout.address_hash == ^address_hash,
-        select: {vout, claim}
+    result =
+      Repo.all(
+        from(
+          vout in Vout,
+          join: claim in Claim,
+          on: claim.vout_n == vout.n and claim.vout_transaction_hash == vout.transaction_hash,
+          where: vout.address_hash == ^address_hash,
+          select: {vout, claim},
+          preload: [:asset]
+        )
       )
-    )
+
+    Enum.map(result, fn {vout, claim} -> {Asset.update_struct(vout), claim} end)
   end
 
   def get_unspent_vouts(address_hash) do
-    Repo.all(
-      from(
-        vout in Vout,
-        where: vout.address_hash == ^address_hash and vout.spent == false,
-        preload: [:asset]
+    result =
+      Repo.all(
+        from(
+          vout in Vout,
+          where: vout.address_hash == ^address_hash and vout.spent == false,
+          preload: [:asset]
+        )
       )
-    )
+
+    Enum.map(result, &Asset.update_struct/1)
   end
 
   def get_claimable_vouts(address_hash) do
-    Repo.all(
-      from(
-        vout in Vout,
-        where:
-          vout.address_hash == ^address_hash and vout.spent == true and vout.claimed == false and
-            vout.asset_hash == ^@neo_asset_hash
+    result =
+      Repo.all(
+        from(
+          vout in Vout,
+          where:
+            vout.address_hash == ^address_hash and vout.spent == true and vout.claimed == false and
+              vout.asset_hash == ^@neo_asset_hash,
+          preload: [:asset]
+        )
       )
-    )
+
+    Enum.map(result, &Asset.update_struct/1)
   end
 
   def get_unclaimed_vouts(address_hash) do
-    Repo.all(
-      from(
-        vout in Vout,
-        where:
-          vout.address_hash == ^address_hash and vout.claimed == false and
-            vout.asset_hash == ^@neo_asset_hash
+    result =
+      Repo.all(
+        from(
+          vout in Vout,
+          where:
+            vout.address_hash == ^address_hash and vout.claimed == false and
+              vout.asset_hash == ^@neo_asset_hash,
+          preload: [:asset]
+        )
       )
-    )
+
+    Enum.map(result, &Asset.update_struct/1)
   end
 end

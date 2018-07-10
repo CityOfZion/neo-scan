@@ -36,21 +36,29 @@ defmodule Neoscan.Addresses do
   end
 
   def get_balances(hash) do
-    Repo.all(
-      from(
-        ab in AddressBalance,
-        join: a in Asset,
-        on: ab.asset_hash == a.transaction_hash,
-        where: ab.address_hash == ^hash,
-        select: %{
-          name: a.name,
-          asset: ab.asset_hash,
-          value: ab.value,
-          precision: a.precision,
-          type: a.type
-        }
+    result =
+      Repo.all(
+        from(
+          ab in AddressBalance,
+          join: a in Asset,
+          on: ab.asset_hash == a.transaction_hash,
+          where: ab.address_hash == ^hash,
+          select: %{
+            name: a.name,
+            asset: ab.asset_hash,
+            value: ab.value,
+            precision: a.precision,
+            type: a.type
+          }
+        )
       )
-    )
+
+    Enum.map(result, &format_balance/1)
+  end
+
+  # todo remove
+  defp format_balance(%{name: name, value: value, precision: precision, type: type} = balance) do
+    %{balance | name: Asset.filter_name(name), value: Asset.compute_value(value, precision, type)}
   end
 
   def get_split_balance(nil), do: nil
@@ -62,17 +70,6 @@ defmodule Neoscan.Addresses do
 
     token_balances =
       Enum.filter(balances, &(not (&1.asset in [@neo_asset_hash, @gas_asset_hash])))
-
-    token_balances =
-      Enum.map(token_balances, fn balance ->
-        %{
-          balance
-          | name:
-              Enum.reduce(balance.name, %{}, fn %{"lang" => lang, "name" => name}, acc ->
-                Map.put(acc, lang, name)
-              end)
-        }
-      end)
 
     %{
       neo: if(is_nil(neo_balance), do: 0, else: neo_balance.value),
@@ -105,7 +102,7 @@ defmodule Neoscan.Addresses do
 
     balances =
       Enum.reduce(balances, %{}, fn %{value: value, name: name}, acc ->
-        Map.put(acc, filter_name(name), value)
+        Map.put(acc, name, value)
       end)
 
     address_history =
@@ -150,27 +147,11 @@ defmodule Neoscan.Addresses do
   defp reduce_balance_to_assets(balances) do
     balances
     |> Enum.filter(&(not is_nil(&1.asset)))
-    |> Enum.map(&{filter_name(&1.asset.name), &1.value})
+    |> Enum.map(&Asset.update_struct/1)
+    |> Enum.map(&{&1.asset.name, &1.value})
     |> Enum.group_by(fn {asset_name, _} -> asset_name end, fn {_, value} -> value end)
     |> Enum.map(fn {asset_name, value_list} -> {asset_name, Enum.sum(value_list)} end)
     |> Enum.into(%{})
-  end
-
-  defp filter_name(asset) do
-    case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
-      %{"name" => "AntShare"} ->
-        "NEO"
-
-      %{"name" => "AntCoin"} ->
-        "GAS"
-
-      %{"name" => name} ->
-        name
-
-      nil ->
-        %{"name" => name} = Enum.at(asset, 0)
-        name
-    end
   end
 
   def get_transaction_abstracts_raw(address_hash, page) do
@@ -182,7 +163,8 @@ defmodule Neoscan.Addresses do
         order_by: [desc: atb.block_time]
       )
 
-    Repo.paginate(transaction_query, page: page, page_size: @page_size)
+    result = Repo.paginate(transaction_query, page: page, page_size: @page_size)
+    %{result | entries: Enum.map(result.entries, &Asset.update_struct/1)}
   end
 
   def get_transaction_abstracts(address_hash, page) do
@@ -199,12 +181,16 @@ defmodule Neoscan.Addresses do
         where:
           atb.address_hash == ^address_hash1 and atb2.address_hash == ^address_hash2 and
             fragment("sign(?)", atb.value) != fragment("sign(?)", atb2.value),
-        preload: [:transaction],
+        preload: [:asset, :transaction],
         order_by: [desc: atb.block_time]
       )
 
     result = Repo.paginate(transaction_query, page: page, page_size: @page_size)
-    %{result | entries: create_transaction_abstracts(result.entries)}
+
+    %{
+      result
+      | entries: create_transaction_abstracts(Enum.map(result.entries, &Asset.update_struct/1))
+    }
   end
 
   defp get_related_transaction_abstracts(%{
@@ -215,7 +201,8 @@ defmodule Neoscan.Addresses do
     atbs_query =
       from(
         atb in AddressTransactionBalance,
-        where: atb.transaction_hash == ^transaction_hash and atb.asset_hash == ^asset_hash
+        where: atb.transaction_hash == ^transaction_hash and atb.asset_hash == ^asset_hash,
+        preload: [:asset]
       )
 
     atbs_query =
@@ -225,7 +212,7 @@ defmodule Neoscan.Addresses do
         from(atb in atbs_query, where: atb.value < 0.0)
       end
 
-    Repo.all(atbs_query)
+    Enum.map(Repo.all(atbs_query), &Asset.update_struct/1)
   end
 
   defp create_transaction_abstracts(transactions) do

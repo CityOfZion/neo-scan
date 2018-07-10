@@ -25,7 +25,11 @@ defmodule Neoscan.AddressesTest do
       value: 3.0
     })
 
-    insert(:asset, %{transaction_hash: @neo_asset_hash, name: [%{"en" => "NEO"}]})
+    insert(:asset, %{
+      transaction_hash: @neo_asset_hash,
+      name: [%{"lang" => "en", "name" => "NEO"}]
+    })
+
     balances = Addresses.get_balances(address_history.address_hash)
     assert 1 == Enum.count(balances)
   end
@@ -153,7 +157,7 @@ defmodule Neoscan.AddressesTest do
              tokens: [
                %{
                  asset: <<1, 2, 3>>,
-                 name: %{"en" => "my token"},
+                 name: "my token",
                  precision: 25,
                  type: "token",
                  value: 12302.0
