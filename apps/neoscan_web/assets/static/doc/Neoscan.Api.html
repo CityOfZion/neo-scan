@@ -1,57 +1,57 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.17.0">
-    <title>Neoscan.Api – NeoScan vdev</title>
-    <link rel="stylesheet" href="dist/app-268c9dc719.css" />
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="ExDoc v0.17.0">
+  <title>Neoscan.Api – NeoScan vdev</title>
+  <link rel="stylesheet" href="dist/app-268c9dc719.css" />
 
 
-    <script src="dist/sidebar_items-2268804092.js"></script>
+  <script src="dist/sidebar_items-2268804092.js"></script>
 
-  </head>
-  <body data-type="modules">
-    <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
+</head>
+<body data-type="modules">
+<script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
 
-    <div class="main">
-<button class="sidebar-toggle">
-  <span class="icon-menu" aria-hidden="true"></span>
-  <span class="sr-only">Toggle Sidebar</span>
-</button>
-<section class="sidebar">
-
-
-  <a href="/" class="sidebar-projectLink">
-    <div class="sidebar-projectDetails">
-      <h1 class="sidebar-projectName">
-        NeoScan
-      </h1>
-      <h2 class="sidebar-projectVersion">
-        vdev
-      </h2>
-    </div>
-
-  </a>
-</section>
-
-<section class="content">
-  <div class="content-outer">
-    <div id="content" class="content-inner">
+<div class="main">
+  <button class="sidebar-toggle">
+    <span class="icon-menu" aria-hidden="true"></span>
+    <span class="sr-only">Toggle Sidebar</span>
+  </button>
+  <section class="sidebar">
 
 
-      <h1>
-        <small class="visible-xs">NeoScan vdev</small>
-        Neoscan.Api
+    <a href="/" class="sidebar-projectLink">
+      <div class="sidebar-projectDetails">
+        <h1 class="sidebar-projectName">
+          NeoScan
+        </h1>
+        <h2 class="sidebar-projectVersion">
+          vdev
+        </h2>
+      </div>
 
-      </h1>
+    </a>
+  </section>
+
+  <section class="content">
+    <div class="content-outer">
+      <div id="content" class="content-inner">
+
+
+        <h1>
+          <small class="visible-xs">NeoScan vdev</small>
+          Neoscan.Api
+
+        </h1>
 
 
         <section id="moduledoc">
           <p>  Main API for accessing data from the explorer.
-  All data is provided through GET requests in <code class="inline">/api/main_net/v1</code>.
-  Testnet isn’t currently available.</p>
+            All data is provided through GET requests in <code class="inline">/api/main_net/v1</code>.
+            Testnet isn’t currently available.</p>
 
         </section>
 
@@ -68,141 +68,123 @@
 
 
 
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
-    <div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_address/1">get_address(hash)</a>
-  </div>
+          <div class="summary-functions summary">
+            <h2>
+              <a href="#functions">Functions</a>
+            </h2>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_address_abstracts/2">get_address_abstracts(hash, page)</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns the address model from its <code class="inline">hash_string</code></p>
-</div>
+              <div class="summary-synopsis"><p>Returns abstract models for an address from its <code class="inline">hash_string</code>, paginated</p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_address_abstracts/2">get_address_abstracts(hash, page)</a>
-  </div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_address_neon/1">get_address_neon(hash)</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns abstract models for an address from its <code class="inline">hash_string</code>, paginated</p>
-</div>
+              <div class="summary-synopsis"><p>Returns the address model from its <code class="inline">hash_string</code></p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_address_neon/1">get_address_neon(hash)</a>
-  </div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_address_to_address_abstracts/3">get_address_to_address_abstracts(hash1, hash2, page)</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns the address model from its <code class="inline">hash_string</code></p>
-</div>
+              <div class="summary-synopsis"><p>Returns abstract models for an address, to an address from their <code class="inline">hash_string</code>, paginated</p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_address_to_address_abstracts/3">get_address_to_address_abstracts(hash1, hash2, page)</a>
-  </div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_all_nodes/0">get_all_nodes()</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns abstract models for an address, to an address from their <code class="inline">hash_string</code>, paginated</p>
-</div>
+              <div class="summary-synopsis"><p>Returns all working nodes and their respective heights.
+                Information is updated each minute</p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_all_nodes/0">get_all_nodes()</a>
-  </div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_balance/1">get_balance(hash)</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns all working nodes and their respective heights.
-Information is updated each minute</p>
-</div>
+              <div class="summary-synopsis"><p>Returns the balance for an address from its <code class="inline">hash_string</code></p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_balance/1">get_balance(hash)</a>
-  </div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_block/1">get_block(hash_or_integer)</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns the balance for an address from its <code class="inline">hash_string</code></p>
-</div>
+              <div class="summary-synopsis"><p>Returns the block model from its <code class="inline">hash_string</code> or <code class="inline">height</code></p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_block/1">get_block(hash_or_integer)</a>
-  </div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_claimable/1">get_claimable(hash)</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns the block model from its <code class="inline">hash_string</code> or <code class="inline">height</code></p>
-</div>
+              <div class="summary-synopsis"><p>Returns the AVAILABLE claimable transactions for an address, from its <code class="inline">hash_string</code></p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_claimable/1">get_claimable(hash)</a>
-  </div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_claimed/1">get_claimed(hash)</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns the AVAILABLE claimable transactions for an address, from its <code class="inline">hash_string</code></p>
-</div>
+              <div class="summary-synopsis"><p>Returns the claimed transactions for an address, from its <code class="inline">hash_string</code></p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_claimed/1">get_claimed(hash)</a>
-  </div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_height/0">get_height()</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns the claimed transactions for an address, from its <code class="inline">hash_string</code></p>
-</div>
+              <div class="summary-synopsis"><p>Returns the blockchain current height, as determined by the majority of
+                working nodes</p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_height/0">get_height()</a>
-  </div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_last_transactions_by_address/2">get_last_transactions_by_address(hash_string, page)</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns the blockchain current height, as determined by the majority of
-working nodes</p>
-</div>
+              <div class="summary-synopsis"><p>Returns the last 15 transaction models in the chain for the selected address
+                from its hash_string, paginated</p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_last_transactions_by_address/2">get_last_transactions_by_address(hash_string, page)</a>
-  </div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_transaction/1">get_transaction(hash)</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns the last 15 transaction models in the chain for the selected address
-from its hash_string, paginated</p>
-</div>
+              <div class="summary-synopsis"><p>Returns the transaction model through its <code class="inline">hash_string</code></p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_nodes/0">get_nodes()</a>
-  </div>
+            </div>
+            <div class="summary-row">
+              <div class="summary-signature">
+                <a href="#get_unclaimed/1">get_unclaimed(hash)</a>
+              </div>
 
-    <div class="summary-synopsis"><p>Returns nodes with the majority of block heigh value</p>
-</div>
+              <div class="summary-synopsis"><p>Returns the unclaimed gas for an address from its <code class="inline">hash_string</code></p>
+              </div>
 
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_transaction/1">get_transaction(hash)</a>
-  </div>
+            </div>
 
-    <div class="summary-synopsis"><p>Returns the transaction model through its <code class="inline">hash_string</code></p>
-</div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#get_unclaimed/1">get_unclaimed(hash)</a>
-  </div>
-
-    <div class="summary-synopsis"><p>Returns the unclaimed gas for an address from its <code class="inline">hash_string</code></p>
-</div>
-
-</div>
-
-  </div>
+          </div>
 
 
 
@@ -221,27 +203,67 @@ from its hash_string, paginated</p>
             </a>
             Functions
           </h1>
-          <div class="detail" id="get_address/1">
-
-
-  <div class="detail-header">
-    <a href="#get_address/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_address(hash)</span>
 
 
 
-  </div>
-  <section class="docstring">
-    <p>Returns the address model from its <code class="inline">hash_string</code></p>
-<h2 id="get_address/1-examples" class="section-heading">
-  <a href="#get_address/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
 
-<pre><code class="elixir">/api/main_net/v1/get_address/{hash_string}
+          <div class="detail" id="get_address_abstracts/2">
+
+
+            <div class="detail-header">
+              <a href="#get_address_abstracts/2" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_address_abstracts(hash, page)</span>
+
+
+
+            </div>
+            <section class="docstring">
+              <p>Returns abstract models for an address from its <code class="inline">hash_string</code>, paginated</p>
+              <h2 id="get_address_abstracts/2-examples" class="section-heading">
+                <a href="#get_address_abstracts/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
+
+              <pre><code class="elixir">/api/main_net/v1/get_address_abstracts/{hash_string}/{page}
+[
+  {
+    &quot;address_from&quot;: &quot;hash_string&quot;,
+    &quot;address_to&quot;: &quot;hash_string&quot;,
+    &quot;amount&quot;: string,
+    &quot;block_height&quot;: integer,
+    &quot;txid&quot;: &quot;tx_id_string&quot;,
+    &quot;asset&quot;: &quot;asset_id_string&quot;,
+    &quot;time&quot;: integer,
+  },
+  ...
+]</code></pre>
+
+            </section>
+          </div>
+          <div class="detail" id="get_address_neon/1">
+
+
+            <div class="detail-header">
+              <a href="#get_address_neon/1" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_address_neon(hash)</span>
+
+
+
+            </div>
+            <section class="docstring">
+              <p>Returns the address model from its <code class="inline">hash_string</code></p>
+              <h2 id="get_address_neon/1-examples" class="section-heading">
+                <a href="#get_address_neon/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
+
+              <pre><code class="elixir">/api/main_net/v1/get_address_neon/{hash_string}
 {
   &quot;txids&quot;: [
     {
@@ -281,29 +303,29 @@ from its hash_string, paginated</p>
   &quot;address&quot;: &quot;hash_string&quot;
 }</code></pre>
 
-  </section>
-</div>
-<div class="detail" id="get_address_abstracts/2">
+            </section>
+          </div>
+          <div class="detail" id="get_address_to_address_abstracts/3">
 
 
-  <div class="detail-header">
-    <a href="#get_address_abstracts/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_address_abstracts(hash, page)</span>
+            <div class="detail-header">
+              <a href="#get_address_to_address_abstracts/3" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_address_to_address_abstracts(hash1, hash2, page)</span>
 
 
 
-  </div>
-  <section class="docstring">
-    <p>Returns abstract models for an address from its <code class="inline">hash_string</code>, paginated</p>
-<h2 id="get_address_abstracts/2-examples" class="section-heading">
-  <a href="#get_address_abstracts/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
+            </div>
+            <section class="docstring">
+              <p>Returns abstract models for an address, to an address from their <code class="inline">hash_string</code>, paginated</p>
+              <h2 id="get_address_to_address_abstracts/3-examples" class="section-heading">
+                <a href="#get_address_to_address_abstracts/3-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
 
-<pre><code class="elixir">/api/main_net/v1/get_address_abstracts/{hash_string}/{page}
+              <pre><code class="elixir">/api/main_net/v1/get_address_to_address_abstracts/{hash_string}/{hash_string}/{page}
 [
   {
     &quot;address_from&quot;: &quot;hash_string&quot;,
@@ -317,167 +339,69 @@ from its hash_string, paginated</p>
   ...
 ]</code></pre>
 
-  </section>
-</div>
-<div class="detail" id="get_address_neon/1">
+            </section>
+          </div>
+          <div class="detail" id="get_all_nodes/0">
 
 
-  <div class="detail-header">
-    <a href="#get_address_neon/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_address_neon(hash)</span>
-
-
-
-  </div>
-  <section class="docstring">
-    <p>Returns the address model from its <code class="inline">hash_string</code></p>
-<h2 id="get_address_neon/1-examples" class="section-heading">
-  <a href="#get_address_neon/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
-
-<pre><code class="elixir">/api/main_net/v1/get_address_neon/{hash_string}
-{
-  &quot;txids&quot;: [
-    {
-      &quot;txid&quot;: &quot;tx_id_string&quot;,
-      &quot;balance&quot;: &quot;balance_object_snapshot&quot;
-    },
-    ...
-  ],
-  &quot;claimed&quot;: [
-    {
-      &quot;txids&quot;: [
-        &quot;tx_id_string&quot;,
-        &quot;tx_id_string&quot;,
-        &quot;tx_id_string&quot;,
-        ...
-      ],
-      &quot;asset&quot;: &quot;name_string&quot;,
-      &quot;amount&quot;: &quot;float&quot;,
-    },
-    ...
-  ],
-  &quot;balance&quot;: [
-    {
-      &quot;asset&quot;: &quot;name_string&quot;,
-      &quot;amount&quot;: float,
-      &quot;unspent&quot;: [
-        {
-          &quot;txid&quot;: &quot;tx_id_string&quot;,
-          &quot;value&quot;: float,
-          &quot;n&quot;: integer
-        },
-        ..
-      ]
-    }
-    ...
-  ],
-  &quot;address&quot;: &quot;hash_string&quot;
-}</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="get_address_to_address_abstracts/3">
-
-
-  <div class="detail-header">
-    <a href="#get_address_to_address_abstracts/3" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_address_to_address_abstracts(hash1, hash2, page)</span>
+            <div class="detail-header">
+              <a href="#get_all_nodes/0" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_all_nodes()</span>
 
 
 
-  </div>
-  <section class="docstring">
-    <p>Returns abstract models for an address, to an address from their <code class="inline">hash_string</code>, paginated</p>
-<h2 id="get_address_to_address_abstracts/3-examples" class="section-heading">
-  <a href="#get_address_to_address_abstracts/3-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
+            </div>
+            <section class="docstring">
+              <p>Returns all working nodes and their respective heights.
+                Information is updated each minute.</p>
+              <p>Currrent tested nodes are:</p>
+              <p>“http://seed1.cityofzion.io:8080”,
+                “http://seed2.cityofzion.io:8080”,
+                “http://seed3.cityofzion.io:8080”,
+                “http://seed4.cityofzion.io:8080”,
+                “http://seed5.cityofzion.io:8080”,
+                “http://api.otcgo.cn:10332”,
+                “https://seed1.neo.org:10331”,
+                “http://seed2.neo.org:10332”,
+                “http://seed3.neo.org:10332”,
+                “http://seed4.neo.org:10332”,
+                “http://seed5.neo.org:10332”,
+                “http://seed0.bridgeprotocol.io:10332”,
+                “http://seed1.bridgeprotocol.io:10332”,
+                “http://seed2.bridgeprotocol.io:10332”,
+                “http://seed3.bridgeprotocol.io:10332”,
+                “http://seed4.bridgeprotocol.io:10332”,
+                “http://seed5.bridgeprotocol.io:10332”,
+                “http://seed6.bridgeprotocol.io:10332”,
+                “http://seed7.bridgeprotocol.io:10332”,
+                “http://seed8.bridgeprotocol.io:10332”,
+                “http://seed9.bridgeprotocol.io:10332”,
+                “http://seed1.redpulse.com:10332”,
+                “http://seed2.redpulse.com:10332”,
+                “https://seed1.redpulse.com:10331”,
+                “https://seed2.redpulse.com:10331”,
+                “http://seed1.treatail.com:10332”,
+                “http://seed2.treatail.com:10332”,
+                “http://seed3.treatail.com:10332”,
+                “http://seed4.treatail.com:10332”,
+                “http://seed1.o3node.org:10332”,
+                “http://seed2.o3node.org:10332”,
+                “http://54.66.154.140:10332”,
+                “http://seed1.eu-central-1.fiatpeg.com:10332”,
+                “http://seed1.eu-west-2.fiatpeg.com:10332”,
+                “http://seed1.aphelion.org:10332”,
+                “http://seed2.aphelion.org:10332”,
+                “http://seed3.aphelion.org:10332”,
+                “http://seed4.aphelion.org:10332”,</p>
+              <h2 id="get_all_nodes/0-examples" class="section-heading">
+                <a href="#get_all_nodes/0-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
 
-<pre><code class="elixir">/api/main_net/v1/get_address_to_address_abstracts/{hash_string}/{hash_string}/{page}
-[
-  {
-    &quot;address_from&quot;: &quot;hash_string&quot;,
-    &quot;address_to&quot;: &quot;hash_string&quot;,
-    &quot;amount&quot;: string,
-    &quot;block_height&quot;: integer,
-    &quot;txid&quot;: &quot;tx_id_string&quot;,
-    &quot;asset&quot;: &quot;asset_id_string&quot;,
-    &quot;time&quot;: integer,
-  },
-  ...
-]</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="get_all_nodes/0">
-
-
-  <div class="detail-header">
-    <a href="#get_all_nodes/0" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_all_nodes()</span>
-
-
-
-  </div>
-  <section class="docstring">
-    <p>Returns all working nodes and their respective heights.
-Information is updated each minute.</p>
-<p>Currrent tested nodes are:</p>
-<p>“http://seed1.cityofzion.io:8080”,
-“http://seed2.cityofzion.io:8080”,
-“http://seed3.cityofzion.io:8080”,
-“http://seed4.cityofzion.io:8080”,
-“http://seed5.cityofzion.io:8080”,
-“http://api.otcgo.cn:10332”,
-“https://seed1.neo.org:10331”,
-“http://seed2.neo.org:10332”,
-“http://seed3.neo.org:10332”,
-“http://seed4.neo.org:10332”,
-“http://seed5.neo.org:10332”,
-“http://seed0.bridgeprotocol.io:10332”,
-“http://seed1.bridgeprotocol.io:10332”,
-“http://seed2.bridgeprotocol.io:10332”,
-“http://seed3.bridgeprotocol.io:10332”,
-“http://seed4.bridgeprotocol.io:10332”,
-“http://seed5.bridgeprotocol.io:10332”,
-“http://seed6.bridgeprotocol.io:10332”,
-“http://seed7.bridgeprotocol.io:10332”,
-“http://seed8.bridgeprotocol.io:10332”,
-“http://seed9.bridgeprotocol.io:10332”,
-“http://seed1.redpulse.com:10332”,
-“http://seed2.redpulse.com:10332”,
-“https://seed1.redpulse.com:10331”,
-“https://seed2.redpulse.com:10331”,
-“http://seed1.treatail.com:10332”,
-“http://seed2.treatail.com:10332”,
-“http://seed3.treatail.com:10332”,
-“http://seed4.treatail.com:10332”,
-“http://seed1.o3node.org:10332”,
-“http://seed2.o3node.org:10332”,
-“http://54.66.154.140:10332”,
-“http://seed1.eu-central-1.fiatpeg.com:10332”,
-“http://seed1.eu-west-2.fiatpeg.com:10332”,
-“http://seed1.aphelion.org:10332”,
-“http://seed2.aphelion.org:10332”,
-“http://seed3.aphelion.org:10332”,
-“http://seed4.aphelion.org:10332”,</p>
-<h2 id="get_all_nodes/0-examples" class="section-heading">
-  <a href="#get_all_nodes/0-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
-
-<pre><code class="elixir">/api/main_net/v1/get_all_nodes
+              <pre><code class="elixir">/api/main_net/v1/get_all_nodes
       [
         {
           &quot;url&quot;: &quot;http://seed1.cityofzion.io:8080&quot;,
@@ -486,29 +410,29 @@ Information is updated each minute.</p>
   ...
 ]</code></pre>
 
-  </section>
-</div>
-<div class="detail" id="get_balance/1">
+            </section>
+          </div>
+          <div class="detail" id="get_balance/1">
 
 
-  <div class="detail-header">
-    <a href="#get_balance/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_balance(hash)</span>
+            <div class="detail-header">
+              <a href="#get_balance/1" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_balance(hash)</span>
 
 
 
-  </div>
-  <section class="docstring">
-    <p>Returns the balance for an address from its <code class="inline">hash_string</code></p>
-<h2 id="get_balance/1-examples" class="section-heading">
-  <a href="#get_balance/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
+            </div>
+            <section class="docstring">
+              <p>Returns the balance for an address from its <code class="inline">hash_string</code></p>
+              <h2 id="get_balance/1-examples" class="section-heading">
+                <a href="#get_balance/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
 
-<pre><code class="elixir">/api/main_net/v1/get_balance/{hash_string}
+              <pre><code class="elixir">/api/main_net/v1/get_balance/{hash_string}
 {
   &quot;balance&quot;: [
     {
@@ -528,29 +452,29 @@ Information is updated each minute.</p>
   &quot;address&quot;: &quot;hash_string&quot;
 }</code></pre>
 
-  </section>
-</div>
-<div class="detail" id="get_block/1">
+            </section>
+          </div>
+          <div class="detail" id="get_block/1">
 
 
-  <div class="detail-header">
-    <a href="#get_block/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_block(hash_or_integer)</span>
+            <div class="detail-header">
+              <a href="#get_block/1" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_block(hash_or_integer)</span>
 
 
 
-  </div>
-  <section class="docstring">
-    <p>Returns the block model from its <code class="inline">hash_string</code> or <code class="inline">height</code></p>
-<h2 id="get_block/1-examples" class="section-heading">
-  <a href="#get_block/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
+            </div>
+            <section class="docstring">
+              <p>Returns the block model from its <code class="inline">hash_string</code> or <code class="inline">height</code></p>
+              <h2 id="get_block/1-examples" class="section-heading">
+                <a href="#get_block/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
 
-<pre><code class="elixir">/api/main_net/v1/get_block/{hash_string}
+              <pre><code class="elixir">/api/main_net/v1/get_block/{hash_string}
 /api/main_net/v1/get_block/{height}
 {
   &quot;version&quot;: integer,
@@ -575,29 +499,29 @@ Information is updated each minute.</p>
   &quot;confirmations&quot;: integer
 }</code></pre>
 
-  </section>
-</div>
-<div class="detail" id="get_claimable/1">
+            </section>
+          </div>
+          <div class="detail" id="get_claimable/1">
 
 
-  <div class="detail-header">
-    <a href="#get_claimable/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_claimable(hash)</span>
+            <div class="detail-header">
+              <a href="#get_claimable/1" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_claimable(hash)</span>
 
 
 
-  </div>
-  <section class="docstring">
-    <p>Returns the AVAILABLE claimable transactions for an address, from its <code class="inline">hash_string</code>.</p>
-<h2 id="get_claimable/1-examples" class="section-heading">
-  <a href="#get_claimable/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
+            </div>
+            <section class="docstring">
+              <p>Returns the AVAILABLE claimable transactions for an address, from its <code class="inline">hash_string</code>.</p>
+              <h2 id="get_claimable/1-examples" class="section-heading">
+                <a href="#get_claimable/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
 
-<pre><code class="elixir">/api/main_net/v1/get_claimable/{hash_string}
+              <pre><code class="elixir">/api/main_net/v1/get_claimable/{hash_string}
 {
   &quot;unclaimed&quot;: float,
   &quot;claimable&quot;: [
@@ -614,29 +538,29 @@ Information is updated each minute.</p>
   &quot;address&quot;: &quot;hash_string&quot;
 }</code></pre>
 
-  </section>
-</div>
-<div class="detail" id="get_claimed/1">
+            </section>
+          </div>
+          <div class="detail" id="get_claimed/1">
 
 
-  <div class="detail-header">
-    <a href="#get_claimed/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_claimed(hash)</span>
+            <div class="detail-header">
+              <a href="#get_claimed/1" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_claimed(hash)</span>
 
 
 
-  </div>
-  <section class="docstring">
-    <p>Returns the claimed transactions for an address, from its <code class="inline">hash_string</code>.</p>
-<h2 id="get_claimed/1-examples" class="section-heading">
-  <a href="#get_claimed/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
+            </div>
+            <section class="docstring">
+              <p>Returns the claimed transactions for an address, from its <code class="inline">hash_string</code>.</p>
+              <h2 id="get_claimed/1-examples" class="section-heading">
+                <a href="#get_claimed/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
 
-<pre><code class="elixir">/api/main_net/v1/get_claimed/{hash_string}
+              <pre><code class="elixir">/api/main_net/v1/get_claimed/{hash_string}
 {
   &quot;claimed&quot;: [
     {
@@ -654,58 +578,58 @@ Information is updated each minute.</p>
   &quot;address&quot;: &quot;hash_string&quot;
 }</code></pre>
 
-  </section>
-</div>
-<div class="detail" id="get_height/0">
+            </section>
+          </div>
+          <div class="detail" id="get_height/0">
 
 
-  <div class="detail-header">
-    <a href="#get_height/0" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_height()</span>
+            <div class="detail-header">
+              <a href="#get_height/0" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_height()</span>
 
 
 
-  </div>
-  <section class="docstring">
-    <p>Returns the blockchain current height, as determined by the majority of
-working nodes.</p>
-<h2 id="get_height/0-examples" class="section-heading">
-  <a href="#get_height/0-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
+            </div>
+            <section class="docstring">
+              <p>Returns the blockchain current height, as determined by the majority of
+                working nodes.</p>
+              <h2 id="get_height/0-examples" class="section-heading">
+                <a href="#get_height/0-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
 
-<pre><code class="elixir">/api/main_net/v1/get_height
+              <pre><code class="elixir">/api/main_net/v1/get_height
 {
   &quot;height&quot;: 1239809
 }</code></pre>
 
-  </section>
-</div>
-<div class="detail" id="get_last_transactions_by_address/2">
+            </section>
+          </div>
+          <div class="detail" id="get_last_transactions_by_address/2">
 
 
-  <div class="detail-header">
-    <a href="#get_last_transactions_by_address/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_last_transactions_by_address(hash_string, page)</span>
+            <div class="detail-header">
+              <a href="#get_last_transactions_by_address/2" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_last_transactions_by_address(hash_string, page)</span>
 
 
 
-  </div>
-  <section class="docstring">
-    <p>Returns the last 15 transaction models in the chain for the selected address
-from its hash_string, paginated.</p>
-<h2 id="get_last_transactions_by_address/2-examples" class="section-heading">
-  <a href="#get_last_transactions_by_address/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
+            </div>
+            <section class="docstring">
+              <p>Returns the last 15 transaction models in the chain for the selected address
+                from its hash_string, paginated.</p>
+              <h2 id="get_last_transactions_by_address/2-examples" class="section-heading">
+                <a href="#get_last_transactions_by_address/2-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
 
-<pre><code class="elixir">/api/main_net/v1/get_last_transactions_by_address/{hash_string}/{page}
+              <pre><code class="elixir">/api/main_net/v1/get_last_transactions_by_address/{hash_string}/{page}
 [{
     &quot;vouts&quot;: [
       {
@@ -764,59 +688,29 @@ from its hash_string, paginated.</p>
   ...
 ]</code></pre>
 
-  </section>
-</div>
-<div class="detail" id="get_nodes/0">
+            </section>
+          </div>
+          <div class="detail" id="get_transaction/1">
 
 
-  <div class="detail-header">
-    <a href="#get_nodes/0" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_nodes()</span>
-
-
-
-  </div>
-  <section class="docstring">
-    <p>Returns nodes with the majority of block heigh value.</p>
-<h2 id="get_nodes/0-examples" class="section-heading">
-  <a href="#get_nodes/0-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
-
-<pre><code class="elixir">/api/main_net/v1/get_nodes
-{
-  &quot;urls&quot;: [
-    &quot;http://seed1.cityofzion.io: 8080&quot;,
-    ....
-  ]
-}</code></pre>
-
-  </section>
-</div>
-<div class="detail" id="get_transaction/1">
-
-
-  <div class="detail-header">
-    <a href="#get_transaction/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_transaction(hash)</span>
+            <div class="detail-header">
+              <a href="#get_transaction/1" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_transaction(hash)</span>
 
 
 
-  </div>
-  <section class="docstring">
-    <p>Returns the transaction model through its <code class="inline">hash_string</code></p>
-<h2 id="get_transaction/1-examples" class="section-heading">
-  <a href="#get_transaction/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
+            </div>
+            <section class="docstring">
+              <p>Returns the transaction model through its <code class="inline">hash_string</code></p>
+              <h2 id="get_transaction/1-examples" class="section-heading">
+                <a href="#get_transaction/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
 
-<pre><code class="elixir">/api/main_net/v1/get_transaction/{hash_string}
+              <pre><code class="elixir">/api/main_net/v1/get_transaction/{hash_string}
 {
   &quot;vouts&quot;: [
     {
@@ -861,59 +755,59 @@ from its hash_string, paginated.</p>
   &quot;asset&quot;: array
 }</code></pre>
 
-  </section>
-</div>
-<div class="detail" id="get_unclaimed/1">
+            </section>
+          </div>
+          <div class="detail" id="get_unclaimed/1">
 
 
-  <div class="detail-header">
-    <a href="#get_unclaimed/1" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <span class="signature">get_unclaimed(hash)</span>
+            <div class="detail-header">
+              <a href="#get_unclaimed/1" class="detail-link" title="Link to this function">
+                <span class="icon-link" aria-hidden="true"></span>
+                <span class="sr-only">Link to this function</span>
+              </a>
+              <span class="signature">get_unclaimed(hash)</span>
 
 
 
-  </div>
-  <section class="docstring">
-    <p>Returns the unclaimed gas for an address from its <code class="inline">hash_string</code></p>
-<h2 id="get_unclaimed/1-examples" class="section-heading">
-  <a href="#get_unclaimed/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Examples
-</h2>
+            </div>
+            <section class="docstring">
+              <p>Returns the unclaimed gas for an address from its <code class="inline">hash_string</code></p>
+              <h2 id="get_unclaimed/1-examples" class="section-heading">
+                <a href="#get_unclaimed/1-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+                Examples
+              </h2>
 
-<pre><code class="elixir">/api/main_net/v1/get_unclaimed/{hash_string}
+              <pre><code class="elixir">/api/main_net/v1/get_unclaimed/{hash_string}
 {
   &quot;unclaimed&quot;: float,
   &quot;address&quot;: &quot;hash_string&quot;
 }</code></pre>
 
-  </section>
-</div>
+            </section>
+          </div>
 
         </section>
 
 
 
-          <footer class="footer">
-        <p>
+        <footer class="footer">
+          <p>
           <span class="line">
             Built using
             <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.17.0),
           </span>
-          <span class="line">
+            <span class="line">
             designed by
             <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
             </span>
-        </p>
-        <button class="night-mode-toggle"><span class="sr-only">Switch theme</span></button>
-      </footer>
+          </p>
+          <button class="night-mode-toggle"><span class="sr-only">Switch theme</span></button>
+        </footer>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 </div>
-  <script src="dist/app-4988ddd06b.js"></script>
+<script src="dist/app-4988ddd06b.js"></script>
 
-  </body>
+</body>
 </html>

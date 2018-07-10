@@ -6,7 +6,6 @@ defmodule NeoscanCache.Cache do
 
   use GenServer
   alias Neoscan.Blocks
-  alias Neoscan.Assets
   alias Neoscan.Transactions
   alias Neoscan.Addresses
   alias Neoscan.Counters
@@ -141,12 +140,10 @@ defmodule NeoscanCache.Cache do
     blocks = Blocks.paginate(1).entries
     transactions = Transactions.paginate(1).entries
     addresses = Addresses.paginate(1).entries
-    assets = Assets.get_all()
     stats = get_general_stats()
 
     set(:blocks, blocks)
     set(:transactions, transactions)
-    set(:assets, assets)
     set(:stats, stats)
     set(:addresses, addresses)
   end
