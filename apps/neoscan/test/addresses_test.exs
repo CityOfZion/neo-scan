@@ -97,10 +97,9 @@ defmodule Neoscan.AddressesTest do
     balances = Addresses.get_balance_history(address_history.address_hash)
 
     assert [
-             %{assets: [%{"NEO" => 2.0}], time: _},
-             %{assets: [%{"GAS" => 0.213}, %{"NEO" => 5.0}], time: _},
-             %{assets: [%{"My Token" => 2.0e-8}, %{"NEO" => 4.0}], time: _}
-           ] = balances
+             %{assets: [%{"GAS" => 0.213}, %{"My Token" => 2.0e-8}, %{"NEO" => 4.0}], time: _},
+             %{assets: [%{"GAS" => 0.0}, %{"My Token" => 0.0}, %{"NEO" => 0.0}], time: _} | _
+           ] = Enum.reverse(balances)
   end
 
   test "get/1" do
