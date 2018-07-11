@@ -57,10 +57,10 @@
 
 <ul id="bytecode-invocation-list">
 	<li class="corner-box remove-margin-left">
-    <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
-      <h2><%= gettext "Bytecode Invocation Script" %></h2>
-      <span class="tooltiptext"><%= get_explanation("bytecode_invocation_script") %></span>
-    </div>
+        <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+          <h2><%= gettext "Bytecode Invocation Script" %></h2>
+          <span class="tooltiptext"><%= get_explanation("bytecode_invocation_script") %></span>
+        </div>
 		<div class="corner-box">
 			<%= for script <- @transaction.scripts do %>
               <%= if check_if_invocation(script) do %>
@@ -70,10 +70,10 @@
 		</div>
 	</li>
 	<li class="corner-box">
-    <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
-      <h2><%= gettext "Bytecode Verification Script" %></h2>
-      <span class="tooltiptext"><%= get_explanation("bytecode_verification_script") %></span>
-    </div>
+        <div class="tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+          <h2><%= gettext "Bytecode Verification Script" %></h2>
+          <span class="tooltiptext"><%= get_explanation("bytecode_verification_script") %></span>
+        </div>
 		<div class="corner-box">
 			<%= for script <- @transaction.scripts do %>
 			  <%= if check_if_verification(script) do %>
@@ -86,8 +86,8 @@
 
 <ul id="bytecode-invocation-list">
   <%= if @transaction.attributes != [] do %>
-		<%= for att <- @transaction.attributes do %>
-			<li class="corner-box remove-margin-left">
+		<%= for {att, index} <- Enum.with_index(@transaction.attributes) do %>
+			<li class="corner-box <%= if rem(index, 2) == 0 do %>remove-margin-left<% end %>">
 				<h2><%= gettext "Attribute" %>: <%=att["usage"]%></h2>
 				<div class="corner-box">
 					<p class="small-detail-text bar-left-transactions"><%= att["data"] %></p>
@@ -96,7 +96,7 @@
 		<% end %>
   <% end %>
   <%= if has_script?(@transaction.scripts) do %>
-		<li class="corner-box">
+		<li class="corner-box <%= if rem(Enum.count(@transaction.attributes), 2) == 0 do %>remove-margin-left<% end %>">
 			<h2><%= gettext "Bytecode Script" %></h2>
 			<div class="corner-box">
 				<p class="small-detail-text bar-left-transactions"><%= get_script(@transaction.scripts) %></p>
