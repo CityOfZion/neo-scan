@@ -10,7 +10,9 @@ defmodule Neoscan.Addresses do
                     227, 178, 223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45, 231>>
 
   @page_size 15
-  @balance_history_size 200
+  @balance_history_size 500
+
+  @day_seconds 86_400
 
   import Ecto.Query, warn: false
 
@@ -116,16 +118,30 @@ defmodule Neoscan.Addresses do
         )
       )
 
+    empty_days =
+      Enum.map(
+        0..30,
+        &%{block_time: DateTime.to_unix(DateTime.utc_now()) - &1 * @day_seconds, asset: nil}
+      )
+
+    address_history =
+      Enum.map(address_history, &%{&1 | block_time: DateTime.to_unix(&1.block_time)}) ++
+        empty_days
+
     address_history =
       address_history
-      |> Enum.group_by(& &1.block_time)
+      |> Enum.group_by(&(div(&1.block_time, @day_seconds) * @day_seconds))
       |> Enum.map(fn {time, balances} ->
-        %{time: DateTime.to_unix(time), assets: reduce_balance_to_assets(balances)}
+        %{time: time, assets: reduce_balance_to_assets(balances)}
       end)
-      |> Enum.sort_by(& &1.time)
-      |> Enum.reverse()
 
-    reduce_address_history(address_history, balances, [])
+    address_history
+    |> Enum.sort_by(& &1.time)
+    |> Enum.reverse()
+    |> reduce_address_history(balances, [])
+    |> Enum.reverse()
+    |> Enum.take(30)
+    |> Enum.reverse()
   end
 
   defp reduce_address_history([], _, acc), do: acc
@@ -136,12 +152,8 @@ defmodule Neoscan.Addresses do
         Map.update!(acc, name, &(&1 - value))
       end)
 
-    elem = %{
-      assets: Enum.map(assets, fn {name, _} -> %{name => Map.get(balances, name)} end),
-      time: time
-    }
-
-    reduce_address_history(rest, new_balances, [elem | acc])
+    assets = Enum.map(balances, fn {key, value} -> %{key => value} end)
+    reduce_address_history(rest, new_balances, [%{assets: assets, time: time} | acc])
   end
 
   defp reduce_balance_to_assets(balances) do
