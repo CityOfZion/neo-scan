@@ -42,8 +42,10 @@ defmodule NeoscanWeb.Helper do
 
     transfer_from_minted =
       transfer_from_minted
-      |> Enum.group_by(& &1.asset, & &1.amount)
-      |> Enum.map(fn {asset, amounts} -> %{asset: asset, value: Enum.sum(amounts)} end)
+      |> Enum.group_by(& &1.asset, & &1.value)
+      |> Enum.map(fn {asset, values} ->
+        %{address_hash: <<0>>, asset: asset, value: Enum.sum(values)}
+      end)
 
     registered =
       if transaction.type == "register_transaction" do
