@@ -10,8 +10,8 @@ environment :dev do
 end
 
 environment :prod do
-  set include_erts: true
-  set include_system_libs: true
+  set include_erts: false
+  set include_system_libs: false
   set cookie: :"UHLs;22CbwNqpN?3g9`c|?.>XO;s%]yP0aup<SmL]`.8bAbujy1[%4.23%1Ya"
 end
 

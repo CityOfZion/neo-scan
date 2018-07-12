@@ -3,6 +3,7 @@ defmodule NeoscanWeb.BlockController do
 
   alias Neoscan.Blocks
   alias Neoscan.Transactions
+  alias NeoscanWeb.Helper
 
   def index(conn, parameters) do
     page(conn, parameters)
@@ -13,6 +14,7 @@ defmodule NeoscanWeb.BlockController do
     hash_or_integer = parse_index_or_hash(hash_or_integer)
     block = Blocks.get(hash_or_integer)
     transactions = Transactions.get_for_block(block.hash, page)
+    transactions = Helper.render_transactions(transactions)
     render(conn, "block.html", block: block, transactions: transactions, page: page)
   end
 
