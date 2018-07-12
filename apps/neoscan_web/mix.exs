@@ -56,6 +56,7 @@ defmodule NeoscanWeb.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:con_cache, "~> 0.13.0"},
       {:gettext, "~> 0.11"},
+      {:blue_bird, "~> 0.3.8"},
       {:neoscan, in_umbrella: true},
       {:neoscan_cache, in_umbrella: true},
       {:neoscan_node, in_umbrella: true},
@@ -65,6 +66,17 @@ defmodule NeoscanWeb.Mixfile do
       {:wobserver, "~> 0.1"},
       {:timex, "~> 3.1"},
       {:number, "~> 0.5.4"}
+    ]
+  end
+
+  def blue_bird_info do
+    [
+      host: "https://neoscan.io",
+      title: "neoscan API",
+      description: """
+      Main API for accessing data from the explorer. All data is provided through GET requests in `/api/main_net/v1`.
+      Testnet isn’t currently available.
+      """
     ]
   end
 

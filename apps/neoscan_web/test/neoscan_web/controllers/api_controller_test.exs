@@ -36,7 +36,9 @@ defmodule NeoscanWeb.ApiControllerTest do
       name: [%{"lang" => "zh", "name" => "My Token"}]
     })
 
-    conn = get(conn, "/api/main_net/v1/get_balance/#{Base58.encode(vout1.address_hash)}")
+    conn =
+      get(conn, api_path(conn, :get_balance, Base58.encode(vout1.address_hash)))
+      |> BlueBird.ConnLogger.save()
 
     assert %{
              "address" => Base58.encode(vout1.address_hash),
@@ -703,9 +705,12 @@ defmodule NeoscanWeb.ApiControllerTest do
     address_hash = Base58.encode(vout.address_hash)
 
     conn = get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{address_hash}/1")
-
     assert 1 == Enum.count(json_response(conn, 200))
-    conn = get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{address_hash}")
+
+    conn =
+      get(conn, api_path(conn, :get_last_transactions_by_address, address_hash))
+      |> BlueBird.ConnLogger.save()
+
     assert 1 == Enum.count(json_response(conn, 200))
   end
 

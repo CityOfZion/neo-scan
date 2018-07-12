@@ -12,12 +12,24 @@ defmodule NeoscanWeb.ApiController do
   end
 
   # used by neon-js
+  api :GET, "/api/main_net/v1/get_balance/:hash" do
+    title("Get address balance")
+    description("Returns the balance for an address from its `hash_string`")
+    parameter(:hash, :string, description: "base 58 address hash")
+  end
+
   def get_balance(conn, %{"hash" => hash}) do
     balance = cache({:get_balance, hash}, Api.get_balance(Base58.decode(hash)))
     json(conn, balance)
   end
 
   # used by neon-js
+  api :GET, "/api/main_net/v1/get_last_transactions_by_address/:hash" do
+    title("Get address last transactions")
+    description("Returns transactions")
+    parameter(:hash, :string, description: "base 58 address hash")
+  end
+
   def get_last_transactions_by_address(conn, %{"hash" => address_hash} = params) do
     page = if is_nil(params["page"]), do: 1, else: String.to_integer(params["page"])
     address_hash = Base58.decode(address_hash)
