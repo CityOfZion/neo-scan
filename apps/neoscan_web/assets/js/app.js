@@ -20,3 +20,21 @@ import 'jquery'
 // paths "./socket" or full ones "web/static/js/socket".
 
 import socket from './home_app'
+
+const moment = require("moment");
+
+const get_local_time = time => {
+    return (moment.unix(time).format('DD-MM-YYYY') + ' | ' + moment.unix(time).format('HH:mm:ss'))
+}
+
+function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+var x = document.getElementsByClassName("utc_time");
+var i;
+for (i = 0; i < x.length; i++) {
+    if(isNumber(x[i].innerHTML)){
+        x[i].innerHTML = get_local_time(x[i].innerHTML);
+    }
+}

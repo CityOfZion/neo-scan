@@ -1,63 +1,31 @@
 <div class="transaction-panel">
+    <%= unless Enum.empty?(@transaction.sent_from ++ @transaction.claimed ++ @transaction.sent_to ++ @transaction.registered ++ @transaction.minted) do %>
     <div class="sent-from-wrapper">
-      <%= if @transaction.type != "claim_transaction" and @transaction.vins != []  do %>
+      <%= unless Enum.empty?(@transaction.sent_from) do %>
         <p class="large-detail-text"><%= gettext "Sent from" %></p>
-        <%= for vin <- @transaction.vins do %>
-          <div class="individual-transaction">
-            <a href='<%= address_path(@conn, :index, render_address_hash(vin.address_hash))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(vin.address_hash) %></a>
-            <p class="neo-amount large-blue-link"><span class="fa <%= render_asset_style(vin.asset_hash) %>"></span><%= render_balance(vin.value, vin.asset_hash) %> <%= render_asset_name(vin.asset_hash) %></p>
-          </div>
-        <% end %>
+        <%= render NeoscanWeb.SharedView, "transaction_panel_entries.html", conn: @conn, entries:  @transaction.sent_from %>
       <% end %>
-      <%= if @transaction.transfers != [] do %>
-        <%= for transfer <- @transaction.transfers do %>
-          <div class="individual-transaction">
-            <%= if transfer.address_from != <<0>> do %>
-            <a href='<%= address_path(@conn, :index, render_address_hash(transfer.address_from))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(transfer.address_from) %></a>
-            <% end %>
-            <p class="neo-amount large-blue-link"><span class="fa <%= render_asset_style(transfer.contract) %>"></span><%= render_token_balance(transfer.amount, transfer.contract) %> <%= render_asset_name(transfer.contract) %></p>
-          </div>
-        <% end %>
-      <% end %>
-      <%= if @transaction.type == "claim_transaction" do %>
+      <%= unless Enum.empty?(@transaction.claimed) do %>
         <p class="large-detail-text"><%= gettext "Claimed from" %></p>
-        <%= for claim <- @transaction.claims do %>
-          <div class="individual-transaction">
-            <a href='<%= address_path(@conn, :index, render_address_hash(claim.address_hash))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(claim.address_hash) %></a>
-            <p class="neo-amount large-blue-link"><span class="fa fa-cube"></span><%= render_balance(claim.value, claim.asset_hash) %> <%= render_asset_name(claim.asset_hash) %></p>
-          </div>
-        <% end %>
+        <%= render NeoscanWeb.SharedView, "transaction_panel_entries.html", conn: @conn, entries:  @transaction.claimed %>
+      <% end %>
+      <%= unless Enum.empty?(@transaction.minted) do %>
+        <p class="large-detail-text"><%= gettext "Minted" %></p>
+        <%= render NeoscanWeb.SharedView, "transaction_panel_entries.html", conn: @conn, entries:  @transaction.minted %>
       <% end %>
     </div>
     <img src="<%= static_path(@conn, "/images/ICON_Sent-arrow.svg")%>" alt="Sent arrow" title="Sent arrow" class="transaction-sent-arrow" />
     <div class="sent-to-wrapper">
-      <%= if @transaction.vouts != [] or @transaction.transfers != [] do %>
+      <%= unless Enum.empty?(@transaction.sent_to) do %>
         <p class="large-detail-text"><%= gettext "Sent to" %></p>
-        <%= if @transaction.vouts != [] do %>
-          <%= for vout <- @transaction.vouts do %>
-            <div class="individual-transaction">
-              <a href='<%= address_path(@conn, :index, render_address_hash(vout.address_hash))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(vout.address_hash) %></a>
-              <p class="gas-amount large-blue-link"><span class="fa <%= render_asset_style(vout.asset_hash) %>"></span><%= render_balance(vout.value, vout.asset_hash) %> <%= render_asset_name(vout.asset_hash) %></p>
-            </div>
-          <% end %>
-        <% end %>
-        <%= if @transaction.transfers != [] do %>
-          <%= for transfer <- @transaction.transfers do %>
-            <div class="individual-transaction">
-              <a href='<%= address_path(@conn, :index, render_address_hash(transfer.address_to))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(transfer.address_to) %></a>
-              <p class="neo-amount large-blue-link"><span class="fa <%= render_asset_style(transfer.contract) %>"></span><%= render_token_balance(transfer.amount, transfer.contract) %> <%= render_asset_name(transfer.contract) %></p>
-            </div>
-          <% end %>
-        <% end %>
+        <%= render NeoscanWeb.SharedView, "transaction_panel_entries.html", conn: @conn, entries:  @transaction.sent_to %>
       <% end %>
-      <%= if @transaction.type == "register_transaction" do %>
-        <p class="large-detail-text"><%= gettext "Registered" %></p>
-        <div class="individual-transaction">
-          <a href='<%= address_path(@conn, :index, render_address_hash(@transaction.asset.admin))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(@transaction.asset.admin) %></a>
-          <p class="gas-amount large-blue-link"><span class="fa <%= render_asset_style(@transaction.hash) %>"></span><%= render_balance(@transaction.asset.amount, @transaction.hash) %> <%= render_asset_name(@transaction.hash) %></p>
-        </div>
-      <% end %>
+      <%= unless Enum.empty?(@transaction.registered) do %>
+          <p class="large-detail-text"><%= gettext "Registered" %></p>
+        <%= render NeoscanWeb.SharedView, "transaction_panel_entries.html", conn: @conn, entries:  @transaction.registered %>
+        <% end %>
     </div>
+    <% end %>
     <%= if @show_info do %>
     <div class="other-transaction-information">
       <p>Network fee: <%=@transaction.net_fee%> <%= gettext "GAS" %> &middot; <%= gettext "System Fee" %>: <%=@transaction.sys_fee%> <%= gettext "GAS" %> &middot; <%= gettext "Data Size" %>: <%=@transaction.size%> bytes</p>

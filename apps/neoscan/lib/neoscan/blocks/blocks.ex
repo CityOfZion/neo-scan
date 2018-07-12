@@ -65,7 +65,7 @@ defmodule Neoscan.Blocks do
         limit: @page_size,
         select:
           merge(e, %{
-            lag: fragment("extract(second FROM (? - lead(?) OVER ()))::integer", e.time, e.time)
+            lag: fragment("extract(epoch FROM (? - lead(?) OVER ()))::integer", e.time, e.time)
           })
       )
 

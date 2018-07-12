@@ -10,33 +10,12 @@ defmodule NeoscanCache.ApiTest do
   end
 
   test "get_transactions/0" do
+    asset = insert(:asset)
     transaction = insert(:transaction, %{type: "contract_transaction"})
-    insert(:vout, %{transaction_hash: transaction.hash})
+    insert(:vout, %{transaction_hash: transaction.hash, asset_hash: asset.transaction_hash})
     insert(:transaction, %{type: "contract_transaction"})
     Cache.sync()
     assert [_, %{vouts: [_]}] = Api.get_transactions()
-  end
-
-  test "get_assets/0" do
-    insert(:asset)
-    insert(:asset)
-    Cache.sync()
-    assert is_list(Api.get_assets())
-  end
-
-  test "get_asset_name/1" do
-    asset = insert(:asset)
-    asset2 = insert(:asset, %{name: [%{"lang" => "fr", "name" => "piece"}]})
-    Cache.sync()
-    assert "truc" == Api.get_asset_name(asset.transaction_hash)
-    assert "piece" == Api.get_asset_name(asset2.transaction_hash)
-    assert "Asset not Found" == Api.get_asset_name("1234567890123456789012345678901234567890")
-  end
-
-  test "get_asset_precision/1" do
-    asset = insert(:asset)
-    Cache.sync()
-    assert asset.precision == Api.get_asset_precision(asset.transaction_hash)
   end
 
   test "get_addresses/0" do

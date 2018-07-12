@@ -8,15 +8,14 @@ defmodule Neoscan.TransactionsTest do
                     175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
 
   test "get/1" do
-    transaction = insert(:transaction, %{vouts: [insert(:vout)]})
-    transaction2 = Transactions.get(transaction.hash)
-    assert 1 == Enum.count(transaction2.vouts)
-    assert transaction.hash == transaction2.hash
-  end
+    asset = insert(:asset)
 
-  test "api_get/1" do
-    transaction = insert(:transaction, %{vouts: [insert(:vout)]})
-    transaction2 = Transactions.api_get(transaction.hash)
+    transaction =
+      insert(:transaction, %{vouts: [insert(:vout, %{asset_hash: asset.transaction_hash})]})
+
+    insert(:asset, %{transaction_hash: transaction.hash})
+
+    transaction2 = Transactions.get(transaction.hash)
     assert 1 == Enum.count(transaction2.vouts)
     assert transaction.hash == transaction2.hash
   end
@@ -48,9 +47,10 @@ defmodule Neoscan.TransactionsTest do
   end
 
   test "get_claimed_vouts/1" do
-    vout1 = insert(:vout)
-    insert(:vout, %{address_hash: vout1.address_hash})
-    vout3 = insert(:vout, %{address_hash: vout1.address_hash})
+    asset = insert(:asset)
+    vout1 = insert(:vout, %{asset_hash: asset.transaction_hash})
+    insert(:vout, %{address_hash: vout1.address_hash, asset_hash: asset.transaction_hash})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: asset.transaction_hash})
     claim1 = insert(:claim, %{vout_n: vout1.n, vout_transaction_hash: vout1.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
@@ -65,15 +65,17 @@ defmodule Neoscan.TransactionsTest do
   end
 
   test "get_unspent_vouts/1" do
-    vout1 = insert(:vout)
-    vout2 = insert(:vout, %{address_hash: vout1.address_hash})
+    asset = insert(:asset)
+    vout1 = insert(:vout, %{asset_hash: asset.transaction_hash})
+    vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: asset.transaction_hash})
     insert(:vin, %{vout_n: vout2.n, vout_transaction_hash: vout2.transaction_hash})
-    insert(:vout, %{address_hash: vout1.address_hash})
+    insert(:vout, %{address_hash: vout1.address_hash, asset_hash: asset.transaction_hash})
 
     assert 2 == Enum.count(Transactions.get_unspent_vouts(vout1.address_hash))
   end
 
   test "get_claimable_vouts/1" do
+    insert(:asset, %{transaction_hash: @neo_asset_hash})
     vout1 = insert(:vout, %{asset_hash: @neo_asset_hash})
     vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
     insert(:vin, %{vout_n: vout2.n, vout_transaction_hash: vout2.transaction_hash})
@@ -87,21 +89,8 @@ defmodule Neoscan.TransactionsTest do
              Transactions.get_claimable_vouts(vout1.address_hash)
   end
 
-  test "api_get_for_address/2" do
-    transaction1 = insert(:transaction)
-    transaction2 = insert(:transaction)
-    address_history = insert(:address_history, %{transaction_hash: transaction1.hash})
-
-    insert(:address_history, %{
-      address_hash: address_history.address_hash,
-      transaction_hash: transaction2.hash
-    })
-
-    transactions = Transactions.api_get_for_address(address_history.address_hash, 1)
-    assert 2 == Enum.count(transactions)
-  end
-
   test "get_unclaimed_vouts/1" do
+    insert(:asset, %{transaction_hash: @neo_asset_hash})
     vout1 = insert(:vout, %{asset_hash: @neo_asset_hash})
     vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
     insert(:vin, %{vout_n: vout2.n, vout_transaction_hash: vout2.transaction_hash})

@@ -63,10 +63,15 @@ defmodule NeoscanWeb.ApiControllerTest do
   end
 
   test "get_claimed/:hash", %{conn: conn} do
-    vout1 = insert(:vout)
-    insert(:vout, %{address_hash: vout1.address_hash})
-    vout3 = insert(:vout, %{address_hash: vout1.address_hash})
-    vout4 = insert(:vout, %{address_hash: vout1.address_hash})
+    insert(:asset, %{
+      transaction_hash: @neo_asset_hash,
+      name: [%{"lang" => "en", "name" => "NEO"}]
+    })
+
+    vout1 = insert(:vout, %{asset_hash: @neo_asset_hash})
+    insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
+    vout4 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
     insert(:claim, %{vout_n: vout1.n, vout_transaction_hash: vout1.transaction_hash})
     claim3 = insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
@@ -95,6 +100,11 @@ defmodule NeoscanWeb.ApiControllerTest do
   end
 
   test "get_unclaimed/:hash", %{conn: conn} do
+    insert(:asset, %{
+      transaction_hash: @neo_asset_hash,
+      name: [%{"lang" => "en", "name" => "NEO"}]
+    })
+
     :ets.insert(Neoscan.BlocksCache, {:min, nil})
     :ets.insert(Neoscan.BlocksCache, {:max, nil})
     vout1 = insert(:vout, %{start_block_index: 4, value: 5.0, asset_hash: @neo_asset_hash})
@@ -140,6 +150,11 @@ defmodule NeoscanWeb.ApiControllerTest do
   end
 
   test "get_claimable/:hash", %{conn: conn} do
+    insert(:asset, %{
+      transaction_hash: @neo_asset_hash,
+      name: [%{"lang" => "en", "name" => "NEO"}]
+    })
+
     :ets.insert(Neoscan.BlocksCache, {:min, nil})
     :ets.insert(Neoscan.BlocksCache, {:max, nil})
     vout1 = insert(:vout, %{asset_hash: @neo_asset_hash})
@@ -214,6 +229,11 @@ defmodule NeoscanWeb.ApiControllerTest do
   end
 
   test "get_address_neon/:hash", %{conn: conn} do
+    insert(:asset, %{
+      transaction_hash: @neo_asset_hash,
+      name: [%{"lang" => "en", "name" => "NEO"}]
+    })
+
     transaction1 = insert(:transaction)
     transaction2 = insert(:transaction)
     transaction3 = insert(:transaction)
@@ -252,11 +272,6 @@ defmodule NeoscanWeb.ApiControllerTest do
         asset_hash: @neo_asset_hash,
         value: 5.0
       })
-
-    insert(:asset, %{
-      transaction_hash: @neo_asset_hash,
-      name: [%{"lang" => "en", "name" => "NEO"}]
-    })
 
     vout1 =
       insert(:vout, %{

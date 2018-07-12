@@ -12,45 +12,6 @@ defmodule NeoscanCache.Api do
     Cache.get(:transactions)
   end
 
-  def get_assets do
-    assets = Cache.get(:assets)
-    if is_nil(assets), do: [], else: assets
-  end
-
-  def get_asset_precision(asset_hash) do
-    Cache.get(:assets)
-    |> Enum.find(fn %{transaction_hash: transaction_hash} -> transaction_hash == asset_hash end)
-    |> (&if(is_nil(&1), do: %{precision: 0}, else: &1)).()
-    |> Map.get(:precision)
-  end
-
-  def get_asset_name(asset_hash) do
-    Cache.get(:assets)
-    |> Enum.find(fn %{transaction_hash: transaction_hash} -> transaction_hash == asset_hash end)
-    |> (&if(is_nil(&1), do: %{}, else: &1)).()
-    |> Map.get(:name)
-    |> filter_name()
-  end
-
-  defp filter_name(nil), do: "Asset not Found"
-
-  defp filter_name(asset) do
-    case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
-      %{"name" => "AntShare"} ->
-        "NEO"
-
-      %{"name" => "AntCoin"} ->
-        "GAS"
-
-      %{"name" => name} ->
-        name
-
-      nil ->
-        %{"name" => name} = Enum.at(asset, 0)
-        name
-    end
-  end
-
   def get_addresses do
     Cache.get(:addresses)
   end

@@ -1,0 +1,8 @@
+<%= for entry <- @entries do %>
+  <div class="individual-transaction">
+    <%= unless entry.address_hash == <<0>> do %>
+    <a href='<%= address_path(@conn, :index, render_address_hash(entry.address_hash))%>' alt="View wallet address" title="View wallet address" class="large-blue-link wallet-address"><span class="fa fa-key"></span><%= render_address_hash(entry.address_hash) %></a>
+    <% end %>
+    <p class="neo-amount large-blue-link"><span class="fa <%= render_asset_style(entry.asset.name) %>"></span><%= render_balance(entry.value, entry.asset.precision) %> <%= entry.asset.name %></p>
+  </div>
+<% end %>

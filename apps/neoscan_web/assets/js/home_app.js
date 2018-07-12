@@ -168,7 +168,7 @@ window.onload = function () {
     })
 
     const transactionsTextElem = document.getElementById('last-x-transactions')
-    let transactionText = `Last ${count} Transactions for `
+    let transactionText = `Last 30 days transactions`
 
     const assetDropdown = document.getElementById('select-address-chart')
     const assetNames = Object.keys(assetsList)
@@ -176,27 +176,15 @@ window.onload = function () {
       const option = document.createElement("option");
       option.text = name;
       option.value = name;
-      assetDropdown.add(option);
-      if (!assetNames[idx+1] && !assetNames[idx-1] ) {
-        transactionText += `${name}`
-      } else if (assetNames[idx+1]) {
-        transactionText += `${name}, `
-      } else {
-        transactionText = transactionText.slice(0,-2)
-        transactionText += ` and ${name}`
+      if(name == 'NEO'){
+        option.selected = true;
       }
-
+      assetDropdown.add(option);
     })
 
     transactionsTextElem.innerHTML = transactionText
 
-    if (assetsList['NEO']) {
-      createAddressChart('NEO', dates, assetsList['NEO'], count)
-    } else if (assetsList['GAS']) {
-      createAddressChart('GAS', dates, assetsList['GAS'], count)
-    } else if (assetNames.length > 0) {
-      createAddressChart(assetNames[0], dates, assetsList[assetNames[0]], count)
-    }
+    createAddressChart('NEO', dates, assetsList['NEO'], count)
 
     assetDropdown.onchange = function () {
       createAddressChart(this.value, dates, assetsList[this.value], count)

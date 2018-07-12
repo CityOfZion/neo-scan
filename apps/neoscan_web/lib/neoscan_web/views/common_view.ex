@@ -1,5 +1,5 @@
 defmodule NeoscanWeb.CommonView do
-  alias Neoscan.Explanations
+  alias NeoscanWeb.Explanations
   alias NeoscanWeb.ViewHelper
   alias Neoscan.Vm.Disassembler
 
@@ -55,46 +55,19 @@ defmodule NeoscanWeb.CommonView do
 
   def check_last(page, total), do: page * 15 < total
 
-  def render_asset_style(asset_hash) do
-    case render_asset_name(asset_hash) do
-      "GAS" ->
-        "fa-cubes"
-
-      "NEO" ->
-        "fa-cube"
-
-      _ ->
-        "fa-university"
-    end
-  end
-
-  def render_asset_name(asset_hash) do
-    NeoscanCache.Api.get_asset_name(asset_hash)
-  end
+  def render_asset_style("GAS"), do: "fa-cubes"
+  def render_asset_style("NEO"), do: "fa-cube"
+  def render_asset_style(_), do: "fa-university"
 
   def render_hash(hash), do: Base.encode16(hash, case: :lower)
 
   def render_address_hash(hash), do: Base58.encode(hash)
 
-  def render_token_balance(amount, precision) when is_integer(precision) do
-    render_balance(amount / :math.pow(10, precision), precision)
-  end
-
-  def render_token_balance(amount, asset_hash) do
-    precision = NeoscanCache.Api.get_asset_precision(asset_hash)
-    render_token_balance(amount, precision)
-  end
-
   def render_balance(-0.00000001, _), do: "∞"
 
-  def render_balance(amount, precision) when is_integer(precision) do
+  def render_balance(amount, precision) do
     balance = Number.Delimit.number_to_delimited(amount, precision: precision)
     render_amount(balance)
-  end
-
-  def render_balance(amount, asset_hash) do
-    precision = NeoscanCache.Api.get_asset_precision(asset_hash)
-    render_balance(amount, precision)
   end
 
   def render_amount(amount) do
@@ -114,9 +87,7 @@ defmodule NeoscanWeb.CommonView do
     end
   end
 
-  def render_date_time(date_time) do
-    remove_trailing("#{DateTime.to_date(date_time)} | #{DateTime.to_time(date_time)}")
-  end
+  def render_date_time(date_time), do: DateTime.to_unix(date_time)
 
   def has_script?(scripts), do: not is_nil(get_script(scripts))
 
