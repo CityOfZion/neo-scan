@@ -36,7 +36,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       name: [%{"lang" => "zh", "name" => "My Token"}]
     })
 
-    conn = get(conn, "/api/main_net/v1/get_balance/#{Base58.encode(vout1.address_hash)}")
+    conn = conn |> get("/api/main_net/v1/get_balance/#{Base58.encode(vout1.address_hash)}") |> doc
 
     assert %{
              "address" => Base58.encode(vout1.address_hash),

@@ -63,6 +63,7 @@ defmodule NeoscanWeb.Mixfile do
       {:cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.2"},
       {:wobserver, "~> 0.1"},
+      {:bureaucrat, "~> 0.2.4"},
       {:timex, "~> 3.1"},
       {:number, "~> 0.5.4"}
     ]
