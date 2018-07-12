@@ -16,8 +16,7 @@ RUN RELEASE_DIR=`ls -d /code/_build/prod/rel/neoscan/releases/*/` && tar -xf "$R
 
 FROM bitwalker/alpine-elixir:1.6.5
 
-COPY --from=release /export/ /opt/app
-RUN chown -R default /opt/app/
+COPY --from=release --chown=default:root /export/ /opt/app
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh

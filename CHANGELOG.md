@@ -2,6 +2,8 @@
 
 ## 2.1
 
+- Fix address token charts
+- Fix transaction display (minted token, transfer)
 - Fix decimals for NEP5 that were not returned correctly in API
 - Time displayed in the front-end should respect user timezone
 - Fix Attribute typo
