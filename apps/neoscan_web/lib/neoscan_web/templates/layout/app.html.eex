@@ -89,7 +89,7 @@
 						<a href="<%= blocks_path(@conn, :page, "1") %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_blocks_path(@conn), do: " active" %>"><%= gettext "Blocks" %></a>
 					</li>
 					<li>
-						<a href="<%= doc_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_doc_path(@conn), do: " active" %>"><%= gettext "API" %></a>
+						<a href="<%= docs_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link"><%= gettext "API" %></a>
 					</li>
 				</ul>
 			</div>
@@ -122,7 +122,7 @@
 						<a href="https://github.com/CityOfZion" alt="<%= gettext "City of Zion Github" %>" title="<%= gettext "City of Zion Github" %>" class="coz-github"><%= gettext "City of Zion Github" %></a>
 					</div>
 					<div class="footer-link-wrapper">
-						<a href="<%= doc_path(@conn, :index) %>" alt="<%= gettext "NEOSCAN API" %>" title="<%= gettext "NEOSCAN API" %>" class="coz-api"><%= gettext "NEOSCAN API" %></a>
+						<a href="<%= docs_path(@conn, :index) %>" alt="<%= gettext "NEOSCAN API" %>" title="<%= gettext "NEOSCAN API" %>" class="coz-api"><%= gettext "NEOSCAN API" %></a>
 					</div>
           <div class="footer-link-wrapper">
             <div class="btn btn-primary tooltip-btn">

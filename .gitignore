@@ -10,3 +10,5 @@ erl_crash.dump
 .DS_Store
 apps/neoscan/block_cache
 block_cache
+apps/neoscan_web/assets/static/docs/api.apib
+apps/neoscan_web/assets/static/docs/index.html

@@ -40,6 +40,18 @@ config :number,
     separator: "."
   ]
 
+config :blue_bird,
+  docs_path: "apps/neoscan_web/assets/static/docs",
+  theme: "triple",
+  ignore_headers: [
+    "content-type",
+    "cache-control",
+    "x-request-id",
+    "access-control-allow-origin",
+    "access-control-allow-credentials"
+  ],
+  router: NeoscanWeb.Router
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

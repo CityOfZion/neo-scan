@@ -1,5 +1,6 @@
 stages:
   - test
+  - docs
   - build
   - deploy
 
@@ -30,6 +31,20 @@ test:
     - mix format --check-formatted
     - mix coveralls.post -u --token "${COVERALLS_REPO_TOKEN}" --branch "${CI_COMMIT_REF_NAME}" --message "${CI_COMMIT_TITLE}" --sha "${CI_COMMIT_SHA}" --service_name "gitlab"
     - rm -Rf _build/test/lib/neo*
+  artifacts:
+    paths:
+      - apps/neoscan_web/assets/static/docs/api.apib
+
+neoscan-docs:
+  stage: docs
+  image:
+    name: humangeo/aglio
+    entrypoint: [""]
+  script:
+    - aglio --theme-variables streak --theme-template triple -i apps/neoscan_web/assets/static/docs/api.apib -o apps/neoscan_web/assets/static/docs/index.html
+  artifacts:
+    paths:
+      - apps/neoscan_web/assets/static/docs/index.html
 
 neoscan-build:
   stage: build

@@ -19,6 +19,7 @@ defmodule NeoscanWeb do
 
   def controller do
     quote do
+      use BlueBird.Controller
       use Phoenix.Controller, namespace: NeoscanWeb
       import Plug.Conn
       import NeoscanWeb.Router.Helpers
