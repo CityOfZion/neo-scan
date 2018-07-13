@@ -13,7 +13,7 @@ defmodule NeoscanWeb.Endpoint do
     at: "/",
     from: :neoscan_web,
     gzip: true,
-    only: ~w(css fonts images js favicon.ico robots.txt doc)
+    only: ~w(css fonts images js favicon.ico robots.txt docs)
   )
 
   # Code reloading can be explicitly enabled under the

@@ -35,8 +35,6 @@ defmodule NeoscanWeb.Router do
 
     get("/blocks/:page", BlocksController, :page)
 
-    get("/doc", DocController, :index)
-
     get("/price/:from/:to/:graph", PriceController, :index)
 
     get("/transaction/:hash", TransactionController, :index)

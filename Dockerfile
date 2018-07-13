@@ -7,6 +7,7 @@ ENV MIX_ENV=prod
 RUN cd /code && mix local.hex --force
 RUN cd /code && mix local.rebar --force
 RUN cd /code && rm -Rf _build && mix deps.get
+RUN cd /code && npm install -g aglio && mix bird.gen.docs
 RUN cd /code/apps/neoscan_web/assets && npm install && npm run deploy
 RUN cd /code && mix compile
 RUN cd /code && mix phx.digest

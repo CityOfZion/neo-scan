@@ -30,6 +30,9 @@ test:
     - mix format --check-formatted
     - mix coveralls.post -u --token "${COVERALLS_REPO_TOKEN}" --branch "${CI_COMMIT_REF_NAME}" --message "${CI_COMMIT_TITLE}" --sha "${CI_COMMIT_SHA}" --service_name "gitlab"
     - rm -Rf _build/test/lib/neo*
+  artifacts:
+    paths:
+      - apps/neoscan_web/assets/static/docs/api.apib
 
 neoscan-build:
   stage: build

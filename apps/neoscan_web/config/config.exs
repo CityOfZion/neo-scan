@@ -41,8 +41,8 @@ config :number,
   ]
 
 config :blue_bird,
-  docs_path: "priv/static/docs",
-  theme: "streak",
+  docs_path: "apps/neoscan_web/assets/static/docs",
+  theme: "triple",
   ignore_headers: [
     "content-type",
     "cache-control",
