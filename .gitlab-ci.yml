@@ -1,5 +1,6 @@
 stages:
   - test
+  - docs
   - build
   - deploy
 
@@ -33,6 +34,15 @@ test:
   artifacts:
     paths:
       - apps/neoscan_web/assets/static/docs/api.apib
+
+neoscan-docs:
+  stage: docs
+  image: humangeo/aglio
+  script:
+    - aglio --theme-variables streak --theme-template triple -i apps/neoscan_web/assets/static/docs/api.apib -o apps/neoscan_web/assets/static/docs/index.html
+  artifacts:
+    paths:
+      - apps/neoscan_web/assets/static/docs/index.html
 
 neoscan-build:
   stage: build
