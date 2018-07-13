@@ -83,7 +83,9 @@ defmodule NeoscanWeb.ApiControllerTest do
       vout_transaction_hash: vout4.transaction_hash
     })
 
-    conn = get(conn, "/api/main_net/v1/get_claimed/#{Base58.encode(vout1.address_hash)}")
+    conn =
+      get(conn, api_path(conn, :get_claimed, Base58.encode(vout1.address_hash)))
+      |> BlueBird.ConnLogger.save()
 
     assert %{
              "address" => Base58.encode(vout1.address_hash),
@@ -143,7 +145,7 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     address_hash = Base58.encode(vout1.address_hash)
 
-    conn = get(conn, "/api/main_net/v1/get_unclaimed/#{address_hash}")
+    conn = get(conn, api_path(conn, :get_unclaimed, address_hash)) |> BlueBird.ConnLogger.save()
 
     assert %{
              "address" => address_hash,
@@ -200,7 +202,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     insert(:block, %{index: 9, gas_generated: 3.0, total_sys_fee: 12.0})
 
     address_hash = Base58.encode(vout1.address_hash)
-    conn = get(conn, "/api/main_net/v1/get_claimable/#{address_hash}")
+    conn = get(conn, api_path(conn, :get_claimable, address_hash)) |> BlueBird.ConnLogger.save()
 
     assert %{
              "address" => address_hash,
@@ -321,7 +323,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       vout_transaction_hash: vout4.transaction_hash
     })
 
-    conn = get(conn, "/api/main_net/v1/get_address_neon/#{Base58.encode(vout1.address_hash)}")
+    conn = get(conn, api_path(conn, :get_address_neon, Base58.encode(vout1.address_hash)))
     result = json_response(conn, 200)
     assert 1 == Enum.count(result["balance"])
     assert 2 == Enum.count(result["claimed"])
@@ -424,7 +426,9 @@ defmodule NeoscanWeb.ApiControllerTest do
       vout_transaction_hash: vout6.transaction_hash
     })
 
-    conn = get(conn, "/api/main_net/v1/get_address_abstracts/#{address_hash_str}/1")
+    conn =
+      get(conn, api_path(conn, :get_address_abstracts, address_hash_str, "1"))
+      |> BlueBird.ConnLogger.save()
 
     assert [
              %{
@@ -519,10 +523,15 @@ defmodule NeoscanWeb.ApiControllerTest do
     conn =
       get(
         conn,
-        "/api/main_net/v1/get_address_to_address_abstracts/#{address_hash_str}/#{
-          address_hash_str2
-        }/1"
+        api_path(
+          conn,
+          :get_address_to_address_abstracts,
+          address_hash_str,
+          address_hash_str2,
+          "1"
+        )
       )
+      |> BlueBird.ConnLogger.save()
 
     assert [
              %{
@@ -550,7 +559,10 @@ defmodule NeoscanWeb.ApiControllerTest do
     block = insert(:block, %{transactions: [insert(:transaction)]})
     [%{hash: transaction_hash}] = block.transactions
     transfer = insert(:transfer, %{block_index: block.index})
-    conn = get(conn, "/api/main_net/v1/get_block/#{Base.encode16(block.hash)}")
+
+    conn =
+      get(conn, api_path(conn, :get_block, Base.encode16(block.hash)))
+      |> BlueBird.ConnLogger.save()
 
     assert %{
              "confirmations" => 1,
@@ -630,8 +642,9 @@ defmodule NeoscanWeb.ApiControllerTest do
     conn =
       get(
         conn,
-        "/api/main_net/v1/get_transaction/#{Base.encode16(transaction.hash, case: :lower)}"
+        api_path(conn, :get_transaction, Base.encode16(transaction.hash, case: :lower))
       )
+      |> BlueBird.ConnLogger.save()
 
     assert %{
              "asset" => nil,
@@ -704,24 +717,28 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     address_hash = Base58.encode(vout.address_hash)
 
-    conn = get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{address_hash}/1")
+    conn =
+      get(
+        conn,
+        api_path(conn, :get_last_transactions_by_address, Base58.encode(vout.address_hash))
+      )
+      |> BlueBird.ConnLogger.save()
+
     assert 1 == Enum.count(json_response(conn, 200))
 
-    conn =
-      get(conn, api_path(conn, :get_last_transactions_by_address, address_hash))
-      |> BlueBird.ConnLogger.save()
+    conn = get(conn, api_path(conn, :get_last_transactions_by_address, address_hash))
 
     assert 1 == Enum.count(json_response(conn, 200))
   end
 
   test "get_all_nodes", %{conn: conn} do
-    conn = get(conn, "/api/main_net/v1/get_all_nodes")
+    conn = get(conn, api_path(conn, :get_all_nodes)) |> BlueBird.ConnLogger.save()
     assert [%{"height" => _, "url" => _} | _] = json_response(conn, 200)
   end
 
   test "get_height", %{conn: conn} do
     insert(:counter, %{name: "blocks", value: 156})
-    conn = get(conn, "/api/main_net/v1/get_height")
+    conn = get(conn, api_path(conn, :get_height)) |> BlueBird.ConnLogger.save()
     assert 155 == json_response(conn, 200)["height"]
   end
 end

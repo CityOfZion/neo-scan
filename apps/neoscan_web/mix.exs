@@ -4,7 +4,7 @@ defmodule NeoscanWeb.Mixfile do
   def project do
     [
       app: :neoscan_web,
-      version: "0.0.1",
+      version: "2.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -72,10 +72,9 @@ defmodule NeoscanWeb.Mixfile do
   def blue_bird_info do
     [
       host: "https://neoscan.io",
-      title: "neoscan API",
+      title: "NEOSCAN API",
       description: """
       Main API for accessing data from the explorer. All data is provided through GET requests in `/api/main_net/v1`.
-      Testnet isn’t currently available.
       """
     ]
   end
