@@ -59,7 +59,7 @@ defmodule NeoscanNode.NodeChecker do
     1..20
     |> Enum.map(&"#{@env_var_prefix}#{&1}")
     |> Enum.map(&System.get_env/1)
-    |> Enum.filter(&(not is_nil(&1)))
+    |> Enum.filter(&(not is_nil(&1) and &1 != ""))
     |> (&if(&1 == [], do: @servers, else: &1)).()
   end
 

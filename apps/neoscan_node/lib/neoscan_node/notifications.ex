@@ -11,7 +11,10 @@ defmodule NeoscanNode.Notifications do
 
   defp get_servers() do
     notification_server = System.get_env("NEO_NOTIFICATIONS_SERVER")
-    if is_nil(notification_server), do: @notification_seeds, else: [notification_server]
+
+    if is_nil(notification_server) or notification_server == "",
+      do: @notification_seeds,
+      else: [notification_server]
   end
 
   defp get_random_server(), do: Enum.random(get_servers())

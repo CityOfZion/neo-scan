@@ -8,6 +8,18 @@ services:
     environment:
       HOST: ${HOST}
       PORT: 4000
+      NEO_SEED_1: ${NEO_SEED_1}
+      NEO_SEED_2: ${NEO_SEED_2}
+      NEO_SEED_3: ${NEO_SEED_3}
+      NEO_SEED_4: ${NEO_SEED_4}
+      NEO_SEED_5: ${NEO_SEED_5}
+      NEO_SEED_6: ${NEO_SEED_6}
+      NEO_SEED_7: ${NEO_SEED_7}
+      NEO_SEED_8: ${NEO_SEED_8}
+      NEO_SEED_9: ${NEO_SEED_9}
+      NEO_SEED_10: ${NEO_SEED_10}
+      TEST_NET: ${TEST_NET}
+      NEO_NOTIFICATIONS_SERVER: ${NEO_NOTIFICATIONS_SERVER}
     logging:
       driver: "json-file"
       options:
