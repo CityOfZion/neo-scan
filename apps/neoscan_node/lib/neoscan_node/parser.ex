@@ -173,9 +173,9 @@ defmodule NeoscanNode.Parser do
     %{
       contract_address: parse58(token["contract_address"]),
       decimals: token["decimals"],
-      name: token["name"],
+      name: parse_string(token["name"]),
       script_hash: parse16(token["script_hash"]),
-      symbol: token["symbol"]
+      symbol: parse_string(token["symbol"])
     }
   end
 
@@ -188,4 +188,6 @@ defmodule NeoscanNode.Parser do
       type: token["type"]
     }
   end
+
+  defp parse_string(string), do: String.replace(string, "\u0000", "")
 end
