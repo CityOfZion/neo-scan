@@ -4,7 +4,6 @@ defmodule NeoscanNode.Notifications do
   """
 
   @notification_seeds Application.fetch_env!(:neoscan_node, :notification_seeds)
-  @limit_height Application.fetch_env!(:neoscan_node, :start_notifications)
 
   alias NeoscanNode.HttpCalls
   alias NeoscanNode.Parser
@@ -49,8 +48,6 @@ defmodule NeoscanNode.Notifications do
     {:ok, tokens, _current_height, _total_pages} = HttpCalls.get("#{url}/tokens")
     Enum.map(tokens, &Parser.parse_token/1)
   end
-
-  def get_transfer_block_notifications(height) when height <= @limit_height, do: []
 
   def get_transfer_block_notifications(height) do
     notifications = get_block_notifications(height)
