@@ -3,7 +3,7 @@ defmodule NeoscanNode.NodeChecker do
 
   @servers Application.fetch_env!(:neoscan_node, :seeds)
   @update_interval 2_000
-  @env_vars ["NEO_SEED_1", "NEO_SEED_2", "NEO_SEED_3", "NEO_SEED_4"]
+  @env_var_prefix "NEO_SEED_"
 
   alias NeoscanNode.Blockchain
   alias NeoscanNode.EtsProcess
@@ -56,7 +56,8 @@ defmodule NeoscanNode.NodeChecker do
   end
 
   defp get_servers do
-    @env_vars
+    1..20
+    |> Enum.map(&"#{@env_var_prefix}#{&1}")
     |> Enum.map(&System.get_env/1)
     |> Enum.filter(&(not is_nil(&1)))
     |> (&if(&1 == [], do: @servers, else: &1)).()
