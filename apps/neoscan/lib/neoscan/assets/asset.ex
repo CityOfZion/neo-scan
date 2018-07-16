@@ -73,4 +73,6 @@ defmodule Neoscan.Asset do
         asset: %{asset | name: filter_name(name)}
     }
   end
+
+  def update_struct(struct), do: struct
 end

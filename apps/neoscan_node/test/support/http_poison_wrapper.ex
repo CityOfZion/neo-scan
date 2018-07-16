@@ -2443,7 +2443,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     }
   end
 
-  def get("http://notifications1.neeeo.org/v1/tokens", _, _) do
+  def get("http://notifications1.neeeo.org/v1/tokens?page=1", _, _) do
     {
       :ok,
       %HTTPoison.Response{
