@@ -2297,6 +2297,26 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
   def contract_data("0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9"), do: @contract
   def contract_data(_), do: nil
 
+  def get("http://notifications1.neeeo.org/v1/notifications/block/0?page=1", _, _) do
+    {
+      :ok,
+      %HTTPoison.Response{
+        body:
+          Poison.encode!(%{
+            "current_height" => 2_337_751,
+            "message" => "",
+            "page" => 0,
+            "page_len" => 500,
+            "results" => [],
+            "total" => 0,
+            "total_pages" => 1
+          }),
+        headers: [],
+        status_code: 200
+      }
+    }
+  end
+
   def get("http://notifications1.neeeo.org/v1/notifications/block/1444843?page=1", _, _) do
     {
       :ok,
@@ -2423,7 +2443,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     }
   end
 
-  def get("http://notifications1.neeeo.org/v1/tokens", _, _) do
+  def get("http://notifications1.neeeo.org/v1/tokens?page=1", _, _) do
     {
       :ok,
       %HTTPoison.Response{

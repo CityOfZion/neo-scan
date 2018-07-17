@@ -3,8 +3,6 @@ defmodule Neoscan.Notifications.NotificationsTest do
 
   alias NeoscanNode.Notifications
 
-  @limit_height Application.fetch_env!(:neoscan_node, :start_notifications)
-
   test "get_block_notifications/2" do
     assert [] = Notifications.get_block_notifications(1)
 
@@ -103,8 +101,6 @@ defmodule Neoscan.Notifications.NotificationsTest do
   end
 
   test "add_notifications/2" do
-    assert [] = Notifications.get_transfer_block_notifications(0)
-    assert [] = Notifications.get_transfer_block_notifications(@limit_height + 1)
     assert 3 == Enum.count(Notifications.get_transfer_block_notifications(1_444_843))
   end
 end

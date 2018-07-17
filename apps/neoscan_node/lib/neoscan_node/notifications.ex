@@ -4,7 +4,6 @@ defmodule NeoscanNode.Notifications do
   """
 
   @notification_seeds Application.fetch_env!(:neoscan_node, :notification_seeds)
-  @limit_height Application.fetch_env!(:neoscan_node, :start_notifications)
 
   alias NeoscanNode.HttpCalls
   alias NeoscanNode.Parser
@@ -12,7 +11,10 @@ defmodule NeoscanNode.Notifications do
 
   defp get_servers() do
     notification_server = System.get_env("NEO_NOTIFICATIONS_SERVER")
-    if is_nil(notification_server), do: @notification_seeds, else: [notification_server]
+
+    if is_nil(notification_server) or notification_server == "",
+      do: @notification_seeds,
+      else: [notification_server]
   end
 
   defp get_random_server(), do: Enum.random(get_servers())
@@ -44,13 +46,23 @@ defmodule NeoscanNode.Notifications do
     end
   end
 
-  def get_token_notifications do
-    url = get_random_server()
-    {:ok, tokens, _current_height, _total_pages} = HttpCalls.get("#{url}/tokens")
-    Enum.map(tokens, &Parser.parse_token/1)
+  defp get_token_page(url, page) do
+    HttpCalls.get("#{url}/tokens?page=#{page}")
   end
 
-  def get_transfer_block_notifications(height) when height <= @limit_height, do: []
+  def get_token_notifications do
+    url = get_random_server()
+    {:ok, tokens, _current_height, total_pages} = get_token_page(url, 1)
+
+    tokens_3 =
+      for page <- remaining_pages(total_pages) do
+        {:ok, tokens_2, _, _} = get_token_page(url, page)
+        tokens_2
+      end
+
+    tokens = List.flatten(tokens_3) ++ tokens
+    Enum.map(tokens, &Parser.parse_token/1)
+  end
 
   def get_transfer_block_notifications(height) do
     notifications = get_block_notifications(height)
