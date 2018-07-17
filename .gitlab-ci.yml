@@ -103,8 +103,10 @@ testnet:
     TEST_NET: "true"
     NEO_NOTIFICATIONS_SERVER: http://notiftest1.neeeo.org/v1
   tags:
-    - staging
+    - testnet
   when: manual
+  only:
+      - master
 
 production:
   stage: deploy
