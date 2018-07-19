@@ -123,10 +123,10 @@ nex_testnet:
     TEST_NET: "true"
     NEO_NOTIFICATIONS_SERVER: http://nexnotifications.neeeo.org/v1
   tags:
-    - staging
+    - nextestnet
   when: manual
-#  only:
-#      - master
+  only:
+      - master
 
 production:
   stage: deploy
