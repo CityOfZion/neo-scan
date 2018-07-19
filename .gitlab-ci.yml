@@ -128,6 +128,23 @@ nex_testnet:
   only:
       - master
 
+coz_testnet:
+  stage: deploy
+  environment: coz_testnet
+  script:
+    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - docker-compose -f docker-compose.prod.yml up -d
+  variables:
+    HOST: coz.neoscan-testnet.io
+    NEO_SEED_1: http://188.68.34.29:10004
+    TEST_NET: "true"
+    NEO_NOTIFICATIONS_SERVER: http://coznotifications.neeeo.org/v1
+  tags:
+    - coztestnet
+  when: manual
+  only:
+      - master
+
 production:
   stage: deploy
   environment: production
