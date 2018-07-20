@@ -1,6 +1,8 @@
 defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
   @moduledoc false
 
+  @notification_url Application.fetch_env!(:neoscan_node, :notification_seeds) |> List.first()
+
   @block0 %{
     "confirmations" => 2_326_310,
     "hash" => "0xd42561e3d30e15be6400b6df2f328e02d2bf6354c41dce433bc57687c82144bf",
@@ -2297,7 +2299,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
   def contract_data("0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9"), do: @contract
   def contract_data(_), do: nil
 
-  def get("http://notifications1.neeeo.org/v1/notifications/block/0?page=1", _, _) do
+  def get("#{@notification_url}/notifications/block/0?page=1", _, _) do
     {
       :ok,
       %HTTPoison.Response{
@@ -2317,7 +2319,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     }
   end
 
-  def get("http://notifications1.neeeo.org/v1/notifications/block/1444843?page=1", _, _) do
+  def get("#{@notification_url}/notifications/block/1444843?page=1", _, _) do
     {
       :ok,
       %HTTPoison.Response{
@@ -2368,7 +2370,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     }
   end
 
-  def get("http://notifications1.neeeo.org/v1/notifications/block/1444902?page=" <> page, _, _) do
+  def get("#{@notification_url}/notifications/block/1444902?page=" <> page, _, _) do
     page = String.to_integer(page)
 
     {
@@ -2403,7 +2405,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     }
   end
 
-  def get("http://notifications1.neeeo.org/v1/notifications/block/1444801?page=1", _, _) do
+  def get("#{@notification_url}/notifications/block/1444801?page=1", _, _) do
     {
       :ok,
       %HTTPoison.Response{
@@ -2423,7 +2425,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     }
   end
 
-  def get("http://notifications1.neeeo.org/v1/notifications/block/1?page=1", _, _) do
+  def get("#{@notification_url}/notifications/block/1?page=1", _, _) do
     {
       :ok,
       %HTTPoison.Response{
@@ -2443,7 +2445,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     }
   end
 
-  def get("http://notifications1.neeeo.org/v1/tokens?page=1", _, _) do
+  def get("#{@notification_url}/tokens?page=1", _, _) do
     {
       :ok,
       %HTTPoison.Response{
