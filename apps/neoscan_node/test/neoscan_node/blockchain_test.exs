@@ -191,9 +191,9 @@ defmodule Neoscan.Blockchain.BlockchainTest do
     assert {:ok, %{index: 1}} = Blockchain.get_block_by_hash(block_1_hash)
   end
 
-  test "get_current_height/1" do
-    {:ok, height} = Blockchain.get_current_height()
-    assert 200 == height
+  test "get_block_count/1" do
+    {:ok, count} = Blockchain.get_block_count()
+    assert 200 == count
   end
 
   test "get_transaction/2" do
