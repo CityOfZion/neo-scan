@@ -5,7 +5,7 @@ defmodule Neoscan.HttpCalls.HttpCallsTest do
 
   @notification_url Application.fetch_env!(:neoscan_node, :notification_seeds) |> List.first()
   @node_url Application.fetch_env!(:neoscan_node, :seeds) |> List.first()
-  @token_url "#{@notification_url}/tokens"
+  @token_url "#{@notification_url}/tokens?page=1"
 
   test "post/3" do
     assert {:ok, _} = HttpCalls.post(@node_url, "getblock", [0, 1])

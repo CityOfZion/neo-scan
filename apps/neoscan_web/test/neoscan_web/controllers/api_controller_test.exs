@@ -6,6 +6,9 @@ defmodule NeoscanWeb.ApiControllerTest do
   @neo_asset_hash <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144,
                     175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
 
+  @gas_asset_hash <<96, 44, 121, 113, 139, 22, 228, 66, 222, 88, 119, 142, 20, 141, 11, 16, 132,
+                    227, 178, 223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45, 231>>
+
   setup do
     Supervisor.terminate_child(NeoscanWeb.Supervisor, ConCache)
     Supervisor.restart_child(NeoscanWeb.Supervisor, ConCache)
@@ -339,7 +342,11 @@ defmodule NeoscanWeb.ApiControllerTest do
     transaction1 = insert(:transaction)
 
     vout =
-      insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 5.1})
+      insert(:vout, %{
+        transaction_hash: transaction1.hash,
+        asset_hash: @gas_asset_hash,
+        value: 5.1
+      })
 
     address_hash = vout.address_hash
     address_hash_str = Base58.encode(address_hash)
@@ -426,11 +433,31 @@ defmodule NeoscanWeb.ApiControllerTest do
       vout_transaction_hash: vout6.transaction_hash
     })
 
+    # transfer transaction mint
+    transaction8 = insert(:transaction)
+
+    insert(:transfer, %{
+      address_from: <<0>>,
+      address_to: address_hash,
+      transaction_hash: transaction8.hash,
+      contract: asset_hash,
+      amount: 18.0
+    })
+
     conn =
       get(conn, api_path(conn, :get_address_abstracts, address_hash_str, "1"))
       |> BlueBird.ConnLogger.save()
 
     assert [
+             %{
+               "address_from" => "mint",
+               "address_to" => address_hash_str,
+               "amount" => "18",
+               "asset" => asset_hash_str,
+               "block_height" => transaction8.block_index,
+               "time" => DateTime.to_unix(transaction8.block_time),
+               "txid" => Base.encode16(transaction8.hash, case: :lower)
+             },
              %{
                "address_from" => address_hash_str,
                "address_to" => Base58.encode(vout7.address_hash),
@@ -471,7 +498,7 @@ defmodule NeoscanWeb.ApiControllerTest do
                "address_from" => "claim",
                "address_to" => address_hash_str,
                "amount" => "5.1",
-               "asset" => asset_hash_str,
+               "asset" => Base.encode16(@gas_asset_hash, case: :lower),
                "block_height" => transaction1.block_index,
                "time" => DateTime.to_unix(transaction1.block_time),
                "txid" => Base.encode16(transaction1.hash, case: :lower)
