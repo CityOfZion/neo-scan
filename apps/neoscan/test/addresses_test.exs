@@ -181,7 +181,11 @@ defmodule Neoscan.AddressesTest do
     transaction1 = insert(:transaction)
 
     vout =
-      insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 5.0})
+      insert(:vout, %{
+        transaction_hash: transaction1.hash,
+        asset_hash: @gas_asset_hash,
+        value: 5.0
+      })
 
     address_hash = vout.address_hash
     insert(:vout, %{transaction_hash: transaction1.hash, asset_hash: asset_hash, value: 2.0})
@@ -284,10 +288,30 @@ defmodule Neoscan.AddressesTest do
       vout_transaction_hash: vout8.transaction_hash
     })
 
-    assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 6, total_pages: 1} =
+    # transfer transaction mint
+    transaction8 = insert(:transaction)
+
+    insert(:transfer, %{
+      address_from: <<0>>,
+      address_to: address_hash,
+      transaction_hash: transaction8.hash,
+      contract: asset_hash,
+      amount: 18.0
+    })
+
+    assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 7, total_pages: 1} =
              Addresses.get_transaction_abstracts(address_hash, 1)
 
     assert entries == [
+             %{
+               address_from: "mint",
+               address_to: address_hash,
+               value: 18.0,
+               asset_hash: asset_hash,
+               block_index: transaction8.block_index,
+               block_time: transaction8.block_time,
+               transaction_hash: transaction8.hash
+             },
              %{
                address_from: address_hash,
                address_to: address_hash,
@@ -337,7 +361,7 @@ defmodule Neoscan.AddressesTest do
                address_from: "claim",
                address_to: address_hash,
                value: 5.0,
-               asset_hash: asset_hash,
+               asset_hash: @gas_asset_hash,
                block_index: transaction1.block_index,
                block_time: transaction1.block_time,
                transaction_hash: transaction1.hash

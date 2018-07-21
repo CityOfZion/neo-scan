@@ -258,7 +258,10 @@ defmodule Neoscan.Addresses do
     if is_sender, do: {original, other}, else: {other, original}
   end
 
-  defp get_transaction_abstract_other_actor(%{related: []}), do: "claim"
+  defp get_transaction_abstract_other_actor(%{asset_hash: @gas_asset_hash, related: []}),
+    do: "claim"
+
+  defp get_transaction_abstract_other_actor(%{related: []}), do: "mint"
 
   defp get_transaction_abstract_other_actor(%{related: [%{address_hash: address_hash}]}),
     do: address_hash
