@@ -64,11 +64,12 @@ defmodule NeoscanNode.NodeChecker do
   end
 
   defp get_node_height(url) do
-    {status, height} = Blockchain.get_current_height(url)
+    {status, count} = Blockchain.get_block_count(url)
 
     if status == :ok do
       try do
-        {status, _block} = Blockchain.get_block_by_height(url, height - 1)
+        height = count - 1
+        {status, _block} = Blockchain.get_block_by_height(url, height)
 
         if status == :ok do
           {url, height}

@@ -34,9 +34,9 @@ defmodule NeoscanNode.Blockchain do
     end
   end
 
-  def get_current_height, do: get_current_height(NodeChecker.get_random_node())
+  def get_block_count, do: get_block_count(NodeChecker.get_random_node())
 
-  def get_current_height(url), do: HttpCalls.post(url, "getblockcount", [])
+  def get_block_count(url), do: HttpCalls.post(url, "getblockcount", [])
 
   def get_transaction(txid), do: get_transaction(NodeChecker.get_random_node(), txid)
 
