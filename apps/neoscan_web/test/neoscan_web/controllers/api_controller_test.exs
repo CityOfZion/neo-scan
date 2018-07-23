@@ -339,7 +339,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     asset_hash_str = Base.encode16(asset_hash, case: :lower)
 
     # claim transaction (no vin, but 1 vout) address is receiver
-    transaction1 = insert(:transaction)
+    transaction1 = insert(:transaction, %{type: "claim_transaction"})
 
     vout =
       insert(:vout, %{
