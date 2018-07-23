@@ -671,6 +671,12 @@ defmodule NeoscanWeb.ApiControllerTest do
              "tx_count" => block.tx_count,
              "version" => block.version
            } == json_response(conn, 200)
+
+    conn =
+      get(conn, api_path(conn, :get_block, Base.encode16("notfound")))
+      |> BlueBird.ConnLogger.save()
+
+    assert %{"error" => "block not found"} == json_response(conn, 404)
   end
 
   test "test concache", %{conn: conn} do
@@ -781,6 +787,12 @@ defmodule NeoscanWeb.ApiControllerTest do
                }
              ]
            } == json_response(conn, 200)
+
+    conn =
+      get(conn, api_path(conn, :get_transaction, Base.encode16("notfound")))
+      |> BlueBird.ConnLogger.save()
+
+    assert %{"error" => "transaction not found"} == json_response(conn, 404)
   end
 
   test "get_last_transactions_by_address/:hash/:page", %{conn: conn} do

@@ -150,7 +150,7 @@ defmodule NeoscanWeb.Api do
 
   def get_block(hash_or_integer) do
     block = Blocks.get(hash_or_integer)
-    render_block(block)
+    unless is_nil(block), do: render_block(block)
   end
 
   defp render_block(block) do
@@ -175,7 +175,7 @@ defmodule NeoscanWeb.Api do
 
   def get_transaction(hash) do
     transaction = Transactions.get(hash)
-    render_transaction(transaction)
+    unless is_nil(transaction), do: render_transaction(transaction)
   end
 
   defp render_vout(vout) do

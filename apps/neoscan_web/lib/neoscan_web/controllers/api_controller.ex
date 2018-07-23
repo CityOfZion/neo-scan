@@ -179,7 +179,14 @@ defmodule NeoscanWeb.ApiController do
   def get_block(conn, %{"hash" => hash}) do
     hash = parse_index_or_hash(hash)
     block = cache({:get_block, hash}, Api.get_block(hash))
-    json(conn, block)
+
+    if is_nil(block) do
+      conn
+      |> put_status(:not_found)
+      |> json(%{error: "block not found"})
+    else
+      json(conn, block)
+    end
   end
 
   # for future use
@@ -192,7 +199,14 @@ defmodule NeoscanWeb.ApiController do
   def get_transaction(conn, %{"hash" => hash}) do
     hash = parse_index_or_hash(hash)
     transaction = cache({:get_transaction, hash}, Api.get_transaction(hash))
-    json(conn, transaction)
+
+    if is_nil(transaction) do
+      conn
+      |> put_status(:not_found)
+      |> json(%{error: "transaction not found"})
+    else
+      json(conn, transaction)
+    end
   end
 
   defp parse_index_or_hash(value) do
