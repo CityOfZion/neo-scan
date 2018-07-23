@@ -299,10 +299,73 @@ defmodule Neoscan.AddressesTest do
       amount: 18.0
     })
 
-    assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 7, total_pages: 1} =
+    # transfer transaction burn
+    transaction9 = insert(:transaction)
+
+    insert(:transfer, %{
+      address_from: address_hash,
+      address_to: <<0>>,
+      transaction_hash: transaction9.hash,
+      contract: asset_hash,
+      amount: 18.0
+    })
+
+    # pay gas fee
+    transaction10 = insert(:transaction)
+
+    insert(:vin, %{
+      transaction_hash: transaction10.hash,
+      vout_n: vout.n,
+      vout_transaction_hash: vout.transaction_hash
+    })
+
+    insert(:vout, %{
+      address_hash: address_hash,
+      transaction_hash: transaction10.hash,
+      asset_hash: @gas_asset_hash,
+      value: 4.9
+    })
+
+    transaction11 = insert(:transaction, %{type: "miner_transaction"})
+
+    insert(:vout, %{
+      address_hash: address_hash,
+      transaction_hash: transaction11.hash,
+      asset_hash: @gas_asset_hash,
+      value: 5.0
+    })
+
+    assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 10, total_pages: 1} =
              Addresses.get_transaction_abstracts(address_hash, 1)
 
     assert entries == [
+             %{
+               address_from: "network_fees",
+               address_to: address_hash,
+               value: 5.0,
+               asset_hash: @gas_asset_hash,
+               block_index: transaction11.block_index,
+               block_time: transaction11.block_time,
+               transaction_hash: transaction11.hash
+             },
+             %{
+               address_from: address_hash,
+               address_to: "fees",
+               value: 0.09999999999999964,
+               asset_hash: @gas_asset_hash,
+               block_index: transaction10.block_index,
+               block_time: transaction10.block_time,
+               transaction_hash: transaction10.hash
+             },
+             %{
+               address_from: address_hash,
+               address_to: "burn",
+               value: 18.0,
+               asset_hash: asset_hash,
+               block_index: transaction9.block_index,
+               block_time: transaction9.block_time,
+               transaction_hash: transaction9.hash
+             },
              %{
                address_from: "mint",
                address_to: address_hash,

@@ -268,6 +268,9 @@ defmodule NeoscanWeb.Api do
     |> String.trim_trailing(".")
   end
 
+  defp render_transaction_abstract_address("burn", _), do: "burn"
+  defp render_transaction_abstract_address("network_fees", _), do: "network_fees"
+  defp render_transaction_abstract_address("fees", _), do: "fees"
   defp render_transaction_abstract_address("mint", _), do: "mint"
   defp render_transaction_abstract_address("claim", _), do: "claim"
 

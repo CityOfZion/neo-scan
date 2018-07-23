@@ -254,17 +254,28 @@ defmodule Neoscan.Addresses do
   defp get_transaction_abstract_actors(abt) do
     is_sender = abt.value < 0
     original = abt.address_hash
-    other = get_transaction_abstract_other_actor(abt)
+    other = get_transaction_abstract_other_actor(abt, is_sender)
     if is_sender, do: {original, other}, else: {other, original}
   end
 
-  defp get_transaction_abstract_other_actor(%{asset_hash: @gas_asset_hash, related: []}),
+  defp get_transaction_abstract_other_actor(
+         %{transaction: %{type: "miner_transaction"}, asset_hash: @gas_asset_hash, related: []},
+         false
+       ),
+       do: "network_fees"
+
+  defp get_transaction_abstract_other_actor(%{asset_hash: @gas_asset_hash, related: []}, false),
     do: "claim"
 
-  defp get_transaction_abstract_other_actor(%{related: []}), do: "mint"
+  defp get_transaction_abstract_other_actor(%{asset_hash: @gas_asset_hash, related: []}, true),
+    do: "fees"
 
-  defp get_transaction_abstract_other_actor(%{related: [%{address_hash: address_hash}]}),
+  defp get_transaction_abstract_other_actor(%{related: []}, false), do: "mint"
+
+  defp get_transaction_abstract_other_actor(%{related: []}, true), do: "burn"
+
+  defp get_transaction_abstract_other_actor(%{related: [%{address_hash: address_hash}]}, _),
     do: address_hash
 
-  defp get_transaction_abstract_other_actor(_), do: "multi"
+  defp get_transaction_abstract_other_actor(_, _), do: "multi"
 end

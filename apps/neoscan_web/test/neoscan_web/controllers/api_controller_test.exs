@@ -444,11 +444,74 @@ defmodule NeoscanWeb.ApiControllerTest do
       amount: 18.0
     })
 
+    # transfer transaction burn
+    transaction9 = insert(:transaction)
+
+    insert(:transfer, %{
+      address_from: address_hash,
+      address_to: <<0>>,
+      transaction_hash: transaction9.hash,
+      contract: asset_hash,
+      amount: 18.0
+    })
+
+    # pay gas fee
+    transaction10 = insert(:transaction)
+
+    insert(:vin, %{
+      transaction_hash: transaction10.hash,
+      vout_n: vout.n,
+      vout_transaction_hash: vout.transaction_hash
+    })
+
+    insert(:vout, %{
+      address_hash: address_hash,
+      transaction_hash: transaction10.hash,
+      asset_hash: @gas_asset_hash,
+      value: 4.9
+    })
+
+    transaction11 = insert(:transaction, %{type: "miner_transaction"})
+
+    insert(:vout, %{
+      address_hash: address_hash,
+      transaction_hash: transaction11.hash,
+      asset_hash: @gas_asset_hash,
+      value: 5.0
+    })
+
     conn =
       get(conn, api_path(conn, :get_address_abstracts, address_hash_str, "1"))
       |> BlueBird.ConnLogger.save()
 
     assert [
+             %{
+               "address_from" => "network_fees",
+               "address_to" => address_hash_str,
+               "amount" => "5",
+               "asset" => Base.encode16(@gas_asset_hash, case: :lower),
+               "block_height" => transaction11.block_index,
+               "time" => DateTime.to_unix(transaction11.block_time),
+               "txid" => Base.encode16(transaction11.hash, case: :lower)
+             },
+             %{
+               "address_from" => address_hash_str,
+               "address_to" => "fees",
+               "amount" => "0.2",
+               "asset" => Base.encode16(@gas_asset_hash, case: :lower),
+               "block_height" => transaction10.block_index,
+               "time" => DateTime.to_unix(transaction10.block_time),
+               "txid" => Base.encode16(transaction10.hash, case: :lower)
+             },
+             %{
+               "address_from" => address_hash_str,
+               "address_to" => "burn",
+               "amount" => "18",
+               "asset" => asset_hash_str,
+               "block_height" => transaction9.block_index,
+               "time" => DateTime.to_unix(transaction9.block_time),
+               "txid" => Base.encode16(transaction9.hash, case: :lower)
+             },
              %{
                "address_from" => "mint",
                "address_to" => address_hash_str,
