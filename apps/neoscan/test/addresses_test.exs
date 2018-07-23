@@ -178,7 +178,7 @@ defmodule Neoscan.AddressesTest do
     asset_hash = asset.transaction_hash
 
     # claim transaction (no vin, but 1 vout) address is receiver
-    transaction1 = insert(:transaction)
+    transaction1 = insert(:transaction, %{type: "claim_transaction"})
 
     vout =
       insert(:vout, %{

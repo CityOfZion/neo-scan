@@ -25,7 +25,7 @@ defmodule NeoscanWeb.Endpoint do
   end
 
   plug(Plug.RequestId)
-  plug(Plug.Logger)
+  plug(Plug.Logger, log: :debug)
 
   plug(
     Plug.Parsers,
