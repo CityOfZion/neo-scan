@@ -1,7 +1,7 @@
-defmodule Neoscan.Vm.DisassemblerTest do
+defmodule NeoVM.DisassemblerTest do
   use ExUnit.Case
 
-  alias Neoscan.Vm.Disassembler
+  alias NeoVM.Disassembler
 
   # TODO this test show parsing error in the current code.
   test "disassemble Red Pulse Token contract" do

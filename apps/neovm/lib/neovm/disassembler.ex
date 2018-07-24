@@ -1,4 +1,4 @@
-defmodule Neoscan.Vm.Disassembler do
+defmodule NeoVM.Disassembler do
   @moduledoc ""
   # credo:disable-for-lines:118
   @opcodes_list %{

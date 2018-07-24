@@ -60,6 +60,7 @@ defmodule NeoscanWeb.Mixfile do
       {:neoscan, in_umbrella: true},
       {:neoscan_cache, in_umbrella: true},
       {:neoscan_node, in_umbrella: true},
+      {:neovm, in_umbrella: true},
       {:excoveralls, "~> 0.8", only: :test},
       {:cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.2"},
