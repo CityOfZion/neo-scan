@@ -360,7 +360,7 @@ a:hover {
 }
 
 .deprecated {
-    color:#999!important;
+    color: #999!important;
     text-decoration: line-through;
 }
 
