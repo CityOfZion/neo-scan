@@ -54,9 +54,13 @@ defmodule NeoscanWeb.Api do
 
   defp extract_sys_fees_in_range(sys_fees, start_index, end_index) do
     sys_fees
-    |> Enum.filter(&(&1.index >= start_index and &1.index <= end_index))
-    |> Enum.map(& &1.total_sys_fee)
-    |> Enum.sum()
+    |> Enum.reduce(0.0, fn %{index: index, total_sys_fee: total_sys_fee}, acc ->
+      if index >= start_index and index <= end_index do
+        acc + total_sys_fee
+      else
+        acc
+      end
+    end)
   end
 
   def get_unclaimed(address_hash) do

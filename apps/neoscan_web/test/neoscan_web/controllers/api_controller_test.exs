@@ -679,40 +679,6 @@ defmodule NeoscanWeb.ApiControllerTest do
     assert %{"error" => "block not found"} == json_response(conn, 404)
   end
 
-  #  test "test concache", %{conn: conn} do
-  #    asset = insert(:asset)
-  #    transaction = insert(:transaction)
-  #
-  #    vout =
-  #      insert(:vout, %{transaction_hash: transaction.hash, asset_hash: asset.transaction_hash})
-  #
-  #    transaction = insert(:transaction)
-  #
-  #    insert(:vout, %{
-  #      transaction_hash: transaction.hash,
-  #      address_hash: vout.address_hash,
-  #      asset_hash: asset.transaction_hash
-  #    })
-  #
-  #    address_hash = Base58.encode(vout.address_hash)
-  #    conn = get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{address_hash}/1")
-  #    assert 2 == Enum.count(json_response(conn, 200))
-  #    transaction = insert(:transaction)
-  #
-  #    insert(:vout, %{
-  #      transaction_hash: transaction.hash,
-  #      address_hash: vout.address_hash,
-  #      asset_hash: asset.transaction_hash
-  #    })
-  #
-  #    conn = get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{address_hash}/1")
-  #    assert 2 == Enum.count(json_response(conn, 200))
-  #    Supervisor.terminate_child(NeoscanWeb.Supervisor, ConCache)
-  #    Supervisor.restart_child(NeoscanWeb.Supervisor, ConCache)
-  #    conn = get(conn, "/api/main_net/v1/get_last_transactions_by_address/#{address_hash}/1")
-  #    assert 3 == Enum.count(json_response(conn, 200))
-  #  end
-
   test "get_transaction/:hash", %{conn: conn} do
     asset = insert(:asset)
     transaction = insert(:transaction)
