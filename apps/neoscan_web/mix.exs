@@ -54,7 +54,6 @@ defmodule NeoscanWeb.Mixfile do
       {:phoenix_ecto, "~> 3.2"},
       {:phoenix_html, "~> 2.10"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
-      {:con_cache, "~> 0.13.0"},
       {:gettext, "~> 0.11"},
       {:blue_bird, "~> 0.3.8"},
       {:neoscan, in_umbrella: true},
