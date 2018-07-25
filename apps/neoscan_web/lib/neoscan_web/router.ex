@@ -65,8 +65,6 @@ defmodule NeoscanWeb.Router do
       :get_last_transactions_by_address
     )
 
-    # soon to be deprecated
-    get("/get_address_neon/:hash", ApiController, :get_address_neon)
     get("/get_height", ApiController, :get_height)
 
     # Used by NEX

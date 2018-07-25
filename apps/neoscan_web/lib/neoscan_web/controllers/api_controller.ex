@@ -105,13 +105,6 @@ defmodule NeoscanWeb.ApiController do
     json(conn, height)
   end
 
-  # used by neon-js 3.7.0 (deprecated)
-  def get_address_neon(conn, %{"hash" => address_hash}) do
-    address_hash = Base58.decode(address_hash)
-    address = cache({:get_address_neon, address_hash}, Api.get_address_neon(address_hash))
-    json(conn, address)
-  end
-
   # used by NEX
   api :GET, "/api/main_net/v1/get_address_abstracts/:hash/:page" do
     title("Get address transactions summary")
