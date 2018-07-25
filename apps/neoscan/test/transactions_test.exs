@@ -102,6 +102,9 @@ defmodule Neoscan.TransactionsTest do
     transaction_hash1 = vout1.transaction_hash
 
     assert [%{transaction_hash: ^transaction_hash1}, %{transaction_hash: ^transaction_hash}] =
-             Transactions.get_unclaimed_vouts(vout1.address_hash)
+             Enum.sort_by(
+               Transactions.get_unclaimed_vouts(vout1.address_hash),
+               & &1.start_block_index
+             )
   end
 end

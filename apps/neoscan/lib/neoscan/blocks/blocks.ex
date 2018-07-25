@@ -11,6 +11,7 @@ defmodule Neoscan.Blocks do
   require Logger
 
   @page_size 15
+  @missing_block_range 1_000
 
   @doc """
   Gets a single block by its height or hash value
@@ -73,8 +74,15 @@ defmodule Neoscan.Blocks do
   end
 
   def get_missing_block_indexes do
-    query =
-      "SELECT * FROM generate_series(0, (SELECT max(index) FROM blocks)) as index EXCEPT SELECT index FROM blocks"
+    query = """
+      SELECT * FROM generate_series((SELECT GREATEST(0, (SELECT MAX(index) FROM blocks) - #{
+      @missing_block_range - 1
+    })),
+        (SELECT MAX(index) FROM blocks)) as index
+        EXCEPT SELECT * FROM (SELECT index FROM blocks ORDER BY index DESC LIMIT #{
+      @missing_block_range
+    }) as t(index)
+    """
 
     result = Ecto.Adapters.SQL.query!(Repo, query, [])
     List.flatten(result.rows)
