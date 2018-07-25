@@ -1,4 +1,4 @@
-defmodule NeoVM.DisassemblerTest do
+defmodule NeoVM.Disassembler2Test do
   use ExUnit.Case
 
   alias NeoVM.Disassembler2
