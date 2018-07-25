@@ -37,9 +37,35 @@ defmodule NeoscanWeb.Api do
     %{:address => Base58.encode(address_hash), :balance => balances}
   end
 
+  # for the max(current_end_index, end_index), the end_index can be nil, it is expected that max(nil, 123) = nil
+  defp get_vouts_range(
+         [%{start_block_index: start_index, end_block_index: end_index} | _] = vouts
+       ) do
+    Enum.reduce(vouts, {start_index, end_index}, fn %{
+                                                      start_block_index: start_index,
+                                                      end_block_index: end_index
+                                                    },
+                                                    {current_start_index, current_end_index} ->
+      {min(start_index, current_start_index), max(current_end_index, end_index)}
+    end)
+  end
+
+  defp get_vouts_range(_), do: {0, 0}
+
+  defp extract_sys_fees_in_range(sys_fees, start_index, end_index) do
+    sys_fees
+    |> Enum.filter(&(&1.index >= start_index and &1.index <= end_index))
+    |> Enum.map(& &1.total_sys_fee)
+    |> Enum.sum()
+  end
+
   def get_unclaimed(address_hash) do
     vouts = Transactions.get_unclaimed_vouts(address_hash)
     current_index = Counters.count_blocks() - 1
+
+    {start_index, end_index} = get_vouts_range(vouts)
+    end_index = if is_nil(end_index), do: current_index, else: end_index
+    sys_fees = BlocksCache.get_total_sys_fee(start_index, end_index - 1)
 
     unclaimed =
       Enum.reduce(vouts, 0, fn vout, acc ->
@@ -52,7 +78,7 @@ defmodule NeoscanWeb.Api do
           value * BlockGasGeneration.get_range_amount(start_index, end_index - 1) / @total_neo
 
         sys_fee =
-          value * BlocksCache.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
+          value * extract_sys_fees_in_range(sys_fees, start_index, end_index - 1) / @total_neo
 
         acc + sys_fee + generated
       end)
@@ -80,6 +106,9 @@ defmodule NeoscanWeb.Api do
   def get_claimable(address_hash) do
     vouts = Transactions.get_claimable_vouts(address_hash)
 
+    {start_index, end_index} = get_vouts_range(vouts)
+    sys_fees = BlocksCache.get_total_sys_fee(start_index, end_index - 1)
+
     claimable =
       Enum.map(vouts, fn vout ->
         value = round(vout.value)
@@ -90,7 +119,7 @@ defmodule NeoscanWeb.Api do
           value * BlockGasGeneration.get_range_amount(start_index, end_index - 1) / @total_neo
 
         sys_fee =
-          value * BlocksCache.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
+          value * extract_sys_fees_in_range(sys_fees, start_index, end_index - 1) / @total_neo
 
         unclaimed = sys_fee + generated
 
@@ -112,40 +141,6 @@ defmodule NeoscanWeb.Api do
       |> Enum.sum()
 
     %{address: Base58.encode(address_hash), claimable: claimable, unclaimed: unclaimed}
-  end
-
-  def get_address_neon(address_hash) do
-    %{balance: balances} = get_balance(address_hash)
-    %{claimed: claimed} = get_claimed(address_hash)
-    transaction_abstracts = Addresses.get_transaction_abstracts_raw(address_hash, 1)
-    simple_balance = Enum.reduce(balances, %{}, fn b, acc -> Map.put(acc, b.asset, b.amount) end)
-    balance_history = render_neon_abstracts(transaction_abstracts.entries, simple_balance, [])
-    address = Addresses.get(address_hash)
-
-    %{
-      txids: balance_history,
-      tx_count: address.tx_count,
-      time: DateTime.to_unix(address.last_transaction_time),
-      claimed: claimed,
-      balance: balances,
-      address: Base58.encode(address_hash)
-    }
-  end
-
-  def render_neon_abstracts([], _, acc), do: Enum.reverse(acc)
-
-  def render_neon_abstracts([transaction | rest], balance, acc) do
-    balance = Map.update!(balance, transaction.asset.name, &(&1 - transaction.value))
-
-    t = %{
-      txid: Base.encode16(transaction.transaction_hash, case: :lower),
-      block_height: transaction.transaction.block_index,
-      balance: Enum.map(balance, fn {asset, amount} -> %{asset: asset, amount: amount} end),
-      asset_moved: Base.encode16(transaction.asset_hash, case: :lower),
-      amount_moved: transaction.value
-    }
-
-    render_neon_abstracts(rest, balance, [t | acc])
   end
 
   def get_block(hash_or_integer) do

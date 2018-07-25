@@ -63,6 +63,14 @@ defmodule NeoscanWeb.CommonView do
 
   def render_address_hash(hash), do: Base58.encode(hash)
 
+  def render_balance(nil), do: "0"
+
+  def render_balance(%{:value => amount, :precision => precision}),
+    do: render_balance(amount, precision)
+
+  def render_balance(%{:value => amount, :asset => %{:precision => precision}}),
+    do: render_balance(amount, precision)
+
   def render_balance(-0.00000001, _), do: "∞"
 
   def render_balance(amount, precision) do

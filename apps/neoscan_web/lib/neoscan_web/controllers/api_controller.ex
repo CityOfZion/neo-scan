@@ -3,13 +3,15 @@ defmodule NeoscanWeb.ApiController do
 
   alias NeoscanWeb.Api
 
-  defmacro cache(key, value, ttl \\ 10_000) do
-    quote do
-      ConCache.get_or_store(:my_cache, unquote(key), fn ->
-        %ConCache.Item{value: unquote(value), ttl: unquote(ttl)}
-      end)
-    end
-  end
+  #  defmacro cache(key, value, ttl \\ 10_000) do
+  #    quote do
+  #      ConCache.get_or_store(:my_cache, unquote(key), fn ->
+  #        %ConCache.Item{value: unquote(value), ttl: unquote(ttl)}
+  #      end)
+  #    end
+  #  end
+
+  def cache(_, value), do: value
 
   apigroup("API v1", "")
 
@@ -101,13 +103,6 @@ defmodule NeoscanWeb.ApiController do
   def get_height(conn, %{}) do
     height = cache({:get_height}, Api.get_height())
     json(conn, height)
-  end
-
-  # used by neon-js 3.7.0 (deprecated)
-  def get_address_neon(conn, %{"hash" => address_hash}) do
-    address_hash = Base58.decode(address_hash)
-    address = cache({:get_address_neon, address_hash}, Api.get_address_neon(address_hash))
-    json(conn, address)
   end
 
   # used by NEX
