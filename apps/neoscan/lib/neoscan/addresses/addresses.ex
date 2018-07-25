@@ -74,8 +74,8 @@ defmodule Neoscan.Addresses do
       Enum.filter(balances, &(not (&1.asset in [@neo_asset_hash, @gas_asset_hash])))
 
     %{
-      neo: if(is_nil(neo_balance), do: 0, else: neo_balance.value),
-      gas: if(is_nil(gas_balance), do: 0.0, else: gas_balance.value),
+      neo: neo_balance,
+      gas: gas_balance,
       tokens: token_balances
     }
   end

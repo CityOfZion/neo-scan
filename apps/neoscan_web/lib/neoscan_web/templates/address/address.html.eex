@@ -12,21 +12,21 @@
   <div class="individual-wallet-wrapper">
     <div class="individual-wallet-box">
       <p class="balance-label"> <i class="fa fa-cube wallet-label-icon"></i><%= gettext "NEO Balance" %></p>
-      <p class="balance-amount"><%= render_balance(@balance.neo, 0) %></p>
+      <p class="balance-amount"><%= render_balance(@balance.neo) %></p>
     </div>
     <div class="individual-wallet-box gas-balance last">
       <p class="balance-label"> <i class="fa fa-cubes wallet-label-icon"></i> <%= gettext "GAS Balance" %></p>
       <div class="total-gas-balance">
-        <p class="balance-amount"><%= render_balance(@balance.gas, 8) %></p>
+        <p class="balance-amount"><%= render_balance(@balance.gas) %></p>
         <p class="loading-gas"><%= gettext "Loading Unclaimed Gas" %><span>.</span><span>.</span><span>.</span></p>
         <p class="unclaimed-GAS"></p>
       </div>
     </div>
-    <%= for %{name: name, value: value, precision: precision} <- @balance.tokens do %>
+    <%= for %{name: name} = balance <- @balance.tokens do %>
         <div class="individual-wallet-box last">
           <p class="balance-label"> <i class="fa fa-university wallet-label-icon"></i> <%= name %></p>
           <div class="total-gas-balance">
-            <p class="balance-amount"><%= render_balance(value, precision) %></p>
+            <p class="balance-amount"><%= render_balance(balance) %></p>
           </div>
         </div>
       <% end %>

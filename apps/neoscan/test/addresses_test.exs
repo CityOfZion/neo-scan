@@ -138,11 +138,15 @@ defmodule Neoscan.AddressesTest do
 
     insert(:asset, %{
       transaction_hash: @neo_asset_hash,
+      type: "governing_token",
+      precision: 0,
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
     insert(:asset, %{
       transaction_hash: @gas_asset_hash,
+      type: "utility_token",
+      precision: 8,
       name: [%{"lang" => "en", "name" => "GAS"}]
     })
 
@@ -153,8 +157,20 @@ defmodule Neoscan.AddressesTest do
     })
 
     assert %{
-             gas: 0.213,
-             neo: 5.0,
+             gas: %{
+               asset: @gas_asset_hash,
+               name: "GAS",
+               precision: 8,
+               type: "utility_token",
+               value: 0.213
+             },
+             neo: %{
+               asset: @neo_asset_hash,
+               name: "NEO",
+               precision: 0,
+               type: "governing_token",
+               value: 5.0
+             },
              tokens: [
                %{
                  asset: <<1, 2, 3>>,
