@@ -14,6 +14,8 @@ defmodule Neoscan.Addresses do
 
   @day_seconds 86_400
 
+  @deprecated_tokens Application.get_env(:neoscan, :deprecated_tokens)
+
   import Ecto.Query, warn: false
 
   require Logger
@@ -73,10 +75,14 @@ defmodule Neoscan.Addresses do
     token_balances =
       Enum.filter(balances, &(not (&1.asset in [@neo_asset_hash, @gas_asset_hash])))
 
+    normal_token_balances = Enum.filter(token_balances, &(not (&1.asset in @deprecated_tokens)))
+    deprecated_token_balances = Enum.filter(token_balances, &(&1.asset in @deprecated_tokens))
+
     %{
       neo: neo_balance,
       gas: gas_balance,
-      tokens: token_balances
+      tokens: normal_token_balances,
+      deprecated_tokens: deprecated_token_balances
     }
   end
 
