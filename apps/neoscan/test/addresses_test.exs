@@ -4,6 +4,8 @@ defmodule Neoscan.AddressesTest do
 
   alias Neoscan.Addresses
 
+  @deprecated_tokens Application.get_env(:neoscan, :deprecated_tokens)
+
   @neo_asset_hash <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144,
                     175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
 
@@ -136,13 +138,26 @@ defmodule Neoscan.AddressesTest do
       block_time: block_time
     })
 
+    deprecated_asset_hash = Enum.random(@deprecated_tokens)
+
+    insert(:address_history, %{
+      address_hash: address_history.address_hash,
+      asset_hash: deprecated_asset_hash,
+      value: 124.0,
+      block_time: block_time
+    })
+
     insert(:asset, %{
       transaction_hash: @neo_asset_hash,
+      type: "governing_token",
+      precision: 0,
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
     insert(:asset, %{
       transaction_hash: @gas_asset_hash,
+      type: "utility_token",
+      precision: 8,
       name: [%{"lang" => "en", "name" => "GAS"}]
     })
 
@@ -152,9 +167,27 @@ defmodule Neoscan.AddressesTest do
       name: [%{"lang" => "en", "name" => "my token"}]
     })
 
+    insert(:asset, %{
+      transaction_hash: deprecated_asset_hash,
+      precision: 8,
+      name: [%{"lang" => "en", "name" => "my deprecated token"}]
+    })
+
     assert %{
-             gas: 0.213,
-             neo: 5.0,
+             gas: %{
+               asset: @gas_asset_hash,
+               name: "GAS",
+               precision: 8,
+               type: "utility_token",
+               value: 0.213
+             },
+             neo: %{
+               asset: @neo_asset_hash,
+               name: "NEO",
+               precision: 0,
+               type: "governing_token",
+               value: 5.0
+             },
              tokens: [
                %{
                  asset: <<1, 2, 3>>,
@@ -162,6 +195,15 @@ defmodule Neoscan.AddressesTest do
                  precision: 25,
                  type: "token",
                  value: 12302.0
+               }
+             ],
+             deprecated_tokens: [
+               %{
+                 asset: deprecated_asset_hash,
+                 name: "my deprecated token",
+                 precision: 8,
+                 type: "token",
+                 value: 124.0
                }
              ]
            } == Addresses.get_split_balance(address_history.address_hash)

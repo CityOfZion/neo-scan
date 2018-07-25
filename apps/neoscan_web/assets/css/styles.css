@@ -359,6 +359,11 @@ a:hover {
   margin: 30px auto;
 }
 
+.deprecated {
+    color: #999!important;
+    text-decoration: line-through;
+}
+
 
 /******************************************
 

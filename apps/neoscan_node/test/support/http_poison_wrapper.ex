@@ -3,6 +3,11 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
 
   @notification_url Application.fetch_env!(:neoscan_node, :notification_seeds) |> List.first()
 
+  @unknown_block %{
+    code: -100,
+    message: "Unknown block"
+  }
+
   @block0 %{
     "confirmations" => 2_326_310,
     "hash" => "0xd42561e3d30e15be6400b6df2f328e02d2bf6354c41dce433bc57687c82144bf",
@@ -1924,6 +1929,11 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     "version" => 0
   }
 
+  @unknown_transaction %{
+    code: -100,
+    message: "Unknown transaction"
+  }
+
   @transaction %{
     "txid" => "0x9e9526615ee7d460ed445c873c4af91bf7bfcc67e6e43feaf051b962a6df0a98",
     "size" => 10,
@@ -2076,6 +2086,11 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     "vout" => []
   }
 
+  @unknown_asset %{
+    code: -100,
+    message: "Unknown asset"
+  }
+
   @asset %{
     "version" => 0,
     "id" => "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
@@ -2092,6 +2107,11 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     "issuer" => "Abf2qMs1pzQb8kYk9RuxtUb9jtRKJVuBJt",
     "expiration" => 4_000_000,
     "frozen" => false
+  }
+
+  @unknown_contract %{
+    code: -100,
+    message: "Unknown contract"
   }
 
   @contract %{
@@ -2152,6 +2172,14 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     "total_pages" => 1
   }
 
+  def result(result) do
+    %{"result" => result}
+  end
+
+  def error(error) do
+    %{"error" => error}
+  end
+
   def post(url, data, headers, opts) do
     result = handle_post(Poison.decode!(data))
 
@@ -2186,10 +2214,10 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
         "jsonrpc" => "2.0",
         "id" => 5
       }) do
-    result = contract_data(hash)
+    data = contract_data(hash)
 
-    unless is_nil(result) do
-      body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => result}))
+    unless is_nil(data) do
+      body = :zlib.gzip(Poison.encode!(Map.merge(%{"jsonrpc" => "2.0", "id" => 5}, data)))
 
       {
         :ok,
@@ -2204,10 +2232,10 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
         "jsonrpc" => "2.0",
         "id" => 5
       }) do
-    result = transaction_data(hash)
+    data = transaction_data(hash)
 
-    unless is_nil(result) do
-      body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => result}))
+    unless is_nil(data) do
+      body = :zlib.gzip(Poison.encode!(Map.merge(%{"jsonrpc" => "2.0", "id" => 5}, data)))
 
       {
         :ok,
@@ -2222,10 +2250,10 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
         "jsonrpc" => "2.0",
         "id" => 5
       }) do
-    result = block_data(hash)
+    data = block_data(hash)
 
-    unless is_nil(result) do
-      body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => result}))
+    unless is_nil(data) do
+      body = :zlib.gzip(Poison.encode!(Map.merge(%{"jsonrpc" => "2.0", "id" => 5}, data)))
 
       {
         :ok,
@@ -2240,10 +2268,10 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
         "jsonrpc" => "2.0",
         "id" => 5
       }) do
-    result = asset_data(hash)
+    data = asset_data(hash)
 
-    unless is_nil(result) do
-      body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => result}))
+    unless is_nil(data) do
+      body = :zlib.gzip(Poison.encode!(Map.merge(%{"jsonrpc" => "2.0", "id" => 5}, data)))
 
       {
         :ok,
@@ -2263,40 +2291,61 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
 
   def handle_post(_), do: nil
 
-  def block_data(0), do: @block0
-  def block_data(1), do: @block1
-  def block_data(2), do: @block2
-  def block_data(123), do: @block123
-  def block_data(199), do: @block199
-  def block_data(1_444_843), do: @block1444843
-  def block_data(2_120_069), do: @block2120069
-  def block_data("d42561e3d30e15be6400b6df2f328e02d2bf6354c41dce433bc57687c82144bf"), do: @block0
-  def block_data("d782db8a38b0eea0d7394e0f007c61c71798867578c77c387c08113903946cc9"), do: @block1
+  def block_data(0), do: result(@block0)
+  def block_data(1), do: result(@block1)
+  def block_data(2), do: result(@block2)
+  def block_data(123), do: result(@block123)
+  def block_data(199), do: result(@block199)
+  def block_data(1_444_843), do: result(@block1444843)
+  def block_data(2_120_069), do: result(@block2120069)
+
+  def block_data("d42561e3d30e15be6400b6df2f328e02d2bf6354c41dce433bc57687c82144bf"),
+    do: result(@block0)
+
+  def block_data("d782db8a38b0eea0d7394e0f007c61c71798867578c77c387c08113903946cc9"),
+    do: result(@block1)
 
   def block_data("87ba13e7af11d599364f7ee0e59970e7e84611bbdbe27e4fccee8fb7ec6aba28"),
-    do: @block123
+    do: result(@block123)
+
+  def block_data("0000000000000000000000000000000000000000000000000000000000000000"),
+    do: error(@unknown_block)
 
   def block_data(_), do: nil
 
   def transaction_data("9f3316d2eaa4c5cdd8cfbd3252be14efb8e9dcd76d3115517c45f85946db41b2"),
-    do: @transaction9f
+    do: result(@transaction9f)
 
   def transaction_data("45ced268026de0fcaf7035e4960e860b98fe1ae5122e716d9daac1163f13e534"),
-    do: @transaction45
+    do: result(@transaction45)
 
   def transaction_data("0x9e9526615ee7d460ed445c873c4af91bf7bfcc67e6e43feaf051b962a6df0a98"),
-    do: @transaction
+    do: result(@transaction)
 
   def transaction_data("fd161ccd87deab812daa433cbc0f8f6468de24f1d708187beef5ab9ada7050f3"),
-    do: @transactionfd
+    do: result(@transactionfd)
+
+  def transaction_data("0000000000000000000000000000000000000000000000000000000000000000"),
+    do: error(@unknown_transaction)
 
   def transaction_data(_), do: nil
 
-  def asset_data("c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"), do: @asset
-  def asset_data("0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"), do: @asset
+  def asset_data("c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"),
+    do: result(@asset)
+
+  def asset_data("0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"),
+    do: result(@asset)
+
+  def asset_data("0000000000000000000000000000000000000000000000000000000000000000"),
+    do: error(@unknown_asset)
+
+  def asset_data("0x0000000000000000000000000000000000000000000000000000000000000000"),
+    do: error(@unknown_asset)
+
   def asset_data(_), do: nil
 
-  def contract_data("0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9"), do: @contract
+  def contract_data("0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9"), do: result(@contract)
+  def contract_data("0x0000000000000000000000000000000000000000"), do: error(@unknown_contract)
   def contract_data(_), do: nil
 
   def get("#{@notification_url}/notifications/block/0?page=1", _, _) do

@@ -41,21 +41,36 @@ defmodule NeoscanNode.Blockchain do
   def get_transaction(txid), do: get_transaction(NodeChecker.get_random_node(), txid)
 
   def get_transaction(url, txid) do
-    {:ok, response} = HttpCalls.post(url, "getrawtransaction", [txid, 1])
-    {:ok, Parser.parse_transaction(response)}
+    case HttpCalls.post(url, "getrawtransaction", [txid, 1]) do
+      {:ok, response} ->
+        {:ok, Parser.parse_transaction(response)}
+
+      error ->
+        error
+    end
   end
 
   def get_asset(txid), do: get_asset(NodeChecker.get_random_node(), txid)
 
   def get_asset(url, txid) do
-    {:ok, response} = HttpCalls.post(url, "getassetstate", [txid, 1])
-    {:ok, Parser.parse_asset(response)}
+    case HttpCalls.post(url, "getassetstate", [txid, 1]) do
+      {:ok, response} ->
+        {:ok, Parser.parse_asset(response)}
+
+      error ->
+        error
+    end
   end
 
   def get_contract(hash), do: get_contract(NodeChecker.get_random_node(), hash)
 
   def get_contract(url, hash) do
-    {:ok, response} = HttpCalls.post(url, "getcontractstate", [hash])
-    {:ok, Parser.parse_contract(response)}
+    case HttpCalls.post(url, "getcontractstate", [hash]) do
+      {:ok, response} ->
+        {:ok, Parser.parse_contract(response)}
+
+      error ->
+        error
+    end
   end
 end
