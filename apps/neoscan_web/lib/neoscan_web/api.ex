@@ -65,7 +65,7 @@ defmodule NeoscanWeb.Api do
 
     {start_index, end_index} = get_vouts_range(vouts)
     end_index = if is_nil(end_index), do: current_index, else: end_index
-    sys_fees = BlocksCache.get_total_sys_fee(start_index, end_index)
+    sys_fees = BlocksCache.get_total_sys_fee(start_index, end_index - 1)
 
     unclaimed =
       Enum.reduce(vouts, 0, fn vout, acc ->
@@ -107,7 +107,7 @@ defmodule NeoscanWeb.Api do
     vouts = Transactions.get_claimable_vouts(address_hash)
 
     {start_index, end_index} = get_vouts_range(vouts)
-    sys_fees = BlocksCache.get_total_sys_fee(start_index, end_index)
+    sys_fees = BlocksCache.get_total_sys_fee(start_index, end_index - 1)
 
     claimable =
       Enum.map(vouts, fn vout ->
