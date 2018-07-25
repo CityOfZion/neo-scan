@@ -189,6 +189,11 @@ defmodule Neoscan.Blockchain.BlockchainTest do
     block_1_hash = "d782db8a38b0eea0d7394e0f007c61c71798867578c77c387c08113903946cc9"
     assert {:ok, %{index: 0}} = Blockchain.get_block_by_hash(block_0_hash)
     assert {:ok, %{index: 1}} = Blockchain.get_block_by_hash(block_1_hash)
+
+    assert {:error, %{"code" => -100, "message" => _message}} =
+             Blockchain.get_block_by_hash(
+               "0000000000000000000000000000000000000000000000000000000000000000"
+             )
   end
 
   test "get_block_count/1" do
@@ -233,6 +238,11 @@ defmodule Neoscan.Blockchain.BlockchainTest do
              Blockchain.get_transaction(
                "45ced268026de0fcaf7035e4960e860b98fe1ae5122e716d9daac1163f13e534"
              )
+
+    assert {:error, %{"code" => -100, "message" => _message}} =
+             Blockchain.get_transaction(
+               "0000000000000000000000000000000000000000000000000000000000000000"
+             )
   end
 
   test "get_asset/2" do
@@ -264,6 +274,11 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                version: 0
              }
            } == Blockchain.get_asset(txid)
+
+    assert {:error, %{"code" => -100, "message" => _message}} =
+             Blockchain.get_asset(
+               "0x0000000000000000000000000000000000000000000000000000000000000000"
+             )
   end
 
   test "get_contract/2" do
@@ -289,5 +304,8 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                version: 0
              }
            } = Blockchain.get_contract(contract_hash)
+
+    assert {:error, %{"code" => -100, "message" => _message}} =
+             Blockchain.get_contract("0x0000000000000000000000000000000000000000")
   end
 end
