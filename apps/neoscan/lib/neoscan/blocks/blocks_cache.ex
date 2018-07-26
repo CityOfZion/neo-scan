@@ -57,11 +57,11 @@ defmodule Neoscan.BlocksCache do
         _from,
         %{min: cache_min, max: cache_max, segment_tree: segment_tree} = state
       ) do
-    blocks1 = Blocks.get_total_sys_fee(min, cache_min)
+    blocks1 = Blocks.get_total_sys_fee(min, cache_min - 1)
     blocks2 = Blocks.get_total_sys_fee(cache_max + 1, max)
 
     state =
-      if Enum.count(blocks1) == max(cache_min - min + 1, 0) and
+      if Enum.count(blocks1) == max(cache_min - min, 0) and
            Enum.count(blocks2) == max(max - cache_max, 0) do
         segment_tree = update_segment_tree(update_segment_tree(segment_tree, blocks1), blocks2)
         %{segment_tree: segment_tree, min: min, max: cache_max + Enum.count(blocks2)}
