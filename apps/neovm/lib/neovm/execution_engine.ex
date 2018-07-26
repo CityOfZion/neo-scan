@@ -238,8 +238,8 @@ defmodule NeoVM.ExecutionEngine do
   @_MIN 0xA3
   # Returns the larger of a and b.
   @_MAX 0xA4
-  #  # Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
-  #  @_WITHIN 0xA5
+  # Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
+  @_WITHIN 0xA5
   #
   #  #  Crypto
   #  # @_RIPEMD160 0xA6, #  The input is hashed using RIPEMD-160.
@@ -312,6 +312,14 @@ defmodule NeoVM.ExecutionEngine do
      %{state | stack: [do_execute_integer_2(opcode, get_integer(x1), get_integer(x2)) | stack]}}
   end
 
+  def do_execute(<<@_WITHIN, rest::binary>>, %{stack: [b, a, x | stack]} = state) do
+    {rest,
+     %{
+       state
+       | stack: [get_integer(a) <= get_integer(x) and get_integer(x) < get_integer(b) | stack]
+     }}
+  end
+
   def do_execute_integer_1(@_INVERT, x1), do: ~~~x1
   def do_execute_integer_1(@_INC, x1), do: x1 + 1
   def do_execute_integer_1(@_DEC, x1), do: x1 - 1
@@ -340,12 +348,12 @@ defmodule NeoVM.ExecutionEngine do
   def do_execute_integer_2(@_MOD, x1, x2), do: rem(x1, x2)
   def do_execute_integer_2(@_SHL, x1, x2), do: x1 <<< x2
   def do_execute_integer_2(@_SHR, x1, x2), do: x1 >>> x2
-  def do_execute_integer_2(@_NUMEQUAL, x1, x2), do: if(x1 == x2, do: 1, else: 0)
-  def do_execute_integer_2(@_NUMNOTEQUAL, x1, x2), do: if(x1 != x2, do: 1, else: 0)
-  def do_execute_integer_2(@_LT, x1, x2), do: if(x1 < x2, do: 1, else: 0)
-  def do_execute_integer_2(@_GT, x1, x2), do: if(x1 > x2, do: 1, else: 0)
-  def do_execute_integer_2(@_LTE, x1, x2), do: if(x1 <= x2, do: 1, else: 0)
-  def do_execute_integer_2(@_GTE, x1, x2), do: if(x1 >= x2, do: 1, else: 0)
+  def do_execute_integer_2(@_NUMEQUAL, x1, x2), do: x1 == x2
+  def do_execute_integer_2(@_NUMNOTEQUAL, x1, x2), do: x1 != x2
+  def do_execute_integer_2(@_LT, x1, x2), do: x1 < x2
+  def do_execute_integer_2(@_GT, x1, x2), do: x1 > x2
+  def do_execute_integer_2(@_LTE, x1, x2), do: x1 <= x2
+  def do_execute_integer_2(@_GTE, x1, x2), do: x1 >= x2
   def do_execute_integer_2(@_MIN, x1, x2), do: min(x1, x2)
   def do_execute_integer_2(@_MAX, x1, x2), do: max(x1, x2)
 
