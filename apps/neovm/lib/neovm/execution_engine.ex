@@ -174,36 +174,36 @@ defmodule NeoVM.ExecutionEngine do
   #  # Returns the length of the input string.
   #  @_SIZE 0x82
   #
-  #  #  Bitwise logic
-  #  # Flips all of the bits in the input.
-  #  @_INVERT 0x83
-  #  # Boolean and between each bit in the inputs.
-  #  @_AND 0x84
-  #  # Boolean or between each bit in the inputs.
-  #  @_OR 0x85
-  #  # Boolean exclusive or between each bit in the inputs.
-  #  @_XOR 0x86
+  #  Bitwise logic
+  # Flips all of the bits in the input.
+  @_INVERT 0x83
+  # Boolean and between each bit in the inputs.
+  @_AND 0x84
+  # Boolean or between each bit in the inputs.
+  @_OR 0x85
+  # Boolean exclusive or between each bit in the inputs.
+  @_XOR 0x86
   #  # Returns 1 if the inputs are exactly equal, 0 otherwise.
   #  @_EQUAL 0x87
   #  # @_OP_EQUALVERIFY 0x88, #  Same as OP_EQUAL, but runs OP_VERIFY afterward.
   #  # @_OP_RESERVED1 0x89, #  Transaction is invalid unless occuring in an unexecuted OP_IF branch
   #  # @_OP_RESERVED2 0x8A, #  Transaction is invalid unless occuring in an unexecuted OP_IF branch
   #
-  #  #  Arithmetic
-  #  #  Note: Arithmetic inputs are limited to signed 32-bit integers, but may overflow their output.
-  #  # 1 is added to the input.
-  #  @_INC 0x8B
-  #  # 1 is subtracted from the input.
-  #  @_DEC 0x8C
-  #  @_SIGN 0x8D
-  #  # The sign of the input is flipped.
-  #  @_NEGATE 0x8F
-  #  # The input is made positive.
-  #  @_ABS 0x90
-  #  # If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
-  #  @_NOT 0x91
-  #  # Returns 0 if the input is 0. 1 otherwise.
-  #  @_NZ 0x92
+  #  Arithmetic
+  #  Note: Arithmetic inputs are limited to signed 32-bit integers, but may overflow their output.
+  # 1 is added to the input.
+  @_INC 0x8B
+  # 1 is subtracted from the input.
+  @_DEC 0x8C
+  @_SIGN 0x8D
+  # The sign of the input is flipped.
+  @_NEGATE 0x8F
+  # The input is made positive.
+  @_ABS 0x90
+  # If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
+  @_NOT 0x91
+  # Returns 0 if the input is 0. 1 otherwise.
+  @_NZ 0x92
   # a is added to b.
   @_ADD 0x93
   # b is subtracted from a.
@@ -300,27 +300,54 @@ defmodule NeoVM.ExecutionEngine do
     {rest, %{state | stack: [list | stack]}}
   end
 
-  def do_execute(<<opcode, rest::binary>>, %{stack: [x2, x1 | stack]} = state)
-      when (opcode >= @_ADD and opcode <= @_SHR) or (opcode >= @_NUMEQUAL and opcode <= @_MAX) do
-    {rest,
-     %{state | stack: [do_execute_arithmectic2(opcode, get_integer(x1), get_integer(x2)) | stack]}}
+  def do_execute(<<opcode, rest::binary>>, %{stack: [x1 | stack]} = state)
+      when opcode == @_INVERT or (opcode >= @_INC and opcode <= @_NZ) do
+    {rest, %{state | stack: [do_execute_integer_1(opcode, get_integer(x1)) | stack]}}
   end
 
-  def do_execute_arithmectic2(@_ADD, x1, x2), do: x1 + x2
-  def do_execute_arithmectic2(@_SUB, x1, x2), do: x1 - x2
-  def do_execute_arithmectic2(@_MUL, x1, x2), do: x1 * x2
-  def do_execute_arithmectic2(@_DIV, x1, x2), do: x1 / x2
-  def do_execute_arithmectic2(@_MOD, x1, x2), do: rem(x1, x2)
-  def do_execute_arithmectic2(@_SHL, x1, x2), do: x1 <<< x2
-  def do_execute_arithmectic2(@_SHR, x1, x2), do: x1 >>> x2
-  def do_execute_arithmectic2(@_NUMEQUAL, x1, x2), do: if(x1 == x2, do: 1, else: 0)
-  def do_execute_arithmectic2(@_NUMNOTEQUAL, x1, x2), do: if(x1 != x2, do: 1, else: 0)
-  def do_execute_arithmectic2(@_LT, x1, x2), do: if(x1 < x2, do: 1, else: 0)
-  def do_execute_arithmectic2(@_GT, x1, x2), do: if(x1 > x2, do: 1, else: 0)
-  def do_execute_arithmectic2(@_LTE, x1, x2), do: if(x1 <= x2, do: 1, else: 0)
-  def do_execute_arithmectic2(@_GTE, x1, x2), do: if(x1 >= x2, do: 1, else: 0)
-  def do_execute_arithmectic2(@_MIN, x1, x2), do: min(x1, x2)
-  def do_execute_arithmectic2(@_MAX, x1, x2), do: max(x1, x2)
+  def do_execute(<<opcode, rest::binary>>, %{stack: [x2, x1 | stack]} = state)
+      when (opcode >= @_ADD and opcode <= @_SHR) or (opcode >= @_NUMEQUAL and opcode <= @_MAX) or
+             (opcode >= @_AND and opcode <= @_XOR) do
+    {rest,
+     %{state | stack: [do_execute_integer_2(opcode, get_integer(x1), get_integer(x2)) | stack]}}
+  end
+
+  def do_execute_integer_1(@_INVERT, x1), do: ~~~x1
+  def do_execute_integer_1(@_INC, x1), do: x1 + 1
+  def do_execute_integer_1(@_DEC, x1), do: x1 - 1
+
+  def do_execute_integer_1(@_SIGN, x1) when x1 > 0, do: 1
+  def do_execute_integer_1(@_SIGN, 0), do: 0
+  def do_execute_integer_1(@_SIGN, _), do: -1
+
+  def do_execute_integer_1(@_NEGATE, x1), do: -x1
+  def do_execute_integer_1(@_ABS, x1), do: abs(x1)
+
+  def do_execute_integer_1(@_NOT, 0), do: 1
+  def do_execute_integer_1(@_NOT, 1), do: 0
+  def do_execute_integer_1(@_NOT, _), do: 0
+
+  def do_execute_integer_1(@_NZ, 0), do: 0
+  def do_execute_integer_1(@_NZ, _), do: 1
+
+  def do_execute_integer_2(@_AND, x1, x2), do: band(x1, x2)
+  def do_execute_integer_2(@_OR, x1, x2), do: bor(x1, x2)
+  def do_execute_integer_2(@_XOR, x1, x2), do: bxor(x1, x2)
+  def do_execute_integer_2(@_ADD, x1, x2), do: x1 + x2
+  def do_execute_integer_2(@_SUB, x1, x2), do: x1 - x2
+  def do_execute_integer_2(@_MUL, x1, x2), do: x1 * x2
+  def do_execute_integer_2(@_DIV, x1, x2), do: x1 / x2
+  def do_execute_integer_2(@_MOD, x1, x2), do: rem(x1, x2)
+  def do_execute_integer_2(@_SHL, x1, x2), do: x1 <<< x2
+  def do_execute_integer_2(@_SHR, x1, x2), do: x1 >>> x2
+  def do_execute_integer_2(@_NUMEQUAL, x1, x2), do: if(x1 == x2, do: 1, else: 0)
+  def do_execute_integer_2(@_NUMNOTEQUAL, x1, x2), do: if(x1 != x2, do: 1, else: 0)
+  def do_execute_integer_2(@_LT, x1, x2), do: if(x1 < x2, do: 1, else: 0)
+  def do_execute_integer_2(@_GT, x1, x2), do: if(x1 > x2, do: 1, else: 0)
+  def do_execute_integer_2(@_LTE, x1, x2), do: if(x1 <= x2, do: 1, else: 0)
+  def do_execute_integer_2(@_GTE, x1, x2), do: if(x1 >= x2, do: 1, else: 0)
+  def do_execute_integer_2(@_MIN, x1, x2), do: min(x1, x2)
+  def do_execute_integer_2(@_MAX, x1, x2), do: max(x1, x2)
 
   defp get_integer(value) when is_integer(value), do: value
 

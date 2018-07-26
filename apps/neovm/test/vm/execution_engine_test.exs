@@ -24,6 +24,18 @@ defmodule NeoVM.ExecutionEngineTest do
            } == ExecutionEngine.execute(binary)
   end
 
+  test "AND" do
+    assert %{stack: [8]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x0B, 0x84>>)
+  end
+
+  test "OR" do
+    assert %{stack: [11]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x03, 0x85>>)
+  end
+
+  test "XOR" do
+    assert %{stack: [3]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x0B, 0x86>>)
+  end
+
   test "ADD" do
     assert %{stack: [3]} == ExecutionEngine.execute(<<0x01, 0x01, 0x01, 0x02, 0x93>>)
   end
@@ -94,5 +106,44 @@ defmodule NeoVM.ExecutionEngineTest do
   test "MAX" do
     assert %{stack: [8]} == ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x08, 0xA4>>)
     assert %{stack: [8]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x07, 0xA4>>)
+  end
+
+  test "INVERT" do
+    assert %{stack: [-8]} == ExecutionEngine.execute(<<0x01, 0x07, 0x83>>)
+  end
+
+  test "INC" do
+    assert %{stack: [8]} == ExecutionEngine.execute(<<0x01, 0x07, 0x8B>>)
+  end
+
+  test "DEC" do
+    assert %{stack: [6]} == ExecutionEngine.execute(<<0x01, 0x07, 0x8C>>)
+  end
+
+  test "SIGN" do
+    assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x07, 0x8D>>)
+    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x00, 0x8D>>)
+    assert %{stack: [-1]} == ExecutionEngine.execute(<<0x01, 0xFF, 0x8D>>)
+  end
+
+  test "NEGATE" do
+    assert %{stack: [-7]} == ExecutionEngine.execute(<<0x01, 0x07, 0x8F>>)
+    assert %{stack: [2]} == ExecutionEngine.execute(<<0x01, 0xFE, 0x8F>>)
+  end
+
+  test "ABS" do
+    assert %{stack: [7]} == ExecutionEngine.execute(<<0x01, 0x07, 0x90>>)
+    assert %{stack: [2]} == ExecutionEngine.execute(<<0x01, 0xFE, 0x90>>)
+  end
+
+  test "NOT" do
+    assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x00, 0x91>>)
+    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x01, 0x91>>)
+    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x02, 0x91>>)
+  end
+
+  test "NZ" do
+    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x00, 0x92>>)
+    assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x01, 0x92>>)
   end
 end
