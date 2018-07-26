@@ -64,7 +64,12 @@ defmodule Neoscan.BlocksCache do
       if Enum.count(blocks1) == max(cache_min - min, 0) and
            Enum.count(blocks2) == max(max - cache_max, 0) do
         segment_tree = update_segment_tree(update_segment_tree(segment_tree, blocks1), blocks2)
-        %{segment_tree: segment_tree, min: min, max: cache_max + Enum.count(blocks2)}
+
+        %{
+          segment_tree: segment_tree,
+          min: min(min, cache_min),
+          max: cache_max + Enum.count(blocks2)
+        }
       else
         state
       end
