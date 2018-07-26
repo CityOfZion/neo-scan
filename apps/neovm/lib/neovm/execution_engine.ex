@@ -152,10 +152,10 @@ defmodule NeoVM.ExecutionEngine do
   #  @_VERIFY 0xAD
   #  @_CHECKMULTISIG 0xAE
   #
-  #  #  Array
-  #  @_ARRAYSIZE 0xC0
+  #  Array
+  @_ARRAYSIZE 0xC0
   @_PACK 0xC1
-  #  @_UNPACK 0xC2
+  @_UNPACK 0xC2
   #  @_PICKITEM 0xC3
   #  @_SETITEM 0xC4
   #  # Used as a reference type
@@ -194,11 +194,6 @@ defmodule NeoVM.ExecutionEngine do
     {rest, %{state | stack: [opcode - @_PUSH1 + 1 | state.stack]}}
   end
 
-  def do_execute(<<@_PACK, rest::binary>>, %{stack: [size | stack]} = state) do
-    {list, stack} = Enum.split(stack, size)
-    {rest, %{state | stack: [list | stack]}}
-  end
-
   def do_execute(<<opcode, rest::binary>>, %{stack: [x1 | stack]} = state)
       when opcode == @_INVERT or (opcode >= @_INC and opcode <= @_NZ) do
     {rest, %{state | stack: [do_execute_integer_1(opcode, get_integer(x1)) | stack]}}
@@ -229,6 +224,26 @@ defmodule NeoVM.ExecutionEngine do
 
   def do_execute(<<@_BOOLOR, rest::binary>>, %{stack: [b, a | stack]} = state) do
     {rest, %{state | stack: [get_boolean(a) or get_boolean(b) | stack]}}
+  end
+
+  def do_execute(<<@_ARRAYSIZE, rest::binary>>, %{stack: [value | stack]} = state)
+      when is_binary(value) do
+    {rest, %{state | stack: [byte_size(value) | stack]}}
+  end
+
+  def do_execute(<<@_ARRAYSIZE, rest::binary>>, %{stack: [value | stack]} = state)
+      when is_list(value) or is_map(value) do
+    {rest, %{state | stack: [Enum.count(value) | stack]}}
+  end
+
+  def do_execute(<<@_PACK, rest::binary>>, %{stack: [size | stack]} = state) do
+    {list, stack} = Enum.split(stack, size)
+    {rest, %{state | stack: [Enum.reverse(list) | stack]}}
+  end
+
+  def do_execute(<<@_UNPACK, rest::binary>>, %{stack: [value | stack]} = state)
+      when is_list(value) do
+    {rest, %{state | stack: [Enum.count(value) | Enum.reverse(value) ++ stack]}}
   end
 
   def do_execute_integer_1(@_INVERT, x1), do: ~~~x1
