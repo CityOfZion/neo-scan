@@ -1,4 +1,4 @@
-defmodule NeoVM.Disassembler2 do
+defmodule NeoVM.ExecutionEngine do
   import Bitwise
 
   # An empty array of bytes is pushed onto the stack.
@@ -222,22 +222,22 @@ defmodule NeoVM.Disassembler2 do
   #  @_BOOLAND 0x9A
   #  # If a or b is not 0, the output is 1. Otherwise 0.
   #  @_BOOLOR 0x9B
-  #  # Returns 1 if the numbers are equal, 0 otherwise.
-  #  @_NUMEQUAL 0x9C
-  #  # Returns 1 if the numbers are not equal, 0 otherwise.
-  #  @_NUMNOTEQUAL 0x9E
-  #  # Returns 1 if a is less than b, 0 otherwise.
-  #  @_LT 0x9F
-  #  # Returns 1 if a is greater than b, 0 otherwise.
-  #  @_GT 0xA0
-  #  # Returns 1 if a is less than or equal to b, 0 otherwise.
-  #  @_LTE 0xA1
-  #  # Returns 1 if a is greater than or equal to b, 0 otherwise.
-  #  @_GTE 0xA2
-  #  # Returns the smaller of a and b.
-  #  @_MIN 0xA3
-  #  # Returns the larger of a and b.
-  #  @_MAX 0xA4
+  # Returns 1 if the numbers are equal, 0 otherwise.
+  @_NUMEQUAL 0x9C
+  # Returns 1 if the numbers are not equal, 0 otherwise.
+  @_NUMNOTEQUAL 0x9E
+  # Returns 1 if a is less than b, 0 otherwise.
+  @_LT 0x9F
+  # Returns 1 if a is greater than b, 0 otherwise.
+  @_GT 0xA0
+  # Returns 1 if a is less than or equal to b, 0 otherwise.
+  @_LTE 0xA1
+  # Returns 1 if a is greater than or equal to b, 0 otherwise.
+  @_GTE 0xA2
+  # Returns the smaller of a and b.
+  @_MIN 0xA3
+  # Returns the larger of a and b.
+  @_MAX 0xA4
   #  # Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
   #  @_WITHIN 0xA5
   #
@@ -301,7 +301,7 @@ defmodule NeoVM.Disassembler2 do
   end
 
   def do_execute(<<opcode, rest::binary>>, %{stack: [x2, x1 | stack]} = state)
-      when opcode >= @_ADD and opcode <= @_SHR do
+      when (opcode >= @_ADD and opcode <= @_SHR) or (opcode >= @_NUMEQUAL and opcode <= @_MAX) do
     {rest,
      %{state | stack: [do_execute_arithmectic2(opcode, get_integer(x1), get_integer(x2)) | stack]}}
   end
@@ -313,6 +313,14 @@ defmodule NeoVM.Disassembler2 do
   def do_execute_arithmectic2(@_MOD, x1, x2), do: rem(x1, x2)
   def do_execute_arithmectic2(@_SHL, x1, x2), do: x1 <<< x2
   def do_execute_arithmectic2(@_SHR, x1, x2), do: x1 >>> x2
+  def do_execute_arithmectic2(@_NUMEQUAL, x1, x2), do: if(x1 == x2, do: 1, else: 0)
+  def do_execute_arithmectic2(@_NUMNOTEQUAL, x1, x2), do: if(x1 != x2, do: 1, else: 0)
+  def do_execute_arithmectic2(@_LT, x1, x2), do: if(x1 < x2, do: 1, else: 0)
+  def do_execute_arithmectic2(@_GT, x1, x2), do: if(x1 > x2, do: 1, else: 0)
+  def do_execute_arithmectic2(@_LTE, x1, x2), do: if(x1 <= x2, do: 1, else: 0)
+  def do_execute_arithmectic2(@_GTE, x1, x2), do: if(x1 >= x2, do: 1, else: 0)
+  def do_execute_arithmectic2(@_MIN, x1, x2), do: min(x1, x2)
+  def do_execute_arithmectic2(@_MAX, x1, x2), do: max(x1, x2)
 
   defp get_integer(value) when is_integer(value), do: value
 
