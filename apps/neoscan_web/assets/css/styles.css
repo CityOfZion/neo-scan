@@ -603,6 +603,7 @@ a:hover {
   float: right;
   margin: 0 30px 30px 0;
   width: 160px;
+  background-color: #313164;
 }
 .language-dropdown-options, .transactions-dropdown-options {
   display: none;
@@ -2840,7 +2841,7 @@ SMALL MOBILE MEDIA QUERIES (MAX-WIDTH: 480PX)
 		float: none;
 		text-align: center;
 	}
-    
+
     .total-gas-balance {
         float: none;
         text-align: center;
