@@ -1,6 +1,5 @@
 defmodule NeoVM.ExecutionEngine do
   import Bitwise
-  import NeoVM.Crypto
   alias NeoVM.Crypto
   # An empty array of bytes is pushed onto the stack.
   #  @_PUSH0 0x00
@@ -196,36 +195,6 @@ defmodule NeoVM.ExecutionEngine do
     {rest, %{state | stack: [opcode - @_PUSH1 + 1 | state.stack]}}
   end
 
-  def do_execute(<<@_SHA256, rest::binary>>, %{stack: [x | stack]} = state) do
-    hash = Crypto.sha256(get_binary(x))
-    {rest, %{state | stack: [hash | stack]}}
-  end
-
-  def do_execute(<<@_SHA1, rest::binary>>, %{stack: [x | stack]} = state) do
-    hash = Crypto.sha1(get_binary(x))
-    {rest, %{state | stack: [hash | stack]}}
-  end
-
-  def do_execute(<<@_RIPEMD160, rest::binary>>, %{stack: [x | stack]} = state) do
-    hash = Crypto.ripemd160(get_binary(x))
-    {rest, %{state | stack: [hash | stack]}}
-  end
-
-  def do_execute(<<@_HASH160, rest::binary>>, %{stack: [x | stack]} = state) do
-    hash = Crypto.hash160(get_binary(x))
-    {rest, %{state | stack: [hash | stack]}}
-  end
-
-  def do_execute(<<@_HASH256, rest::binary>>, %{stack: [x | stack]} = state) do
-    hash = Crypto.hash256(get_binary(x))
-    {rest, %{state | stack: [hash | stack]}}
-  end
-
-  def do_execute(<<@_PACK, rest::binary>>, %{stack: [size | stack]} = state) do
-    {list, stack} = Enum.split(stack, size)
-    {rest, %{state | stack: [list | stack]}}
-  end
-
   def do_execute(<<opcode, rest::binary>>, %{stack: [x1 | stack]} = state)
       when opcode == @_INVERT or (opcode >= @_INC and opcode <= @_NZ) do
     {rest, %{state | stack: [do_execute_integer_1(opcode, get_integer(x1)) | stack]}}
@@ -278,6 +247,31 @@ defmodule NeoVM.ExecutionEngine do
     {rest, %{state | stack: [Enum.count(value) | Enum.reverse(value) ++ stack]}}
   end
 
+  def do_execute(<<@_SHA256, rest::binary>>, %{stack: [x | stack]} = state) do
+    hash = Crypto.sha256(get_binary(x))
+    {rest, %{state | stack: [hash | stack]}}
+  end
+
+  def do_execute(<<@_SHA1, rest::binary>>, %{stack: [x | stack]} = state) do
+    hash = Crypto.sha1(get_binary(x))
+    {rest, %{state | stack: [hash | stack]}}
+  end
+
+  def do_execute(<<@_RIPEMD160, rest::binary>>, %{stack: [x | stack]} = state) do
+    hash = Crypto.ripemd160(get_binary(x))
+    {rest, %{state | stack: [hash | stack]}}
+  end
+
+  def do_execute(<<@_HASH160, rest::binary>>, %{stack: [x | stack]} = state) do
+    hash = Crypto.hash160(get_binary(x))
+    {rest, %{state | stack: [hash | stack]}}
+  end
+
+  def do_execute(<<@_HASH256, rest::binary>>, %{stack: [x | stack]} = state) do
+    hash = Crypto.hash256(get_binary(x))
+    {rest, %{state | stack: [hash | stack]}}
+  end
+
   def do_execute_integer_1(@_INVERT, x1), do: ~~~x1
   def do_execute_integer_1(@_INC, x1), do: x1 + 1
   def do_execute_integer_1(@_DEC, x1), do: x1 - 1
@@ -327,4 +321,10 @@ defmodule NeoVM.ExecutionEngine do
   defp get_boolean(0), do: false
   defp get_boolean(value) when is_integer(value), do: true
   defp get_boolean(value) when is_binary(value), do: get_boolean(get_integer(value))
+
+  # Convert stackitems to binary
+  defp get_binary(true), do: <<1>>
+  defp get_binary(false), do: <<0>>
+  defp get_binary(x) when is_binary(x), do: x
+  defp get_binary(x) when is_integer(x), do: :binary.encode_unsigned(x, :big)
 end

@@ -147,7 +147,6 @@ defmodule NeoVM.ExecutionEngineTest do
     assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x01, 0x92>>)
   end
 
-
   test "SHA256" do
     assert %{
              stack: [
@@ -191,6 +190,7 @@ defmodule NeoVM.ExecutionEngineTest do
                  79, 252, 235, 104>>
              ]
            } == ExecutionEngine.execute(<<0x01, 0x00, 0xA9>>)
+  end
 
   test "WITHIN" do
     assert %{stack: [true]} ==
@@ -238,6 +238,5 @@ defmodule NeoVM.ExecutionEngineTest do
   test "UNPACK" do
     assert %{stack: [3, 3, 2, 1]} ==
              ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x53, 0xC1, 0xC2>>)
-
   end
 end

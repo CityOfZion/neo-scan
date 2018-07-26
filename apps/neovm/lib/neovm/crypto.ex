@@ -26,10 +26,4 @@ defmodule NeoVM.Crypto do
   #     _ -> nil
   #   end
   # end
-
-  # Convert stackitems to binary
-  def get_binary(true), do: 1
-  def get_binary(false), do: 0
-  def get_binary(x) when is_binary(x), do: x
-  def get_binary(x) when is_number(x), do: :binary.encode_unsigned(x, :big)
 end
