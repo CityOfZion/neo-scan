@@ -1,6 +1,4 @@
 defmodule Neoscan.Transactions do
-
-
   @moduledoc """
   The boundary for the Transactions system.
   """

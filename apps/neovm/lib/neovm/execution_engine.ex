@@ -243,13 +243,14 @@ defmodule NeoVM.ExecutionEngine do
   #  @_WITHIN 0xA5
   #
   #  #  Crypto
-   @_RIPEMD160 0xA6 #  The input is hashed using RIPEMD-160.
+  #  The input is hashed using RIPEMD-160.
+  @_RIPEMD160 0xA6
   #  # The input is hashed using SHA-1.
-   @_SHA1 0xA7
+  @_SHA1 0xA7
   #  # The input is hashed using SHA-256.
-   @_SHA256 0xA8
-   @_HASH160 0xA9
-   @_HASH256 0xAA
+  @_SHA256 0xA8
+  @_HASH160 0xA9
+  @_HASH256 0xAA
   #  @_CHECKSIG 0xAC
   #  @_VERIFY 0xAD
   #  @_CHECKMULTISIG 0xAE
@@ -296,27 +297,29 @@ defmodule NeoVM.ExecutionEngine do
     {rest, %{state | stack: [opcode - @_PUSH1 + 1 | state.stack]}}
   end
 
-  def do_execute(<<@_SHA256, rest::binary>>, %{stack: [ x | stack]} = state) do
-    hash = Crypto.sha256(bin(x))
-    {rest, %{state | stack: [ hash | stack]}}
+  def do_execute(<<@_SHA256, rest::binary>>, %{stack: [x | stack]} = state) do
+    hash = Crypto.sha256(get_binary(x))
+    {rest, %{state | stack: [hash | stack]}}
   end
 
-  def do_execute(<<@_SHA1, rest::binary>>, %{stack: [ x | stack]} = state) do
-    hash = Crypto.sha1(bin(x))
-    {rest, %{state | stack: [ hash | stack]}}
+  def do_execute(<<@_SHA1, rest::binary>>, %{stack: [x | stack]} = state) do
+    hash = Crypto.sha1(get_binary(x))
+    {rest, %{state | stack: [hash | stack]}}
   end
 
-  def do_execute(<<@_RIPEMD160, rest::binary>>, %{stack: [ x | stack]} = state) do
-    hash = Crypto.ripemd160(bin(x))
-    {rest, %{state | stack: [ hash | stack]}}
+  def do_execute(<<@_RIPEMD160, rest::binary>>, %{stack: [x | stack]} = state) do
+    hash = Crypto.ripemd160(get_binary(x))
+    {rest, %{state | stack: [hash | stack]}}
   end
-  def do_execute(<<@_HASH160, rest::binary>>, %{stack: [ x | stack]} = state) do
-    hash = Crypto.hash160(bin(x))
-    {rest, %{state | stack: [ hash | stack]}}
+
+  def do_execute(<<@_HASH160, rest::binary>>, %{stack: [x | stack]} = state) do
+    hash = Crypto.hash160(get_binary(x))
+    {rest, %{state | stack: [hash | stack]}}
   end
-  def do_execute(<<@_HASH256, rest::binary>>, %{stack: [ x | stack]} = state) do
-    hash = Crypto.hash256(bin(x))
-    {rest, %{state | stack: [ hash | stack]}}
+
+  def do_execute(<<@_HASH256, rest::binary>>, %{stack: [x | stack]} = state) do
+    hash = Crypto.hash256(get_binary(x))
+    {rest, %{state | stack: [hash | stack]}}
   end
 
   def do_execute(<<@_PACK, rest::binary>>, %{stack: [size | stack]} = state) do
