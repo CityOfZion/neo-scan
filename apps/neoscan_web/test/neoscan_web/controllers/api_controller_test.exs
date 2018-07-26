@@ -112,8 +112,6 @@ defmodule NeoscanWeb.ApiControllerTest do
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
-    :ets.insert(Neoscan.BlocksCache, {:min, nil})
-    :ets.insert(Neoscan.BlocksCache, {:max, nil})
     vout1 = insert(:vout, %{start_block_index: 4, value: 5.0, asset_hash: @neo_asset_hash})
 
     vout2 =
@@ -134,16 +132,16 @@ defmodule NeoscanWeb.ApiControllerTest do
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
-    insert(:block, %{index: 2, total_sys_fee: 6.0})
-    insert(:block, %{index: 4, total_sys_fee: 1.0})
-    insert(:block, %{index: 5, total_sys_fee: 5.0})
-    insert(:block, %{index: 6, total_sys_fee: 44.0})
-    insert(:block, %{index: 9, total_sys_fee: 12.0})
-    insert(:block, %{index: 10, total_sys_fee: 12.0})
-    insert(:block, %{index: 11, total_sys_fee: 12.0})
-    insert(:block, %{index: 12, total_sys_fee: 12.0})
-    insert(:block, %{index: 13, total_sys_fee: 12.0})
-    insert(:block, %{index: 14, total_sys_fee: 12.0})
+    insert(:block, %{index: 2, total_sys_fee: 0.0})
+    insert(:block, %{index: 4, total_sys_fee: 0.0})
+    insert(:block, %{index: 5, total_sys_fee: 0.0})
+    insert(:block, %{index: 6, total_sys_fee: 0.0})
+    insert(:block, %{index: 9, total_sys_fee: 0.0})
+    insert(:block, %{index: 10, total_sys_fee: 0.0})
+    insert(:block, %{index: 11, total_sys_fee: 0.0})
+    insert(:block, %{index: 12, total_sys_fee: 0.0})
+    insert(:block, %{index: 13, total_sys_fee: 0.0})
+    insert(:block, %{index: 14, total_sys_fee: 0.0})
     # current index will be 9
 
     address_hash = Base58.encode(vout1.address_hash)
@@ -152,7 +150,7 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     assert %{
              "address" => address_hash,
-             "unclaimed" => 6.0e-6
+             "unclaimed" => 3.2e-6
            } == json_response(conn, 200)
   end
 
@@ -162,8 +160,6 @@ defmodule NeoscanWeb.ApiControllerTest do
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
-    :ets.insert(Neoscan.BlocksCache, {:min, nil})
-    :ets.insert(Neoscan.BlocksCache, {:max, nil})
     vout1 = insert(:vout, %{asset_hash: @neo_asset_hash})
 
     vout2 =
@@ -198,12 +194,6 @@ defmodule NeoscanWeb.ApiControllerTest do
       block_index: 8
     })
 
-    insert(:block, %{index: 2, gas_generated: 7.0, total_sys_fee: 6.0})
-    insert(:block, %{index: 4, gas_generated: 5.0, total_sys_fee: 2.0})
-    insert(:block, %{index: 5, gas_generated: 2.0, total_sys_fee: 5.0})
-    insert(:block, %{index: 6, gas_generated: 4.0, total_sys_fee: 44.0})
-    insert(:block, %{index: 9, gas_generated: 3.0, total_sys_fee: 12.0})
-
     address_hash = Base58.encode(vout1.address_hash)
     conn = get(conn, api_path(conn, :get_claimable, address_hash)) |> BlueBird.ConnLogger.save()
 
@@ -215,9 +205,9 @@ defmodule NeoscanWeb.ApiControllerTest do
                  "generated" => 4.8e-7,
                  "n" => vout4.n,
                  "start_height" => 5,
-                 "sys_fee" => 9.8e-7,
+                 "sys_fee" => 0.0,
                  "txid" => Base.encode16(vout4.transaction_hash, case: :lower),
-                 "unclaimed" => 1.46e-6,
+                 "unclaimed" => 4.8e-7,
                  "value" => 2
                },
                %{
@@ -225,13 +215,13 @@ defmodule NeoscanWeb.ApiControllerTest do
                  "generated" => 1.2e-6,
                  "n" => vout2.n,
                  "start_height" => 3,
-                 "sys_fee" => 3.5e-7,
+                 "sys_fee" => 0.0,
                  "txid" => Base.encode16(vout2.transaction_hash, case: :lower),
-                 "unclaimed" => 1.55e-6,
+                 "unclaimed" => 1.2e-6,
                  "value" => 5
                }
              ],
-             "unclaimed" => 3.01e-6
+             "unclaimed" => 1.68e-6
            } == json_response(conn, 200)
   end
 
