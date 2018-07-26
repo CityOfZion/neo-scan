@@ -1,6 +1,6 @@
 defmodule NeoVM.Crypto do
   @moduledoc """
-    Cryto functions for the neovm
+    Convenience cryto functions for the neovm
   """
 
   def ripemd160(bin), do: :crypto.hash(:ripemd160, bin)
@@ -16,6 +16,7 @@ defmodule NeoVM.Crypto do
     |>sha256
     |> sha256
   end
+
   # def verify(msg,sig,hash,pub_key) do
   #   try do
   #     :public_key.verify(msg, hash, sig, pub_key)
@@ -24,11 +25,11 @@ defmodule NeoVM.Crypto do
   #   end
   # end
 
-  #Convert numbers to binary
+  #Convert stackitems to binary
   def bin(true), do: 1
   def bin(false), do: 0
   def bin(x) when is_binary(x), do: x
-  def bin(x) when is_number(x), do: x #TODO:Need to convert number to binary
+  def bin(x) when is_number(x), do: :binary.encode_unsigned(x,:big)
 
 
 end
