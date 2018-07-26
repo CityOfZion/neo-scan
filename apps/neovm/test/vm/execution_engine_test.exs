@@ -163,4 +163,21 @@ defmodule NeoVM.ExecutionEngineTest do
     assert %{stack: [false]} ==
              ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x01, 0x01, 0x03, 0xA5>>)
   end
+
+  test "EQUAL" do
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x87>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x09, 0x87>>)
+  end
+
+  test "BOOLOR" do
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x9B>>)
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x00, 0x01, 0x09, 0x9B>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x00, 0x01, 0x00, 0x9B>>)
+  end
+
+  test "BOOLAND" do
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x9A>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x00, 0x01, 0x09, 0x9A>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x00, 0x01, 0x00, 0x9A>>)
+  end
 end

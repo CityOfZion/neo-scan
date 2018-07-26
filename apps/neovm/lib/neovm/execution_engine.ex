@@ -5,79 +5,6 @@ defmodule NeoVM.ExecutionEngine do
   #  @_PUSH0 0x00
   # b'\x01-b'\x4B The next opcode bytes is data to be pushed onto the stack
   @_PUSHBYTES1 0x01
-  #  @_PUSHBYTES2 0x02
-  #  @_PUSHBYTES3 0x03
-  #  @_PUSHBYTES4 0x04
-  #  @_PUSHBYTES5 0x05
-  #  @_PUSHBYTES6 0x06
-  #  @_PUSHBYTES7 0x07
-  #  @_PUSHBYTES8 0x08
-  #  @_PUSHBYTES9 0x09
-  #  @_PUSHBYTES10 0x0A
-  #  @_PUSHBYTES11 0x0B
-  #  @_PUSHBYTES12 0x0C
-  #  @_PUSHBYTES13 0x0D
-  #  @_PUSHBYTES14 0x0E
-  #  @_PUSHBYTES15 0x0F
-  #  @_PUSHBYTES16 0x10
-  #  @_PUSHBYTES17 0x11
-  #  @_PUSHBYTES18 0x12
-  #  @_PUSHBYTES19 0x13
-  #  @_PUSHBYTES20 0x14
-  #  @_PUSHBYTES21 0x15
-  #  @_PUSHBYTES22 0x16
-  #  @_PUSHBYTES23 0x17
-  #  @_PUSHBYTES24 0x18
-  #  @_PUSHBYTES25 0x19
-  #  @_PUSHBYTES26 0x1A
-  #  @_PUSHBYTES27 0x1B
-  #  @_PUSHBYTES28 0x1C
-  #  @_PUSHBYTES29 0x1D
-  #  @_PUSHBYTES30 0x1E
-  #  @_PUSHBYTES31 0x1F
-  #  @_PUSHBYTES32 0x20
-  #  @_PUSHBYTES33 0x21
-  #  @_PUSHBYTES34 0x22
-  #  @_PUSHBYTES35 0x23
-  #  @_PUSHBYTES36 0x24
-  #  @_PUSHBYTES37 0x25
-  #  @_PUSHBYTES38 0x26
-  #  @_PUSHBYTES39 0x27
-  #  @_PUSHBYTES40 0x28
-  #  @_PUSHBYTES41 0x29
-  #  @_PUSHBYTES42 0x2A
-  #  @_PUSHBYTES43 0x2B
-  #  @_PUSHBYTES44 0x2C
-  #  @_PUSHBYTES45 0x2D
-  #  @_PUSHBYTES46 0x2E
-  #  @_PUSHBYTES47 0x2F
-  #  @_PUSHBYTES48 0x30
-  #  @_PUSHBYTES49 0x31
-  #  @_PUSHBYTES50 0x32
-  #  @_PUSHBYTES51 0x33
-  #  @_PUSHBYTES52 0x34
-  #  @_PUSHBYTES53 0x35
-  #  @_PUSHBYTES54 0x36
-  #  @_PUSHBYTES55 0x37
-  #  @_PUSHBYTES56 0x38
-  #  @_PUSHBYTES57 0x39
-  #  @_PUSHBYTES58 0x3A
-  #  @_PUSHBYTES59 0x3B
-  #  @_PUSHBYTES60 0x3C
-  #  @_PUSHBYTES61 0x3D
-  #  @_PUSHBYTES62 0x3E
-  #  @_PUSHBYTES63 0x3F
-  #  @_PUSHBYTES64 0x40
-  #  @_PUSHBYTES65 0x41
-  #  @_PUSHBYTES66 0x42
-  #  @_PUSHBYTES67 0x43
-  #  @_PUSHBYTES68 0x44
-  #  @_PUSHBYTES69 0x45
-  #  @_PUSHBYTES70 0x46
-  #  @_PUSHBYTES71 0x47
-  #  @_PUSHBYTES72 0x48
-  #  @_PUSHBYTES73 0x49
-  #  @_PUSHBYTES74 0x4A
   @_PUSHBYTES75 0x4B
   #  # The next byte contains the number of bytes to be pushed onto the stack.
   #  @_PUSHDATA1 0x4C
@@ -89,34 +16,6 @@ defmodule NeoVM.ExecutionEngine do
   #  @_PUSHM1 0x4F
   # The number 1 is pushed onto the stack.
   @_PUSH1 0x51
-  #  # The number 2 is pushed onto the stack.
-  #  @_PUSH2 0x52
-  #  # The number 3 is pushed onto the stack.
-  #  @_PUSH3 0x53
-  #  # The number 4 is pushed onto the stack.
-  #  @_PUSH4 0x54
-  #  # The number 5 is pushed onto the stack.
-  #  @_PUSH5 0x55
-  #  # The number 6 is pushed onto the stack.
-  #  @_PUSH6 0x56
-  #  # The number 7 is pushed onto the stack.
-  #  @_PUSH7 0x57
-  #  # The number 8 is pushed onto the stack.
-  #  @_PUSH8 0x58
-  #  # The number 9 is pushed onto the stack.
-  #  @_PUSH9 0x59
-  #  # The number 10 is pushed onto the stack.
-  #  @_PUSH10 0x5A
-  #  # The number 11 is pushed onto the stack.
-  #  @_PUSH11 0x5B
-  #  # The number 12 is pushed onto the stack.
-  #  @_PUSH12 0x5C
-  #  # The number 13 is pushed onto the stack.
-  #  @_PUSH13 0x5D
-  #  # The number 14 is pushed onto the stack.
-  #  @_PUSH14 0x5E
-  #  # The number 15 is pushed onto the stack.
-  #  @_PUSH15 0x5F
   # The number 16 is pushed onto the stack.
   @_PUSH16 0x60
 
@@ -183,12 +82,12 @@ defmodule NeoVM.ExecutionEngine do
   @_OR 0x85
   # Boolean exclusive or between each bit in the inputs.
   @_XOR 0x86
-  #  # Returns 1 if the inputs are exactly equal, 0 otherwise.
-  #  @_EQUAL 0x87
-  #  # @_OP_EQUALVERIFY 0x88, #  Same as OP_EQUAL, but runs OP_VERIFY afterward.
-  #  # @_OP_RESERVED1 0x89, #  Transaction is invalid unless occuring in an unexecuted OP_IF branch
-  #  # @_OP_RESERVED2 0x8A, #  Transaction is invalid unless occuring in an unexecuted OP_IF branch
-  #
+  # Returns 1 if the inputs are exactly equal, 0 otherwise.
+  @_EQUAL 0x87
+  # @_OP_EQUALVERIFY 0x88, #  Same as OP_EQUAL, but runs OP_VERIFY afterward.
+  # @_OP_RESERVED1 0x89, #  Transaction is invalid unless occuring in an unexecuted OP_IF branch
+  # @_OP_RESERVED2 0x8A, #  Transaction is invalid unless occuring in an unexecuted OP_IF branch
+
   #  Arithmetic
   #  Note: Arithmetic inputs are limited to signed 32-bit integers, but may overflow their output.
   # 1 is added to the input.
@@ -218,10 +117,10 @@ defmodule NeoVM.ExecutionEngine do
   @_SHL 0x98
   # Shifts a right b bits, preserving sign.
   @_SHR 0x99
-  #  # If both a and b are not 0, the output is 1. Otherwise 0.
-  #  @_BOOLAND 0x9A
-  #  # If a or b is not 0, the output is 1. Otherwise 0.
-  #  @_BOOLOR 0x9B
+  # If both a and b are not 0, the output is 1. Otherwise 0.
+  @_BOOLAND 0x9A
+  # If a or b is not 0, the output is 1. Otherwise 0.
+  @_BOOLOR 0x9B
   # Returns 1 if the numbers are equal, 0 otherwise.
   @_NUMEQUAL 0x9C
   # Returns 1 if the numbers are not equal, 0 otherwise.
@@ -320,6 +219,18 @@ defmodule NeoVM.ExecutionEngine do
      }}
   end
 
+  def do_execute(<<@_EQUAL, rest::binary>>, %{stack: [b, a | stack]} = state) do
+    {rest, %{state | stack: [a == b | stack]}}
+  end
+
+  def do_execute(<<@_BOOLAND, rest::binary>>, %{stack: [b, a | stack]} = state) do
+    {rest, %{state | stack: [get_boolean(a) and get_boolean(b) | stack]}}
+  end
+
+  def do_execute(<<@_BOOLOR, rest::binary>>, %{stack: [b, a | stack]} = state) do
+    {rest, %{state | stack: [get_boolean(a) or get_boolean(b) | stack]}}
+  end
+
   def do_execute_integer_1(@_INVERT, x1), do: ~~~x1
   def do_execute_integer_1(@_INC, x1), do: x1 + 1
   def do_execute_integer_1(@_DEC, x1), do: x1 - 1
@@ -364,4 +275,9 @@ defmodule NeoVM.ExecutionEngine do
     <<x::signed-little-integer-size(size)>> = value
     x
   end
+
+  defp get_boolean(value) when is_boolean(value), do: value
+  defp get_boolean(0), do: false
+  defp get_boolean(value) when is_integer(value), do: true
+  defp get_boolean(value) when is_binary(value), do: get_boolean(get_integer(value))
 end
