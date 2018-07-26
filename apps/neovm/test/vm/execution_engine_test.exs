@@ -14,11 +14,11 @@ defmodule NeoVM.ExecutionEngineTest do
              stack: [
                "transfer",
                [
-                 <<28, 101, 188, 56, 148, 146, 249, 177, 76, 138, 112, 139, 186, 29, 1, 60, 66,
-                   141, 153, 9>>,
+                 <<128, 148, 111, 207, 6, 0, 0, 0>>,
                  <<13, 225, 6, 213, 163, 156, 162, 184, 58, 42, 70, 196, 109, 239, 136, 188, 97,
                    97, 152, 20>>,
-                 <<128, 148, 111, 207, 6, 0, 0, 0>>
+                 <<28, 101, 188, 56, 148, 146, 249, 177, 76, 138, 112, 139, 186, 29, 1, 60, 66,
+                   141, 153, 9>>
                ]
              ]
            } == ExecutionEngine.execute(binary)
@@ -65,37 +65,37 @@ defmodule NeoVM.ExecutionEngineTest do
   end
 
   test "NUMEQUAL" do
-    assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x9C>>)
-    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x09, 0x9C>>)
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x9C>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x09, 0x9C>>)
   end
 
   test "NUMNOTEQUAL" do
-    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x9E>>)
-    assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x09, 0x9E>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x9E>>)
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x09, 0x9E>>)
   end
 
   test "LT" do
-    assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x08, 0x9F>>)
-    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x9F>>)
-    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x09, 0x01, 0x08, 0x9F>>)
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x08, 0x9F>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x9F>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x09, 0x01, 0x08, 0x9F>>)
   end
 
   test "GT" do
-    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x08, 0xA0>>)
-    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0xA0>>)
-    assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x09, 0x01, 0x08, 0xA0>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x08, 0xA0>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0xA0>>)
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x09, 0x01, 0x08, 0xA0>>)
   end
 
   test "LTE" do
-    assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x08, 0xA1>>)
-    assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0xA1>>)
-    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x09, 0x01, 0x08, 0xA1>>)
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x08, 0xA1>>)
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0xA1>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x09, 0x01, 0x08, 0xA1>>)
   end
 
   test "GTE" do
-    assert %{stack: [0]} == ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x08, 0xA2>>)
-    assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0xA2>>)
-    assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x09, 0x01, 0x08, 0xA2>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x08, 0xA2>>)
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0xA2>>)
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x09, 0x01, 0x08, 0xA2>>)
   end
 
   test "MIN" do
@@ -147,6 +147,7 @@ defmodule NeoVM.ExecutionEngineTest do
     assert %{stack: [1]} == ExecutionEngine.execute(<<0x01, 0x01, 0x92>>)
   end
 
+
   test "SHA256" do
     assert %{
              stack: [
@@ -190,5 +191,53 @@ defmodule NeoVM.ExecutionEngineTest do
                  79, 252, 235, 104>>
              ]
            } == ExecutionEngine.execute(<<0x01, 0x00, 0xA9>>)
+
+  test "WITHIN" do
+    assert %{stack: [true]} ==
+             ExecutionEngine.execute(<<0x01, 0x02, 0x01, 0x01, 0x01, 0x03, 0xA5>>)
+
+    assert %{stack: [true]} ==
+             ExecutionEngine.execute(<<0x01, 0x01, 0x01, 0x01, 0x01, 0x03, 0xA5>>)
+
+    assert %{stack: [false]} ==
+             ExecutionEngine.execute(<<0x01, 0x03, 0x01, 0x01, 0x01, 0x03, 0xA5>>)
+
+    assert %{stack: [false]} ==
+             ExecutionEngine.execute(<<0x01, 0x00, 0x01, 0x01, 0x01, 0x03, 0xA5>>)
+
+    assert %{stack: [false]} ==
+             ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x01, 0x01, 0x03, 0xA5>>)
+  end
+
+  test "EQUAL" do
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x87>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x09, 0x87>>)
+  end
+
+  test "BOOLOR" do
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x9B>>)
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x00, 0x01, 0x09, 0x9B>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x00, 0x01, 0x00, 0x9B>>)
+  end
+
+  test "BOOLAND" do
+    assert %{stack: [true]} == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x08, 0x9A>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x00, 0x01, 0x09, 0x9A>>)
+    assert %{stack: [false]} == ExecutionEngine.execute(<<0x01, 0x00, 0x01, 0x00, 0x9A>>)
+  end
+
+  test "ARRAYSIZE" do
+    assert %{stack: [3]} == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x53, 0xC1, 0xC0>>)
+    assert %{stack: [3]} == ExecutionEngine.execute(<<0x03, 0x52, 0x53, 0x53, 0xC0>>)
+  end
+
+  test "PACK" do
+    assert %{stack: [[1, 2, 3]]} == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x53, 0xC1>>)
+  end
+
+  test "UNPACK" do
+    assert %{stack: [3, 3, 2, 1]} ==
+             ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x53, 0xC1, 0xC2>>)
+
   end
 end
