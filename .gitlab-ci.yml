@@ -29,7 +29,7 @@ test:
     - mix local.hex --force
     - mix deps.get
     - mix format --check-formatted
-    - mix coveralls.post -u --token "${COVERALLS_REPO_TOKEN}" --branch "${CI_COMMIT_REF_NAME}" --message "${CI_COMMIT_TITLE}" --sha "${CI_COMMIT_SHA}" --service_name "gitlab"
+    - mix coveralls.post -u --token "${COVERALLS_REPO_TOKEN}" --branch "${CI_COMMIT_REF_NAME}" --message "${CI_COMMIT_TITLE}" --sha "${CI_COMMIT_SHA}"
     - rm -Rf _build/test/lib/neo*
   artifacts:
     paths:
