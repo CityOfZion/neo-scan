@@ -16,7 +16,7 @@ before_script:
 
 test:
   stage: test
-  image: bitwalker/alpine-elixir-phoenix:1.6.5
+  image: bitwalker/alpine-elixir-phoenix:1.7.0
   services:
     - postgres
   cache:

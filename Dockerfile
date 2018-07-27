@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-elixir-phoenix:1.6.5 as release
+FROM bitwalker/alpine-elixir-phoenix:1.7.0 as release
 
 COPY . /code
 
@@ -14,7 +14,7 @@ RUN cd /code && mix release --env=prod
 RUN mkdir /export
 RUN RELEASE_DIR=`ls -d /code/_build/prod/rel/neoscan/releases/*/` && tar -xf "$RELEASE_DIR/neoscan.tar.gz" -C /export
 
-FROM bitwalker/alpine-elixir:1.6.5
+FROM bitwalker/alpine-elixir:1.7.0
 
 COPY --from=release --chown=default:root /export/ /opt/app
 
