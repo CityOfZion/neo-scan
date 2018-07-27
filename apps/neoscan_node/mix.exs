@@ -60,7 +60,7 @@ defmodule NeoscanNode.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:hackney, "~> 1.11", override: true},
+      {:hackney, "~> 1.13", override: true},
       {:poison, "~> 3.1"},
       {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
       {:excoveralls, "~> 0.8", only: :test}
