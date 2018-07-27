@@ -17,7 +17,7 @@ end
 
 release :neoscan do
   set version: current_version(:neoscan)
-  set commands: ["migrate": "rel/commands/migrate.sh"]
+  set commands: [migrate: "rel/commands/migrate.sh"]
   set applications: [
         :runtime_tools,
         :neoprice,
