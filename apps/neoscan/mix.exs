@@ -51,7 +51,8 @@ defmodule Neoscan.Mixfile do
       {:ex_machina, "~> 2.0", only: :test},
       {:excoveralls, "~> 0.8", only: :test},
       {:poison, "~> 3.1"},
-      {:scrivener_ecto, "~> 1.3"}
+      {:scrivener_ecto, "~> 1.3"},
+      {:segment_tree, "~> 0.1.0"}
     ]
   end
 
