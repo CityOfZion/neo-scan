@@ -3,45 +3,89 @@ defmodule NeoNotification.HTTPPoisonWrapper do
 
   @notification_url "http://fake-notification-server"
 
-  @tokens %{
+  @tokens_page_1 %{
     "current_height" => 2_326_419,
-    "message" => "",
-    "page" => 0,
-    "page_len" => 500,
+    "message" => "Results for tokens",
+    "page" => 1,
+    "page_len" => 1,
     "results" => [
       %{
-        "block" => 2_120_069,
-        "contract" => %{
-          "author" => "Loopring",
-          "code" => %{
-            "hash" => "0xcb9f3b7c6fb1cf2c13a40637c189bdd066a272b4",
-            "parameters" => "0710",
-            "returntype" => 5,
-            "script" => ""
-          },
-          "code_version" => "1",
-          "description" => "LrnToken",
-          "email" => "@",
-          "name" => "lrnToken",
-          "properties" => %{
-            "dynamic_invoke" => false,
-            "storage" => true
-          },
-          "version" => 0
-        },
+        "block" => 2_120_075,
+        "tx" => "0xd7d97c3fc600ee22170f2a66a9b5c83a2122e8c02c6517d81c99d3efedf886d3",
         "token" => %{
-          "contract_address" => "AQV236N8gvwsPpNkMeVFK5T8gSTriU1gri",
-          "decimals" => 8,
           "name" => "Loopring Neo Token",
+          "symbol" => "LRN",
+          "decimals" => 8,
           "script_hash" => "0x06fa8be9b6609d963e8fc63977b9f8dc5f10895f",
-          "symbol" => "LRN"
+          "contract_address" => "AQV236N8gvwsPpNkMeVFK5T8gSTriU1gri"
         },
-        "tx" => "0xe708a3e7697d89b9d3775399dcee22ffffed9602c4077968a66e059a4cccbe25",
-        "type" => "SmartContract.Contract.Create"
+        "contract" => %{
+          "version" => 0,
+          "hash" => "0x06fa8be9b6609d963e8fc63977b9f8dc5f10895f",
+          "script" => nil,
+          "parameters" => [
+            "String",
+            "Array"
+          ],
+          "returntype" => "ByteArray",
+          "name" => "lrnToken",
+          "code_version" => "1",
+          "author" => "Loopring",
+          "email" => "@",
+          "description" => "LrnToken",
+          "properties" => %{
+            "storage" => true,
+            "dynamic_invoke" => false
+          }
+        },
+        "key" => "0x065f89105fdcf8b97739c68f3e969d60b6e98bfa06"
       }
     ],
-    "total" => 1,
-    "total_pages" => 1
+    "total" => 2,
+    "total_pages" => 2
+  }
+
+  @tokens_page_2 %{
+    "current_height" => 2_326_419,
+    "message" => "Results for tokens",
+    "page" => 2,
+    "page_len" => 1,
+    "results" => [
+      %{
+        "block" => 1_982_259,
+        "tx" => "0x449b6f8e305ea79bc9c10cdc096cff0a2b5d7ab94fe42b8c85ccb24a500baeeb",
+        "token" => %{
+          "name" => "Orbis",
+          "symbol" => "OBT",
+          "decimals" => 8,
+          "script_hash" => "0x0e86a40588f715fcaf7acd1812d50af478e6e917",
+          "contract_address" => "AHxKPazwxuL1rDBEbodogyf24zzASxwRRz"
+        },
+        "contract" => %{
+          "code" => %{},
+          "version" => 0,
+          "hash" => "0x0e86a40588f715fcaf7acd1812d50af478e6e917",
+          "script" => "0x12",
+          "parameters" => [
+            "String",
+            "Array"
+          ],
+          "returntype" => "ByteArray",
+          "name" => "Orbis",
+          "code_version" => "2.00",
+          "author" => "The Orbis Team",
+          "email" => "admin@orbismesh.com",
+          "description" => "Orbis Token (OBT)",
+          "properties" => %{
+            "storage" => true,
+            "dynamic_invoke" => false
+          }
+        },
+        "key" => "0x0617e9e678f40ad51218cd7aaffc15f78805a4860e"
+      }
+    ],
+    "total" => 2,
+    "total_pages" => 2
   }
 
   def get("#{@notification_url}/notifications/block/0?page=1", _, _) do
@@ -190,11 +234,26 @@ defmodule NeoNotification.HTTPPoisonWrapper do
     }
   end
 
+  def get("#{@notification_url}/notifications/block/123457?page=1", _, _) do
+    {:error, :timeout}
+  end
+
   def get("#{@notification_url}/tokens?page=1", _, _) do
     {
       :ok,
       %HTTPoison.Response{
-        body: Poison.encode!(@tokens),
+        body: Poison.encode!(@tokens_page_1),
+        headers: [],
+        status_code: 200
+      }
+    }
+  end
+
+  def get("#{@notification_url}/tokens?page=2", _, _) do
+    {
+      :ok,
+      %HTTPoison.Response{
+        body: Poison.encode!(@tokens_page_2),
         headers: [],
         status_code: 200
       }

@@ -105,7 +105,6 @@ defmodule NeoNode do
 
   # handles a sucessful response
   defp handle_body({:ok, %{"result" => result}}), do: {:ok, result}
-  defp handle_body({:ok, %{"results" => results}}), do: {:ok, results}
   defp handle_body({:ok, %{"error" => error}}), do: {:error, error}
   defp handle_body(error), do: {:error, "body error: #{inspect(error)}"}
 end

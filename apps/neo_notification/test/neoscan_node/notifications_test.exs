@@ -64,22 +64,51 @@ defmodule NeoNotificationTest do
   test "get_tokens/2" do
     assert [
              %{
-               block: 2_120_069,
+               block: 1_982_259,
+               contract: %{
+                 properties: %{"dynamic_invoke" => false, "storage" => true},
+                 version: 0,
+                 author: "The Orbis Team",
+                 code_version: "2.00",
+                 email: "admin@orbismesh.com",
+                 hash:
+                   <<14, 134, 164, 5, 136, 247, 21, 252, 175, 122, 205, 24, 18, 213, 10, 244, 120,
+                     230, 233, 23>>,
+                 name: "Orbis",
+                 parameters: ["String", "Array"],
+                 return_type: "ByteArray",
+                 script: <<18>>
+               },
+               token: %{
+                 decimals: 8,
+                 contract_address:
+                   <<23, 23, 233, 230, 120, 244, 10, 213, 18, 24, 205, 122, 175, 252, 21, 247,
+                     136, 5, 164, 134, 14, 67, 133, 250, 73>>,
+                 name: "Orbis",
+                 script_hash:
+                   <<14, 134, 164, 5, 136, 247, 21, 252, 175, 122, 205, 24, 18, 213, 10, 244, 120,
+                     230, 233, 23>>,
+                 symbol: "OBT"
+               },
+               transaction_hash:
+                 <<68, 155, 111, 142, 48, 94, 167, 155, 201, 193, 12, 220, 9, 108, 255, 10, 43,
+                   93, 122, 185, 79, 228, 43, 140, 133, 204, 178, 74, 80, 11, 174, 235>>,
+               type: nil
+             },
+             %{
+               block: 2_120_075,
                contract: %{
                  author: "Loopring",
                  code_version: "1",
                  email: "@",
                  hash:
-                   <<203, 159, 59, 124, 111, 177, 207, 44, 19, 164, 6, 55, 193, 137, 189, 208,
-                     102, 162, 114, 180>>,
+                   <<6, 250, 139, 233, 182, 96, 157, 150, 62, 143, 198, 57, 119, 185, 248, 220,
+                     95, 16, 137, 95>>,
                  name: "lrnToken",
-                 parameters: "0710",
-                 properties: %{
-                   "dynamic_invoke" => false,
-                   "storage" => true
-                 },
-                 return_type: 5,
-                 script: "",
+                 parameters: ["String", "Array"],
+                 properties: %{"dynamic_invoke" => false, "storage" => true},
+                 return_type: "ByteArray",
+                 script: nil,
                  version: 0
                },
                token: %{
@@ -94,9 +123,9 @@ defmodule NeoNotificationTest do
                  symbol: "LRN"
                },
                transaction_hash:
-                 <<231, 8, 163, 231, 105, 125, 137, 185, 211, 119, 83, 153, 220, 238, 34, 255,
-                   255, 237, 150, 2, 196, 7, 121, 104, 166, 110, 5, 154, 76, 204, 190, 37>>,
-               type: "SmartContract.Contract.Create"
+                 <<215, 217, 124, 63, 198, 0, 238, 34, 23, 15, 42, 102, 169, 181, 200, 58, 33, 34,
+                   232, 192, 44, 101, 23, 216, 28, 153, 211, 239, 237, 248, 134, 211>>,
+               type: nil
              }
            ] == NeoNotification.get_tokens(@notification_url)
   end
