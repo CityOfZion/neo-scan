@@ -2129,13 +2129,8 @@ defmodule NeoNode.HTTPPoisonWrapper do
     "version" => 0
   }
 
-  def result(result) do
-    %{"result" => result}
-  end
-
-  def error(error) do
-    %{"error" => error}
-  end
+  defp result(result), do: %{"result" => result}
+  defp error(error), do: %{"error" => error}
 
   def post(url, data, headers, opts) do
     result = handle_post(Poison.decode!(data))
@@ -2201,6 +2196,10 @@ defmodule NeoNode.HTTPPoisonWrapper do
     end
   end
 
+  def handle_post(%{"method" => "getblock", "params" => [123_457, _]}) do
+    {:error, :timeout}
+  end
+
   def handle_post(%{
         "params" => [hash, _length],
         "method" => "getblock",
@@ -2253,6 +2252,7 @@ defmodule NeoNode.HTTPPoisonWrapper do
   def block_data(2), do: result(@block2)
   def block_data(123), do: result(@block123)
   def block_data(199), do: result(@block199)
+  def block_data(123_456), do: error("error")
   def block_data(1_444_843), do: result(@block1444843)
   def block_data(2_120_069), do: result(@block2120069)
 

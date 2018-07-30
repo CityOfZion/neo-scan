@@ -3,6 +3,11 @@ defmodule NeoNodeTest do
 
   @fake_node_url "http://fakenode"
 
+  test "post/3" do
+    assert {:ok, _} = NeoNode.post(@fake_node_url, "getblock", [0, 1])
+    assert {:error, _} = NeoNode.post(@fake_node_url, "getblockerror", [0, 1])
+  end
+
   test "get_block_by_height/2" do
     assert {
              :ok,
@@ -182,6 +187,11 @@ defmodule NeoNodeTest do
            } == NeoNode.get_block_by_height(@fake_node_url, 0)
 
     assert {:ok, %{index: 2_120_069}} = NeoNode.get_block_by_height(@fake_node_url, 2_120_069)
+
+    assert {:error, "error"} == NeoNode.get_block_by_height(@fake_node_url, 123_456)
+
+    assert {:error, ":timeout #{@fake_node_url}"} ==
+             NeoNode.get_block_by_height(@fake_node_url, 123_457)
   end
 
   test "get_block_by_hash/2" do
