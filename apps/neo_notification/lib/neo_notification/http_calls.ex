@@ -1,27 +1,13 @@
-defmodule NeoscanNode.HttpCalls do
+defmodule NeoNotification.HttpCalls do
   @moduledoc false
 
   require Logger
 
-  alias NeoscanNode.HttpCalls.HTTPPoisonWrapper
+  alias NeoNotification.HTTPPoisonWrapper
 
   @timeout 5_000
 
   @opts [ssl: [{:versions, [:"tlsv1.2"]}], timeout: @timeout, recv_timeout: @timeout]
-  @headers [{"Content-Type", "application/json"}, {"Accept-Encoding", "gzip"}]
-
-  def post(url, method, params) when is_bitstring(url) do
-    data =
-      Poison.encode!(%{
-        "jsonrpc" => "2.0",
-        "method" => method,
-        "params" => params,
-        "id" => 5
-      })
-
-    result = HTTPPoisonWrapper.post(url, data, @headers, @opts)
-    handle_response(result, url)
-  end
 
   def get(url) when is_bitstring(url) do
     result = HTTPPoisonWrapper.get(url, [], @opts)

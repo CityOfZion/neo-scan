@@ -1,10 +1,10 @@
-defmodule Neoscan.Notifications.NotificationsTest do
+defmodule NeoNotificationTest do
   use ExUnit.Case
 
-  alias NeoscanNode.Notifications
+  @notification_url "http://fake-notification-server"
 
   test "get_block_notifications/2" do
-    assert [] = Notifications.get_block_notifications(1)
+    assert [] = NeoNotification.get_block_notifications(@notification_url, 1)
 
     assert [
              %{
@@ -55,12 +55,13 @@ defmodule Neoscan.Notifications.NotificationsTest do
                    118, 125, 0, 193, 82, 170, 111, 128, 39, 194, 75, 223, 20, 242>>,
                type: "SmartContract.Runtime.Notify"
              }
-           ] == Notifications.get_block_notifications(1_444_843)
+           ] == NeoNotification.get_block_notifications(@notification_url, 1_444_843)
 
-    assert 2771 == Enum.count(Notifications.get_block_notifications(1_444_902))
+    assert 2771 ==
+             Enum.count(NeoNotification.get_block_notifications(@notification_url, 1_444_902))
   end
 
-  test "get_token_notifications/1" do
+  test "get_tokens/2" do
     assert [
              %{
                block: 2_120_069,
@@ -97,10 +98,10 @@ defmodule Neoscan.Notifications.NotificationsTest do
                    255, 237, 150, 2, 196, 7, 121, 104, 166, 110, 5, 154, 76, 204, 190, 37>>,
                type: "SmartContract.Contract.Create"
              }
-           ] == Notifications.get_token_notifications()
+           ] == NeoNotification.get_tokens(@notification_url)
   end
 
-  test "add_notifications/2" do
-    assert 3 == Enum.count(Notifications.get_transfer_block_notifications(1_444_843))
+  test "get_block_transfers/2" do
+    assert 3 == Enum.count(NeoNotification.get_block_transfers(@notification_url, 1_444_843))
   end
 end

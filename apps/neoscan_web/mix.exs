@@ -64,7 +64,8 @@ defmodule NeoscanWeb.Mixfile do
       {:cors_plug, "~> 1.2"},
       {:wobserver, "~> 0.1"},
       {:timex, "~> 3.1"},
-      {:number, "~> 0.5.4"}
+      {:number, "~> 0.5.4"},
+      {:base58, github: "adrienmo/base58"}
     ]
   end
 

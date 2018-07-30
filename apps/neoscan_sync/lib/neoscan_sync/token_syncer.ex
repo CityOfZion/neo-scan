@@ -1,6 +1,5 @@
 defmodule NeoscanSync.TokenSyncer do
   alias Neoscan.Repo
-  alias NeoscanNode.Notifications
   alias Neoscan.Asset
 
   use GenServer
@@ -27,7 +26,7 @@ defmodule NeoscanSync.TokenSyncer do
   end
 
   def sync_tokens do
-    tokens = Notifications.get_token_notifications()
+    tokens = NeoscanNode.get_tokens()
     tokens = Enum.map(tokens, &convert_token_to_asset/1)
     Repo.insert_all(Asset, tokens, on_conflict: :nothing)
   end

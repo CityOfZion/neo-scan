@@ -1,7 +1,7 @@
-defmodule Neoscan.Blockchain.BlockchainTest do
+defmodule NeoNodeTest do
   use ExUnit.Case
 
-  alias NeoscanNode.Blockchain
+  @fake_node_url "http://fakenode"
 
   test "get_block_by_height/2" do
     assert {
@@ -179,25 +179,26 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                ],
                version: 0
              }
-           } == Blockchain.get_block_by_height(0)
+           } == NeoNode.get_block_by_height(@fake_node_url, 0)
 
-    assert {:ok, %{index: 2_120_069}} = Blockchain.get_block_by_height(2_120_069)
+    assert {:ok, %{index: 2_120_069}} = NeoNode.get_block_by_height(@fake_node_url, 2_120_069)
   end
 
   test "get_block_by_hash/2" do
     block_0_hash = "d42561e3d30e15be6400b6df2f328e02d2bf6354c41dce433bc57687c82144bf"
     block_1_hash = "d782db8a38b0eea0d7394e0f007c61c71798867578c77c387c08113903946cc9"
-    assert {:ok, %{index: 0}} = Blockchain.get_block_by_hash(block_0_hash)
-    assert {:ok, %{index: 1}} = Blockchain.get_block_by_hash(block_1_hash)
+    assert {:ok, %{index: 0}} = NeoNode.get_block_by_hash(@fake_node_url, block_0_hash)
+    assert {:ok, %{index: 1}} = NeoNode.get_block_by_hash(@fake_node_url, block_1_hash)
 
     assert {:error, %{"code" => -100, "message" => _message}} =
-             Blockchain.get_block_by_hash(
+             NeoNode.get_block_by_hash(
+               @fake_node_url,
                "0000000000000000000000000000000000000000000000000000000000000000"
              )
   end
 
   test "get_block_count/1" do
-    {:ok, count} = Blockchain.get_block_count()
+    {:ok, count} = NeoNode.get_block_count(@fake_node_url)
     assert 200 == count
   end
 
@@ -227,20 +228,23 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                vouts: [],
                claims: []
              }
-           } == Blockchain.get_transaction(txid)
+           } == NeoNode.get_transaction(@fake_node_url, txid)
 
     assert {:ok, %{scripts: [%{}, %{"contract" => _}]}} =
-             Blockchain.get_transaction(
+             NeoNode.get_transaction(
+               @fake_node_url,
                "fd161ccd87deab812daa433cbc0f8f6468de24f1d708187beef5ab9ada7050f3"
              )
 
     assert {:ok, %{scripts: [%{}, %{}, %{"script" => _}]}} =
-             Blockchain.get_transaction(
+             NeoNode.get_transaction(
+               @fake_node_url,
                "45ced268026de0fcaf7035e4960e860b98fe1ae5122e716d9daac1163f13e534"
              )
 
     assert {:error, %{"code" => -100, "message" => _message}} =
-             Blockchain.get_transaction(
+             NeoNode.get_transaction(
+               @fake_node_url,
                "0000000000000000000000000000000000000000000000000000000000000000"
              )
   end
@@ -273,10 +277,11 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                type: :governing_token,
                version: 0
              }
-           } == Blockchain.get_asset(txid)
+           } == NeoNode.get_asset(@fake_node_url, txid)
 
     assert {:error, %{"code" => -100, "message" => _message}} =
-             Blockchain.get_asset(
+             NeoNode.get_asset(
+               @fake_node_url,
                "0x0000000000000000000000000000000000000000000000000000000000000000"
              )
   end
@@ -303,9 +308,9 @@ defmodule Neoscan.Blockchain.BlockchainTest do
                script: <<1, 31>>,
                version: 0
              }
-           } = Blockchain.get_contract(contract_hash)
+           } = NeoNode.get_contract(@fake_node_url, contract_hash)
 
     assert {:error, %{"code" => -100, "message" => _message}} =
-             Blockchain.get_contract("0x0000000000000000000000000000000000000000")
+             NeoNode.get_contract(@fake_node_url, "0x0000000000000000000000000000000000000000")
   end
 end

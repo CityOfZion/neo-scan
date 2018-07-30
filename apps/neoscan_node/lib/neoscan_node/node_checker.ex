@@ -5,7 +5,6 @@ defmodule NeoscanNode.NodeChecker do
   @update_interval 2_000
   @env_var_prefix "NEO_SEED_"
 
-  alias NeoscanNode.Blockchain
   alias NeoscanNode.EtsProcess
 
   use GenServer
@@ -44,6 +43,10 @@ defmodule NeoscanNode.NodeChecker do
 
   def get_data, do: get(:data)
 
+  def get_random_notification do
+    "http://fake-notification-server"
+  end
+
   def get_random_node do
     nodes = get_nodes()
 
@@ -64,12 +67,12 @@ defmodule NeoscanNode.NodeChecker do
   end
 
   defp get_node_height(url) do
-    {status, count} = Blockchain.get_block_count(url)
+    {status, count} = NeoNode.get_block_count(url)
 
     if status == :ok do
       try do
         height = count - 1
-        {status, _block} = Blockchain.get_block_by_height(url, height)
+        {status, _block} = NeoNode.get_block_by_height(url, height)
 
         if status == :ok do
           {url, height}

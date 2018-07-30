@@ -1,4 +1,4 @@
-defmodule NeoscanNode.Parser do
+defmodule NeoNode.Parser do
   defp parse16("0x" <> rest), do: parse16(rest)
 
   defp parse16(string) do

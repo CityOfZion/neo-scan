@@ -1,10 +1,6 @@
 defmodule NeoscanNodeTest do
   use ExUnit.Case
 
-  test "get_nodes/0" do
-    assert is_list(NeoscanNode.get_nodes())
-  end
-
   test "get_height/0" do
     {:ok, height} = NeoscanNode.get_height()
     assert is_number(height)
