@@ -3,10 +3,11 @@ defmodule NeoscanNode.NodeChecker do
 
   @neo_node_urls Application.fetch_env!(:neoscan_node, :seeds)
   @neo_notification_urls Application.fetch_env!(:neoscan_node, :notification_seeds)
-  @update_interval 2_000
+  @update_interval 100
   @env_var_prefix "NEO_SEED_"
   @env_var_neo_notification "NEO_NOTIFICATIONS_SERVER"
   @retry_interval 1_000
+  @timeout 15_000
 
   alias NeoscanNode.EtsProcess
   use GenServer
@@ -25,15 +26,19 @@ defmodule NeoscanNode.NodeChecker do
   def sync() do
     Process.send_after(self(), :sync, @update_interval)
 
-    live_nodes =
-      get_neo_node_urls()
-      |> pmap(&get_node_height/1, 15_000)
-      |> Enum.filter(&(not is_nil(&1)))
+    task =
+      Task.async(fn ->
+        get_neo_node_urls()
+        |> pmap(&get_node_height/1, @timeout)
+        |> Enum.filter(&(not is_nil(&1)))
+      end)
 
     live_notifications =
       get_neo_notification_urls()
-      |> pmap(&get_notification_height/1, 15_000)
+      |> pmap(&get_notification_height/1, @timeout)
       |> Enum.filter(&(not is_nil(&1)))
+
+    live_nodes = Task.await(task, @timeout)
 
     last_block_index = Enum.max(Enum.map(live_nodes, &elem(&1, 1)), fn -> 0 end)
     set(:last_block_index, last_block_index)
@@ -89,11 +94,11 @@ defmodule NeoscanNode.NodeChecker do
 
   defp get_notification_height(url) do
     case NeoNotification.get_current_height(url) do
-      nil ->
-        nil
-
-      height ->
+      {:ok, height} ->
         {url, height}
+
+      _ ->
+        nil
     end
   end
 

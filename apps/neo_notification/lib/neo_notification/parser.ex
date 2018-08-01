@@ -21,6 +21,8 @@ defmodule NeoNotification.Parser do
     }
   end
 
+  def parse_block_notification(_), do: %{notify_type: :others}
+
   def parse_contract(contract = %{"code" => code}) do
     contract
     |> Map.merge(code)

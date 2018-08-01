@@ -26,9 +26,14 @@ defmodule NeoscanSync.TokenSyncer do
   end
 
   def sync_tokens do
-    tokens = NeoscanNode.get_tokens()
-    tokens = Enum.map(tokens, &convert_token_to_asset/1)
-    Repo.insert_all(Asset, tokens, on_conflict: :nothing)
+    case NeoscanNode.get_tokens() do
+      {:ok, tokens} ->
+        tokens = Enum.map(tokens, &convert_token_to_asset/1)
+        Repo.insert_all(Asset, tokens, on_conflict: :nothing)
+
+      _ ->
+        nil
+    end
   end
 
   def convert_token_to_asset(token) do
