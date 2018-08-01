@@ -7,7 +7,7 @@ defmodule NeoNotification do
   alias NeoNotification.Parser
   require Logger
 
-  @timeout 5_000
+  @timeout 2_000
   @opts [ssl: [{:versions, [:"tlsv1.2"]}], timeout: @timeout, recv_timeout: @timeout]
   #
   def get_block_transfers(url, height) do

@@ -103,21 +103,12 @@ defmodule NeoscanNode.NodeChecker do
   end
 
   defp get_node_height(url) do
-    {status, count} = NeoNode.get_block_count(url)
+    case NeoNode.get_block_count(url) do
+      {:ok, count} ->
+        {url, count - 1}
 
-    if status == :ok do
-      try do
-        height = count - 1
-        {status, _block} = NeoNode.get_block_by_height(url, height)
-
-        if status == :ok do
-          {url, height}
-        end
-      rescue
-        e in FunctionClauseError ->
-          Logger.error("error: #{url} #{inspect(e)}}")
-          nil
-      end
+      _ ->
+        nil
     end
   end
 

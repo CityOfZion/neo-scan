@@ -7,7 +7,7 @@ defmodule NeoNode do
   alias NeoNode.Parser
   alias NeoNode.HTTPPoisonWrapper
 
-  @timeout 5_000
+  @timeout 2_000
 
   @opts [ssl: [{:versions, [:"tlsv1.2"]}], timeout: @timeout, recv_timeout: @timeout]
   @headers [{"Content-Type", "application/json"}, {"Accept-Encoding", "gzip"}]
