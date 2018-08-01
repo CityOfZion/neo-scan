@@ -1,7 +1,7 @@
 defmodule NeoNotification.HTTPPoisonWrapper do
   @moduledoc false
 
-  @notification_url "http://fake-notification-server"
+  @notification_url Application.fetch_env!(:neo_notification, :notification_url_test)
 
   @tokens_page_1 %{
     "current_height" => 2_326_419,
@@ -94,7 +94,7 @@ defmodule NeoNotification.HTTPPoisonWrapper do
       %HTTPoison.Response{
         body:
           Poison.encode!(%{
-            "current_height" => 2_337_751,
+            "current_height" => 2_400_000,
             "message" => "",
             "page" => 0,
             "page_len" => 500,

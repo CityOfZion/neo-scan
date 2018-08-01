@@ -209,7 +209,7 @@ defmodule NeoNodeTest do
 
   test "get_block_count/1" do
     {:ok, count} = NeoNode.get_block_count(@fake_node_url)
-    assert 200 == count
+    assert 2_400_000 == count
   end
 
   test "get_transaction/2" do

@@ -1,7 +1,7 @@
 defmodule NeoNotificationTest do
   use ExUnit.Case
 
-  @notification_url "http://fake-notification-server"
+  @notification_url Application.fetch_env!(:neo_notification, :notification_url_test)
 
   test "get_block_notifications/2" do
     assert [] = NeoNotification.get_block_notifications(@notification_url, 1)
@@ -132,5 +132,9 @@ defmodule NeoNotificationTest do
 
   test "get_block_transfers/2" do
     assert 3 == Enum.count(NeoNotification.get_block_transfers(@notification_url, 1_444_843))
+  end
+
+  test "get_current_height/2" do
+    assert 2_400_000 == NeoNotification.get_current_height(@notification_url)
   end
 end

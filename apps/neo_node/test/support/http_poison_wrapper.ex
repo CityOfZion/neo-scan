@@ -2237,7 +2237,7 @@ defmodule NeoNode.HTTPPoisonWrapper do
   end
 
   def handle_post(%{"params" => [], "method" => "getblockcount", "jsonrpc" => "2.0", "id" => 5}) do
-    body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => 200}))
+    body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => 2_400_000}))
 
     {
       :ok,
@@ -2251,7 +2251,7 @@ defmodule NeoNode.HTTPPoisonWrapper do
   def block_data(1), do: result(@block1)
   def block_data(2), do: result(@block2)
   def block_data(123), do: result(@block123)
-  def block_data(199), do: result(@block199)
+  def block_data(2_399_999), do: result(@block199)
   def block_data(123_456), do: error("error")
   def block_data(1_444_843), do: result(@block1444843)
   def block_data(2_120_069), do: result(@block2120069)

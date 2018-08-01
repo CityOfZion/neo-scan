@@ -10,12 +10,19 @@ defmodule NeoNotification do
   @timeout 5_000
   @opts [ssl: [{:versions, [:"tlsv1.2"]}], timeout: @timeout, recv_timeout: @timeout]
 
-  @gzip_header {"Content-Encoding", "gzip"}
-  @xgzip_header {"Content-Encoding", "x-gzip"}
-
   def get_block_transfers(url, height) do
     notifications = get_block_notifications(url, height)
     Enum.filter(notifications, &(&1.notify_type == :transfer))
+  end
+
+  def get_current_height(url) do
+    case get_block_notifications_page(url, 0, 1) do
+      {:ok, _, current_height, _} ->
+        current_height
+
+      _ ->
+        nil
+    end
   end
 
   def get_block_notifications(url, height) do
@@ -61,34 +68,24 @@ defmodule NeoNotification do
   defp remaining_pages(total_pages), do: 2..total_pages
 
   def get(url) do
-    result = HTTPPoisonWrapper.get(url, [], @opts)
-    handle_response(result, url)
-  end
+    case HTTPPoisonWrapper.get(url, [], @opts) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        body
+        |> Poison.decode()
+        |> handle_body()
 
-  defp has_gzip_headers?(headers), do: @gzip_header in headers or @xgzip_header in headers
-
-  # Handles the response of an HTTP call
-  defp handle_response(
-         {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}},
-         _
-       ) do
-    body
-    |> (&if(has_gzip_headers?(headers), do: :zlib.gunzip(&1), else: &1)).()
-    |> Poison.decode()
-    |> handle_body()
-  end
-
-  defp handle_response({_, result}, url) do
-    message = "#{inspect(result)} #{url}"
-    Logger.debug(message)
-    {:error, message}
+      {_, result} ->
+        message = "#{inspect(result)} #{url}"
+        Logger.debug(message)
+        {:error, message}
+    end
   end
 
   # handles a sucessful response}
-  defp handle_body(
-         {:ok,
-          %{"results" => result, "current_height" => current_height, "total_pages" => total_pages}}
-       ),
+  defp handle_body({
+         :ok,
+         %{"results" => result, "current_height" => current_height, "total_pages" => total_pages}
+       }),
        do: {:ok, result, current_height, total_pages}
 
   defp handle_body({:ok, %{"error" => error}}), do: {:error, error}
