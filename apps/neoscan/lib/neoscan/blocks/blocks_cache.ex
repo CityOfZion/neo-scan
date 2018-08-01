@@ -5,9 +5,9 @@ defmodule Neoscan.BlocksCache do
 
   use GenServer
   alias Neoscan.Blocks
-  alias Neoscan.SegmentTree
 
   @timeout 60_000
+  @max_index 4_000_000
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -15,7 +15,7 @@ defmodule Neoscan.BlocksCache do
 
   @impl true
   def init(:ok) do
-    {:ok, %{min: nil, max: nil, segment_tree: %{}}}
+    {:ok, %{min: nil, max: nil, segment_tree: SegmentTree.new(@max_index, &Kernel.+/2)}}
   end
 
   def get_sys_fees_in_range(_, -1), do: 0
@@ -26,7 +26,7 @@ defmodule Neoscan.BlocksCache do
 
   defp update_segment_tree(segment_tree, blocks) do
     Enum.reduce(blocks, segment_tree, fn %{index: index, total_sys_fee: value}, acc ->
-      SegmentTree.insert_value(acc, index, value)
+      SegmentTree.put(acc, index, value)
     end)
   end
 
@@ -49,7 +49,7 @@ defmodule Neoscan.BlocksCache do
         state
       end
 
-    {:reply, SegmentTree.sum(state.segment_tree, min, max), state}
+    {:reply, SegmentTree.aggregate(state.segment_tree, min, max), state}
   end
 
   def handle_call(
@@ -74,6 +74,6 @@ defmodule Neoscan.BlocksCache do
         state
       end
 
-    {:reply, SegmentTree.sum(state.segment_tree, min, max), state}
+    {:reply, SegmentTree.aggregate(state.segment_tree, min, max), state}
   end
 end

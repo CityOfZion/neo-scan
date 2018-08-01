@@ -172,11 +172,12 @@ window.onload = function () {
 
     const assetDropdown = document.getElementById('select-address-chart')
     const assetNames = Object.keys(assetsList)
+    const defaultAssetName = assetNames.find(x => x === 'NEO') || assetNames.find(_ => true);
     assetNames.forEach((name, idx) => {
       const option = document.createElement("option");
       option.text = name;
       option.value = name;
-      if(name == 'NEO'){
+      if(name == defaultAssetName){
         option.selected = true;
       }
       assetDropdown.add(option);
@@ -184,7 +185,7 @@ window.onload = function () {
 
     transactionsTextElem.innerHTML = transactionText
 
-    createAddressChart('NEO', dates, assetsList['NEO'], count)
+    createAddressChart(defaultAssetName, dates, assetsList[defaultAssetName], count)
 
     assetDropdown.onchange = function () {
       createAddressChart(this.value, dates, assetsList[this.value], count)
