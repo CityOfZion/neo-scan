@@ -1,6 +1,6 @@
 %{
   "approximate_histogram": {:hex, :approximate_histogram, "0.1.1", "198eb36681e763ed4baab6ca0682acec4ef642f60ba272f251d3059052f4f378", [:mix], []},
-  "base58": {:hex, :base58, "0.1.0", "ab34d1a4ef0f11ac61b9f5ad54c35826c3bdc541688a2f95183417272aa1fcfc", [:mix], [], "hexpm"},
+  "base58": {:git, "https://github.com/adrienmo/base58.git", "0589677c3bf5e94922439fb9306c0c933c856885", []},
   "bitmap": {:hex, :bitmap, "1.0.1", "37d913e4f36e65ffffc3e38ee2bd2e8d768aedec6973de4bdce5c3456ef8a86e", [:mix], [], "hexpm"},
   "blue_bird": {:hex, :blue_bird, "0.3.8", "b09adda9f4f0012f06489ff01152c2b6e471d4940ef3e7d95e35323594512015", [:mix], [{:phoenix, "~> 1.3.0", [hex: :phoenix, repo: "hexpm", optional: true]}, {:plug, ">= 1.4.3", [hex: :plug, repo: "hexpm", optional: false]}, {:poison, ">= 3.1.0", [hex: :poison, repo: "hexpm", optional: false]}], "hexpm"},
   "buffer": {:hex, :buffer, "0.3.12", "4231fe8d94dcfbb7bb3d8b242b87b2f2f14aea506bb9bc03e0e3d3b46f2b608c", [:mix], [], "hexpm"},

@@ -202,7 +202,7 @@ defmodule NeoscanWeb.Api do
   end
 
   def get_all_nodes do
-    NeoscanNode.get_data()
+    NeoscanNode.get_live_nodes()
     |> Enum.map(fn {url, height} -> %{url: url, height: height} end)
   end
 

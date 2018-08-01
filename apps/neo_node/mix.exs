@@ -1,9 +1,9 @@
-defmodule NeoscanNode.Mixfile do
+defmodule NeoNode.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :neoscan_node,
+      app: :neo_node,
       version: "2.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -11,8 +11,10 @@ defmodule NeoscanNode.Mixfile do
       lockfile: "../../mix.lock",
       elixir: "~> 1.6",
       elixirc_options: [
-        warnings_as_errors: true
+        warnings_as_errors: true,
+        ignore_module_conflict: true
       ],
+      elixirc_paths: elixirc_paths(Mix.env()),
       test_coverage: [
         tool: ExCoveralls
       ],
@@ -34,10 +36,13 @@ defmodule NeoscanNode.Mixfile do
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
     [
-      extra_applications: [:logger, :httpoison],
-      mod: {NeoscanNode.Application, []}
+      extra_applications: [:logger, :httpoison]
     ]
   end
+
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Dependencies can be Hex packages:
   #
@@ -56,9 +61,8 @@ defmodule NeoscanNode.Mixfile do
     [
       {:hackney, "~> 1.11", override: true},
       {:poison, "~> 3.1"},
+      {:base58, github: "adrienmo/base58"},
       {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
-      {:neo_node, in_umbrella: true},
-      {:neo_notification, in_umbrella: true},
       {:excoveralls, "~> 0.8", only: :test}
     ]
   end
