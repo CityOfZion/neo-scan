@@ -125,7 +125,7 @@ defmodule NeoscanWeb.ApiController do
     title("Get address transactions summary")
     description("Returns transaction summary an address from its hash, paginated")
     parameter(:address, :string, description: "base 58 address")
-    parameter(:page, :integer, description: "page", optional: true)
+    parameter(:page, :integer, description: "page")
   end
 
   def get_address_abstracts(conn, params) do
@@ -143,7 +143,7 @@ defmodule NeoscanWeb.ApiController do
     description("Returns transaction summary between two address from their hash, paginated")
     parameter(:address1, :string, description: "base 58 address")
     parameter(:address2, :string, description: "base 58 address")
-    parameter(:page, :integer, description: "page", optional: true)
+    parameter(:page, :integer, description: "page")
   end
 
   def get_address_to_address_abstracts(conn, params) do

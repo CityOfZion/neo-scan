@@ -65,9 +65,12 @@ defmodule NeoscanWeb.ApiControllerTest do
                %{"amount" => 2.0, "asset" => "My Token", "unspent" => []}
              ]
            } == json_response(conn, 200)
+
+    conn = get(conn, api_path(conn, :get_balance, "==#$%")) |> BlueBird.ConnLogger.save()
+    assert %{"errors" => ["address is not a valid base58"]} == json_response(conn, 400)
   end
 
-  test "get_claimed/:hash", %{conn: conn} do
+  test "get_claimed/:address", %{conn: conn} do
     insert(:asset, %{
       transaction_hash: @neo_asset_hash,
       name: [%{"lang" => "en", "name" => "NEO"}]
@@ -109,6 +112,9 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     assert Base.encode16(vout3.transaction_hash, case: :lower) in txids
     assert Base.encode16(vout4.transaction_hash, case: :lower) in txids
+
+    conn = get(conn, api_path(conn, :get_claimed, "==#$%")) |> BlueBird.ConnLogger.save()
+    assert %{"errors" => ["address is not a valid base58"]} == json_response(conn, 400)
   end
 
   test "get_unclaimed/:hash", %{conn: conn} do
@@ -157,6 +163,9 @@ defmodule NeoscanWeb.ApiControllerTest do
              "address" => address_hash,
              "unclaimed" => 3.2e-6
            } == json_response(conn, 200)
+
+    conn = get(conn, api_path(conn, :get_unclaimed, "==#$%")) |> BlueBird.ConnLogger.save()
+    assert %{"errors" => ["address is not a valid base58"]} == json_response(conn, 400)
   end
 
   test "get_claimable/:hash", %{conn: conn} do
@@ -228,6 +237,9 @@ defmodule NeoscanWeb.ApiControllerTest do
              ],
              "unclaimed" => 1.68e-6
            } == json_response(conn, 200)
+
+    conn = get(conn, api_path(conn, :get_claimable, "==#$%")) |> BlueBird.ConnLogger.save()
+    assert %{"errors" => ["address is not a valid base58"]} == json_response(conn, 400)
   end
 
   test "get_address_abstracts/:hash/:page", %{conn: conn} do
@@ -464,9 +476,16 @@ defmodule NeoscanWeb.ApiControllerTest do
                "txid" => Base.encode16(transaction1.hash, case: :lower)
              }
            ] == json_response(conn, 200)["entries"]
+
+    conn =
+      get(conn, api_path(conn, :get_address_abstracts, "==#$%", "nan"))
+      |> BlueBird.ConnLogger.save()
+
+    assert %{"errors" => ["page is not a valid integer", "address is not a valid base58"]} ==
+             json_response(conn, 400)
   end
 
-  test "get_address_to_address_abstracts/:hash1/:hash2/:page", %{conn: conn} do
+  test "get_address_to_address_abstracts/:address1/:address2/:page", %{conn: conn} do
     asset = insert(:asset)
     asset_hash = asset.transaction_hash
     asset_hash_str = Base.encode16(asset_hash, case: :lower)
@@ -540,6 +559,18 @@ defmodule NeoscanWeb.ApiControllerTest do
                "txid" => Base.encode16(transaction1.hash, case: :lower)
              }
            ] == json_response(conn, 200)["entries"]
+
+    conn =
+      get(conn, api_path(conn, :get_address_to_address_abstracts, "==#$%", "==#$%", "nan"))
+      |> BlueBird.ConnLogger.save()
+
+    assert %{
+             "errors" => [
+               "page is not a valid integer",
+               "address2 is not a valid base58",
+               "address1 is not a valid base58"
+             ]
+           } == json_response(conn, 400)
   end
 
   test "get_block/:hash", %{conn: conn} do
@@ -574,6 +605,10 @@ defmodule NeoscanWeb.ApiControllerTest do
       |> BlueBird.ConnLogger.save()
 
     assert %{"errors" => ["object not found"]} == json_response(conn, 404)
+    conn = get(conn, api_path(conn, :get_block, "nan")) |> BlueBird.ConnLogger.save()
+
+    assert %{"errors" => ["block_hash is not a valid integer_or_base16"]} ==
+             json_response(conn, 400)
   end
 
   test "get_transaction/:hash", %{conn: conn} do
@@ -656,6 +691,9 @@ defmodule NeoscanWeb.ApiControllerTest do
       |> BlueBird.ConnLogger.save()
 
     assert %{"errors" => ["object not found"]} == json_response(conn, 404)
+
+    conn = get(conn, api_path(conn, :get_transaction, "nan")) |> BlueBird.ConnLogger.save()
+    assert %{"errors" => ["transaction_hash is not a valid base16"]} == json_response(conn, 400)
   end
 
   test "get_last_transactions_by_address/:address/:page", %{conn: conn} do
@@ -694,6 +732,13 @@ defmodule NeoscanWeb.ApiControllerTest do
     conn = get(conn, api_path(conn, :get_last_transactions_by_address, address_hash))
 
     assert 1 == Enum.count(json_response(conn, 200))
+
+    conn =
+      get(conn, api_path(conn, :get_last_transactions_by_address, "==") <> "/nan")
+      |> BlueBird.ConnLogger.save()
+
+    assert %{"errors" => ["page is not a valid integer", "address is not a valid base58"]} ==
+             json_response(conn, 400)
   end
 
   test "get_all_nodes", %{conn: conn} do

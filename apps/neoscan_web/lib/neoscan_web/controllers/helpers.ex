@@ -9,7 +9,7 @@ defmodule NeoscanWeb.Controllers.Helpers do
 
       case unquote(var) do
         %{errors: errors} ->
-          json(unquote(conn), %{errors: errors})
+          json(put_status(unquote(conn), :bad_request), %{errors: errors})
 
         _ ->
           block = unquote(block)
@@ -40,8 +40,9 @@ defmodule NeoscanWeb.Controllers.Helpers do
     try do
       Map.put(parsed, name, parse_type(value, type))
     catch
-      _ ->
-        Map.update(parsed, :errors, &["#{name} is not a valid #{type}" | &1], [])
+      _, _ ->
+        error = "#{name} is not a valid #{type}"
+        Map.update(parsed, :errors, [error], &[error | &1])
     end
   end
 
