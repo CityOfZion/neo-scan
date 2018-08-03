@@ -69,7 +69,13 @@ defmodule NeoscanWeb.AddressControllerTest do
     assert html_response(conn, 200) =~ "token 1"
     assert html_response(conn, 200) =~ "token 2"
 
+    conn = get(conn, "/address/#{address_hash}/nan")
+    assert "/" == redirected_to(conn, 302)
+
     conn = get(conn, "/address/abc")
+    assert "/" == redirected_to(conn, 302)
+
+    conn = get(conn, "/address/====")
     assert "/" == redirected_to(conn, 302)
   end
 end

@@ -13,5 +13,8 @@ defmodule NeoscanWeb.BlocksControllerTest do
     conn = get(conn, "/blocks/2")
     body = html_response(conn, 200)
     assert not (body =~ Base.encode16(block.hash, case: :lower))
+
+    conn = get(conn, "/blocks/====")
+    assert "/" == redirected_to(conn, 302)
   end
 end

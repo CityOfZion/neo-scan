@@ -63,9 +63,12 @@ defmodule NeoscanWeb.TransactionControllerTest do
       conn = get(conn, "/transaction/#{Base.encode16(transaction.hash, case: :lower)}")
       body = html_response(conn, 200)
       assert body =~ Base.encode16(transaction.hash, case: :lower)
-    end
 
-    #    conn = get(conn, "/transaction/random")
-    #    assert "/" == redirected_to(conn, 302)
+      conn = get(conn, "/transaction/random")
+      assert "/" == redirected_to(conn, 302)
+
+      conn = get(conn, "/transaction/1e")
+      assert "/" == redirected_to(conn, 302)
+    end
   end
 end

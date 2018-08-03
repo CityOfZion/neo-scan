@@ -25,13 +25,13 @@ defmodule NeoscanWeb.Router do
     get("/", HomeController, :index)
     post("/", HomeController, :search)
 
-    get("/address/:hash", AddressController, :index)
-    get("/address/:hash/:page", AddressController, :page)
+    get("/address/:address", AddressController, :index)
+    get("/address/:address/:page", AddressController, :page)
 
     get("/addresses/:page", AddressesController, :page)
 
-    get("/block/:hash", BlockController, :index)
-    get("/block/:hash/:page", BlockController, :page)
+    get("/block/:block_hash", BlockController, :index)
+    get("/block/:block_hash/:page", BlockController, :page)
 
     get("/blocks/:page", BlocksController, :page)
 
@@ -39,7 +39,7 @@ defmodule NeoscanWeb.Router do
 
     get("/price/:from/:to/:graph", PriceController, :index)
 
-    get("/transaction/:hash", TransactionController, :index)
+    get("/transaction/:transaction_hash", TransactionController, :index)
 
     get("/transactions/:page", TransactionsController, :page)
   end
@@ -48,19 +48,19 @@ defmodule NeoscanWeb.Router do
     pipe_through(:api)
 
     # used by neon-js / wallet
-    get("/get_balance/:hash", ApiController, :get_balance)
-    get("/get_unclaimed/:hash", ApiController, :get_unclaimed)
-    get("/get_claimable/:hash", ApiController, :get_claimable)
+    get("/get_balance/:address", ApiController, :get_balance)
+    get("/get_unclaimed/:address", ApiController, :get_unclaimed)
+    get("/get_claimable/:address", ApiController, :get_claimable)
     get("/get_all_nodes", ApiController, :get_all_nodes)
 
     get(
-      "/get_last_transactions_by_address/:hash",
+      "/get_last_transactions_by_address/:address",
       ApiController,
       :get_last_transactions_by_address
     )
 
     get(
-      "/get_last_transactions_by_address/:hash/:page",
+      "/get_last_transactions_by_address/:address/:page",
       ApiController,
       :get_last_transactions_by_address
     )
@@ -68,18 +68,18 @@ defmodule NeoscanWeb.Router do
     get("/get_height", ApiController, :get_height)
 
     # Used by NEX
-    get("/get_address_abstracts/:hash/:page", ApiController, :get_address_abstracts)
+    get("/get_address_abstracts/:address/:page", ApiController, :get_address_abstracts)
 
     get(
-      "/get_address_to_address_abstracts/:hash1/:hash2/:page",
+      "/get_address_to_address_abstracts/:address1/:address2/:page",
       ApiController,
       :get_address_to_address_abstracts
     )
 
     # for future use
-    get("/get_claimed/:hash", ApiController, :get_claimed)
-    get("/get_block/:hash", ApiController, :get_block)
-    get("/get_transaction/:hash", ApiController, :get_transaction)
+    get("/get_claimed/:address", ApiController, :get_claimed)
+    get("/get_block/:block_hash", ApiController, :get_block)
+    get("/get_transaction/:transaction_hash", ApiController, :get_transaction)
   end
 
   # Other scopes may use custom stacks.

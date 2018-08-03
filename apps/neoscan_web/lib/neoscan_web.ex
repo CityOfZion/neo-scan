@@ -23,6 +23,7 @@ defmodule NeoscanWeb do
       use Phoenix.Controller, namespace: NeoscanWeb
       import Plug.Conn
       import NeoscanWeb.Router.Helpers
+      import NeoscanWeb.Controllers.Helpers
       import NeoscanWeb.Gettext
     end
   end
