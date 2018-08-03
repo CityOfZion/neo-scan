@@ -1,7 +1,23 @@
 defmodule NeoscanWeb.Controllers.Helpers do
   @moduledoc false
 
-  defmacro if_valid_params(conn, params, specs, do: block) do
+  defmacro if_valid_query(conn, params, specs, do: block) do
+    var = Macro.var(:parsed, nil)
+
+    quote do
+      unquote(var) = NeoscanWeb.Controllers.Helpers.parse(unquote(params), unquote(specs))
+
+      case unquote(var) do
+        %{errors: _} ->
+          redirect(unquote(conn), to: home_path(unquote(conn), :index))
+
+        _ ->
+          unquote(block)
+      end
+    end
+  end
+
+  defmacro if_valid_query_json(conn, params, specs, do: block) do
     var = Macro.var(:parsed, nil)
 
     quote do

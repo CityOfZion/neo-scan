@@ -52,7 +52,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_balance(conn, params) do
-    if_valid_params(conn, params, @address_spec, do: Api.get_balance(parsed.address))
+    if_valid_query_json(conn, params, @address_spec, do: Api.get_balance(parsed.address))
   end
 
   # used by neon-js
@@ -69,7 +69,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_last_transactions_by_address(conn, params) do
-    if_valid_params conn, params, @address_page_spec do
+    if_valid_query_json conn, params, @address_page_spec do
       Api.get_last_transactions_by_address(parsed.address, parsed.page)
     end
   end
@@ -96,7 +96,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_unclaimed(conn, params) do
-    if_valid_params(conn, params, @address_spec, do: Api.get_unclaimed(parsed.address))
+    if_valid_query_json(conn, params, @address_spec, do: Api.get_unclaimed(parsed.address))
   end
 
   # used by neon-js
@@ -107,7 +107,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_claimable(conn, params) do
-    if_valid_params(conn, params, @address_spec, do: Api.get_claimable(parsed.address))
+    if_valid_query_json(conn, params, @address_spec, do: Api.get_claimable(parsed.address))
   end
 
   # used by neon-js
@@ -129,7 +129,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_address_abstracts(conn, params) do
-    if_valid_params(
+    if_valid_query_json(
       conn,
       params,
       @address_page_spec,
@@ -147,7 +147,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_address_to_address_abstracts(conn, params) do
-    if_valid_params conn, params, @address1_address_2_page_spec do
+    if_valid_query_json conn, params, @address1_address_2_page_spec do
       Api.get_address_to_address_abstracts(parsed.address1, parsed.address2, parsed.page)
     end
   end
@@ -160,7 +160,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_claimed(conn, params) do
-    if_valid_params(conn, params, @address_spec, do: Api.get_claimed(parsed.address))
+    if_valid_query_json(conn, params, @address_spec, do: Api.get_claimed(parsed.address))
   end
 
   # for future use
@@ -171,7 +171,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_block(conn, params) do
-    if_valid_params(conn, params, @block_hash_spec, do: Api.get_block(parsed.block_hash))
+    if_valid_query_json(conn, params, @block_hash_spec, do: Api.get_block(parsed.block_hash))
   end
 
   # for future use
@@ -182,7 +182,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_transaction(conn, params) do
-    if_valid_params(
+    if_valid_query_json(
       conn,
       params,
       @transaction_hash_spec,

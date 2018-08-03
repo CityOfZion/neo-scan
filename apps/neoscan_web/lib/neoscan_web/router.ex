@@ -25,13 +25,13 @@ defmodule NeoscanWeb.Router do
     get("/", HomeController, :index)
     post("/", HomeController, :search)
 
-    get("/address/:hash", AddressController, :index)
-    get("/address/:hash/:page", AddressController, :page)
+    get("/address/:address", AddressController, :index)
+    get("/address/:address/:page", AddressController, :page)
 
     get("/addresses/:page", AddressesController, :page)
 
-    get("/block/:hash", BlockController, :index)
-    get("/block/:hash/:page", BlockController, :page)
+    get("/block/:block_hash", BlockController, :index)
+    get("/block/:block_hash/:page", BlockController, :page)
 
     get("/blocks/:page", BlocksController, :page)
 
@@ -39,7 +39,7 @@ defmodule NeoscanWeb.Router do
 
     get("/price/:from/:to/:graph", PriceController, :index)
 
-    get("/transaction/:hash", TransactionController, :index)
+    get("/transaction/:transaction_hash", TransactionController, :index)
 
     get("/transactions/:page", TransactionsController, :page)
   end
