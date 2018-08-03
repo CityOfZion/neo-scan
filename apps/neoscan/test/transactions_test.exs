@@ -61,7 +61,11 @@ defmodule Neoscan.TransactionsTest do
              {%{start_block_index: ^start_block_index},
               %{transaction_hash: ^claim_transaction_hash}},
              {%{}, %{}}
-           ] = Transactions.get_claimed_vouts(vout1.address_hash)
+           ] =
+             Enum.sort_by(
+               Transactions.get_claimed_vouts(vout1.address_hash),
+               &elem(&1, 0).start_block_index
+             )
   end
 
   test "get_unspent_vouts/1" do

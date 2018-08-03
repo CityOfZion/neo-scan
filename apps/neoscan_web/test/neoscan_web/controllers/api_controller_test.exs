@@ -90,20 +90,24 @@ defmodule NeoscanWeb.ApiControllerTest do
       get(conn, api_path(conn, :get_claimed, Base58.encode(vout1.address_hash)))
       |> BlueBird.ConnLogger.save()
 
+    address_hash = Base58.encode(vout1.address_hash)
+
     assert %{
-             "address" => Base58.encode(vout1.address_hash),
-             "claimed" => [
-               %{
-                 "txids" => [Base.encode16(vout1.transaction_hash, case: :lower)]
-               },
-               %{
-                 "txids" => [
-                   Base.encode16(vout3.transaction_hash, case: :lower),
-                   Base.encode16(vout4.transaction_hash, case: :lower)
-                 ]
-               }
-             ]
-           } == json_response(conn, 200)
+             "address" => ^address_hash,
+             "claimed" => claimed
+           } = json_response(conn, 200)
+
+    assert [
+             %{
+               "txids" => [Base.encode16(vout1.transaction_hash, case: :lower)]
+             },
+             %{
+               "txids" => [
+                 Base.encode16(vout3.transaction_hash, case: :lower),
+                 Base.encode16(vout4.transaction_hash, case: :lower)
+               ]
+             }
+           ] == Enum.sort_by(claimed, &Enum.count(&1["txids"]))
   end
 
   test "get_unclaimed/:hash", %{conn: conn} do

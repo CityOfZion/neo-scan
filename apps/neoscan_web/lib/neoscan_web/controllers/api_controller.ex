@@ -3,16 +3,6 @@ defmodule NeoscanWeb.ApiController do
 
   alias NeoscanWeb.Api
 
-  #  defmacro cache(key, value, ttl \\ 10_000) do
-  #    quote do
-  #      ConCache.get_or_store(:my_cache, unquote(key), fn ->
-  #        %ConCache.Item{value: unquote(value), ttl: unquote(ttl)}
-  #      end)
-  #    end
-  #  end
-
-  def cache(_, value), do: value
-
   apigroup("API v1", "")
 
   # used by neon-js
@@ -23,7 +13,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_balance(conn, %{"hash" => hash}) do
-    balance = cache({:get_balance, hash}, Api.get_balance(Base58.decode(hash)))
+    balance = Api.get_balance(Base58.decode(hash))
     json(conn, balance)
   end
 
@@ -44,11 +34,7 @@ defmodule NeoscanWeb.ApiController do
     page = if is_nil(params["page"]), do: 1, else: String.to_integer(params["page"])
     address_hash = Base58.decode(address_hash)
 
-    transactions =
-      cache(
-        {:get_last_transactions_by_address, address_hash, page},
-        Api.get_last_transactions_by_address(address_hash, page)
-      )
+    transactions = Api.get_last_transactions_by_address(address_hash, page)
 
     json(conn, transactions)
   end
@@ -64,7 +50,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_all_nodes(conn, %{}) do
-    nodes = cache({:get_all_nodes}, Api.get_all_nodes())
+    nodes = Api.get_all_nodes()
     json(conn, nodes)
   end
 
@@ -77,7 +63,7 @@ defmodule NeoscanWeb.ApiController do
 
   def get_unclaimed(conn, %{"hash" => address_hash}) do
     address_hash = Base58.decode(address_hash)
-    unclaimed = cache({:get_unclaimed, address_hash}, Api.get_unclaimed(address_hash))
+    unclaimed = Api.get_unclaimed(address_hash)
     json(conn, unclaimed)
   end
 
@@ -90,7 +76,7 @@ defmodule NeoscanWeb.ApiController do
 
   def get_claimable(conn, %{"hash" => address_hash}) do
     address_hash = Base58.decode(address_hash)
-    claimable = cache({:get_claimable, address_hash}, Api.get_claimable(address_hash))
+    claimable = Api.get_claimable(address_hash)
     json(conn, claimable)
   end
 
@@ -101,7 +87,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_height(conn, %{}) do
-    height = cache({:get_height}, Api.get_height())
+    height = Api.get_height()
     json(conn, height)
   end
 
@@ -117,11 +103,7 @@ defmodule NeoscanWeb.ApiController do
     page = if is_nil(params["page"]), do: 1, else: String.to_integer(params["page"])
     address_hash = Base58.decode(address_hash)
 
-    abstracts =
-      cache(
-        {:get_address_abstracts, address_hash, page},
-        Api.get_address_abstracts(address_hash, page)
-      )
+    abstracts = Api.get_address_abstracts(address_hash, page)
 
     json(conn, abstracts)
   end
@@ -143,11 +125,7 @@ defmodule NeoscanWeb.ApiController do
     address_hash1 = Base58.decode(address_hash1)
     address_hash2 = Base58.decode(address_hash2)
 
-    abstracts =
-      cache(
-        {:get_address_to_address_abstracts, address_hash1, address_hash2, page},
-        Api.get_address_to_address_abstracts(address_hash1, address_hash2, page)
-      )
+    abstracts = Api.get_address_to_address_abstracts(address_hash1, address_hash2, page)
 
     json(conn, abstracts)
   end
@@ -160,7 +138,7 @@ defmodule NeoscanWeb.ApiController do
   end
 
   def get_claimed(conn, %{"hash" => hash}) do
-    claimed = cache({:get_claimed, hash}, Api.get_claimed(Base58.decode(hash)))
+    claimed = Api.get_claimed(Base58.decode(hash))
     json(conn, claimed)
   end
 
@@ -173,7 +151,7 @@ defmodule NeoscanWeb.ApiController do
 
   def get_block(conn, %{"hash" => hash}) do
     hash = parse_index_or_hash(hash)
-    block = cache({:get_block, hash}, Api.get_block(hash))
+    block = Api.get_block(hash)
 
     if is_nil(block) do
       conn
@@ -193,7 +171,7 @@ defmodule NeoscanWeb.ApiController do
 
   def get_transaction(conn, %{"hash" => hash}) do
     hash = parse_index_or_hash(hash)
-    transaction = cache({:get_transaction, hash}, Api.get_transaction(hash))
+    transaction = Api.get_transaction(hash)
 
     if is_nil(transaction) do
       conn
