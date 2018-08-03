@@ -15,7 +15,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     :ok
   end
 
-  test "get_balance/:hash", %{conn: conn} do
+  test "get_balance/:address", %{conn: conn} do
     vout1 = insert(:vout, %{asset_hash: @neo_asset_hash, value: 2.0})
     vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
     insert(:vin, %{vout_n: vout2.n, vout_transaction_hash: vout2.transaction_hash})
@@ -91,6 +91,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       |> BlueBird.ConnLogger.save()
 
     address_hash = Base58.encode(vout1.address_hash)
+    vout1_transaction_hash = Base.encode16(vout1.transaction_hash, case: :lower)
 
     assert %{
              "address" => ^address_hash,
@@ -99,15 +100,15 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     assert [
              %{
-               "txids" => [Base.encode16(vout1.transaction_hash, case: :lower)]
+               "txids" => [^vout1_transaction_hash]
              },
              %{
-               "txids" => [
-                 Base.encode16(vout3.transaction_hash, case: :lower),
-                 Base.encode16(vout4.transaction_hash, case: :lower)
-               ]
+               "txids" => txids
              }
-           ] == Enum.sort_by(claimed, &Enum.count(&1["txids"]))
+           ] = Enum.sort_by(claimed, &Enum.count(&1["txids"]))
+
+    assert Base.encode16(vout3.transaction_hash, case: :lower) in txids
+    assert Base.encode16(vout4.transaction_hash, case: :lower) in txids
   end
 
   test "get_unclaimed/:hash", %{conn: conn} do
@@ -572,7 +573,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       get(conn, api_path(conn, :get_block, Base.encode16("notfound")))
       |> BlueBird.ConnLogger.save()
 
-    assert %{"error" => "block not found"} == json_response(conn, 404)
+    assert %{"errors" => ["object not found"]} == json_response(conn, 404)
   end
 
   test "get_transaction/:hash", %{conn: conn} do
@@ -654,10 +655,10 @@ defmodule NeoscanWeb.ApiControllerTest do
       get(conn, api_path(conn, :get_transaction, Base.encode16("notfound")))
       |> BlueBird.ConnLogger.save()
 
-    assert %{"error" => "transaction not found"} == json_response(conn, 404)
+    assert %{"errors" => ["object not found"]} == json_response(conn, 404)
   end
 
-  test "get_last_transactions_by_address/:hash/:page", %{conn: conn} do
+  test "get_last_transactions_by_address/:address/:page", %{conn: conn} do
     asset = insert(:asset)
     transaction = insert(:transaction)
     vout = insert(:vout, %{asset_hash: asset.transaction_hash})
