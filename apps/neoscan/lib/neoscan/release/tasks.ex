@@ -33,7 +33,7 @@ defmodule Neoscan.Release.Tasks do
     IO.puts("Loading #{@app}..")
 
     # Load the code for myapp, but don't start it
-    :ok = Application.load(@app)
+    _ = Application.load(@app)
 
     IO.puts("Starting dependencies..")
     # Start apps necessary for executing migrations

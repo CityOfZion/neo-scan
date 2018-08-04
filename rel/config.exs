@@ -4,15 +4,14 @@ use Mix.Releases.Config,
 
 environment :dev do
   set dev_mode: true
-  set include_erts: true
-  set include_system_libs: false
-  set cookie: :"UHLs;22CbwNqpN?3g9`c|?.>XO;s%]yP0aup<SmL]`.8bAbujy1[%4.23%1Yf"
+  set include_erts: false
+  set cookie: :test
 end
 
 environment :prod do
   set include_erts: false
-  set include_system_libs: false
-  set cookie: :"UHLs;22CbwNqpN?3g9`c|?.>XO;s%]yP0aup<SmL]`.8bAbujy1[%4.23%1Ya"
+  set include_src: false
+  set cookie: :crypto.hash(:sha256, System.get_env("COOKIE")) |> Base.encode16 |> String.to_atom
 end
 
 release :neoscan do
