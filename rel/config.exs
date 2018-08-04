@@ -11,7 +11,7 @@ end
 environment :prod do
   set include_erts: false
   set include_src: false
-  set cookie: :crypto.hash(:sha256, System.get_env("COOKIE")) |> Base.encode16 |> String.to_atom
+  set cookie: :"UHLs;22CbwNqpN?3g9`c|?.>XO;s%]yP0aup<SmL]`.8bAbujy1[%4.23%1Ya"	
 end
 
 release :neoscan do
