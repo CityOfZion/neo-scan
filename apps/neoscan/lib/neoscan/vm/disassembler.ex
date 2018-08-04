@@ -187,7 +187,7 @@ defmodule Neoscan.Vm.Disassembler do
   def parse_script(hex_string) do
     hex_string
     |> String.codepoints()
-    |> Stream.chunk(2)
+    |> Stream.chunk_every(2)
     |> Enum.map(&Enum.join/1)
     |> make_list()
     |> reduce_list_to_string()
@@ -221,7 +221,7 @@ defmodule Neoscan.Vm.Disassembler do
           opcode_keyword == "APPCALL" or opcode_keyword == "TAILCALL" ->
             base_args
             |> String.codepoints()
-            |> Stream.chunk(2)
+            |> Stream.chunk_every(2)
             |> Enum.reverse()
             |> Enum.join()
 

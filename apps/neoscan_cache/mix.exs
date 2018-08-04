@@ -57,7 +57,7 @@ defmodule NeoscanCache.Mixfile do
     [
       {:crypto_compare, "~> 0.1.1"},
       {:neoscan, in_umbrella: true},
-      {:excoveralls, "~> 0.8", only: :test}
+      {:excoveralls, "~> 0.9", only: :test}
     ]
   end
 end

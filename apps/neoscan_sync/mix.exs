@@ -59,7 +59,7 @@ defmodule NeoscanSync.Mixfile do
     [
       {:neoscan, in_umbrella: true},
       {:neoscan_node, in_umbrella: true},
-      {:excoveralls, "~> 0.8", only: :test},
+      {:excoveralls, "~> 0.9", only: :test},
       {:buffer, "~> 0.3.12"}
     ]
   end

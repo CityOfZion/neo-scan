@@ -43,7 +43,7 @@ defmodule Neoscan.Umbrella.Mixfile do
     [
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
       {:excoveralls, "~> 0.8", only: :test},
-      {:distillery, "~> 1.5", runtime: false}
+      {:distillery, "~> 2.0.0-rc.7", runtime: false}
     ]
   end
 

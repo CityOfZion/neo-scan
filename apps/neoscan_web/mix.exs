@@ -49,21 +49,21 @@ defmodule NeoscanWeb.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.3.0-rc"},
+      {:phoenix, "~> 1.3.3"},
       {:phoenix_pubsub, "~> 1.0"},
-      {:phoenix_ecto, "~> 3.2"},
-      {:phoenix_html, "~> 2.10"},
-      {:phoenix_live_reload, "~> 1.0", only: :dev},
-      {:gettext, "~> 0.11"},
+      {:phoenix_ecto, "~> 3.3"},
+      {:phoenix_html, "~> 2.11"},
+      {:phoenix_live_reload, "~> 1.1", only: :dev},
+      {:gettext, "~> 0.15"},
       {:blue_bird, "~> 0.3.8"},
       {:neoscan, in_umbrella: true},
       {:neoscan_cache, in_umbrella: true},
       {:neoscan_node, in_umbrella: true},
-      {:excoveralls, "~> 0.8", only: :test},
-      {:cowboy, "~> 1.0"},
-      {:cors_plug, "~> 1.2"},
+      {:excoveralls, "~> 0.9", only: :test},
+      {:cowboy, "~> 1.1"},
+      {:cors_plug, "~> 1.5"},
       {:wobserver, "~> 0.1"},
-      {:timex, "~> 3.1"},
+      {:timex, "~> 3.3"},
       {:number, "~> 0.5.4"},
       {:base58, github: "adrienmo/base58"}
     ]
