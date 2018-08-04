@@ -37,39 +37,9 @@ defmodule NeoscanWeb.Api do
     %{:address => Base58.encode(address_hash), :balance => balances}
   end
 
-  # for the max(current_end_index, end_index), the end_index can be nil, it is expected that max(nil, 123) = nil
-  defp get_vouts_range(
-         [%{start_block_index: start_index, end_block_index: end_index} | _] = vouts
-       ) do
-    Enum.reduce(vouts, {start_index, end_index}, fn %{
-                                                      start_block_index: start_index,
-                                                      end_block_index: end_index
-                                                    },
-                                                    {current_start_index, current_end_index} ->
-      {min(start_index, current_start_index), max(current_end_index, end_index)}
-    end)
-  end
-
-  defp get_vouts_range(_), do: {0, 0}
-
-  defp extract_sys_fees_in_range(sys_fees, start_index, end_index) do
-    sys_fees
-    |> Enum.reduce(0.0, fn %{index: index, total_sys_fee: total_sys_fee}, acc ->
-      if index >= start_index and index <= end_index do
-        acc + total_sys_fee
-      else
-        acc
-      end
-    end)
-  end
-
   def get_unclaimed(address_hash) do
     vouts = Transactions.get_unclaimed_vouts(address_hash)
     current_index = Counters.count_blocks() - 1
-
-    {start_index, end_index} = get_vouts_range(vouts)
-    end_index = if is_nil(end_index), do: current_index, else: end_index
-    sys_fees = BlocksCache.get_total_sys_fee(start_index, end_index - 1)
 
     unclaimed =
       Enum.reduce(vouts, 0, fn vout, acc ->
@@ -82,7 +52,7 @@ defmodule NeoscanWeb.Api do
           value * BlockGasGeneration.get_range_amount(start_index, end_index - 1) / @total_neo
 
         sys_fee =
-          value * extract_sys_fees_in_range(sys_fees, start_index, end_index - 1) / @total_neo
+          value * BlocksCache.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
 
         acc + sys_fee + generated
       end)
@@ -110,9 +80,6 @@ defmodule NeoscanWeb.Api do
   def get_claimable(address_hash) do
     vouts = Transactions.get_claimable_vouts(address_hash)
 
-    {start_index, end_index} = get_vouts_range(vouts)
-    sys_fees = BlocksCache.get_total_sys_fee(start_index, end_index - 1)
-
     claimable =
       Enum.map(vouts, fn vout ->
         value = round(vout.value)
@@ -123,7 +90,7 @@ defmodule NeoscanWeb.Api do
           value * BlockGasGeneration.get_range_amount(start_index, end_index - 1) / @total_neo
 
         sys_fee =
-          value * extract_sys_fees_in_range(sys_fees, start_index, end_index - 1) / @total_neo
+          value * BlocksCache.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
 
         unclaimed = sys_fee + generated
 
@@ -235,7 +202,7 @@ defmodule NeoscanWeb.Api do
   end
 
   def get_all_nodes do
-    NeoscanNode.get_data()
+    NeoscanNode.get_live_nodes()
     |> Enum.map(fn {url, height} -> %{url: url, height: height} end)
   end
 

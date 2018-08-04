@@ -4,20 +4,19 @@ use Mix.Releases.Config,
 
 environment :dev do
   set dev_mode: true
-  set include_erts: true
-  set include_system_libs: false
-  set cookie: :"UHLs;22CbwNqpN?3g9`c|?.>XO;s%]yP0aup<SmL]`.8bAbujy1[%4.23%1Yf"
+  set include_erts: false
+  set cookie: :test
 end
 
 environment :prod do
   set include_erts: false
-  set include_system_libs: false
-  set cookie: :"UHLs;22CbwNqpN?3g9`c|?.>XO;s%]yP0aup<SmL]`.8bAbujy1[%4.23%1Ya"
+  set include_src: false
+  set cookie: :"UHLs;22CbwNqpN?3g9`c|?.>XO;s%]yP0aup<SmL]`.8bAbujy1[%4.23%1Ya"	
 end
 
 release :neoscan do
   set version: current_version(:neoscan)
-  set commands: ["migrate": "rel/commands/migrate.sh"]
+  set commands: [migrate: "rel/commands/migrate.sh", seed: "rel/commands/seed.sh"]
   set applications: [
         :runtime_tools,
         :neoprice,

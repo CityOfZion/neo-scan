@@ -6,10 +6,8 @@ defmodule Neoscan.BlocksCache do
   use GenServer
   alias Neoscan.Blocks
 
-  @filename "./block_cache"
-  @integer_byte_size 4
-  @integer_bit_size 8 * @integer_byte_size
-  @nb_cached_blocks 10_000_000
+  @timeout 60_000
+  @max_index 4_000_000
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -17,126 +15,65 @@ defmodule Neoscan.BlocksCache do
 
   @impl true
   def init(:ok) do
-    init_file_cache()
-    init_ets_table()
-    set(:min, nil)
-    set(:max, nil)
-    {:ok, %{}}
+    {:ok, %{min: nil, max: nil, segment_tree: SegmentTree.new(@max_index, &Kernel.+/2)}}
   end
 
-  defp init_file_cache do
-    {:ok, file} = :file.open(@filename, [:write])
-    total_size = @integer_byte_size * @nb_cached_blocks
-    :ok = :file.write(file, <<0::size(total_size)>>)
-    :ok = :file.sync(file)
-    :ok = :file.close(file)
-  end
-
-  defp init_ets_table do
-    :ets.new(__MODULE__, [
-      :set,
-      :named_table,
-      :public,
-      read_concurrency: true,
-      write_concurrency: true
-    ])
-  end
-
-  defp set_cached_response(min, response) do
-    binary = response_to_binary(response)
-    {:ok, file} = :file.open(@filename, [:write, :read])
-    {:ok, _} = :file.position(file, {:bof, @integer_byte_size * min})
-    :ok = :file.write(file, binary)
-    :ok = :file.sync(file)
-    :ok = :file.close(file)
-    Enum.count(response)
-  end
-
-  defp response_to_binary(response), do: response_to_binary(response, <<>>)
-  defp response_to_binary([], acc), do: acc
-
-  defp response_to_binary([%{total_sys_fee: fee} | t], acc) do
-    response_to_binary(t, <<acc::binary, round(fee)::size(@integer_bit_size)>>)
-  end
-
-  defp get_cached_response(min, max) do
-    {:ok, file} = :file.open(@filename, [:read, :binary])
-    {:ok, _} = :file.position(file, {:bof, @integer_byte_size * min})
-    {:ok, binary} = :file.read(file, @integer_byte_size * (max - min + 1))
-    :ok = :file.close(file)
-    binary_to_response(binary, min)
-  end
-
-  defp binary_to_response(binary, index), do: binary_to_response(binary, index, [])
-  defp binary_to_response(<<>>, _, acc), do: Enum.reverse(acc)
-
-  defp binary_to_response(<<fee::size(@integer_bit_size), rest::binary>>, index, acc) do
-    binary_to_response(rest, index + 1, [%{index: index, total_sys_fee: fee * 1.0} | acc])
-  end
-
-  defp get(key) do
-    case :ets.lookup(__MODULE__, key) do
-      [{^key, result}] -> result
-      _ -> nil
-    end
-  end
-
-  defp set(key, value) do
-    :ets.insert(__MODULE__, {key, value})
-  end
-
-  def get_total_sys_fee(_, -1), do: []
-
-  def get_total_sys_fee(min, max) do
-    cache_min = get(:min)
-    cache_max = get(:max)
-
-    {is_cached, new_cache_max} =
-      if is_nil(cache_max) or is_nil(cache_min) do
-        blocks = Blocks.get_total_sys_fee(min, max)
-
-        if Enum.count(blocks) == max - min + 1 do
-          {true, min + set_cached_response(min, blocks) - 1}
-        else
-          {false, blocks}
-        end
-      else
-        blocks1 = Blocks.get_total_sys_fee(min, cache_min)
-        blocks2 = Blocks.get_total_sys_fee(cache_max + 1, max)
-
-        if Enum.count(blocks1) == max(cache_min - min + 1, 0) and
-             Enum.count(blocks2) == max(max - cache_max, 0) do
-          set_cached_response(min, blocks1)
-          {true, cache_max + set_cached_response(cache_max + 1, blocks2)}
-        else
-          {false, Blocks.get_total_sys_fee(min, max)}
-        end
-      end
-
-    if is_cached do
-      # it is possible override will occur here, for example another process stores a smaller value of min
-      # or a higher value of max, however if data is queried again, it is not a serious problem, it would be better
-      # to update it atomically if and only if the value is lower or higher. But there is no easy way to do it wiht ets
-      new_cache_min = if min < cache_min, do: min, else: cache_min
-      set(:min, new_cache_min)
-
-      # current logic check the highest block so max can be ahead of the current database state, we need to put max to the
-      # real block number in the database
-      set(:max, new_cache_max)
-
-      real_max = if new_cache_max > max, do: max, else: new_cache_max
-
-      get_cached_response(min, real_max)
-    else
-      new_cache_max
-    end
-  end
+  def get_sys_fees_in_range(_, -1), do: 0
 
   def get_sys_fees_in_range(min, max) do
-    result = get_total_sys_fee(min, max)
+    GenServer.call(__MODULE__, {:range, min, max}, @timeout)
+  end
 
-    result
-    |> Enum.map(& &1.total_sys_fee)
-    |> Enum.sum()
+  defp update_segment_tree(segment_tree, blocks) do
+    Enum.reduce(blocks, segment_tree, fn %{index: index, total_sys_fee: value}, acc ->
+      SegmentTree.put(acc, index, value)
+    end)
+  end
+
+  @impl true
+  def handle_call(
+        {:range, min, max},
+        _from,
+        %{min: nil, max: nil, segment_tree: segment_tree} = state
+      ) do
+    blocks = Blocks.get_total_sys_fee(min, max)
+
+    state =
+      if Enum.count(blocks) == max - min + 1 do
+        %{
+          segment_tree: update_segment_tree(segment_tree, blocks),
+          min: min,
+          max: min + Enum.count(blocks) - 1
+        }
+      else
+        state
+      end
+
+    {:reply, SegmentTree.aggregate(state.segment_tree, min, max), state}
+  end
+
+  def handle_call(
+        {:range, min, max},
+        _from,
+        %{min: cache_min, max: cache_max, segment_tree: segment_tree} = state
+      ) do
+    blocks1 = Blocks.get_total_sys_fee(min, cache_min - 1)
+    blocks2 = Blocks.get_total_sys_fee(cache_max + 1, max)
+
+    state =
+      if Enum.count(blocks1) == max(cache_min - min, 0) and
+           Enum.count(blocks2) == max(max - cache_max, 0) do
+        segment_tree = update_segment_tree(update_segment_tree(segment_tree, blocks1), blocks2)
+
+        %{
+          segment_tree: segment_tree,
+          min: min(min, cache_min),
+          max: cache_max + Enum.count(blocks2)
+        }
+      else
+        state
+      end
+
+    {:reply, SegmentTree.aggregate(state.segment_tree, min, max), state}
   end
 end

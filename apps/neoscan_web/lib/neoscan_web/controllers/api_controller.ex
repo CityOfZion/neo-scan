@@ -3,32 +3,60 @@ defmodule NeoscanWeb.ApiController do
 
   alias NeoscanWeb.Api
 
-  #  defmacro cache(key, value, ttl \\ 10_000) do
-  #    quote do
-  #      ConCache.get_or_store(:my_cache, unquote(key), fn ->
-  #        %ConCache.Item{value: unquote(value), ttl: unquote(ttl)}
-  #      end)
-  #    end
-  #  end
+  @address_spec [
+    address: %{
+      type: :base58
+    }
+  ]
+  @address_page_spec [
+    address: %{
+      type: :base58
+    },
+    page: %{
+      type: :integer,
+      default: 1
+    }
+  ]
+  @address1_address_2_page_spec [
+    address1: %{
+      type: :base58
+    },
+    address2: %{
+      type: :base58
+    },
+    page: %{
+      type: :integer,
+      default: 1
+    }
+  ]
 
-  def cache(_, value), do: value
+  @block_hash_spec [
+    block_hash: %{
+      type: :integer_or_base16
+    }
+  ]
+
+  @transaction_hash_spec [
+    transaction_hash: %{
+      type: :base16
+    }
+  ]
 
   apigroup("API v1", "")
 
   # used by neon-js
-  api :GET, "/api/main_net/v1/get_balance/:hash" do
+  api :GET, "/api/main_net/v1/get_balance/:address" do
     title("Get address balance")
     description("Returns the balance for an address including NEP5 Tokens.")
-    parameter(:hash, :string, description: "base 58 address")
+    parameter(:address, :string, description: "base 58 address")
   end
 
-  def get_balance(conn, %{"hash" => hash}) do
-    balance = cache({:get_balance, hash}, Api.get_balance(Base58.decode(hash)))
-    json(conn, balance)
+  def get_balance(conn, params) do
+    if_valid_query_json(conn, params, @address_spec, do: Api.get_balance(parsed.address))
   end
 
   # used by neon-js
-  api :GET, "/api/main_net/v1/get_last_transactions_by_address/:hash/:page" do
+  api :GET, "/api/main_net/v1/get_last_transactions_by_address/:address/:page" do
     title("Get address last transactions")
 
     description("""
@@ -36,21 +64,14 @@ defmodule NeoscanWeb.ApiController do
       from its hash, paginated.
     """)
 
-    parameter(:hash, :string, description: "base 58 address")
+    parameter(:address, :string, description: "base 58 address")
     parameter(:page, :integer, description: "page index", optional: true)
   end
 
-  def get_last_transactions_by_address(conn, %{"hash" => address_hash} = params) do
-    page = if is_nil(params["page"]), do: 1, else: String.to_integer(params["page"])
-    address_hash = Base58.decode(address_hash)
-
-    transactions =
-      cache(
-        {:get_last_transactions_by_address, address_hash, page},
-        Api.get_last_transactions_by_address(address_hash, page)
-      )
-
-    json(conn, transactions)
+  def get_last_transactions_by_address(conn, params) do
+    if_valid_query_json conn, params, @address_page_spec do
+      Api.get_last_transactions_by_address(parsed.address, parsed.page)
+    end
   end
 
   # used by neon-js
@@ -63,35 +84,30 @@ defmodule NeoscanWeb.ApiController do
     """)
   end
 
-  def get_all_nodes(conn, %{}) do
-    nodes = cache({:get_all_nodes}, Api.get_all_nodes())
-    json(conn, nodes)
+  def get_all_nodes(conn, _) do
+    json(conn, Api.get_all_nodes())
   end
 
   # used by neon-js
-  api :GET, "/api/main_net/v1/get_unclaimed/:hash" do
+  api :GET, "/api/main_net/v1/get_unclaimed/:address" do
     title("Get address unclaimed gas")
     description("Returns the unclaimed gas for an address from its hash.")
-    parameter(:hash, :string, description: "base 58 address")
+    parameter(:address, :string, description: "base 58 address")
   end
 
-  def get_unclaimed(conn, %{"hash" => address_hash}) do
-    address_hash = Base58.decode(address_hash)
-    unclaimed = cache({:get_unclaimed, address_hash}, Api.get_unclaimed(address_hash))
-    json(conn, unclaimed)
+  def get_unclaimed(conn, params) do
+    if_valid_query_json(conn, params, @address_spec, do: Api.get_unclaimed(parsed.address))
   end
 
   # used by neon-js
-  api :GET, "/api/main_net/v1/get_claimable/:hash" do
+  api :GET, "/api/main_net/v1/get_claimable/:address" do
     title("Get address claimable transactions")
     description(" Returns the AVAILABLE claimable transactions for an address, from its hash.")
-    parameter(:hash, :string, description: "base 58 address")
+    parameter(:address, :string, description: "base 58 address")
   end
 
-  def get_claimable(conn, %{"hash" => address_hash}) do
-    address_hash = Base58.decode(address_hash)
-    claimable = cache({:get_claimable, address_hash}, Api.get_claimable(address_hash))
-    json(conn, claimable)
+  def get_claimable(conn, params) do
+    if_valid_query_json(conn, params, @address_spec, do: Api.get_claimable(parsed.address))
   end
 
   # used by neon-js
@@ -100,117 +116,77 @@ defmodule NeoscanWeb.ApiController do
     description("Returns latest block index of the neoscan db.")
   end
 
-  def get_height(conn, %{}) do
-    height = cache({:get_height}, Api.get_height())
-    json(conn, height)
+  def get_height(conn, _) do
+    json(conn, Api.get_height())
   end
 
   # used by NEX
-  api :GET, "/api/main_net/v1/get_address_abstracts/:hash/:page" do
+  api :GET, "/api/main_net/v1/get_address_abstracts/:address/:page" do
     title("Get address transactions summary")
     description("Returns transaction summary an address from its hash, paginated")
-    parameter(:hash, :string, description: "base 58 address")
-    parameter(:page, :integer, description: "page", optional: true)
+    parameter(:address, :string, description: "base 58 address")
+    parameter(:page, :integer, description: "page")
   end
 
-  def get_address_abstracts(conn, %{"hash" => address_hash} = params) do
-    page = if is_nil(params["page"]), do: 1, else: String.to_integer(params["page"])
-    address_hash = Base58.decode(address_hash)
-
-    abstracts =
-      cache(
-        {:get_address_abstracts, address_hash, page},
-        Api.get_address_abstracts(address_hash, page)
-      )
-
-    json(conn, abstracts)
+  def get_address_abstracts(conn, params) do
+    if_valid_query_json(
+      conn,
+      params,
+      @address_page_spec,
+      do: Api.get_address_abstracts(parsed.address, parsed.page)
+    )
   end
 
   # used by NEX
-  api :GET, "/api/main_net/v1/get_address_to_address_abstracts/:hash1/:hash2/:page" do
+  api :GET, "/api/main_net/v1/get_address_to_address_abstracts/:address1/:address2/:page" do
     title("Get address pair transactions summary")
     description("Returns transaction summary between two address from their hash, paginated")
-    parameter(:hash1, :string, description: "base 58 address")
-    parameter(:hash2, :string, description: "base 58 address")
-    parameter(:page, :integer, description: "page", optional: true)
+    parameter(:address1, :string, description: "base 58 address")
+    parameter(:address2, :string, description: "base 58 address")
+    parameter(:page, :integer, description: "page")
   end
 
-  def get_address_to_address_abstracts(
-        conn,
-        %{"hash1" => address_hash1, "hash2" => address_hash2} = params
-      ) do
-    page = if is_nil(params["page"]), do: 1, else: String.to_integer(params["page"])
-    address_hash1 = Base58.decode(address_hash1)
-    address_hash2 = Base58.decode(address_hash2)
-
-    abstracts =
-      cache(
-        {:get_address_to_address_abstracts, address_hash1, address_hash2, page},
-        Api.get_address_to_address_abstracts(address_hash1, address_hash2, page)
-      )
-
-    json(conn, abstracts)
+  def get_address_to_address_abstracts(conn, params) do
+    if_valid_query_json conn, params, @address1_address_2_page_spec do
+      Api.get_address_to_address_abstracts(parsed.address1, parsed.address2, parsed.page)
+    end
   end
 
   # for future use
-  api :GET, "/api/main_net/v1/get_claimed/:hash" do
+  api :GET, "/api/main_net/v1/get_claimed/:address" do
     title("Get address claimed transactions")
     description("Returns the claimed transactions for an address, from its hash")
     parameter(:hash, :string, description: "base 58 address")
   end
 
-  def get_claimed(conn, %{"hash" => hash}) do
-    claimed = cache({:get_claimed, hash}, Api.get_claimed(Base58.decode(hash)))
-    json(conn, claimed)
+  def get_claimed(conn, params) do
+    if_valid_query_json(conn, params, @address_spec, do: Api.get_claimed(parsed.address))
   end
 
   # for future use
-  api :GET, "/api/main_net/v1/get_block/:hash" do
+  api :GET, "/api/main_net/v1/get_block/:block_hash" do
     title("Get block")
     description("Returns the block model from its hash or index")
     parameter(:hash, :string, description: "base 16 block hash")
   end
 
-  def get_block(conn, %{"hash" => hash}) do
-    hash = parse_index_or_hash(hash)
-    block = cache({:get_block, hash}, Api.get_block(hash))
-
-    if is_nil(block) do
-      conn
-      |> put_status(:not_found)
-      |> json(%{error: "block not found"})
-    else
-      json(conn, block)
-    end
+  def get_block(conn, params) do
+    if_valid_query_json(conn, params, @block_hash_spec, do: Api.get_block(parsed.block_hash))
   end
 
   # for future use
-  api :GET, "/api/main_net/v1/get_transaction/:hash" do
+  api :GET, "/api/main_net/v1/get_transaction/:transaction_hash" do
     title("Get transaction")
     description("Returns the transaction model from its hash")
-    parameter(:hash, :string, description: "base 16 transaction hash")
+    parameter(:transaction_hash, :string, description: "base 16 transaction hash")
   end
 
-  def get_transaction(conn, %{"hash" => hash}) do
-    hash = parse_index_or_hash(hash)
-    transaction = cache({:get_transaction, hash}, Api.get_transaction(hash))
-
-    if is_nil(transaction) do
-      conn
-      |> put_status(:not_found)
-      |> json(%{error: "transaction not found"})
-    else
-      json(conn, transaction)
-    end
-  end
-
-  defp parse_index_or_hash(value) do
-    case Integer.parse(value) do
-      {integer, ""} ->
-        integer
-
-      _ ->
-        Base.decode16!(value, case: :mixed)
-    end
+  def get_transaction(conn, params) do
+    if_valid_query_json(
+      conn,
+      params,
+      @transaction_hash_spec,
+      do: Api.get_transaction(parsed.transaction_hash)
+    )
   end
 end

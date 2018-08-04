@@ -370,17 +370,42 @@ defmodule Neoscan.AddressesTest do
 
     transaction11 = insert(:transaction, %{type: "miner_transaction"})
 
-    insert(:vout, %{
-      address_hash: address_hash,
-      transaction_hash: transaction11.hash,
-      asset_hash: @gas_asset_hash,
-      value: 5.0
+    vout8 =
+      insert(:vout, %{
+        address_hash: address_hash,
+        transaction_hash: transaction11.hash,
+        asset_hash: @gas_asset_hash,
+        value: 5.0
+      })
+
+    transaction12 = insert(:transaction, %{type: "contract_transaction", net_fee: 0.2})
+
+    insert(:vin, %{
+      transaction_hash: transaction12.hash,
+      vout_n: vout8.n,
+      vout_transaction_hash: vout8.transaction_hash
     })
 
-    assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 10, total_pages: 1} =
+    vout9 =
+      insert(:vout, %{
+        transaction_hash: transaction12.hash,
+        asset_hash: @gas_asset_hash,
+        value: 4.8
+      })
+
+    assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 11, total_pages: 1} =
              Addresses.get_transaction_abstracts(address_hash, 1)
 
     assert entries == [
+             %{
+               address_from: address_hash,
+               address_to: vout9.address_hash,
+               value: 4.8,
+               asset_hash: @gas_asset_hash,
+               block_index: transaction12.block_index,
+               block_time: transaction12.block_time,
+               transaction_hash: transaction12.hash
+             },
              %{
                address_from: "network_fees",
                address_to: address_hash,

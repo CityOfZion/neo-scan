@@ -11,10 +11,8 @@ defmodule NeoscanNode.Mixfile do
       lockfile: "../../mix.lock",
       elixir: "~> 1.6",
       elixirc_options: [
-        warnings_as_errors: true,
-        ignore_module_conflict: true
+        warnings_as_errors: true
       ],
-      elixirc_paths: elixirc_paths(Mix.env()),
       test_coverage: [
         tool: ExCoveralls
       ],
@@ -41,10 +39,6 @@ defmodule NeoscanNode.Mixfile do
     ]
   end
 
-  # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib"]
-
   # Dependencies can be Hex packages:
   #
   #   {:my_dep, "~> 0.3.0"}
@@ -60,9 +54,11 @@ defmodule NeoscanNode.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:hackney, "~> 1.11", override: true},
+      {:hackney, "~> 1.13", override: true},
       {:poison, "~> 3.1"},
       {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
+      {:neo_node, in_umbrella: true},
+      {:neo_notification, in_umbrella: true},
       {:excoveralls, "~> 0.8", only: :test}
     ]
   end

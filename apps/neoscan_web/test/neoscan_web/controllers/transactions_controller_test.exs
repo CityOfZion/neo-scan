@@ -50,5 +50,8 @@ defmodule NeoscanWeb.TransactionsControllerTest do
     body = html_response(conn, 200)
     assert not (body =~ Base.encode16(Enum.at(transactions, 15).hash, case: :lower))
     assert body =~ Base.encode16(Enum.at(transactions, 2).hash, case: :lower)
+
+    conn = get(conn, "/transactions/====")
+    assert "/" == redirected_to(conn, 302)
   end
 end

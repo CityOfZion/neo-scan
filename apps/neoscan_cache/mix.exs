@@ -11,8 +11,7 @@ defmodule NeoscanCache.Mixfile do
       lockfile: "../../mix.lock",
       elixir: "~> 1.4",
       elixirc_options: [
-        warnings_as_errors: true,
-        ignore_module_conflict: true
+        warnings_as_errors: true
       ],
       test_coverage: [
         tool: ExCoveralls
@@ -39,7 +38,7 @@ defmodule NeoscanCache.Mixfile do
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib"]
+  defp elixirc_paths(_), do: ["lib", "wrapper"]
 
   # Dependencies can be Hex packages:
   #
@@ -58,7 +57,7 @@ defmodule NeoscanCache.Mixfile do
     [
       {:crypto_compare, "~> 0.1.1"},
       {:neoscan, in_umbrella: true},
-      {:excoveralls, "~> 0.8", only: :test}
+      {:excoveralls, "~> 0.9", only: :test}
     ]
   end
 end

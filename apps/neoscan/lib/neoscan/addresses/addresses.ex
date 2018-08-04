@@ -246,12 +246,23 @@ defmodule Neoscan.Addresses do
       transaction_hash: abt.transaction_hash,
       address_from: address_from,
       address_to: address_to,
-      value: abs(abt.value),
+      value: get_transaction_abstract_value(abt),
       asset_hash: abt.asset_hash,
       block_time: abt.transaction.block_time,
       block_index: abt.transaction.block_index
     }
   end
+
+  defp get_transaction_abstract_value(%{
+         value: value,
+         asset_hash: @gas_asset_hash,
+         transaction: %{net_fee: net_fee}
+       })
+       when value < 0 do
+    abs(value) - net_fee
+  end
+
+  defp get_transaction_abstract_value(%{value: value}), do: abs(value)
 
   # self transfer for gas claim
   defp get_transaction_abstract_actors(%{value: 0.0, address_hash: address_hash}),

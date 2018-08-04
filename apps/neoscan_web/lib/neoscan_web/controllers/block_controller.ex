@@ -5,26 +5,31 @@ defmodule NeoscanWeb.BlockController do
   alias Neoscan.Transactions
   alias NeoscanWeb.Helper
 
+  @block_hash_page_spec [
+    block_hash: %{
+      type: :integer_or_base16
+    },
+    page: %{
+      type: :integer,
+      default: 1
+    }
+  ]
+
   def index(conn, parameters) do
     page(conn, parameters)
   end
 
-  def page(conn, parameters = %{"hash" => hash_or_integer}) do
-    page = if is_nil(parameters["page"]), do: 1, else: String.to_integer(parameters["page"])
-    hash_or_integer = parse_index_or_hash(hash_or_integer)
-    block = Blocks.get(hash_or_integer)
-    transactions = Transactions.get_for_block(block.hash, page)
-    transactions = Helper.render_transactions(transactions)
-    render(conn, "block.html", block: block, transactions: transactions, page: page)
-  end
+  def page(conn, params) do
+    if_valid_query conn, params, @block_hash_page_spec do
+      block = Blocks.get(parsed.block_hash)
 
-  defp parse_index_or_hash(value) do
-    case Integer.parse(value) do
-      {integer, ""} ->
-        integer
-
-      _ ->
-        Base.decode16!(value, case: :mixed)
+      if is_nil(block) do
+        redirect(conn, to: home_path(conn, :index))
+      else
+        transactions = Transactions.get_for_block(block.hash, parsed.page)
+        transactions = Helper.render_transactions(transactions)
+        render(conn, "block.html", block: block, transactions: transactions, page: parsed.page)
+      end
     end
   end
 end
