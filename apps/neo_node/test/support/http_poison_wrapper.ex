@@ -1,7 +1,5 @@
-defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
+defmodule NeoNode.HTTPPoisonWrapper do
   @moduledoc false
-
-  @notification_url Application.fetch_env!(:neoscan_node, :notification_seeds) |> List.first()
 
   @unknown_block %{
     code: -100,
@@ -2131,54 +2129,8 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     "version" => 0
   }
 
-  @tokens %{
-    "current_height" => 2_326_419,
-    "message" => "",
-    "page" => 0,
-    "page_len" => 500,
-    "results" => [
-      %{
-        "block" => 2_120_069,
-        "contract" => %{
-          "author" => "Loopring",
-          "code" => %{
-            "hash" => "0xcb9f3b7c6fb1cf2c13a40637c189bdd066a272b4",
-            "parameters" => "0710",
-            "returntype" => 5,
-            "script" => ""
-          },
-          "code_version" => "1",
-          "description" => "LrnToken",
-          "email" => "@",
-          "name" => "lrnToken",
-          "properties" => %{
-            "dynamic_invoke" => false,
-            "storage" => true
-          },
-          "version" => 0
-        },
-        "token" => %{
-          "contract_address" => "AQV236N8gvwsPpNkMeVFK5T8gSTriU1gri",
-          "decimals" => 8,
-          "name" => "Loopring Neo Token",
-          "script_hash" => "0x06fa8be9b6609d963e8fc63977b9f8dc5f10895f",
-          "symbol" => "LRN"
-        },
-        "tx" => "0xe708a3e7697d89b9d3775399dcee22ffffed9602c4077968a66e059a4cccbe25",
-        "type" => "SmartContract.Contract.Create"
-      }
-    ],
-    "total" => 1,
-    "total_pages" => 1
-  }
-
-  def result(result) do
-    %{"result" => result}
-  end
-
-  def error(error) do
-    %{"error" => error}
-  end
+  defp result(result), do: %{"result" => result}
+  defp error(error), do: %{"error" => error}
 
   def post(url, data, headers, opts) do
     result = handle_post(Poison.decode!(data))
@@ -2244,6 +2196,10 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
     end
   end
 
+  def handle_post(%{"method" => "getblock", "params" => [123_457, _]}) do
+    {:error, :timeout}
+  end
+
   def handle_post(%{
         "params" => [hash, _length],
         "method" => "getblock",
@@ -2281,7 +2237,7 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
   end
 
   def handle_post(%{"params" => [], "method" => "getblockcount", "jsonrpc" => "2.0", "id" => 5}) do
-    body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => 200}))
+    body = :zlib.gzip(Poison.encode!(%{"jsonrpc" => "2.0", "id" => 5, "result" => 2_400_000}))
 
     {
       :ok,
@@ -2295,7 +2251,8 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
   def block_data(1), do: result(@block1)
   def block_data(2), do: result(@block2)
   def block_data(123), do: result(@block123)
-  def block_data(199), do: result(@block199)
+  def block_data(2_399_999), do: result(@block199)
+  def block_data(123_456), do: error("error")
   def block_data(1_444_843), do: result(@block1444843)
   def block_data(2_120_069), do: result(@block2120069)
 
@@ -2347,171 +2304,4 @@ defmodule NeoscanNode.HttpCalls.HTTPPoisonWrapper do
   def contract_data("0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9"), do: result(@contract)
   def contract_data("0x0000000000000000000000000000000000000000"), do: error(@unknown_contract)
   def contract_data(_), do: nil
-
-  def get("#{@notification_url}/notifications/block/0?page=1", _, _) do
-    {
-      :ok,
-      %HTTPoison.Response{
-        body:
-          Poison.encode!(%{
-            "current_height" => 2_337_751,
-            "message" => "",
-            "page" => 0,
-            "page_len" => 500,
-            "results" => [],
-            "total" => 0,
-            "total_pages" => 1
-          }),
-        headers: [],
-        status_code: 200
-      }
-    }
-  end
-
-  def get("#{@notification_url}/notifications/block/1444843?page=1", _, _) do
-    {
-      :ok,
-      %HTTPoison.Response{
-        body:
-          Poison.encode!(%{
-            "current_height" => 2_337_751,
-            "message" => "",
-            "page" => 0,
-            "page_len" => 500,
-            "results" => [
-              %{
-                "addr_from" => "",
-                "addr_to" => "ATuT3d1cM4gtg6HezpFrgMppAV3wC5Pjd9",
-                "amount" => "5065200000000000",
-                "block" => 1_444_843,
-                "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
-                "notify_type" => "transfer",
-                "tx" => "0xc920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2",
-                "type" => "SmartContract.Runtime.Notify"
-              },
-              %{
-                "addr_from" => "",
-                "addr_to" => "AHWaJejUjvez5R6SW5kbWrMoLA9vSzTpW9",
-                "amount" => "9096780000000000",
-                "block" => 1_444_843,
-                "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
-                "notify_type" => "transfer",
-                "tx" => "0xc920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2",
-                "type" => "SmartContract.Runtime.Notify"
-              },
-              %{
-                "addr_from" => "",
-                "addr_to" => "AN8cLUwpv7UEWTVxXgGKeuWvwoT2psMygA",
-                "amount" => "3500000000000000",
-                "block" => 1_444_843,
-                "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
-                "notify_type" => "transfer",
-                "tx" => "0xc920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2",
-                "type" => "SmartContract.Runtime.Notify"
-              }
-            ],
-            "total" => 3,
-            "total_pages" => 1
-          }),
-        headers: [],
-        status_code: 200
-      }
-    }
-  end
-
-  def get("#{@notification_url}/notifications/block/1444902?page=" <> page, _, _) do
-    page = String.to_integer(page)
-
-    {
-      :ok,
-      %HTTPoison.Response{
-        body:
-          Poison.encode!(%{
-            "current_height" => 2_326_473,
-            "message" => "",
-            "page" => page,
-            "page_len" => 500,
-            "results" =>
-              List.duplicate(
-                %{
-                  "addr_from" => "",
-                  "addr_to" => "AN8cLUwpv7UEWTVxXgGKeuWvwoT2psMygA",
-                  "amount" => "3500000000000000",
-                  "block" => 1_444_843,
-                  "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
-                  "notify_type" => "transfer",
-                  "tx" => "0xc920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2",
-                  "type" => "SmartContract.Runtime.Notify"
-                },
-                if(page < 6, do: 500, else: 271)
-              ),
-            "total" => 2771,
-            "total_pages" => 6
-          }),
-        headers: [],
-        status_code: 200
-      }
-    }
-  end
-
-  def get("#{@notification_url}/notifications/block/1444801?page=1", _, _) do
-    {
-      :ok,
-      %HTTPoison.Response{
-        body:
-          Poison.encode!(%{
-            "current_height" => 2_326_473,
-            "message" => "",
-            "page" => 0,
-            "page_len" => 500,
-            "results" => [],
-            "total" => 0,
-            "total_pages" => 0
-          }),
-        headers: [],
-        status_code: 200
-      }
-    }
-  end
-
-  def get("#{@notification_url}/notifications/block/1?page=1", _, _) do
-    {
-      :ok,
-      %HTTPoison.Response{
-        body:
-          Poison.encode!(%{
-            "current_height" => 2_326_467,
-            "message" => "",
-            "page" => 0,
-            "page_len" => 500,
-            "results" => [],
-            "total" => 0,
-            "total_pages" => 0
-          }),
-        headers: [],
-        status_code: 200
-      }
-    }
-  end
-
-  def get("#{@notification_url}/tokens?page=1", _, _) do
-    {
-      :ok,
-      %HTTPoison.Response{
-        body: Poison.encode!(@tokens),
-        headers: [],
-        status_code: 200
-      }
-    }
-  end
-
-  def get("error", _, _), do: {:error, :error}
-
-  def get(url, headers, opts) do
-    IO.inspect({url, headers, opts})
-    result = HTTPoison.get(url, headers, opts)
-    IO.inspect(result)
-    IO.inspect(Poison.decode!(elem(result, 1).body), limit: :infinity)
-    result
-  end
 end

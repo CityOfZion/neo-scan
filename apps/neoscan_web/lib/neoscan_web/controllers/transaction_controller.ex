@@ -4,10 +4,22 @@ defmodule NeoscanWeb.TransactionController do
   alias Neoscan.Transactions
   alias NeoscanWeb.Helper
 
-  def index(conn, %{"hash" => transaction_hash}) do
-    transaction_hash = Base.decode16!(transaction_hash, case: :mixed)
-    transaction = Transactions.get(transaction_hash)
-    transaction = Helper.render_transaction(transaction)
-    render(conn, "transaction.html", transaction: transaction)
+  @transaction_hash_spec [
+    transaction_hash: %{
+      type: :base16
+    }
+  ]
+
+  def index(conn, params) do
+    if_valid_query conn, params, @transaction_hash_spec do
+      transaction = Transactions.get(parsed.transaction_hash)
+
+      if is_nil(transaction) do
+        redirect(conn, to: home_path(conn, :index))
+      else
+        transaction = Helper.render_transaction(transaction)
+        render(conn, "transaction.html", transaction: transaction)
+      end
+    end
   end
 end

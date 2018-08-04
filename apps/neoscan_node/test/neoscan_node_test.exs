@@ -1,17 +1,12 @@
 defmodule NeoscanNodeTest do
   use ExUnit.Case
 
-  test "get_nodes/0" do
-    assert is_list(NeoscanNode.get_nodes())
+  test "get_last_block_index/0" do
+    assert 2_399_999 == NeoscanNode.get_last_block_index()
   end
 
-  test "get_height/0" do
-    {:ok, height} = NeoscanNode.get_height()
-    assert is_number(height)
-  end
-
-  test "get_data/0" do
-    [{url, height} | _] = NeoscanNode.get_data()
+  test "get_live_nodes/0" do
+    [{url, height} | _] = NeoscanNode.get_live_nodes()
     assert is_bitstring(url) and is_number(height)
   end
 

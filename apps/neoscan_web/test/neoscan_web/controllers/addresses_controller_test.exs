@@ -15,5 +15,8 @@ defmodule NeoscanWeb.AddressesControllerTest do
     body = html_response(conn, 200)
     assert not (body =~ Base58.encode(Enum.at(addresses, 15).hash))
     assert body =~ Base58.encode(Enum.at(addresses, 2).hash)
+
+    conn = get(conn, "/addresses/====")
+    assert "/" == redirected_to(conn, 302)
   end
 end
