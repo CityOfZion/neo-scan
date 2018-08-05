@@ -4,7 +4,12 @@ defmodule NeoscanSync.Syncer do
   alias NeoscanSync.Converter
   alias Neoscan.Repo
   alias Neoscan.Blocks
-
+  alias Neoscan.Vout
+  alias Neoscan.Vin
+  alias Neoscan.Claim
+  alias Neoscan.Transfer
+  alias Neoscan.Transaction
+  alias Neoscan.Asset
   use GenServer
 
   require Logger
@@ -61,9 +66,49 @@ defmodule NeoscanSync.Syncer do
     end
   end
 
+  def explode_block(block) do
+    map = %{
+      block: %{block | transactions: []},
+      transactions: [],
+      vouts: [],
+      vins: [],
+      claims: [],
+      transfers: [],
+      assets: []
+    }
+
+    Enum.reduce(block.transactions, map, fn transaction, acc ->
+      %{
+        acc
+        | transactions: [
+            Map.drop(transaction, [:vouts, :vins, :claims, :transfers, :asset]) | acc.transactions
+          ],
+          vouts: transaction.vouts ++ acc.vouts,
+          vins: transaction.vins ++ acc.vins,
+          claims: transaction.claims ++ acc.claims,
+          transfers: transaction.transfers ++ acc.transfers,
+          assets: if(is_nil(transaction.asset), do: [], else: [transaction.asset]) ++ acc.assets
+      }
+    end)
+  end
+
   def insert_block(block) do
+    exploded_block = explode_block(block)
+
     try do
-      Repo.transaction(fn -> Repo.insert!(block, timeout: :infinity) end, timeout: :infinity)
+      Repo.transaction(
+        fn ->
+          Repo.insert!(exploded_block.block, timeout: :infinity)
+          Repo.insert_all(Transaction, exploded_block.transactions, timeout: :infinity)
+          Repo.insert_all(Vin, exploded_block.vins, timeout: :infinity)
+          Repo.insert_all(Vout, exploded_block.vouts, timeout: :infinity)
+          Repo.insert_all(Claim, exploded_block.claims, timeout: :infinity)
+          Repo.insert_all(Transfer, exploded_block.transfers, timeout: :infinity)
+          Repo.insert_all(Asset, exploded_block.assets, timeout: :infinity)
+        end,
+        timeout: :infinity
+      )
+
       :ok
     catch
       error ->
