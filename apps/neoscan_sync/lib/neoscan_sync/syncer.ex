@@ -92,6 +92,12 @@ defmodule NeoscanSync.Syncer do
     end)
   end
 
+  defp insert_all(schema, data) do
+    data
+    |> Enum.chunk_every(1_000)
+    |> Enum.map(&Repo.insert_all(schema, &1, timeout: :infinity))
+  end
+
   def insert_block(block) do
     exploded_block = explode_block(block)
 
@@ -99,12 +105,12 @@ defmodule NeoscanSync.Syncer do
       Repo.transaction(
         fn ->
           Repo.insert!(exploded_block.block, timeout: :infinity)
-          Repo.insert_all(Transaction, exploded_block.transactions, timeout: :infinity)
-          Repo.insert_all(Vin, exploded_block.vins, timeout: :infinity)
-          Repo.insert_all(Vout, exploded_block.vouts, timeout: :infinity)
-          Repo.insert_all(Claim, exploded_block.claims, timeout: :infinity)
-          Repo.insert_all(Transfer, exploded_block.transfers, timeout: :infinity)
-          Repo.insert_all(Asset, exploded_block.assets, timeout: :infinity)
+          insert_all(Transaction, exploded_block.transactions)
+          insert_all(Vin, exploded_block.vins)
+          insert_all(Vout, exploded_block.vouts)
+          insert_all(Claim, exploded_block.claims)
+          insert_all(Transfer, exploded_block.transfers)
+          insert_all(Asset, exploded_block.assets)
         end,
         timeout: :infinity
       )
