@@ -723,18 +723,18 @@ defmodule NeoscanWeb.ApiControllerTest do
     conn =
       get(
         conn,
-        api_path(conn, :get_last_transactions_by_address, Base58.encode(vout.address_hash))
+        api_path(conn, :get_last_transactions_by_address, Base58.encode(vout.address_hash), "1")
       )
       |> BlueBird.ConnLogger.save()
 
     assert 1 == Enum.count(json_response(conn, 200))
 
-    conn = get(conn, api_path(conn, :get_last_transactions_by_address, address_hash))
+    conn = get(conn, api_path(conn, :get_last_transactions_by_address, address_hash, "1"))
 
     assert 1 == Enum.count(json_response(conn, 200))
 
     conn =
-      get(conn, api_path(conn, :get_last_transactions_by_address, "==") <> "/nan")
+      get(conn, api_path(conn, :get_last_transactions_by_address, "==", "nan"))
       |> BlueBird.ConnLogger.save()
 
     assert %{"errors" => ["page is not a valid integer", "address is not a valid base58"]} ==

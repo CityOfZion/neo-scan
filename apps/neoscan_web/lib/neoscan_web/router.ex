@@ -54,12 +54,6 @@ defmodule NeoscanWeb.Router do
     get("/get_all_nodes", ApiController, :get_all_nodes)
 
     get(
-      "/get_last_transactions_by_address/:address",
-      ApiController,
-      :get_last_transactions_by_address
-    )
-
-    get(
       "/get_last_transactions_by_address/:address/:page",
       ApiController,
       :get_last_transactions_by_address
