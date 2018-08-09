@@ -215,6 +215,71 @@ defmodule Neoscan.Repo.Migrations.Triggers do
       EXECUTE PROCEDURE address_counter();
     """
 
+    execute """
+    CREATE OR REPLACE FUNCTION asset_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        INSERT INTO counters (name, value)
+        VALUES ('assets', 1)
+        ON CONFLICT ON CONSTRAINT counters_pkey DO
+        UPDATE SET
+        value = counters.value + EXCLUDED.value;
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER asset_counter_trigger
+      AFTER INSERT ON assets FOR each row
+      EXECUTE PROCEDURE asset_counter();
+    """
+
+    execute """
+    CREATE OR REPLACE FUNCTION transaction_by_asset_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM address_transaction_balances
+          WHERE asset_hash = NEW.asset_hash AND transaction_hash = NEW.transaction_hash
+          OFFSET 1
+        ) THEN
+          RETURN NULL;
+        END IF;
+        
+        INSERT INTO counters (name, value)
+        VALUES ('transactions_by_asset_' || encode(NEW.asset_hash, 'hex'), 1)
+        ON CONFLICT ON CONSTRAINT counters_pkey DO
+        UPDATE SET
+        value = counters.value + EXCLUDED.value;
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER transaction_by_asset_counter_trigger
+      AFTER INSERT ON address_transaction_balances FOR each row
+      EXECUTE PROCEDURE transaction_by_asset_counter();
+    """
+
+    execute """
+    CREATE OR REPLACE FUNCTION address_by_asset_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        INSERT INTO counters (name, value)
+        VALUES ('addresses_by_asset_' || encode(NEW.asset_hash, 'hex'), 1)
+        ON CONFLICT ON CONSTRAINT counters_pkey DO
+        UPDATE SET
+        value = counters.value + EXCLUDED.value;
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER address_by_asset_counter_trigger
+      AFTER INSERT ON address_balances FOR each row
+      EXECUTE PROCEDURE address_by_asset_counter();
+    """
+
     # transactions
 
     execute """

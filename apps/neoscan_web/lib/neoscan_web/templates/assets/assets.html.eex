@@ -1,0 +1,44 @@
+<h1 class="content-title"><%= gettext "Assets" %></h1>
+
+<!-- All assets content -->
+<section id="all-assets-wrapper">
+
+  <div class="detail-bar">
+    <p class="detail-type detail-type-first-3-col"><%= gettext "Name" %></p>
+    <p class="detail-type col-6-width"><%= gettext "Asset Hash" %></p>
+    <p class="detail-type col-3-width"><%= gettext "Created on" %></p>
+    <p class="detail-type tablet-full-width"><%= gettext "All asset information" %></p>
+  </div>
+
+  <!-- Assets -->
+  <section id="assets-wrapper">
+    <div class="assets-list">
+      <!-- Asset -->
+      <%= for asset <- @assets do %>
+        <div class="full-width-bar asset">
+          <div class="information-wrapper">
+            <p class="medium-detail-text col-3-width"><span class="fa <%= render_asset_style(asset.type) %>"></span><%= render_asset_name(@conn, asset) %></p>
+            <div class="secondary-info-wrapper">
+              <a href="<%= asset_path(@conn, :index, render_hash(asset.transaction_hash))%>" alt="<%= gettext "View asset"%>" title="<%= gettext "View asset"%>" class="large-blue-link col-6-width"><%= render_hash(asset.transaction_hash) %></a>
+              <p class="medium-detail-text col-3-width remove-550px">
+                <span class="utc_time"><%= render_date_time(asset.block_time) %></span>
+              </p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <p  class="number-counter"><%= gettext "Assets"%> <%= get_current_min_qtd(@page, @total) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @total) %> <%= gettext "of"%> <%= @total %></p>
+  <div class="see-all-button-container">
+    <div class="btn-group">
+      <%= if @page != 1 do %>
+        <a href="<%= assets_path(@conn, :page, to_string(@page - 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-left"></i></a>
+      <% end %>
+      <%= if check_last(@page, @total) do %>
+        <a href="<%= assets_path(@conn, :page, to_string(@page + 1)) %>" class="button btn btn-primary"><i class="fa fa-angle-right"></i></a>
+      <% end %>
+    </div>
+  </div>
+</section>
