@@ -7,7 +7,7 @@ defmodule Neoscan.AddressesTest do
   @governing_token Application.fetch_env!(:neoscan, :governing_token)
   @utility_token Application.fetch_env!(:neoscan, :utility_token)
   @deprecated_tokens Application.get_env(:neoscan, :deprecated_tokens)
-  
+
   test "get_balances/1" do
     address_history = insert(:address_history, %{asset_hash: <<1, 2, 3>>, value: 1.0})
 
@@ -36,7 +36,11 @@ defmodule Neoscan.AddressesTest do
     block_time0 = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 22)
 
     address_history =
-      insert(:address_history, %{asset_hash: @governing_token, value: 2.0, block_time: block_time0})
+      insert(:address_history, %{
+        asset_hash: @governing_token,
+        value: 2.0,
+        block_time: block_time0
+      })
 
     block_time = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 12)
 
@@ -109,7 +113,11 @@ defmodule Neoscan.AddressesTest do
     block_time0 = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 22)
 
     address_history =
-      insert(:address_history, %{asset_hash: @governing_token, value: 2.0, block_time: block_time0})
+      insert(:address_history, %{
+        asset_hash: @governing_token,
+        value: 2.0,
+        block_time: block_time0
+      })
 
     block_time = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 12)
 
