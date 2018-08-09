@@ -4,15 +4,14 @@ defmodule Neoscan.Counters do
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.Counter
-  alias Neoscan.AddressBalance
-  alias Neoscan.AddressTransactionBalance
 
   def count_addresses do
     Repo.one(from(c in Counter, where: c.name == "addresses", select: c.value))
   end
 
   def count_addresses(asset_hash) do
-    Repo.one(from(ab in AddressBalance, where: ab.asset_hash == ^asset_hash, select: count(1)))
+    name = "addresses_by_asset_" <> Base.encode16(asset_hash, case: :lower)
+    Repo.one(from(c in Counter, where: c.name == ^name, select: c.value)) || 0
   end
 
   def count_blocks do
@@ -42,13 +41,8 @@ defmodule Neoscan.Counters do
   end
 
   def count_transactions(asset_hash) do
-    Repo.one(
-      from(
-        atb in AddressTransactionBalance,
-        where: atb.asset_hash == ^asset_hash,
-        select: count(atb.transaction_hash, :distinct)
-      )
-    )
+    name = "transactions_by_asset_" <> Base.encode16(asset_hash, case: :lower)
+    Repo.one(from(c in Counter, where: c.name == ^name, select: c.value)) || 0
   end
 
   def count_assets do
