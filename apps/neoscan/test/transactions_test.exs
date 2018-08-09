@@ -4,8 +4,7 @@ defmodule Neoscan.TransactionsTest do
 
   alias Neoscan.Transactions
 
-  @neo_asset_hash <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144,
-                    175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
+  @governing_token Application.fetch_env!(:neoscan, :governing_token)
 
   test "get/1" do
     asset = insert(:asset)
@@ -79,11 +78,11 @@ defmodule Neoscan.TransactionsTest do
   end
 
   test "get_claimable_vouts/1" do
-    insert(:asset, %{transaction_hash: @neo_asset_hash})
-    vout1 = insert(:vout, %{asset_hash: @neo_asset_hash})
-    vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
+    insert(:asset, %{transaction_hash: @governing_token})
+    vout1 = insert(:vout, %{asset_hash: @governing_token})
+    vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
     insert(:vin, %{vout_n: vout2.n, vout_transaction_hash: vout2.transaction_hash})
-    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
@@ -94,11 +93,11 @@ defmodule Neoscan.TransactionsTest do
   end
 
   test "get_unclaimed_vouts/1" do
-    insert(:asset, %{transaction_hash: @neo_asset_hash})
-    vout1 = insert(:vout, %{asset_hash: @neo_asset_hash})
-    vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
+    insert(:asset, %{transaction_hash: @governing_token})
+    vout1 = insert(:vout, %{asset_hash: @governing_token})
+    vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
     insert(:vin, %{vout_n: vout2.n, vout_transaction_hash: vout2.transaction_hash})
-    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 

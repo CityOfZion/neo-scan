@@ -3,11 +3,8 @@ defmodule Neoscan.Addresses do
   The boundary for the Addresses system.
   """
 
-  @neo_asset_hash <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144,
-                    175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
-
-  @gas_asset_hash <<96, 44, 121, 113, 139, 22, 228, 66, 222, 88, 119, 142, 20, 141, 11, 16, 132,
-                    227, 178, 223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45, 231>>
+  @governing_token Application.fetch_env!(:neoscan, :governing_token)
+  @utility_token Application.fetch_env!(:neoscan, :utility_token)
 
   @page_size 15
   @balance_history_size 500
@@ -69,11 +66,11 @@ defmodule Neoscan.Addresses do
 
   def get_split_balance(binary_hash) do
     balances = get_balances(binary_hash)
-    neo_balance = Enum.find(balances, &(&1.asset == @neo_asset_hash))
-    gas_balance = Enum.find(balances, &(&1.asset == @gas_asset_hash))
+    neo_balance = Enum.find(balances, &(&1.asset == @governing_token))
+    gas_balance = Enum.find(balances, &(&1.asset == @utility_token))
 
     token_balances =
-      Enum.filter(balances, &(not (&1.asset in [@neo_asset_hash, @gas_asset_hash])))
+      Enum.filter(balances, &(not (&1.asset in [@governing_token, @utility_token])))
 
     normal_token_balances = Enum.filter(token_balances, &(not (&1.asset in @deprecated_tokens)))
     deprecated_token_balances = Enum.filter(token_balances, &(&1.asset in @deprecated_tokens))
@@ -255,7 +252,7 @@ defmodule Neoscan.Addresses do
 
   defp get_transaction_abstract_value(%{
          value: value,
-         asset_hash: @gas_asset_hash,
+         asset_hash: @utility_token,
          transaction: %{net_fee: net_fee}
        })
        when value < 0 do
@@ -276,15 +273,15 @@ defmodule Neoscan.Addresses do
   end
 
   defp get_transaction_abstract_other_actor(
-         %{transaction: %{type: "miner_transaction"}, asset_hash: @gas_asset_hash, related: []},
+         %{transaction: %{type: "miner_transaction"}, asset_hash: @utility_token, related: []},
          false
        ),
        do: "network_fees"
 
-  defp get_transaction_abstract_other_actor(%{asset_hash: @gas_asset_hash, related: []}, false),
+  defp get_transaction_abstract_other_actor(%{asset_hash: @utility_token, related: []}, false),
     do: "claim"
 
-  defp get_transaction_abstract_other_actor(%{asset_hash: @gas_asset_hash, related: []}, true),
+  defp get_transaction_abstract_other_actor(%{asset_hash: @utility_token, related: []}, true),
     do: "fees"
 
   defp get_transaction_abstract_other_actor(%{related: []}, false), do: "mint"

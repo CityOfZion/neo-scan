@@ -4,13 +4,9 @@ defmodule Neoscan.AddressesTest do
 
   alias Neoscan.Addresses
 
+  @governing_token Application.fetch_env!(:neoscan, :governing_token)
+  @utility_token Application.fetch_env!(:neoscan, :utility_token)
   @deprecated_tokens Application.get_env(:neoscan, :deprecated_tokens)
-
-  @neo_asset_hash <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144,
-                    175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
-
-  @gas_asset_hash <<96, 44, 121, 113, 139, 22, 228, 66, 222, 88, 119, 142, 20, 141, 11, 16, 132,
-                    227, 178, 223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45, 231>>
 
   test "get_balances/1" do
     address_history = insert(:address_history, %{asset_hash: <<1, 2, 3>>, value: 1.0})
@@ -23,12 +19,12 @@ defmodule Neoscan.AddressesTest do
 
     insert(:address_history, %{
       address_hash: address_history.address_hash,
-      asset_hash: @neo_asset_hash,
+      asset_hash: @governing_token,
       value: 3.0
     })
 
     insert(:asset, %{
-      transaction_hash: @neo_asset_hash,
+      transaction_hash: @governing_token,
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
@@ -40,20 +36,24 @@ defmodule Neoscan.AddressesTest do
     block_time0 = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 22)
 
     address_history =
-      insert(:address_history, %{asset_hash: @neo_asset_hash, value: 2.0, block_time: block_time0})
+      insert(:address_history, %{
+        asset_hash: @governing_token,
+        value: 2.0,
+        block_time: block_time0
+      })
 
     block_time = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 12)
 
     insert(:address_history, %{
       address_hash: address_history.address_hash,
-      asset_hash: @neo_asset_hash,
+      asset_hash: @governing_token,
       value: 3.0,
       block_time: block_time
     })
 
     insert(:address_history, %{
       address_hash: address_history.address_hash,
-      asset_hash: @gas_asset_hash,
+      asset_hash: @utility_token,
       value: 0.2130,
       block_time: block_time
     })
@@ -61,7 +61,7 @@ defmodule Neoscan.AddressesTest do
     address_history2 =
       insert(:address_history, %{
         address_hash: address_history.address_hash,
-        asset_hash: @neo_asset_hash,
+        asset_hash: @governing_token,
         value: -3.0
       })
 
@@ -74,18 +74,18 @@ defmodule Neoscan.AddressesTest do
 
     insert(:address_history, %{
       address_hash: address_history.address_hash,
-      asset_hash: @neo_asset_hash,
+      asset_hash: @governing_token,
       block_time: address_history2.block_time,
       value: 2.0
     })
 
     insert(:asset, %{
-      transaction_hash: @neo_asset_hash,
+      transaction_hash: @governing_token,
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
     insert(:asset, %{
-      transaction_hash: @gas_asset_hash,
+      transaction_hash: @utility_token,
       name: [%{"lang" => "en", "name" => "GAS"}]
     })
 
@@ -113,20 +113,24 @@ defmodule Neoscan.AddressesTest do
     block_time0 = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 22)
 
     address_history =
-      insert(:address_history, %{asset_hash: @neo_asset_hash, value: 2.0, block_time: block_time0})
+      insert(:address_history, %{
+        asset_hash: @governing_token,
+        value: 2.0,
+        block_time: block_time0
+      })
 
     block_time = DateTime.from_unix!(DateTime.to_unix(DateTime.utc_now()) - 12)
 
     insert(:address_history, %{
       address_hash: address_history.address_hash,
-      asset_hash: @neo_asset_hash,
+      asset_hash: @governing_token,
       value: 3.0,
       block_time: block_time
     })
 
     insert(:address_history, %{
       address_hash: address_history.address_hash,
-      asset_hash: @gas_asset_hash,
+      asset_hash: @utility_token,
       value: 0.2130,
       block_time: block_time
     })
@@ -148,14 +152,14 @@ defmodule Neoscan.AddressesTest do
     })
 
     insert(:asset, %{
-      transaction_hash: @neo_asset_hash,
+      transaction_hash: @governing_token,
       type: "governing_token",
       precision: 0,
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
     insert(:asset, %{
-      transaction_hash: @gas_asset_hash,
+      transaction_hash: @utility_token,
       type: "utility_token",
       precision: 8,
       name: [%{"lang" => "en", "name" => "GAS"}]
@@ -175,14 +179,14 @@ defmodule Neoscan.AddressesTest do
 
     assert %{
              gas: %{
-               asset: @gas_asset_hash,
+               asset: @utility_token,
                name: "GAS",
                precision: 8,
                type: "utility_token",
                value: 0.213
              },
              neo: %{
-               asset: @neo_asset_hash,
+               asset: @governing_token,
                name: "NEO",
                precision: 0,
                type: "governing_token",
@@ -225,7 +229,7 @@ defmodule Neoscan.AddressesTest do
     vout =
       insert(:vout, %{
         transaction_hash: transaction1.hash,
-        asset_hash: @gas_asset_hash,
+        asset_hash: @utility_token,
         value: 5.0
       })
 
@@ -364,7 +368,7 @@ defmodule Neoscan.AddressesTest do
     insert(:vout, %{
       address_hash: address_hash,
       transaction_hash: transaction10.hash,
-      asset_hash: @gas_asset_hash,
+      asset_hash: @utility_token,
       value: 4.9
     })
 
@@ -374,7 +378,7 @@ defmodule Neoscan.AddressesTest do
       insert(:vout, %{
         address_hash: address_hash,
         transaction_hash: transaction11.hash,
-        asset_hash: @gas_asset_hash,
+        asset_hash: @utility_token,
         value: 5.0
       })
 
@@ -389,7 +393,7 @@ defmodule Neoscan.AddressesTest do
     vout9 =
       insert(:vout, %{
         transaction_hash: transaction12.hash,
-        asset_hash: @gas_asset_hash,
+        asset_hash: @utility_token,
         value: 4.8
       })
 
@@ -401,7 +405,7 @@ defmodule Neoscan.AddressesTest do
                address_from: address_hash,
                address_to: vout9.address_hash,
                value: 4.8,
-               asset_hash: @gas_asset_hash,
+               asset_hash: @utility_token,
                block_index: transaction12.block_index,
                block_time: transaction12.block_time,
                transaction_hash: transaction12.hash
@@ -410,7 +414,7 @@ defmodule Neoscan.AddressesTest do
                address_from: "network_fees",
                address_to: address_hash,
                value: 5.0,
-               asset_hash: @gas_asset_hash,
+               asset_hash: @utility_token,
                block_index: transaction11.block_index,
                block_time: transaction11.block_time,
                transaction_hash: transaction11.hash
@@ -419,7 +423,7 @@ defmodule Neoscan.AddressesTest do
                address_from: address_hash,
                address_to: "fees",
                value: 0.09999999999999964,
-               asset_hash: @gas_asset_hash,
+               asset_hash: @utility_token,
                block_index: transaction10.block_index,
                block_time: transaction10.block_time,
                transaction_hash: transaction10.hash
@@ -491,7 +495,7 @@ defmodule Neoscan.AddressesTest do
                address_from: "claim",
                address_to: address_hash,
                value: 5.0,
-               asset_hash: @gas_asset_hash,
+               asset_hash: @utility_token,
                block_index: transaction1.block_index,
                block_time: transaction1.block_time,
                transaction_hash: transaction1.hash
