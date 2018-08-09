@@ -3,11 +3,8 @@ defmodule NeoscanWeb.ApiControllerTest do
 
   import NeoscanWeb.Factory
 
-  @neo_asset_hash <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144,
-                    175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
-
-  @gas_asset_hash <<96, 44, 121, 113, 139, 22, 228, 66, 222, 88, 119, 142, 20, 141, 11, 16, 132,
-                    227, 178, 223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45, 231>>
+  @governing_token Application.fetch_env!(:neoscan, :governing_token)
+  @utility_token Application.fetch_env!(:neoscan, :utility_token)
 
   setup do
     Supervisor.terminate_child(NeoscanWeb.Supervisor, ConCache)
@@ -16,15 +13,15 @@ defmodule NeoscanWeb.ApiControllerTest do
   end
 
   test "get_balance/:address", %{conn: conn} do
-    vout1 = insert(:vout, %{asset_hash: @neo_asset_hash, value: 2.0})
-    vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
+    vout1 = insert(:vout, %{asset_hash: @governing_token, value: 2.0})
+    vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
     insert(:vin, %{vout_n: vout2.n, vout_transaction_hash: vout2.transaction_hash})
 
     vout3 =
-      insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash, value: 5.0})
+      insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token, value: 5.0})
 
     insert(:asset, %{
-      transaction_hash: @neo_asset_hash,
+      transaction_hash: @governing_token,
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
@@ -72,14 +69,14 @@ defmodule NeoscanWeb.ApiControllerTest do
 
   test "get_claimed/:address", %{conn: conn} do
     insert(:asset, %{
-      transaction_hash: @neo_asset_hash,
+      transaction_hash: @governing_token,
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
-    vout1 = insert(:vout, %{asset_hash: @neo_asset_hash})
-    insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
-    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
-    vout4 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
+    vout1 = insert(:vout, %{asset_hash: @governing_token})
+    insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
+    vout4 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
     insert(:claim, %{vout_n: vout1.n, vout_transaction_hash: vout1.transaction_hash})
     claim3 = insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
@@ -119,18 +116,18 @@ defmodule NeoscanWeb.ApiControllerTest do
 
   test "get_unclaimed/:hash", %{conn: conn} do
     insert(:asset, %{
-      transaction_hash: @neo_asset_hash,
+      transaction_hash: @governing_token,
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
-    vout1 = insert(:vout, %{start_block_index: 4, value: 5.0, asset_hash: @neo_asset_hash})
+    vout1 = insert(:vout, %{start_block_index: 4, value: 5.0, asset_hash: @governing_token})
 
     vout2 =
       insert(:vout, %{
         address_hash: vout1.address_hash,
         start_block_index: 3,
         value: 5.0,
-        asset_hash: @neo_asset_hash
+        asset_hash: @governing_token
       })
 
     insert(:vin, %{
@@ -139,7 +136,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       block_index: 6
     })
 
-    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
@@ -170,18 +167,18 @@ defmodule NeoscanWeb.ApiControllerTest do
 
   test "get_claimable/:hash", %{conn: conn} do
     insert(:asset, %{
-      transaction_hash: @neo_asset_hash,
+      transaction_hash: @governing_token,
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
-    vout1 = insert(:vout, %{asset_hash: @neo_asset_hash})
+    vout1 = insert(:vout, %{asset_hash: @governing_token})
 
     vout2 =
       insert(:vout, %{
         address_hash: vout1.address_hash,
         start_block_index: 3,
         value: 5.0,
-        asset_hash: @neo_asset_hash
+        asset_hash: @governing_token
       })
 
     insert(:vin, %{
@@ -190,7 +187,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       block_index: 6
     })
 
-    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @neo_asset_hash})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
@@ -199,7 +196,7 @@ defmodule NeoscanWeb.ApiControllerTest do
         address_hash: vout1.address_hash,
         start_block_index: 5,
         value: 2.0,
-        asset_hash: @neo_asset_hash
+        asset_hash: @governing_token
       })
 
     insert(:vin, %{
@@ -253,7 +250,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     vout =
       insert(:vout, %{
         transaction_hash: transaction1.hash,
-        asset_hash: @gas_asset_hash,
+        asset_hash: @utility_token,
         value: 5.1
       })
 
@@ -376,7 +373,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     insert(:vout, %{
       address_hash: address_hash,
       transaction_hash: transaction10.hash,
-      asset_hash: @gas_asset_hash,
+      asset_hash: @utility_token,
       value: 4.9
     })
 
@@ -385,7 +382,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     insert(:vout, %{
       address_hash: address_hash,
       transaction_hash: transaction11.hash,
-      asset_hash: @gas_asset_hash,
+      asset_hash: @utility_token,
       value: 5.0
     })
 
@@ -398,7 +395,7 @@ defmodule NeoscanWeb.ApiControllerTest do
                "address_from" => "network_fees",
                "address_to" => address_hash_str,
                "amount" => "5",
-               "asset" => Base.encode16(@gas_asset_hash, case: :lower),
+               "asset" => Base.encode16(@utility_token, case: :lower),
                "block_height" => transaction11.block_index,
                "time" => DateTime.to_unix(transaction11.block_time),
                "txid" => Base.encode16(transaction11.hash, case: :lower)
@@ -407,7 +404,7 @@ defmodule NeoscanWeb.ApiControllerTest do
                "address_from" => address_hash_str,
                "address_to" => "fees",
                "amount" => "0.2",
-               "asset" => Base.encode16(@gas_asset_hash, case: :lower),
+               "asset" => Base.encode16(@utility_token, case: :lower),
                "block_height" => transaction10.block_index,
                "time" => DateTime.to_unix(transaction10.block_time),
                "txid" => Base.encode16(transaction10.hash, case: :lower)
@@ -470,7 +467,7 @@ defmodule NeoscanWeb.ApiControllerTest do
                "address_from" => "claim",
                "address_to" => address_hash_str,
                "amount" => "5.1",
-               "asset" => Base.encode16(@gas_asset_hash, case: :lower),
+               "asset" => Base.encode16(@utility_token, case: :lower),
                "block_height" => transaction1.block_index,
                "time" => DateTime.to_unix(transaction1.block_time),
                "txid" => Base.encode16(transaction1.hash, case: :lower)
