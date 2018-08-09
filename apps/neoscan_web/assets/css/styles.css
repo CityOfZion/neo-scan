@@ -1189,7 +1189,7 @@ a:hover {
   padding: 40px 0 20px 0;
   float: left;
 }
-.block-navigation {
+.block-navigation, .asset-navigation{
   width: 100%;
   padding: 40px 0 20px 0;
   overflow: hidden;
@@ -1481,6 +1481,13 @@ a:hover {
   font-size: 16px;
   font-weight: 600;
   padding-bottom: 8px;
+}
+
+#assets-wrapper .col-3-width {
+	width: 1px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 /******************************************

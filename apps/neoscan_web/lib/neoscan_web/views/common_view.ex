@@ -1,4 +1,5 @@
 defmodule NeoscanWeb.CommonView do
+  alias Plug.Conn
   alias NeoscanWeb.Explanations
   alias NeoscanWeb.ViewHelper
   alias Neoscan.Vm.Disassembler
@@ -55,8 +56,8 @@ defmodule NeoscanWeb.CommonView do
 
   def check_last(page, total), do: page * 15 < total
 
-  def render_asset_style("GAS"), do: "fa-cubes"
-  def render_asset_style("NEO"), do: "fa-cube"
+  def render_asset_style("utility_token"), do: "fa-cubes"
+  def render_asset_style("governing_token"), do: "fa-cube"
   def render_asset_style(_), do: "fa-university"
 
   def render_hash(hash), do: Base.encode16(hash, case: :lower)
@@ -96,6 +97,19 @@ defmodule NeoscanWeb.CommonView do
   end
 
   def render_date_time(date_time), do: DateTime.to_unix(date_time)
+
+  def render_asset_name(conn, asset) do
+    lang = Conn.get_session(conn, "locale")
+
+    specific_name =
+      Enum.find(asset.name, fn x -> x["lang"] == lang end) ||
+        Enum.find(asset.name, fn x -> String.starts_with?(x["lang"], lang) end) ||
+        Enum.find(asset.name, fn x -> x["lang"] == "en" end) ||
+        Enum.find(asset.name, fn x -> String.starts_with?(x["lang"], "en") end) ||
+        List.first(asset.name)
+
+    specific_name["name"]
+  end
 
   def has_script?(scripts), do: not is_nil(get_script(scripts))
 

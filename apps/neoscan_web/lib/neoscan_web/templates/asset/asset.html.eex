@@ -1,0 +1,54 @@
+<h1 class="content-title"><%= gettext "Asset Information"%></h1>
+<p class="large-detail-text"><span class="fa <%= render_asset_style(@asset.type) %>"></span><span class="bold-text"><%= gettext "Asset"%></span> <span class="teal-bar">|</span> <span class="eggshell-blue-text"><%= render_hash(@asset.transaction_hash) %></span></p>
+<div class="asset-navigation">
+ <a href="<%= assets_path(@conn, :page, "1") %>" class="browse-wallet-back"><%= gettext "Back to all assets"%></a>
+</div>
+
+<section id="asset-information" class="corner-box bar-left-assets">
+  <!-- Extra information list -->
+  <ul id="extra-information" class="asset-left-information-bar">
+    <li class="border-right border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+      <p class="small-detail-text"><%= gettext "Name" %></p>
+      <p class="large-detail-text"><%= render_asset_name(@conn, @asset) %></p>
+    </li>
+    <li class="border-right border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+      <p class="small-detail-text"><%= gettext "Type" %></p>
+      <p class="large-detail-text"><%= Macro.camelize(@asset.type) %></p>
+    </li>
+    <li class="border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+      <p class="small-detail-text"><%= gettext "Admin" %></p>
+      <%= case @asset.owner do %>
+        <% "00" -> %>
+          <%= gettext "System" %>
+        <% <<0>> -> %>
+          <%= gettext "Contract" %>
+        <% _ -> %>
+          <a href="<%= address_path(@conn, :index, render_address_hash(@asset.admin))%>" class="large-blue-link"><%= render_address_hash(@asset.admin) %></a>
+      <% end %>
+    </li>
+    <li class="border-right border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+      <p class="small-detail-text"><%= gettext "Issued" %></p>
+      <p class="large-detail-text"><%= render_balance(@asset.issued, @asset.precision) %></p>
+    </li>
+    <li class="border-right border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+      <p class="small-detail-text"><%= gettext "Supply" %></p>
+      <p class="large-detail-text"><%= render_balance(@asset.amount, @asset.precision) %></p>
+    </li>
+    <li class="border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+      <p class="small-detail-text"><%= gettext "Precision" %></p>
+      <p class="large-detail-text"><%= @asset.precision %></p>
+    </li>
+    <li class="border-right border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+      <p class="small-detail-text"><%= gettext "Transactions"%></p>
+      <p class="large-detail-text"><%= @asset.tx_count %></p>
+    </li>
+    <li class="border-right remove-border-right-660px remove-border-bottom-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+      <p class="small-detail-text"><%= gettext "Addresses"%></p>
+      <p class="large-detail-text"><%= @asset.addr_count %></p>
+    </li>
+    <li class="remove-border-bottom-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+      <p class="small-detail-text"><%= gettext "Created"%></p>
+      <p class=" wallet-address"><span class="utc_time"><%= get_minutes(@asset.block_time)%></span></a>
+    </li>
+  </ul>
+</section>

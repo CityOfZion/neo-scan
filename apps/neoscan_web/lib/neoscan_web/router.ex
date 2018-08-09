@@ -42,6 +42,10 @@ defmodule NeoscanWeb.Router do
     get("/transaction/:transaction_hash", TransactionController, :index)
 
     get("/transactions/:page", TransactionsController, :page)
+
+    get("/asset/:asset_hash", AssetController, :index)
+
+    get("/assets/:page", AssetsController, :page)
   end
 
   scope "/api/main_net/v1", NeoscanWeb do
