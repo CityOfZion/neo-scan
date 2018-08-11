@@ -1,14 +1,14 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: neoscan-io
+  name: ${WORKLOAD_NAME}
   labels:
-    app: neoscan-io
+    app: ${WORKLOAD_NAME}
 spec:
   template:
     metadata:
       labels:
-        app: neoscan-io
+        app: ${WORKLOAD_NAME}
     spec:
       containers:
       - name: neoscan
@@ -16,28 +16,28 @@ spec:
         - containerPort: 4000
           hostPort: 4000
           protocol: TCP
-        image: registry.gitlab.com/cityofzion/neo-scan:27656365-kubernetes
+        image: ${REGISTRY_PATH}
         stdin: true
         tty: true
         env:
         - name: DB_PASSWORD
-          value: bGbPzMlOpnxaAz74
+          value: ${DB_PASSWORD}
         - name: DB_USERNAME
-          value: postgres
+          value: ${DB_USERNAME}
         - name: HOST
-          value: neoscan.io
+          value: ${HOST}
         - name: PORT
           value: "4000"
         - name: REPLACE_OS_VARS
           value: "true"
         - name: DB_DATABASE
-          value: neoscan-io
+          value: ${WORKLOAD_NAME}
         - name: DB_HOSTNAME
           value: 127.0.0.1
       - name: cloudsql-proxy
         image: gcr.io/cloudsql-docker/gce-proxy:1.11
         command: ["/cloud_sql_proxy",
-                  "-instances=neoscan-212913:us-central1:neoscandb=tcp:5432",
+                  "-instances=${DB_INSTANCE}=tcp:5432",
                   "-credential_file=/secrets/cloudsql/credentials.json"]
         volumeMounts:
         - name: cloudsql-instance-credentials

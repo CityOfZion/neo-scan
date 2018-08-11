@@ -158,3 +158,23 @@ production:
   when: manual
   only:
     - master
+
+productionk:
+  stage: deploy
+  image: lachlanevenson/k8s-kubectl
+  environment: productionk
+  entrypoint: [""]
+  script:
+    - apk add gettext
+    - kubectl config set-credentials ${PROD_KUB_USER}/${PROD_KUB_HOST} --username=${PROD_KUB_USER} --password=${PROD_KUB_PASSWORD}
+    - kubectl config set-cluster ${PROD_KUB_HOST} --insecure-skip-tls-verify=true --server=https://${PROD_KUB_HOST}
+    - kubectl config set-context ${PROD_KUB_NAMESPACE}/${PROD_KUB_HOST}/${PROD_KUB_USER} --user=${PROD_KUB_USER}/${PROD_KUB_HOST} --namespace=${PROD_KUB_NAMESPACE} --cluster=${PROD_KUB_HOST}
+    - kubectl config use-context ${PROD_KUB_NAMESPACE}/${PROD_KUB_HOST}/${PROD_KUB_USER}
+    - export WORKLOAD_NAME=neoscan-io && envsubst < deployment.yaml > deployment-neoscan-io.yaml
+    - kubectl apply -f deployment-neoscan-io.yaml
+  variables:
+    DB_USER: ${PROD_DB_USER}
+    DB_PASSWORD: ${PROD_DB_PASSWORD}
+    DB_INSTANCE: ${PROD_DB_INSTANCE}
+    HOST: api.neoscan.io
+  when: manual
