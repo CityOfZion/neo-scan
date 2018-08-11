@@ -35,7 +35,7 @@ before_script:
 #    paths:
 #      - apps/neoscan_web/assets/static/docs/api.apib
 #
-#neoscan-docs:
+#docs:
 #  stage: docs
 #  image:
 #    name: humangeo/aglio
@@ -46,7 +46,7 @@ before_script:
 #    paths:
 #      - apps/neoscan_web/assets/static/docs/index.html
 #
-#neoscan-build:
+#build:
 #  stage: build
 #  image: docker:latest
 #  services:
@@ -59,16 +59,6 @@ before_script:
 #    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $REGISTRY_PATH $CI_REGISTRY_IMAGE || true"
 #    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE || true"
 #
-#haproxy-build:
-#  stage: build
-#  image: docker:latest
-#  services:
-#    - docker:dind
-#  script:
-#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-#    - cd haproxy && docker build -t $HAPROXY_REGISTRY_PATH .
-#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-#    - docker push $HAPROXY_REGISTRY_PATH
 #
 #staging:
 #  stage: deploy
@@ -82,82 +72,6 @@ before_script:
 #    - staging
 #  when: manual
 #
-#testnet:
-#  stage: deploy
-#  environment: testnet
-#  script:
-#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-#    - docker-compose -f docker-compose.prod.yml up -d
-#  variables:
-#    HOST: neoscan-testnet.io
-#    NEO_SEED_1: http://api.otcgo.cn:20332
-#    NEO_SEED_2: https://seed1.neo.org:20331
-#    NEO_SEED_3: http://seed2.neo.org:20332
-#    NEO_SEED_4: http://seed3.neo.org:20332
-#    NEO_SEED_5: http://seed4.neo.org:20332
-#    NEO_SEED_6: http://test1.cityofzion.io:8880
-#    NEO_SEED_7: http://test2.cityofzion.io:8880
-#    NEO_SEED_8: http://test3.cityofzion.io:8880
-#    NEO_SEED_9: http://test4.cityofzion.io:8880
-#    NEO_SEED_10: http://test5.cityofzion.io:8880
-#    TEST_NET: "true"
-#    NEO_NOTIFICATIONS_SERVER: http://notiftest1.neeeo.org/v1
-#  tags:
-#    - testnet
-#  when: manual
-#  only:
-#      - master
-#
-#nex_testnet:
-#  stage: deploy
-#  environment: nex_testnet
-#  script:
-#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-#    - docker-compose -f docker-compose.prod.yml up -d
-#  variables:
-#    HOST: nex.neoscan-testnet.io
-#    NEO_SEED_1: http://5.35.241.70:10001
-#    NEO_SEED_2: http://5.35.241.70:10002
-#    NEO_SEED_3: http://5.35.241.70:10003
-#    NEO_SEED_4: http://5.35.241.70:10004
-#    TEST_NET: "true"
-#    NEO_NOTIFICATIONS_SERVER: http://nexnotifications.neeeo.org/v1
-#  tags:
-#    - nextestnet
-#  when: manual
-#  only:
-#      - master
-#
-#coz_testnet:
-#  stage: deploy
-#  environment: coz_testnet
-#  script:
-#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-#    - docker-compose -f docker-compose.prod.yml up -d
-#  variables:
-#    HOST: coz.neoscan-testnet.io
-#    NEO_SEED_1: http://188.68.34.29:10004
-#    TEST_NET: "true"
-#    NEO_NOTIFICATIONS_SERVER: http://coznotifications.neeeo.org/v1
-#  tags:
-#    - coztestnet
-#  when: manual
-#  only:
-#      - master
-#
-#production:
-#  stage: deploy
-#  environment: production
-#  script:
-#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-#    - docker-compose -f docker-compose.prod.yml up -d
-#  variables:
-#    HOST: api.neoscan.io
-#  tags:
-#    - production
-#  when: manual
-#  only:
-#    - master
 
 productionk:
   stage: deploy
@@ -166,16 +80,10 @@ productionk:
     entrypoint: [""]
   environment: productionk
   script:
-    - apk add gettext
-    - kubectl config set-credentials ${PROD_KUB_USER}/${PROD_KUB_HOST} --username=${PROD_KUB_USER} --password=${PROD_KUB_PASSWORD}
-    - kubectl config set-cluster ${PROD_KUB_HOST} --insecure-skip-tls-verify=true --server=https://${PROD_KUB_HOST}
-    - kubectl config set-context ${PROD_KUB_NAMESPACE}/${PROD_KUB_HOST}/${PROD_KUB_USER} --user=${PROD_KUB_USER}/${PROD_KUB_HOST} --namespace=${PROD_KUB_NAMESPACE} --cluster=${PROD_KUB_HOST}
-    - kubectl config use-context ${PROD_KUB_NAMESPACE}/${PROD_KUB_HOST}/${PROD_KUB_USER}
-    - export WORKLOAD_NAME=neoscan-io && envsubst < deployment.yaml > deployment-neoscan-io.yaml
-    - kubectl apply -f deployment-neoscan-io.yaml
+    - mkdir ~/.kube && echo "${PROD_KUB_CONFIG}" > ~/.kube/config
+    - ./deploy
   variables:
     DB_USERNAME: ${PROD_DB_USER}
     DB_PASSWORD: ${PROD_DB_PASSWORD}
     DB_INSTANCE: ${PROD_DB_INSTANCE}
-    HOST: api.neoscan.io
   when: manual
