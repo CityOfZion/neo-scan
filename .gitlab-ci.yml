@@ -1,163 +1,163 @@
 stages:
-  - test
-  - docs
-  - build
+#  - test
+#  - docs
+#  - build
   - deploy
 
-variables:
-  POSTGRES_DB: neoscan_test
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: "postgres"
+#variables:
+#  POSTGRES_DB: neoscan_test
+#  POSTGRES_USER: postgres
+#  POSTGRES_PASSWORD: "postgres"
 
 before_script:
   - export IMAGE_TAG="$CI_PIPELINE_ID-$CI_COMMIT_REF_SLUG"
-  - export REGISTRY_PATH="$CI_REGISTRY_IMAGE:$IMAGE_TAG"
+  - export REGISTRY_PATH=registry.gitlab.com/cityofzion/neo-scan:27696307-kubernetes #"$CI_REGISTRY_IMAGE:$IMAGE_TAG"
   - export HAPROXY_REGISTRY_PATH="$CI_REGISTRY_IMAGE/haproxy:$IMAGE_TAG"
 
-test:
-  stage: test
-  image: bitwalker/alpine-elixir-phoenix:1.7.0
-  services:
-    - postgres
-  cache:
-    key: build-cache
-    paths:
-      - deps/
-      - _build/
-  script:
-    - mix local.rebar --force
-    - mix local.hex --force
-    - mix deps.get
-    - mix format --check-formatted
-    - mix coveralls.post -u --token "${COVERALLS_REPO_TOKEN}" --branch "${CI_COMMIT_REF_NAME}" --message "${CI_COMMIT_TITLE}" --sha "${CI_COMMIT_SHA}"
-    - rm -Rf _build/test/lib/neo*
-  artifacts:
-    paths:
-      - apps/neoscan_web/assets/static/docs/api.apib
-
-neoscan-docs:
-  stage: docs
-  image:
-    name: humangeo/aglio
-    entrypoint: [""]
-  script:
-    - aglio --theme-variables streak --theme-template triple -i apps/neoscan_web/assets/static/docs/api.apib -o apps/neoscan_web/assets/static/docs/index.html
-  artifacts:
-    paths:
-      - apps/neoscan_web/assets/static/docs/index.html
-
-neoscan-build:
-  stage: build
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker build -t $REGISTRY_PATH .
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker push $REGISTRY_PATH
-    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $REGISTRY_PATH $CI_REGISTRY_IMAGE || true"
-    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE || true"
-
-haproxy-build:
-  stage: build
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - cd haproxy && docker build -t $HAPROXY_REGISTRY_PATH .
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker push $HAPROXY_REGISTRY_PATH
-
-staging:
-  stage: deploy
-  environment: staging
-  script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker-compose -f docker-compose.prod.yml up -d
-  variables:
-    HOST: neoscan.backslash.fr
-  tags:
-    - staging
-  when: manual
-
-testnet:
-  stage: deploy
-  environment: testnet
-  script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker-compose -f docker-compose.prod.yml up -d
-  variables:
-    HOST: neoscan-testnet.io
-    NEO_SEED_1: http://api.otcgo.cn:20332
-    NEO_SEED_2: https://seed1.neo.org:20331
-    NEO_SEED_3: http://seed2.neo.org:20332
-    NEO_SEED_4: http://seed3.neo.org:20332
-    NEO_SEED_5: http://seed4.neo.org:20332
-    NEO_SEED_6: http://test1.cityofzion.io:8880
-    NEO_SEED_7: http://test2.cityofzion.io:8880
-    NEO_SEED_8: http://test3.cityofzion.io:8880
-    NEO_SEED_9: http://test4.cityofzion.io:8880
-    NEO_SEED_10: http://test5.cityofzion.io:8880
-    TEST_NET: "true"
-    NEO_NOTIFICATIONS_SERVER: http://notiftest1.neeeo.org/v1
-  tags:
-    - testnet
-  when: manual
-  only:
-      - master
-
-nex_testnet:
-  stage: deploy
-  environment: nex_testnet
-  script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker-compose -f docker-compose.prod.yml up -d
-  variables:
-    HOST: nex.neoscan-testnet.io
-    NEO_SEED_1: http://5.35.241.70:10001
-    NEO_SEED_2: http://5.35.241.70:10002
-    NEO_SEED_3: http://5.35.241.70:10003
-    NEO_SEED_4: http://5.35.241.70:10004
-    TEST_NET: "true"
-    NEO_NOTIFICATIONS_SERVER: http://nexnotifications.neeeo.org/v1
-  tags:
-    - nextestnet
-  when: manual
-  only:
-      - master
-
-coz_testnet:
-  stage: deploy
-  environment: coz_testnet
-  script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker-compose -f docker-compose.prod.yml up -d
-  variables:
-    HOST: coz.neoscan-testnet.io
-    NEO_SEED_1: http://188.68.34.29:10004
-    TEST_NET: "true"
-    NEO_NOTIFICATIONS_SERVER: http://coznotifications.neeeo.org/v1
-  tags:
-    - coztestnet
-  when: manual
-  only:
-      - master
-
-production:
-  stage: deploy
-  environment: production
-  script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker-compose -f docker-compose.prod.yml up -d
-  variables:
-    HOST: api.neoscan.io
-  tags:
-    - production
-  when: manual
-  only:
-    - master
+#test:
+#  stage: test
+#  image: bitwalker/alpine-elixir-phoenix:1.7.0
+#  services:
+#    - postgres
+#  cache:
+#    key: build-cache
+#    paths:
+#      - deps/
+#      - _build/
+#  script:
+#    - mix local.rebar --force
+#    - mix local.hex --force
+#    - mix deps.get
+#    - mix format --check-formatted
+#    - mix coveralls.post -u --token "${COVERALLS_REPO_TOKEN}" --branch "${CI_COMMIT_REF_NAME}" --message "${CI_COMMIT_TITLE}" --sha "${CI_COMMIT_SHA}"
+#    - rm -Rf _build/test/lib/neo*
+#  artifacts:
+#    paths:
+#      - apps/neoscan_web/assets/static/docs/api.apib
+#
+#neoscan-docs:
+#  stage: docs
+#  image:
+#    name: humangeo/aglio
+#    entrypoint: [""]
+#  script:
+#    - aglio --theme-variables streak --theme-template triple -i apps/neoscan_web/assets/static/docs/api.apib -o apps/neoscan_web/assets/static/docs/index.html
+#  artifacts:
+#    paths:
+#      - apps/neoscan_web/assets/static/docs/index.html
+#
+#neoscan-build:
+#  stage: build
+#  image: docker:latest
+#  services:
+#    - docker:dind
+#  script:
+#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+#    - docker build -t $REGISTRY_PATH .
+#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+#    - docker push $REGISTRY_PATH
+#    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $REGISTRY_PATH $CI_REGISTRY_IMAGE || true"
+#    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE || true"
+#
+#haproxy-build:
+#  stage: build
+#  image: docker:latest
+#  services:
+#    - docker:dind
+#  script:
+#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+#    - cd haproxy && docker build -t $HAPROXY_REGISTRY_PATH .
+#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+#    - docker push $HAPROXY_REGISTRY_PATH
+#
+#staging:
+#  stage: deploy
+#  environment: staging
+#  script:
+#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+#    - docker-compose -f docker-compose.prod.yml up -d
+#  variables:
+#    HOST: neoscan.backslash.fr
+#  tags:
+#    - staging
+#  when: manual
+#
+#testnet:
+#  stage: deploy
+#  environment: testnet
+#  script:
+#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+#    - docker-compose -f docker-compose.prod.yml up -d
+#  variables:
+#    HOST: neoscan-testnet.io
+#    NEO_SEED_1: http://api.otcgo.cn:20332
+#    NEO_SEED_2: https://seed1.neo.org:20331
+#    NEO_SEED_3: http://seed2.neo.org:20332
+#    NEO_SEED_4: http://seed3.neo.org:20332
+#    NEO_SEED_5: http://seed4.neo.org:20332
+#    NEO_SEED_6: http://test1.cityofzion.io:8880
+#    NEO_SEED_7: http://test2.cityofzion.io:8880
+#    NEO_SEED_8: http://test3.cityofzion.io:8880
+#    NEO_SEED_9: http://test4.cityofzion.io:8880
+#    NEO_SEED_10: http://test5.cityofzion.io:8880
+#    TEST_NET: "true"
+#    NEO_NOTIFICATIONS_SERVER: http://notiftest1.neeeo.org/v1
+#  tags:
+#    - testnet
+#  when: manual
+#  only:
+#      - master
+#
+#nex_testnet:
+#  stage: deploy
+#  environment: nex_testnet
+#  script:
+#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+#    - docker-compose -f docker-compose.prod.yml up -d
+#  variables:
+#    HOST: nex.neoscan-testnet.io
+#    NEO_SEED_1: http://5.35.241.70:10001
+#    NEO_SEED_2: http://5.35.241.70:10002
+#    NEO_SEED_3: http://5.35.241.70:10003
+#    NEO_SEED_4: http://5.35.241.70:10004
+#    TEST_NET: "true"
+#    NEO_NOTIFICATIONS_SERVER: http://nexnotifications.neeeo.org/v1
+#  tags:
+#    - nextestnet
+#  when: manual
+#  only:
+#      - master
+#
+#coz_testnet:
+#  stage: deploy
+#  environment: coz_testnet
+#  script:
+#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+#    - docker-compose -f docker-compose.prod.yml up -d
+#  variables:
+#    HOST: coz.neoscan-testnet.io
+#    NEO_SEED_1: http://188.68.34.29:10004
+#    TEST_NET: "true"
+#    NEO_NOTIFICATIONS_SERVER: http://coznotifications.neeeo.org/v1
+#  tags:
+#    - coztestnet
+#  when: manual
+#  only:
+#      - master
+#
+#production:
+#  stage: deploy
+#  environment: production
+#  script:
+#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+#    - docker-compose -f docker-compose.prod.yml up -d
+#  variables:
+#    HOST: api.neoscan.io
+#  tags:
+#    - production
+#  when: manual
+#  only:
+#    - master
 
 productionk:
   stage: deploy
@@ -174,7 +174,7 @@ productionk:
     - export WORKLOAD_NAME=neoscan-io && envsubst < deployment.yaml > deployment-neoscan-io.yaml
     - kubectl apply -f deployment-neoscan-io.yaml
   variables:
-    DB_USER: ${PROD_DB_USER}
+    DB_USERNAME: ${PROD_DB_USER}
     DB_PASSWORD: ${PROD_DB_PASSWORD}
     DB_INSTANCE: ${PROD_DB_INSTANCE}
     HOST: api.neoscan.io
