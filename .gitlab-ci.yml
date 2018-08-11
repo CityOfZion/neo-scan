@@ -161,9 +161,10 @@ production:
 
 productionk:
   stage: deploy
-  image: lachlanevenson/k8s-kubectl
+  image:
+    name: lachlanevenson/k8s-kubectl
+    entrypoint: [""]
   environment: productionk
-  entrypoint: [""]
   script:
     - apk add gettext
     - kubectl config set-credentials ${PROD_KUB_USER}/${PROD_KUB_HOST} --username=${PROD_KUB_USER} --password=${PROD_KUB_PASSWORD}
