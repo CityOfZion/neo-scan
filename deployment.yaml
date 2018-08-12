@@ -17,7 +17,7 @@ spec:
         tty: true
         env:
         - name: POOL_SIZE
-          value: 4
+          value: "4"
         - name: DB_PASSWORD
           value: ${DB_PASSWORD}
         - name: DB_USERNAME

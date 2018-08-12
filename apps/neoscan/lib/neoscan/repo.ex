@@ -8,7 +8,7 @@ defmodule Neoscan.Repo do
   """
   def init(_, opts) do
     pool_size = System.get_env("POOL_SIZE")
-    pool_size = if is_nil(pool_size), do: 10, else: pool_size
+    pool_size = if is_nil(pool_size), do: 10, else: String.to_integer(pool_size)
     {:ok, Keyword.put(opts, :pool_size, pool_size)}
   end
 end
