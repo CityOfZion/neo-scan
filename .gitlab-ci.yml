@@ -63,7 +63,7 @@ build:
   - mix local.hex --force
   - mix deps.get
   - cd apps/neoscan_web/assets && npm install && npm run deploy
-  - mix compile
+  - cd ../../.. && mix compile
   - mix phx.digest
   - mix release --env=prod
   - mkdir export
