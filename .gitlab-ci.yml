@@ -2,6 +2,7 @@ stages:
   - test
   - docs
   - build
+  - docker
   - deploy
 
 variables:
@@ -12,7 +13,8 @@ variables:
 before_script:
   - export IMAGE_TAG="$CI_PIPELINE_ID-$CI_COMMIT_REF_SLUG"
   - export REGISTRY_PATH="$CI_REGISTRY_IMAGE:$IMAGE_TAG"
-  - export HAPROXY_REGISTRY_PATH="$CI_REGISTRY_IMAGE/haproxy:$IMAGE_TAG"
+  - export SYNC_REGISTRY_PATH="$CI_REGISTRY_IMAGE/sync:$IMAGE_TAG"
+  - export API_REGISTRY_PATH="$CI_REGISTRY_IMAGE/api:$IMAGE_TAG"
 
 test:
   stage: test
@@ -48,6 +50,30 @@ docs:
 
 build:
   stage: build
+  image: bitwalker/alpine-elixir-phoenix:1.7.0
+  cache:
+    key: build-cache
+    paths:
+    - deps/
+    - _build/
+  variables:
+    MIX_ENV: prod
+  script:
+  - mix local.rebar --force
+  - mix local.hex --force
+  - mix deps.get
+  - cd apps/neoscan_web/assets && npm install && npm run deploy
+  - mix compile
+  - mix phx.digest
+  - mix release --env=prod
+  - mkdir export
+  - RELEASE_DIR=`ls -d _build/prod/rel/neoscan/releases/*/` && tar -xf "$RELEASE_DIR/neoscan.tar.gz" -C export/
+  artifacts:
+    paths:
+    - export
+
+docker:
+  stage: docker
   image: docker:latest
   services:
     - docker:dind
@@ -58,7 +84,6 @@ build:
     - docker push $REGISTRY_PATH
     - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $REGISTRY_PATH $CI_REGISTRY_IMAGE || true"
     - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE || true"
-
 
 #staging:
 #  stage: deploy
