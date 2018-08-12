@@ -37,6 +37,12 @@ export TEST_NET="true"
 export NEO_NOTIFICATIONS_SERVER=http://notiftest1.neeeo.org/v1 
 envsubst < deployment.yaml > deployment-testnet-neoscan-io.yaml
 
+envsubst < deployment-pghero.yaml > deployment-pghero-neoscan-io.yaml
+
+envsubst < deployment-psql.yaml > deployment-psql-neoscan-io.yaml
+
+kubectl apply -f deployment-pghero-neoscan-io.yaml
+kubectl apply -f deployment-psql-neoscan-io.yaml
 kubectl apply -f deployment-neoscan-io.yaml
 kubectl apply -f deployment-testnet-neoscan-io.yaml
 kubectl apply -f deployment-coz-testnet-neoscan-io.yaml
