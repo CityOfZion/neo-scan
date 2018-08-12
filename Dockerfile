@@ -1,7 +1,7 @@
 FROM bitwalker/alpine-elixir:1.7.0
 
 ARG APP
-ENV APP=APP
+ENV APP=$APP
 
 COPY --chown=default:root ./export/$APP /opt/app
 
