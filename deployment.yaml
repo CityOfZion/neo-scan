@@ -12,10 +12,6 @@ spec:
     spec:
       containers:
       - name: neoscan
-        ports:
-        - containerPort: 4000
-          hostPort: 4000
-          protocol: TCP
         image: ${REGISTRY_PATH}
         stdin: true
         tty: true
@@ -55,7 +51,7 @@ spec:
         - name: NEO_SEED_10
           value: ${NEO_SEED_10}
         - name: TEST_NET
-          value: ${TEST_NET}
+          value: "${TEST_NET}"
         - name: NEO_NOTIFICATIONS_SERVER
           value: ${NEO_NOTIFICATIONS_SERVER}
       - name: cloudsql-proxy
