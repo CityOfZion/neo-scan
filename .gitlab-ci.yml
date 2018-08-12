@@ -69,6 +69,7 @@ build:
   - mkdir -p export/neoscan_sync && mkdir -p export/neoscan_api
   - RELEASE_DIR=`ls -d _build/prod/rel/neoscan_sync/releases/*/` && tar -xf "$RELEASE_DIR/neoscan_sync.tar.gz" -C export/neoscan_sync/
   - RELEASE_DIR=`ls -d _build/prod/rel/neoscan_api/releases/*/` && tar -xf "$RELEASE_DIR/neoscan_api.tar.gz" -C export/neoscan_api/
+  - rm -Rf _build/prod/lib/neo*
   artifacts:
     paths:
     - export
