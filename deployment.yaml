@@ -52,7 +52,7 @@ spec:
           value: ${NEO_SEED_8}
         - name: NEO_SEED_9
           value: ${NEO_SEED_9}
-        - name: NEO_SEED_10:
+        - name: NEO_SEED_10
           value: ${NEO_SEED_10}
         - name: TEST_NET
           value: ${TEST_NET}
