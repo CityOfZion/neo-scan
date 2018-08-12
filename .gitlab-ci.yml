@@ -12,7 +12,6 @@ variables:
 
 before_script:
   - export IMAGE_TAG="$CI_PIPELINE_ID-$CI_COMMIT_REF_SLUG"
-  - export REGISTRY_PATH="$CI_REGISTRY_IMAGE:$IMAGE_TAG"
   - export SYNC_REGISTRY_PATH="$CI_REGISTRY_IMAGE/sync:$IMAGE_TAG"
   - export API_REGISTRY_PATH="$CI_REGISTRY_IMAGE/api:$IMAGE_TAG"
 
@@ -22,7 +21,7 @@ test:
   services:
     - postgres
   cache:
-    key: build-cache
+    key: test-cache
     paths:
       - deps/
       - _build/
@@ -65,9 +64,11 @@ build:
   - cd apps/neoscan_web/assets && npm install && npm run deploy
   - cd ../../.. && mix compile
   - mix phx.digest
-  - mix release --env=prod
-  - mkdir export
-  - RELEASE_DIR=`ls -d _build/prod/rel/neoscan/releases/*/` && tar -xf "$RELEASE_DIR/neoscan.tar.gz" -C export/
+  - mix release --name=neoscan_sync --env=prod
+  - mix release --name=neoscan_api --env=prod
+  - mkdir -p export/neoscan_sync && mkdir -p export/neoscan_api
+  - RELEASE_DIR=`ls -d _build/prod/rel/neoscan_sync/releases/*/` && tar -xf "$RELEASE_DIR/neoscan_sync.tar.gz" -C export/neoscan_sync/
+  - RELEASE_DIR=`ls -d _build/prod/rel/neoscan_api/releases/*/` && tar -xf "$RELEASE_DIR/neoscan_api.tar.gz" -C export/neoscan_api/
   artifacts:
     paths:
     - export
@@ -79,11 +80,15 @@ docker:
     - docker:dind
   script:
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker build -t $REGISTRY_PATH .
+    - docker build --build-arg APP=neoscan_sync -t $SYNC_REGISTRY_PATH .
+    - docker build --build-arg APP=neoscan_api -t $API_REGISTRY_PATH .
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker push $REGISTRY_PATH
-    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $REGISTRY_PATH $CI_REGISTRY_IMAGE || true"
-    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE || true"
+    - docker push $SYNC_REGISTRY_PATH
+    - docker push $API_REGISTRY_PATH
+    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $SYNC_REGISTRY_PATH $CI_REGISTRY_IMAGE/sync || true"
+    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $API_REGISTRY_PATH $CI_REGISTRY_IMAGE/api || true"
+    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/sync || true"
+    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/api || true"
 
 #staging:
 #  stage: deploy

@@ -1,17 +1,34 @@
 apk add gettext
 
-export WORKLOAD_NAME=neoscan-io
-export HOST=api.neoscan.io 
-envsubst < deployment.yaml > deployment-neoscan-io.yaml
+export DB_DATABASE=neoscan-io
+export WORKLOAD_NAME=sync_neoscan-io
+export HOST=api.neoscan.io
+export POOL_SIZE=5
+export REGISTRY_PATH=${SYNC_REGISTRY_PATH}
+envsubst < deployment.yaml > deployment-sync_neoscan-io.yaml
 
-export WORKLOAD_NAME=coz-neoscan-testnet-io
+export WORKLOAD_NAME=api_neoscan-io
+export REGISTRY_PATH=${API_REGISTRY_PATH}
+export POOL_SIZE=20
+envsubst < deployment.yaml > deployment-api_neoscan-io.yaml
+
+export POOL_SIZE=2
+
+export DB_DATABASE=coz-neoscan-testnet-io
 export HOST=coz.neoscan-testnet.io
 export NEO_SEED_1=http://188.68.34.29:10004
 export TEST_NET="true"
 export NEO_NOTIFICATIONS_SERVER=http://coznotifications.neeeo.org/v1
-envsubst < deployment.yaml > deployment-coz-testnet-neoscan-io.yaml
+export WORKLOAD_NAME=sync_coz-neoscan-testnet-io
+export REGISTRY_PATH=${SYNC_REGISTRY_PATH}
+envsubst < deployment.yaml > deployment-sync_coz-testnet-neoscan-io.yaml
 
-export WORKLOAD_NAME=nex-neoscan-testnet-io
+export WORKLOAD_NAME=api_coz-neoscan-testnet-io
+export REGISTRY_PATH=${API_REGISTRY_PATH}
+envsubst < deployment.yaml > deployment-api_coz-testnet-neoscan-io.yaml
+
+export DB_DATABASE=nex-neoscan-testnet-io
+export WORKLOAD_NAME=sync_nex-neoscan-testnet-io
 export HOST=nex.neoscan-testnet.io
 export NEO_SEED_1=http://5.35.241.70:10001
 export NEO_SEED_2=http://5.35.241.70:10002
@@ -19,9 +36,16 @@ export NEO_SEED_3=http://5.35.241.70:10003
 export NEO_SEED_4=http://5.35.241.70:10004
 export TEST_NET="true"
 export NEO_NOTIFICATIONS_SERVER=http://nexnotifications.neeeo.org/v1
-envsubst < deployment.yaml > deployment-nex-testnet-neoscan-io.yaml
+export REGISTRY_PATH=${SYNC_REGISTRY_PATH}
+envsubst < deployment.yaml > deployment-sync_nex-testnet-neoscan-io.yaml
 
-export WORKLOAD_NAME=neoscan-testnet-io 
+export WORKLOAD_NAME=api_nex-neoscan-testnet-io
+export REGISTRY_PATH=${API_REGISTRY_PATH}
+envsubst < deployment.yaml > deployment-api_nex-testnet-neoscan-io.yaml
+
+export POOL_SIZE=5
+export DB_DATABASE=neoscan-testnet-io
+export WORKLOAD_NAME=sync_neoscan-testnet-io
 export HOST=neoscan-testnet.io 
 export NEO_SEED_1=http://api.otcgo.cn:20332 
 export NEO_SEED_2=https://seed1.neo.org:20331 
@@ -34,8 +58,13 @@ export NEO_SEED_8=http://test3.cityofzion.io:8880
 export NEO_SEED_9=http://test4.cityofzion.io:8880 
 export NEO_SEED_10=http://test5.cityofzion.io:8880 
 export TEST_NET="true" 
-export NEO_NOTIFICATIONS_SERVER=http://notiftest1.neeeo.org/v1 
-envsubst < deployment.yaml > deployment-testnet-neoscan-io.yaml
+export NEO_NOTIFICATIONS_SERVER=http://notiftest1.neeeo.org/v1
+export REGISTRY_PATH=${SYNC_REGISTRY_PATH}
+envsubst < deployment.yaml > deployment-sync_testnet-neoscan-io.yaml
+
+export WORKLOAD_NAME=api_neoscan-testnet-io
+export REGISTRY_PATH=${API_REGISTRY_PATH}
+envsubst < deployment.yaml > deployment-api_testnet-neoscan-io.yaml
 
 envsubst < deployment-pghero.yaml > deployment-pghero-neoscan-io.yaml
 
@@ -43,7 +72,11 @@ envsubst < deployment-psql.yaml > deployment-psql-neoscan-io.yaml
 
 kubectl apply -f deployment-pghero-neoscan-io.yaml
 kubectl apply -f deployment-psql-neoscan-io.yaml
-kubectl apply -f deployment-neoscan-io.yaml
-kubectl apply -f deployment-testnet-neoscan-io.yaml
-kubectl apply -f deployment-coz-testnet-neoscan-io.yaml
-kubectl apply -f deployment-nex-testnet-neoscan-io.yaml
+kubectl apply -f deployment-api_neoscan-io.yaml
+kubectl apply -f deployment-sync_neoscan-io.yaml
+kubectl apply -f deployment-api_testnet-neoscan-io.yaml
+kubectl apply -f deployment-sync_testnet-neoscan-io.yaml
+kubectl apply -f deployment-api_coz-testnet-neoscan-io.yaml
+kubectl apply -f deployment-sync_coz-testnet-neoscan-io.yaml
+kubectl apply -f deployment-api_nex-testnet-neoscan-io.yaml
+kubectl apply -f deployment-sync_nex-testnet-neoscan-io.yaml

@@ -17,7 +17,7 @@ spec:
         tty: true
         env:
         - name: POOL_SIZE
-          value: "4"
+          value: "${POOL_SIZE}"
         - name: DB_PASSWORD
           value: ${DB_PASSWORD}
         - name: DB_USERNAME
@@ -29,7 +29,7 @@ spec:
         - name: REPLACE_OS_VARS
           value: "true"
         - name: DB_DATABASE
-          value: ${WORKLOAD_NAME}
+          value: ${DB_DATABASE}
         - name: DB_HOSTNAME
           value: 127.0.0.1
         - name: NEO_SEED_1
