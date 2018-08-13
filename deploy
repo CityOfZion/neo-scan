@@ -28,10 +28,8 @@ envsubst < deployment.yaml > deployment-sync-coz-testnet-neoscan-io.yaml
 
 export WORKLOAD_NAME=api-coz-neoscan-testnet-io
 export REGISTRY_PATH=${API_REGISTRY_PATH}
-export REPLICAS=2
 envsubst < deployment.yaml > deployment-api-coz-testnet-neoscan-io.yaml
 
-export REPLICAS=1
 export DB_DATABASE=nex-neoscan-testnet-io
 export WORKLOAD_NAME=sync-nex-neoscan-testnet-io
 export HOST=nex.neoscan-testnet.io
@@ -69,6 +67,7 @@ envsubst < deployment.yaml > deployment-sync-testnet-neoscan-io.yaml
 
 export WORKLOAD_NAME=api-neoscan-testnet-io
 export REGISTRY_PATH=${API_REGISTRY_PATH}
+export REPLICAS=2
 envsubst < deployment.yaml > deployment-api-testnet-neoscan-io.yaml
 
 envsubst < deployment-pghero.yaml > deployment-pghero-neoscan-io.yaml
