@@ -5,6 +5,7 @@ metadata:
   labels:
     app: ${WORKLOAD_NAME}
 spec:
+  replicas: ${REPLICAS}
   template:
     metadata:
       labels:

@@ -1,5 +1,6 @@
 apk add gettext
 
+export REPLICAS=1
 export DB_DATABASE=neoscan-io
 export WORKLOAD_NAME=sync-neoscan-io
 export HOST=api.neoscan.io
@@ -7,6 +8,7 @@ export POOL_SIZE=5
 export REGISTRY_PATH=${SYNC_REGISTRY_PATH}
 envsubst < deployment.yaml > deployment-sync-neoscan-io.yaml
 
+export REPLICAS=2
 export WORKLOAD_NAME=api-neoscan-io
 export REGISTRY_PATH=${API_REGISTRY_PATH}
 export POOL_SIZE=20
@@ -14,6 +16,7 @@ envsubst < deployment.yaml > deployment-api-neoscan-io.yaml
 
 export POOL_SIZE=2
 
+export REPLICAS=1
 export DB_DATABASE=coz-neoscan-testnet-io
 export HOST=coz.neoscan-testnet.io
 export NEO_SEED_1=http://188.68.34.29:10004
@@ -25,8 +28,10 @@ envsubst < deployment.yaml > deployment-sync-coz-testnet-neoscan-io.yaml
 
 export WORKLOAD_NAME=api-coz-neoscan-testnet-io
 export REGISTRY_PATH=${API_REGISTRY_PATH}
+export REPLICAS=2
 envsubst < deployment.yaml > deployment-api-coz-testnet-neoscan-io.yaml
 
+export REPLICAS=1
 export DB_DATABASE=nex-neoscan-testnet-io
 export WORKLOAD_NAME=sync-nex-neoscan-testnet-io
 export HOST=nex.neoscan-testnet.io
