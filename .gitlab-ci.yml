@@ -91,18 +91,22 @@ docker:
     - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/sync || true"
     - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/api || true"
 
-#staging:
-#  stage: deploy
-#  environment: staging
-#  script:
-#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-#    - docker-compose -f docker-compose.prod.yml up -d
-#  variables:
-#    HOST: neoscan.backslash.fr
-#  tags:
-#    - staging
-#  when: manual
-#
+staging:
+  stage: deploy
+  image:
+    name: lachlanevenson/k8s-kubectl
+    entrypoint: [""]
+  environment: staging
+  script:
+  - mkdir ~/.kube && echo "${STAGING_KUB_CONFIG}" > ~/.kube/config
+  - ./deploy
+  variables:
+    DB_USERNAME: ${STAGING_DB_USER}
+    DB_PASSWORD: ${STAGING_DB_PASSWORD}
+    DB_INSTANCE: ${STAGING_DB_INSTANCE}
+    STAGING: "true"
+  when: manual
+
 
 productionk:
   stage: deploy
