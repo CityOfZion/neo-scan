@@ -1,95 +1,95 @@
 stages:
-  - test
-  - docs
-  - build
-  - docker
+#  - test
+#  - docs
+#  - build
+#  - docker
   - deploy
 
-variables:
-  POSTGRES_DB: neoscan_test
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: "postgres"
+#variables:
+#  POSTGRES_DB: neoscan_test
+#  POSTGRES_USER: postgres
+#  POSTGRES_PASSWORD: "postgres"
 
 before_script:
   - export IMAGE_TAG="$CI_PIPELINE_ID-$CI_COMMIT_REF_SLUG"
-  - export SYNC_REGISTRY_PATH="$CI_REGISTRY_IMAGE/sync:$IMAGE_TAG"
-  - export API_REGISTRY_PATH="$CI_REGISTRY_IMAGE/api:$IMAGE_TAG"
-
-test:
-  stage: test
-  image: bitwalker/alpine-elixir-phoenix:1.7.0
-  services:
-    - postgres
-  cache:
-    key: test-cache
-    paths:
-      - deps/
-      - _build/
-  script:
-    - mix local.rebar --force
-    - mix local.hex --force
-    - mix deps.get
-    - mix format --check-formatted
-    - mix coveralls.post -u --token "${COVERALLS_REPO_TOKEN}" --branch "${CI_COMMIT_REF_NAME}" --message "${CI_COMMIT_TITLE}" --sha "${CI_COMMIT_SHA}"
-    - rm -Rf _build/test/lib/neo*
-  artifacts:
-    paths:
-      - apps/neoscan_web/assets/static/docs/api.apib
-
-docs:
-  stage: docs
-  image:
-    name: humangeo/aglio
-    entrypoint: [""]
-  script:
-    - aglio --theme-variables streak --theme-template triple -i apps/neoscan_web/assets/static/docs/api.apib -o apps/neoscan_web/assets/static/docs/index.html
-  artifacts:
-    paths:
-      - apps/neoscan_web/assets/static/docs/index.html
-
-build:
-  stage: build
-  image: bitwalker/alpine-elixir-phoenix:1.7.0
-  cache:
-    key: build-cache
-    paths:
-    - deps/
-    - _build/
-  variables:
-    MIX_ENV: prod
-  script:
-  - mix local.rebar --force
-  - mix local.hex --force
-  - mix deps.get
-  - cd apps/neoscan_web/assets && npm install && npm run deploy
-  - cd ../../.. && mix compile
-  - mix phx.digest
-  - mix release --name=neoscan_sync --env=prod
-  - mix release --name=neoscan_api --env=prod
-  - mkdir -p export/neoscan_sync && mkdir -p export/neoscan_api
-  - RELEASE_DIR=`ls -d _build/prod/rel/neoscan_sync/releases/*/` && tar -xf "$RELEASE_DIR/neoscan_sync.tar.gz" -C export/neoscan_sync/
-  - RELEASE_DIR=`ls -d _build/prod/rel/neoscan_api/releases/*/` && tar -xf "$RELEASE_DIR/neoscan_api.tar.gz" -C export/neoscan_api/
-  - rm -Rf _build/prod/lib/neo*
-  artifacts:
-    paths:
-    - export
-
-docker:
-  stage: docker
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker build --build-arg APP=neoscan_sync -t $SYNC_REGISTRY_PATH .
-    - docker build --build-arg APP=neoscan_api -t $API_REGISTRY_PATH .
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker push $SYNC_REGISTRY_PATH
-    - docker push $API_REGISTRY_PATH
-    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $SYNC_REGISTRY_PATH $CI_REGISTRY_IMAGE/sync || true"
-    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $API_REGISTRY_PATH $CI_REGISTRY_IMAGE/api || true"
-    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/sync || true"
-    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/api || true"
+  - export SYNC_REGISTRY_PATH=registry.gitlab.com/cityofzion/neo-scan/sync:27853432-kubernetes #"$CI_REGISTRY_IMAGE/sync:$IMAGE_TAG"
+  - export API_REGISTRY_PATH=registry.gitlab.com/cityofzion/neo-scan/api:27853432-kubernetes #"$CI_REGISTRY_IMAGE/api:$IMAGE_TAG"
+#
+#test:
+#  stage: test
+#  image: bitwalker/alpine-elixir-phoenix:1.7.0
+#  services:
+#    - postgres
+#  cache:
+#    key: test-cache
+#    paths:
+#      - deps/
+#      - _build/
+#  script:
+#    - mix local.rebar --force
+#    - mix local.hex --force
+#    - mix deps.get
+#    - mix format --check-formatted
+#    - mix coveralls.post -u --token "${COVERALLS_REPO_TOKEN}" --branch "${CI_COMMIT_REF_NAME}" --message "${CI_COMMIT_TITLE}" --sha "${CI_COMMIT_SHA}"
+#    - rm -Rf _build/test/lib/neo*
+#  artifacts:
+#    paths:
+#      - apps/neoscan_web/assets/static/docs/api.apib
+#
+#docs:
+#  stage: docs
+#  image:
+#    name: humangeo/aglio
+#    entrypoint: [""]
+#  script:
+#    - aglio --theme-variables streak --theme-template triple -i apps/neoscan_web/assets/static/docs/api.apib -o apps/neoscan_web/assets/static/docs/index.html
+#  artifacts:
+#    paths:
+#      - apps/neoscan_web/assets/static/docs/index.html
+#
+#build:
+#  stage: build
+#  image: bitwalker/alpine-elixir-phoenix:1.7.0
+#  cache:
+#    key: build-cache
+#    paths:
+#    - deps/
+#    - _build/
+#  variables:
+#    MIX_ENV: prod
+#  script:
+#  - mix local.rebar --force
+#  - mix local.hex --force
+#  - mix deps.get
+#  - cd apps/neoscan_web/assets && npm install && npm run deploy
+#  - cd ../../.. && mix compile
+#  - mix phx.digest
+#  - mix release --name=neoscan_sync --env=prod
+#  - mix release --name=neoscan_api --env=prod
+#  - mkdir -p export/neoscan_sync && mkdir -p export/neoscan_api
+#  - RELEASE_DIR=`ls -d _build/prod/rel/neoscan_sync/releases/*/` && tar -xf "$RELEASE_DIR/neoscan_sync.tar.gz" -C export/neoscan_sync/
+#  - RELEASE_DIR=`ls -d _build/prod/rel/neoscan_api/releases/*/` && tar -xf "$RELEASE_DIR/neoscan_api.tar.gz" -C export/neoscan_api/
+#  - rm -Rf _build/prod/lib/neo*
+#  artifacts:
+#    paths:
+#    - export
+#
+#docker:
+#  stage: docker
+#  image: docker:latest
+#  services:
+#    - docker:dind
+#  script:
+#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+#    - docker build --build-arg APP=neoscan_sync -t $SYNC_REGISTRY_PATH .
+#    - docker build --build-arg APP=neoscan_api -t $API_REGISTRY_PATH .
+#    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+#    - docker push $SYNC_REGISTRY_PATH
+#    - docker push $API_REGISTRY_PATH
+#    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $SYNC_REGISTRY_PATH $CI_REGISTRY_IMAGE/sync || true"
+#    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $API_REGISTRY_PATH $CI_REGISTRY_IMAGE/api || true"
+#    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/sync || true"
+#    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/api || true"
 
 staging:
   stage: deploy
