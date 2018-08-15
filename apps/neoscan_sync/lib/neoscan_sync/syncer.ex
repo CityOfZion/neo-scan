@@ -63,7 +63,7 @@ defmodule NeoscanSync.Syncer do
 
   def insert_block(block) do
     try do
-      Repo.transaction(fn -> Repo.insert!(block, timeout: :infinity) end, timeout: :infinity)
+      Repo.insert!(block, timeout: :infinity)
       :ok
     catch
       error ->
@@ -101,8 +101,9 @@ defmodule NeoscanSync.Syncer do
         insert_block(block)
         Monitor.incr(:insert_blocks_time, Time.diff(Time.utc_now(), now, :microseconds))
         Monitor.incr(:insert_blocks_count, 1)
+        Monitor.incr(:insert_transactions_count, block.tx_count)
       end,
-      max_concurrency: 1,
+      max_concurrency: System.schedulers_online(),
       timeout: :infinity
     )
     |> Stream.run()
