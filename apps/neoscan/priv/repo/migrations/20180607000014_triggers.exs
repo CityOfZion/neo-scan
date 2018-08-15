@@ -62,8 +62,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vins() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        UPDATE vouts SET spent = true, end_block_index = NEW.block_index
-          WHERE n = NEW.vout_n and transaction_hash = NEW.vout_transaction_hash;
+        INSERT INTO vouts_queue (transaction_hash, n, claimed, spent, end_block_index)
+        VALUES ( NEW.vout_transaction_hash, NEW.vout_n, false, true, NEW.block_index);
 
         INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
         SELECT address_hash, NEW.transaction_hash, asset_hash, value * -1.0, NEW.block_time, NEW.inserted_at, NEW.updated_at FROM vouts
@@ -84,7 +84,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION toggle_vout_claimed_on_claim_insertion() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        UPDATE vouts SET claimed = true WHERE n = NEW.vout_n and transaction_hash = NEW.vout_transaction_hash;
+        INSERT INTO vouts_queue (transaction_hash, n, claimed, spent, end_block_index)
+        VALUES (NEW.vout_transaction_hash, NEW.vout_n, true, false, null);
         RETURN NULL;
       END;
       $body$;

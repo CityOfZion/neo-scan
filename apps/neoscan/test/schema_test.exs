@@ -58,6 +58,7 @@ defmodule Neoscan.SchemaTest do
     assert is_nil(vout.end_block_index)
 
     vin = insert(:vin, %{vout_n: vout.n, vout_transaction_hash: vout.transaction_hash})
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_vouts_queue()", [])
 
     vout =
       Repo.one(
@@ -92,6 +93,7 @@ defmodule Neoscan.SchemaTest do
     assert not vout.claimed
 
     insert(:claim, %{vout_n: vout.n, vout_transaction_hash: vout.transaction_hash})
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_vouts_queue()", [])
 
     vout =
       Repo.one(

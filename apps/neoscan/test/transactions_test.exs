@@ -73,6 +73,7 @@ defmodule Neoscan.TransactionsTest do
     vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: asset.transaction_hash})
     insert(:vin, %{vout_n: vout2.n, vout_transaction_hash: vout2.transaction_hash})
     insert(:vout, %{address_hash: vout1.address_hash, asset_hash: asset.transaction_hash})
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_vouts_queue()", [])
 
     assert 2 == Enum.count(Transactions.get_unspent_vouts(vout1.address_hash))
   end
@@ -85,7 +86,7 @@ defmodule Neoscan.TransactionsTest do
     vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
-
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_vouts_queue()", [])
     transaction_hash = vout2.transaction_hash
 
     assert [%{transaction_hash: ^transaction_hash}] =
@@ -100,6 +101,7 @@ defmodule Neoscan.TransactionsTest do
     vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_vouts_queue()", [])
 
     transaction_hash = vout2.transaction_hash
     transaction_hash1 = vout1.transaction_hash
