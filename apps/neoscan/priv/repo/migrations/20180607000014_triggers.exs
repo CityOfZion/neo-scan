@@ -25,14 +25,6 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vouts2() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        UPDATE vouts SET spent = (EXISTS(SELECT 1 FROM vins
-          WHERE vout_n = NEW.n AND vout_transaction_hash = NEW.transaction_hash)),
-          end_block_index = (SELECT block_index FROM vins
-          WHERE vout_n = NEW.n AND vout_transaction_hash = NEW.transaction_hash),
-          claimed = (EXISTS(SELECT 1 FROM claims
-          WHERE vout_n = NEW.n AND vout_transaction_hash = NEW.transaction_hash))
-          WHERE n = NEW.n AND transaction_hash = NEW.transaction_hash;
-
         INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
         SELECT NEW.address_hash, transaction_hash, NEW.asset_hash, NEW.value * -1.0, block_time, inserted_at, updated_at FROM vins
         WHERE vout_n = NEW.n and vout_transaction_hash = NEW.transaction_hash;
@@ -45,6 +37,24 @@ defmodule Neoscan.Repo.Migrations.Triggers do
       CREATE TRIGGER generate_address_history_from_vins_trigger
       AFTER INSERT ON vouts FOR each row
       EXECUTE PROCEDURE generate_address_history_from_vouts2();
+    """
+
+    # before insert trigger for vout
+    execute """
+    CREATE OR REPLACE FUNCTION modify_vout_before_insert() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        NEW.spent := (EXISTS(SELECT 1 FROM vins WHERE vout_n = NEW.n AND vout_transaction_hash = NEW.transaction_hash));
+        NEW.end_block_index := (SELECT block_index FROM vins WHERE vout_n = NEW.n AND vout_transaction_hash = NEW.transaction_hash);
+        NEW.claimed := (EXISTS(SELECT 1 FROM claims WHERE vout_n = NEW.n AND vout_transaction_hash = NEW.transaction_hash));
+        RETURN NEW;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER modify_vout_before_insert_trigger
+      BEFORE INSERT ON vouts FOR each row
+      EXECUTE PROCEDURE modify_vout_before_insert();
     """
 
     # generate address history on vins insert (-) if vout is already present
