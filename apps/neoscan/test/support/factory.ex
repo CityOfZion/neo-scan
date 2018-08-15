@@ -9,7 +9,7 @@ defmodule Neoscan.Factory do
   alias Neoscan.AddressHistory
   alias Neoscan.AddressBalance
   alias Neoscan.AddressTransaction
-  alias Neoscan.Address
+  alias Neoscan.AddressQueue
   alias Neoscan.Transfer
   alias Neoscan.Asset
   alias Neoscan.CounterQueue
@@ -123,7 +123,7 @@ defmodule Neoscan.Factory do
   end
 
   def address_factory do
-    %Address{
+    %AddressQueue{
       hash: :crypto.strong_rand_bytes(32),
       first_transaction_time: DateTime.utc_now(),
       last_transaction_time: DateTime.utc_now(),

@@ -101,13 +101,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_from_address_history() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO addresses (hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at)
-        VALUES (NEW.address_hash, NEW.block_time, NEW.block_time, 0, NEW.inserted_at, NEW.updated_at)
-        ON CONFLICT ON CONSTRAINT addresses_pkey DO
-        UPDATE SET
-        first_transaction_time = LEAST(addresses.first_transaction_time, EXCLUDED.first_transaction_time),
-        last_transaction_time = GREATEST(addresses.last_transaction_time, EXCLUDED.last_transaction_time),
-        updated_at = EXCLUDED.updated_at;
+        INSERT INTO addresses_queue (hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.block_time, NEW.block_time, 0, NEW.inserted_at, NEW.updated_at);
         RETURN NULL;
       END;
       $body$;
@@ -213,7 +208,7 @@ defmodule Neoscan.Repo.Migrations.Triggers do
 
     execute """
       CREATE TRIGGER address_counter_trigger
-      AFTER INSERT ON addresses FOR each row
+      AFTER INSERT ON addresses_cached FOR each row
       EXECUTE PROCEDURE address_counter();
     """
 
@@ -239,7 +234,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_tx_count_from_address_transactions() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        UPDATE addresses SET tx_count = addresses.tx_count + 1 WHERE hash = NEW.address_hash;
+        INSERT INTO addresses_queue (hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.block_time, NEW.block_time, 1, now(), now());
         RETURN NULL;
       END;
       $body$;

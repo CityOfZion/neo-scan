@@ -106,7 +106,9 @@ defmodule Neoscan.AddressesTest do
 
   test "get/1" do
     address = insert(:address)
-    assert address == Addresses.get(address.hash)
+
+    assert Map.drop(address, [:__struct__, :__meta__]) ==
+             Map.drop(Addresses.get(address.hash), [:__struct__, :__meta__])
   end
 
   test "get_split_balance/1" do
