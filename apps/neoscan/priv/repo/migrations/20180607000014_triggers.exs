@@ -119,12 +119,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_balances_from_address_history() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO address_balances (address_hash, asset_hash, value, inserted_at, updated_at)
-        VALUES (NEW.address_hash, NEW.asset_hash, NEW.value, NEW.inserted_at, NEW.updated_at)
-        ON CONFLICT ON CONSTRAINT address_balances_pkey DO
-        UPDATE SET
-        value = address_balances.value + EXCLUDED.value,
-        updated_at = EXCLUDED.updated_at;
+        INSERT INTO address_balances_queue (address_hash, asset_hash, value, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.asset_hash, NEW.value, NEW.inserted_at, NEW.updated_at);
         RETURN NULL;
       END;
       $body$;

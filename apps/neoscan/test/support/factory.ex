@@ -7,7 +7,7 @@ defmodule Neoscan.Factory do
   alias Neoscan.Vin
   alias Neoscan.Claim
   alias Neoscan.AddressHistory
-  alias Neoscan.AddressBalance
+  alias Neoscan.AddressBalanceQueue
   alias Neoscan.AddressTransaction
   alias Neoscan.AddressQueue
   alias Neoscan.Transfer
@@ -107,7 +107,7 @@ defmodule Neoscan.Factory do
   end
 
   def address_balance_factory do
-    %AddressBalance{
+    %AddressBalanceQueue{
       address_hash: :crypto.strong_rand_bytes(32),
       asset_hash: :crypto.strong_rand_bytes(32),
       value: 5.0
