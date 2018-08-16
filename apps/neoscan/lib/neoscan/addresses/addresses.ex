@@ -238,17 +238,20 @@ defmodule Neoscan.Addresses do
 
   defp create_transaction_abstract(abt) do
     {address_from, address_to} = get_transaction_abstract_actors(abt)
+    friendly_abt = Map.merge(abt, %{address_from: address_from, address_to: address_to})
 
     %{
       transaction_hash: abt.transaction_hash,
       address_from: address_from,
       address_to: address_to,
-      value: get_transaction_abstract_value(abt),
+      value: get_transaction_abstract_value(friendly_abt),
       asset_hash: abt.asset_hash,
       block_time: abt.transaction.block_time,
       block_index: abt.transaction.block_index
     }
   end
+
+  defp get_transaction_abstract_value(%{value: value, address_to: "fees"}), do: abs(value)
 
   defp get_transaction_abstract_value(%{
          value: value,
