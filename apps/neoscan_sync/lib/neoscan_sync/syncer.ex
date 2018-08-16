@@ -4,7 +4,12 @@ defmodule NeoscanSync.Syncer do
   alias NeoscanSync.Converter
   alias Neoscan.Repo
   alias Neoscan.Blocks
-
+  alias Neoscan.Vout
+  alias Neoscan.Vin
+  alias Neoscan.Claim
+  alias Neoscan.Transfer
+  alias Neoscan.Transaction
+  alias Neoscan.Asset
   use GenServer
 
   require Logger
@@ -12,6 +17,7 @@ defmodule NeoscanSync.Syncer do
   @parallelism 16
   @update_interval 1_000
   @block_chunk_size 5_000
+  @insert_chunk_size 1_000
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -49,7 +55,8 @@ defmodule NeoscanSync.Syncer do
     try do
       block_raw = NeoscanNode.get_block_with_transfers(index)
       ^index = block_raw.index
-      Converter.convert_block(block_raw)
+      converted_block = Converter.convert_block(block_raw)
+      explode_block(converted_block)
     catch
       error ->
         Logger.error("error while downloading block #{inspect({index, error})}")
@@ -61,21 +68,68 @@ defmodule NeoscanSync.Syncer do
     end
   end
 
-  def insert_block(block) do
+  def explode_block(block) do
+    map = %{
+      block: %{block | transactions: []},
+      transactions: [],
+      vouts: [],
+      vins: [],
+      claims: [],
+      transfers: [],
+      assets: []
+    }
+
+    Enum.reduce(block.transactions, map, fn transaction, acc ->
+      %{
+        acc
+        | transactions: [
+            Map.drop(transaction, [:vouts, :vins, :claims, :transfers, :asset]) | acc.transactions
+          ],
+          vouts: transaction.vouts ++ acc.vouts,
+          vins: transaction.vins ++ acc.vins,
+          claims: transaction.claims ++ acc.claims,
+          transfers: transaction.transfers ++ acc.transfers,
+          assets: if(is_nil(transaction.asset), do: [], else: [transaction.asset]) ++ acc.assets
+      }
+    end)
+  end
+
+  defp insert_all(schema, data) do
+    data
+    |> Enum.chunk_every(@insert_chunk_size)
+    |> Enum.map(&Repo.insert_all(schema, &1, timeout: :infinity))
+  end
+
+  def insert_block(exploded_block) do
     try do
-      Repo.insert!(block, timeout: :infinity)
+      Repo.transaction(
+        fn ->
+          Repo.insert!(exploded_block.block, timeout: :infinity)
+          insert_all(Transaction, exploded_block.transactions)
+          insert_all(Vin, exploded_block.vins)
+          insert_all(Vout, exploded_block.vouts)
+          insert_all(Claim, exploded_block.claims)
+          insert_all(Transfer, exploded_block.transfers)
+          insert_all(Asset, exploded_block.assets)
+        end,
+        timeout: :infinity
+      )
+
       :ok
     catch
       error ->
-        Logger.error("error while loading block #{inspect({block.index, error})}")
-        insert_block(block)
+        Logger.error("error while loading block #{inspect({exploded_block.block.index, error})}")
+        insert_block(exploded_block)
 
       :error, %ConstraintError{constraint: "blocks_pkey"} ->
-        Logger.error("block already #{block.index} in the database")
+        Logger.error("block already #{exploded_block.block.index} in the database")
 
       error, reason ->
-        Logger.error("error while loading block #{inspect({block.index, error, reason})}")
-        insert_block(block)
+        Logger.error(
+          "error while loading block #{inspect({exploded_block.block.index, error, reason})}"
+        )
+
+        insert_block(exploded_block)
     end
   end
 
@@ -96,12 +150,12 @@ defmodule NeoscanSync.Syncer do
       ordered: false
     )
     |> Task.async_stream(
-      fn {:ok, block} ->
+      fn {:ok, exploded_block} ->
         now = Time.utc_now()
-        insert_block(block)
+        insert_block(exploded_block)
         Monitor.incr(:insert_blocks_time, Time.diff(Time.utc_now(), now, :microseconds))
         Monitor.incr(:insert_blocks_count, 1)
-        Monitor.incr(:insert_transactions_count, block.tx_count)
+        Monitor.incr(:insert_transactions_count, exploded_block.block.tx_count)
       end,
       max_concurrency: System.schedulers_online(),
       timeout: :infinity
