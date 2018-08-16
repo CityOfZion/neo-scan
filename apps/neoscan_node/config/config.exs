@@ -12,7 +12,7 @@ else
       "http://notifications2.neeeo.org/v1",
       "http://notifications3.neeeo.org/v1",
       "http://notifications4.neeeo.org/v1",
-      "https://n2.cityofzion.io/vi"
+      "https://n2.cityofzion.io/v1"
     ]
 end
 
