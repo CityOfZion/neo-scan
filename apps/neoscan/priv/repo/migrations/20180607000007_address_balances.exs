@@ -2,7 +2,7 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
   use Ecto.Migration
 
   def change do
-    create table(:address_balances_cached, primary_key: false) do
+    create table(:address_balances, primary_key: false) do
       add(:address_hash, :binary, primary_key: true)
       add(:asset_hash, :binary, primary_key: true)
       add(:value, :float, null: false)
@@ -17,17 +17,6 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
 
       timestamps()
     end
-
-    execute """
-    CREATE OR REPLACE VIEW address_balances AS
-      SELECT address_hash, asset_hash, SUM(value) as value, MIN(inserted_at) as inserted_at, MAX(updated_at) as updated_at
-      FROM (
-        SELECT address_hash, asset_hash, value, inserted_at, updated_at FROM address_balances_queue
-         UNION ALL
-        SELECT address_hash, asset_hash, value, inserted_at, updated_at FROM address_balances_cached
-          ) combine
-      GROUP BY address_hash, asset_hash;
-    """
 
     execute """
       CREATE OR REPLACE FUNCTION flush_address_balances_queue()
@@ -51,13 +40,13 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
                 GROUP BY address_hash, asset_hash
             ),
             perform_updates AS (
-                INSERT INTO address_balances_cached
+                INSERT INTO address_balances
                 SELECT address_hash, asset_hash, value, inserted_at, updated_at
                 FROM aggregated_queue
-                ON CONFLICT ON CONSTRAINT address_balances_cached_pkey DO
+                ON CONFLICT ON CONSTRAINT address_balances_pkey DO
                 UPDATE SET
-                  value = address_balances_cached.value + EXCLUDED.value,
-                  updated_at = GREATEST(address_balances_cached.updated_at, EXCLUDED.updated_at)
+                  value = address_balances.value + EXCLUDED.value,
+                  updated_at = GREATEST(address_balances.updated_at, EXCLUDED.updated_at)
                 RETURNING 1
             ),
             perform_prune AS (

@@ -2,7 +2,7 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
   use Ecto.Migration
 
   def change do
-    create table(:address_transaction_balances_cached, primary_key: false) do
+    create table(:address_transaction_balances, primary_key: false) do
       add(:address_hash, :binary, primary_key: true)
       add(:transaction_hash, :binary, primary_key: true)
       add(:asset_hash, :binary, primary_key: true)
@@ -11,9 +11,9 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
       timestamps()
     end
 
-    create(index(:address_transaction_balances_cached, [:address_hash, :block_time]))
-    create(index(:address_transaction_balances_cached, [:transaction_hash]))
-    create(index(:address_transaction_balances_cached, [:transaction_hash, :asset_hash]))
+    create(index(:address_transaction_balances, [:address_hash, :block_time]))
+    create(index(:address_transaction_balances, [:transaction_hash]))
+    create(index(:address_transaction_balances, [:transaction_hash, :asset_hash]))
 
     create table(:address_transaction_balances_queue, primary_key: false) do
       add(:address_hash, :binary, null: false)
@@ -23,17 +23,6 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
       add(:block_time,  :naive_datetime, null: false)
       timestamps()
     end
-
-    execute """
-    CREATE OR REPLACE VIEW address_transaction_balances AS
-      SELECT address_hash, transaction_hash, asset_hash, SUM(value) as value, MIN(block_time) as block_time, MIN(inserted_at) as inserted_at, MAX(updated_at) as updated_at
-      FROM (
-        SELECT address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at FROM address_transaction_balances_queue
-         UNION ALL
-        SELECT address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at FROM address_transaction_balances_cached
-          ) combine
-      GROUP BY address_hash, transaction_hash, asset_hash;
-    """
 
     execute """
       CREATE OR REPLACE FUNCTION flush_address_transaction_balances_queue()
@@ -57,13 +46,13 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
                 GROUP BY address_hash, transaction_hash, asset_hash
             ),
             perform_updates AS (
-                INSERT INTO address_transaction_balances_cached
+                INSERT INTO address_transaction_balances
                 SELECT address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at
                 FROM aggregated_queue
-                ON CONFLICT ON CONSTRAINT address_transaction_balances_cached_pkey DO
+                ON CONFLICT ON CONSTRAINT address_transaction_balances_pkey DO
                 UPDATE SET
-                  value = address_transaction_balances_cached.value + EXCLUDED.value,
-                  updated_at = GREATEST(address_transaction_balances_cached.updated_at, EXCLUDED.updated_at)
+                  value = address_transaction_balances.value + EXCLUDED.value,
+                  updated_at = GREATEST(address_transaction_balances.updated_at, EXCLUDED.updated_at)
                 RETURNING 1
             ),
             perform_prune AS (

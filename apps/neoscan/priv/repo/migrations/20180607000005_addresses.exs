@@ -2,7 +2,7 @@ defmodule Neoscan.Repo.Migrations.Addresses do
   use Ecto.Migration
 
   def change do
-    create table(:addresses_cached, primary_key: false) do
+    create table(:addresses, primary_key: false) do
       add(:hash, :binary, primary_key: true)
       add(:first_transaction_time, :naive_datetime, null: false)
       add(:last_transaction_time, :naive_datetime, null: false)
@@ -20,23 +20,7 @@ defmodule Neoscan.Repo.Migrations.Addresses do
       timestamps()
     end
 
-    create(index(:addresses_cached, [:last_transaction_time]))
-
-    execute """
-    CREATE OR REPLACE VIEW addresses AS
-      SELECT hash, MIN(first_transaction_time) as first_transaction_time,
-        MAX(last_transaction_time) as last_transaction_time,
-        SUM(tx_count) as tx_count,
-        MIN(inserted_at) as inserted_at,
-        MAX(updated_at) as updated_at
-      FROM (
-        SELECT hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at FROM addresses_queue
-         UNION ALL
-        SELECT hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at FROM addresses_cached
-          ) combine
-      GROUP BY hash;
-
-    """
+    create(index(:addresses, [:last_transaction_time]))
 
     execute """
       CREATE OR REPLACE FUNCTION flush_addresses_queue()
@@ -64,15 +48,15 @@ defmodule Neoscan.Repo.Migrations.Addresses do
                 GROUP BY hash
             ),
             perform_updates AS (
-                INSERT INTO addresses_cached
+                INSERT INTO addresses
                 SELECT hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at
                 FROM aggregated_queue
-                ON CONFLICT ON CONSTRAINT addresses_cached_pkey DO
+                ON CONFLICT ON CONSTRAINT addresses_pkey DO
                 UPDATE SET
-                  first_transaction_time = LEAST(addresses_cached.first_transaction_time, EXCLUDED.first_transaction_time),
-                  last_transaction_time = GREATEST(addresses_cached.last_transaction_time, EXCLUDED.last_transaction_time),
-                  tx_count = addresses_cached.tx_count + EXCLUDED.tx_count,
-                  updated_at = GREATEST(addresses_cached.updated_at, EXCLUDED.updated_at)
+                  first_transaction_time = LEAST(addresses.first_transaction_time, EXCLUDED.first_transaction_time),
+                  last_transaction_time = GREATEST(addresses.last_transaction_time, EXCLUDED.last_transaction_time),
+                  tx_count = addresses.tx_count + EXCLUDED.tx_count,
+                  updated_at = GREATEST(addresses.updated_at, EXCLUDED.updated_at)
                 RETURNING 1
             ),
             perform_prune AS (

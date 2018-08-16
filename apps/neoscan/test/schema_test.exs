@@ -130,6 +130,9 @@ defmodule Neoscan.SchemaTest do
   test "vout vin trigger (vin inserted after vout)" do
     vout = insert(:vout)
 
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
+
     address_history =
       Repo.one(from(a in AddressHistory, where: a.address_hash == ^vout.address_hash))
 
@@ -141,6 +144,9 @@ defmodule Neoscan.SchemaTest do
     assert address_balance.value == vout.value
 
     insert(:vin, %{vout_n: vout.n, vout_transaction_hash: vout.transaction_hash})
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
+
     [ah1, ah2] = Repo.all(from(a in AddressHistory, where: a.address_hash == ^vout.address_hash))
     assert ah1.value == -ah2.value
 
@@ -154,6 +160,9 @@ defmodule Neoscan.SchemaTest do
     vin = insert(:vin)
 
     vout = insert(:vout, %{n: vin.vout_n, transaction_hash: vin.vout_transaction_hash})
+
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
 
     [ah1, ah2] =
       Repo.all(
@@ -176,6 +185,8 @@ defmodule Neoscan.SchemaTest do
 
   test "trigger address history" do
     address_history = insert(:address_history)
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
     address = Repo.one(from(a in Address, where: a.hash == ^address_history.address_hash))
     assert address.hash == address_history.address_hash
     assert address.first_transaction_time == address_history.block_time
@@ -194,6 +205,9 @@ defmodule Neoscan.SchemaTest do
         address_hash: address_history.address_hash,
         asset_hash: address_history.asset_hash
       })
+
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
+    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
 
     address = Repo.one(from(a in Address, where: a.hash == ^address_history.address_hash))
     assert address.hash == address_history.address_hash

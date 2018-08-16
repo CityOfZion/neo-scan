@@ -201,7 +201,7 @@ defmodule Neoscan.Repo.Migrations.Triggers do
 
     execute """
       CREATE TRIGGER address_counter_trigger
-      AFTER INSERT ON addresses_cached FOR each row
+      AFTER INSERT ON addresses FOR each row
       EXECUTE PROCEDURE address_counter();
     """
 
