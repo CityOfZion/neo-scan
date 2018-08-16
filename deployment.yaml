@@ -13,6 +13,10 @@ spec:
     spec:
       containers:
       - name: neoscan
+        resources:
+          requests:
+            memory: "${MEMORY_REQUEST}"
+            cpu: "${CPU_REQUEST}"
         image: ${REGISTRY_PATH}
         stdin: true
         tty: true

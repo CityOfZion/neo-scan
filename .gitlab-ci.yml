@@ -121,6 +121,6 @@ production:
     DB_USERNAME: ${PROD_DB_USER}
     DB_PASSWORD: ${PROD_DB_PASSWORD}
     DB_INSTANCE: ${PROD_DB_INSTANCE}
-  only:
-    - master
+#  only:
+#    - master
   when: manual

@@ -3,6 +3,8 @@ apk add gettext
 envsubst < deployment-pghero.yaml > deployment-pghero-neoscan-io.yaml
 envsubst < deployment-psql.yaml > deployment-psql-neoscan-io.yaml
 
+export MEMORY_REQUEST="64Mi"
+export CPU_REQUEST="200m"
 export REPLICAS=1
 export DB_DATABASE=neoscan-io
 export WORKLOAD_NAME=sync-neoscan-io
@@ -11,7 +13,13 @@ export POOL_SIZE=5
 export REGISTRY_PATH=${SYNC_REGISTRY_PATH}
 envsubst < deployment.yaml > deployment-sync-neoscan-io.yaml
 
-export REPLICAS=2
+if [ -z "$STAGING" ]; then
+    export REPLICAS=2
+else
+    export REPLICAS=1
+fi
+export MEMORY_REQUEST="1024Mi"
+export CPU_REQUEST="2000m"
 export WORKLOAD_NAME=api-neoscan-io
 export REGISTRY_PATH=${API_REGISTRY_PATH}
 export POOL_SIZE=20
@@ -21,6 +29,9 @@ kubectl apply -f deployment-pghero-neoscan-io.yaml
 kubectl apply -f deployment-psql-neoscan-io.yaml
 kubectl apply -f deployment-api-neoscan-io.yaml
 kubectl apply -f deployment-sync-neoscan-io.yaml
+
+export MEMORY_REQUEST="64Mi"
+export CPU_REQUEST="200m"
 
 if [ -z "$STAGING" ]; then
 
