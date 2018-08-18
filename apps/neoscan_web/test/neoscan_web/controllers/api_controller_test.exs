@@ -718,10 +718,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     address_hash = Base58.encode(vout.address_hash)
 
     conn =
-      get(
-        conn,
-        api_path(conn, :get_last_transactions_by_address, Base58.encode(vout.address_hash))
-      )
+      get(conn, api_path(conn, :get_last_transactions_by_address, address_hash) <> "/1")
       |> BlueBird.ConnLogger.save()
 
     assert 1 == Enum.count(json_response(conn, 200))
