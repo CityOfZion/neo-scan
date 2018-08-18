@@ -1,6 +1,8 @@
 defmodule NeoscanWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :neoscan_web
 
+  plug(Plug.UrlRewrite)
+
   socket("/socket", NeoscanWeb.UserSocket)
   socket("/wobserver", Wobserver.Web.PhoenixSocket)
 

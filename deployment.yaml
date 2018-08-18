@@ -1,0 +1,86 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ${WORKLOAD_NAME}
+  labels:
+    app: ${WORKLOAD_NAME}
+spec:
+  replicas: ${REPLICAS}
+  template:
+    metadata:
+      labels:
+        app: ${WORKLOAD_NAME}
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - ${WORKLOAD_NAME}
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: neoscan
+#        resources:
+#          requests:
+#            memory: "${MEMORY_REQUEST}"
+#            cpu: "${CPU_REQUEST}"
+        image: ${REGISTRY_PATH}
+        stdin: true
+        tty: true
+        env:
+        - name: POOL_SIZE
+          value: "${POOL_SIZE}"
+        - name: DB_PASSWORD
+          value: ${DB_PASSWORD}
+        - name: DB_USERNAME
+          value: ${DB_USERNAME}
+        - name: HOST
+          value: ${HOST}
+        - name: PORT
+          value: "4000"
+        - name: REPLACE_OS_VARS
+          value: "true"
+        - name: DB_DATABASE
+          value: ${DB_DATABASE}
+        - name: DB_HOSTNAME
+          value: 127.0.0.1
+        - name: NEO_SEED_1
+          value: ${NEO_SEED_1}
+        - name: NEO_SEED_2
+          value: ${NEO_SEED_2}
+        - name: NEO_SEED_3
+          value: ${NEO_SEED_3}
+        - name: NEO_SEED_4
+          value: ${NEO_SEED_4}
+        - name: NEO_SEED_5
+          value: ${NEO_SEED_5}
+        - name: NEO_SEED_6
+          value: ${NEO_SEED_6}
+        - name: NEO_SEED_7
+          value: ${NEO_SEED_7}
+        - name: NEO_SEED_8
+          value: ${NEO_SEED_8}
+        - name: NEO_SEED_9
+          value: ${NEO_SEED_9}
+        - name: NEO_SEED_10
+          value: ${NEO_SEED_10}
+        - name: TEST_NET
+          value: "${TEST_NET}"
+        - name: NEO_NOTIFICATIONS_SERVER
+          value: ${NEO_NOTIFICATIONS_SERVER}
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        command: ["/cloud_sql_proxy",
+                  "-instances=${DB_INSTANCE}=tcp:5432",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+        volumeMounts:
+        - name: cloudsql-instance-credentials
+          mountPath: /secrets/cloudsql
+          readOnly: true
+      volumes:
+      - name: cloudsql-instance-credentials
+        secret:
+          secretName: cloudsql-instance-credentials

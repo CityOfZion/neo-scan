@@ -738,6 +738,13 @@ defmodule NeoscanWeb.ApiControllerTest do
              json_response(conn, 400)
   end
 
+  test "test_net rewriting", %{conn: conn} do
+    main_net_url = api_path(conn, :get_all_nodes)
+    test_net_url = String.replace(main_net_url, "main_net", "test_net")
+    conn = get(conn, test_net_url)
+    assert [%{"height" => _, "url" => _} | _] = json_response(conn, 200)
+  end
+
   test "get_all_nodes", %{conn: conn} do
     conn = get(conn, api_path(conn, :get_all_nodes)) |> BlueBird.ConnLogger.save()
     assert [%{"height" => _, "url" => _} | _] = json_response(conn, 200)
