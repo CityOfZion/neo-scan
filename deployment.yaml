@@ -11,8 +11,22 @@ spec:
       labels:
         app: ${WORKLOAD_NAME}
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - ${WORKLOAD_NAME}
+            topologyKey: "kubernetes.io/hostname"
       containers:
       - name: neoscan
+#        resources:
+#          requests:
+#            memory: "${MEMORY_REQUEST}"
+#            cpu: "${CPU_REQUEST}"
         image: ${REGISTRY_PATH}
         stdin: true
         tty: true

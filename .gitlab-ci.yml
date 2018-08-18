@@ -108,7 +108,7 @@ staging:
   when: manual
 
 
-productionk:
+production:
   stage: deploy
   image:
     name: lachlanevenson/k8s-kubectl
@@ -121,4 +121,6 @@ productionk:
     DB_USERNAME: ${PROD_DB_USER}
     DB_PASSWORD: ${PROD_DB_PASSWORD}
     DB_INSTANCE: ${PROD_DB_INSTANCE}
+#  only:
+#    - master
   when: manual
