@@ -36,7 +36,7 @@ To start your The Application/Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Make sure the username and password for your postgresSQL match the contents of "apps/neoscan/config/dev.exs"
+Make sure the username and password for your PostgreSQL match the contents of "apps/neoscan/config/dev.exs"
 
 ## Learn more
 
