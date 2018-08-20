@@ -1,5 +1,5 @@
 defmodule NeoscanSync.DbFlusher do
-  # alias Neoscan.Repo
+  alias Neoscan.Flush
 
   use GenServer
 
@@ -23,5 +23,6 @@ defmodule NeoscanSync.DbFlusher do
   end
 
   def flush do
+    Flush.all()
   end
 end
