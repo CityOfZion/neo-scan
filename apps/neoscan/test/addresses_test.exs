@@ -3,6 +3,7 @@ defmodule Neoscan.AddressesTest do
   import Neoscan.Factory
 
   alias Neoscan.Addresses
+  alias Neoscan.Flush
 
   @governing_token Application.fetch_env!(:neoscan, :governing_token)
   @utility_token Application.fetch_env!(:neoscan, :utility_token)
@@ -28,9 +29,7 @@ defmodule Neoscan.AddressesTest do
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_transaction_balances_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
+    Flush.all()
 
     balances = Addresses.get_balances(address_history.address_hash)
     assert 1 == Enum.count(balances)
@@ -100,9 +99,7 @@ defmodule Neoscan.AddressesTest do
       name: [%{"lang" => "zh", "name" => "My Token"}]
     })
 
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_transaction_balances_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
+    Flush.all()
 
     balances = Addresses.get_balance_history(address_history.address_hash)
 
@@ -187,9 +184,7 @@ defmodule Neoscan.AddressesTest do
       name: [%{"lang" => "en", "name" => "my deprecated token"}]
     })
 
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_transaction_balances_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
+    Flush.all()
 
     assert %{
              gas: %{
@@ -411,9 +406,7 @@ defmodule Neoscan.AddressesTest do
         value: 4.8
       })
 
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_transaction_balances_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
+    Flush.all()
 
     assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 11, total_pages: 1} =
              Addresses.get_transaction_abstracts(address_hash, 1)

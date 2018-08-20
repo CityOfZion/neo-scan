@@ -2,7 +2,7 @@ defmodule NeoscanWeb.AddressControllerTest do
   use NeoscanWeb.ConnCase
 
   import NeoscanWeb.Factory
-  alias Neoscan.Repo
+  alias Neoscan.Flush
 
   @governing_token Application.fetch_env!(:neoscan, :governing_token)
   @utility_token Application.fetch_env!(:neoscan, :utility_token)
@@ -52,9 +52,7 @@ defmodule NeoscanWeb.AddressControllerTest do
       transaction_hash: transaction.hash
     })
 
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_transaction_balances_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
+    Flush.all()
 
     address_hash = Base58.encode(address_history.address_hash)
     conn = get(conn, "/address/#{address_hash}")

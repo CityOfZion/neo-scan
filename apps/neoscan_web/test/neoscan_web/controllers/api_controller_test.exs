@@ -2,7 +2,7 @@ defmodule NeoscanWeb.ApiControllerTest do
   use NeoscanWeb.ConnCase
 
   import NeoscanWeb.Factory
-  alias Neoscan.Repo
+  alias Neoscan.Flush
 
   @governing_token Application.fetch_env!(:neoscan, :governing_token)
   @utility_token Application.fetch_env!(:neoscan, :utility_token)
@@ -37,10 +37,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       name: [%{"lang" => "zh", "name" => "My Token"}]
     })
 
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_vouts_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_transaction_balances_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
+    Flush.all()
 
     conn =
       get(conn, api_path(conn, :get_balance, Base58.encode(vout1.address_hash)))
@@ -146,7 +143,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_vouts_queue()", [])
+    Flush.all()
 
     insert(:block, %{index: 2, total_sys_fee: 0.0})
     insert(:block, %{index: 4, total_sys_fee: 0.0})
@@ -213,7 +210,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       block_index: 8
     })
 
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_vouts_queue()", [])
+    Flush.all()
 
     address_hash = Base58.encode(vout1.address_hash)
     conn = get(conn, api_path(conn, :get_claimable, address_hash)) |> BlueBird.ConnLogger.save()
@@ -398,9 +395,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       value: 5.0
     })
 
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_transaction_balances_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
+    Flush.all()
 
     conn =
       get(conn, api_path(conn, :get_address_abstracts, address_hash_str, "1"))
@@ -539,9 +534,7 @@ defmodule NeoscanWeb.ApiControllerTest do
       vout_transaction_hash: vout2.transaction_hash
     })
 
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_transaction_balances_queue()", [])
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
+    Flush.all()
 
     conn =
       get(

@@ -3,7 +3,7 @@ defmodule Neoscan.CountersTest do
   import Neoscan.Factory
 
   alias Neoscan.Counters
-  alias Neoscan.Repo
+  alias Neoscan.Flush
 
   test "_count_transactions/0" do
     for _ <- 1..18, do: insert(:block, tx_count: 3)
@@ -18,7 +18,7 @@ defmodule Neoscan.CountersTest do
 
   test "count_addresses/0" do
     for _ <- 1..18, do: insert(:address)
-    Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
+    Flush.all()
     assert 18 == Counters.count_addresses()
   end
 end
