@@ -1,6 +1,6 @@
 apk add gettext
 
-DB_INSTANCE='${DB_INSTANCE}'
+export DB_INSTANCE='${DB_INSTANCE}'
 
 envsubst < deployment-pghero.yaml > deployment-pghero-neoscan-io.yaml
 envsubst < deployment-psql.yaml > deployment-psql-neoscan-io.yaml
