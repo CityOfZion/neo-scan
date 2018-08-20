@@ -101,9 +101,6 @@ staging:
   - mkdir ~/.kube && echo "${STAGING_KUB_CONFIG}" > ~/.kube/config
   - ./deploy
   variables:
-    DB_USERNAME: ${STAGING_DB_USER}
-    DB_PASSWORD: ${STAGING_DB_PASSWORD}
-    DB_INSTANCE: ${STAGING_DB_INSTANCE}
     STAGING: "true"
   when: manual
 
@@ -117,10 +114,6 @@ production:
   script:
     - mkdir ~/.kube && echo "${PROD_KUB_CONFIG}" > ~/.kube/config
     - ./deploy
-  variables:
-    DB_USERNAME: ${PROD_DB_USER}
-    DB_PASSWORD: ${PROD_DB_PASSWORD}
-    DB_INSTANCE: ${PROD_DB_INSTANCE}
   only:
     - master
   when: manual
