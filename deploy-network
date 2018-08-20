@@ -1,3 +1,5 @@
+apk add gettext
+
 if [ -z "$STAGING" ]; then
     export WORKLOAD_NAME=api-neoscan-io
     export STATIC_IP_NAME=neoscan-io
