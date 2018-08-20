@@ -104,16 +104,39 @@ staging:
     STAGING: "true"
   when: manual
 
+staging-network:
+  stage: deploy
+  image:
+    name: lachlanevenson/k8s-kubectl
+    entrypoint: [""]
+  script:
+  - mkdir ~/.kube && echo "${STAGING_KUB_CONFIG}" > ~/.kube/config
+  - ./deploy-network
+  variables:
+    STAGING: "true"
+  when: manual
 
 production:
   stage: deploy
   image:
     name: lachlanevenson/k8s-kubectl
     entrypoint: [""]
-  environment: productionk
+  environment: production
   script:
-    - mkdir ~/.kube && echo "${PROD_KUB_CONFIG}" > ~/.kube/config
+    - mkdir ~/.kube && echo "${PROD1_KUB_CONFIG}" > ~/.kube/config
     - ./deploy
-  only:
-    - master
+#  only:
+#    - master
+  when: manual
+
+production-newtork:
+  stage: deploy
+  image:
+    name: lachlanevenson/k8s-kubectl
+    entrypoint: [""]
+  script:
+  - mkdir ~/.kube && echo "${PROD1_KUB_CONFIG}" > ~/.kube/config
+  - ./deploy-network
+#  only:
+#  - master
   when: manual
