@@ -89,6 +89,8 @@ defmodule NeoscanWeb.ApiControllerTest do
       vout_transaction_hash: vout4.transaction_hash
     })
 
+    Flush.all()
+
     conn =
       get(conn, api_path(conn, :get_claimed, Base58.encode(vout1.address_hash)))
       |> BlueBird.ConnLogger.save()
