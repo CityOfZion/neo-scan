@@ -33,10 +33,16 @@ spec:
         env:
         - name: POOL_SIZE
           value: "${POOL_SIZE}"
-        - name: DB_PASSWORD
-          value: ${DB_PASSWORD}
         - name: DB_USERNAME
-          value: ${DB_USERNAME}
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-db-credentials
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-db-credentials
+              key: password
         - name: HOST
           value: ${HOST}
         - name: PORT
@@ -74,8 +80,14 @@ spec:
       - name: cloudsql-proxy
         image: gcr.io/cloudsql-docker/gce-proxy:1.11
         command: ["/cloud_sql_proxy",
-                  "-instances=${DB_INSTANCE}=tcp:5432",
+                  "-instances=$(DB_INSTANCE)=tcp:5432",
                   "-credential_file=/secrets/cloudsql/credentials.json"]
+        env:
+        - name: DB_INSTANCE
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-db-credentials
+              key: instance
         volumeMounts:
         - name: cloudsql-instance-credentials
           mountPath: /secrets/cloudsql
