@@ -2,9 +2,6 @@ apk add gettext
 
 export DB_INSTANCE='${DB_INSTANCE}'
 
-envsubst < deployment-pghero.yaml > deployment-pghero-neoscan-io.yaml
-envsubst < deployment-psql.yaml > deployment-psql-neoscan-io.yaml
-
 export MEMORY_REQUEST="64Mi"
 export CPU_REQUEST="200m"
 export REPLICAS=1
@@ -27,8 +24,8 @@ export REGISTRY_PATH=${API_REGISTRY_PATH}
 export POOL_SIZE=20
 envsubst < deployment.yaml > deployment-api-neoscan-io.yaml
 
-kubectl apply -f deployment-pghero-neoscan-io.yaml
-kubectl apply -f deployment-psql-neoscan-io.yaml
+kubectl apply -f deployment-pghero.yaml
+kubectl apply -f deployment-psql.yaml
 kubectl apply -f deployment-api-neoscan-io.yaml
 kubectl apply -f deployment-sync-neoscan-io.yaml
 
