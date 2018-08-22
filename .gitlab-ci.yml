@@ -125,8 +125,8 @@ production:
   script:
     - mkdir ~/.kube && echo "${PROD1_KUB_CONFIG}" > ~/.kube/config
     - ./deploy
-#  only:
-#    - master
+  only:
+    - master
   when: manual
 
 production-newtork:
@@ -137,6 +137,6 @@ production-newtork:
   script:
   - mkdir ~/.kube && echo "${PROD1_KUB_CONFIG}" > ~/.kube/config
   - ./deploy-network
-#  only:
-#  - master
+  only:
+  - master
   when: manual
