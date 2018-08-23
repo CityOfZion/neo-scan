@@ -2,6 +2,7 @@ stages:
   - test
   - docs
   - build
+  - docker
   - deploy
 
 variables:
@@ -11,8 +12,8 @@ variables:
 
 before_script:
   - export IMAGE_TAG="$CI_PIPELINE_ID-$CI_COMMIT_REF_SLUG"
-  - export REGISTRY_PATH="$CI_REGISTRY_IMAGE:$IMAGE_TAG"
-  - export HAPROXY_REGISTRY_PATH="$CI_REGISTRY_IMAGE/haproxy:$IMAGE_TAG"
+  - export SYNC_REGISTRY_PATH="$CI_REGISTRY_IMAGE/sync:$IMAGE_TAG"
+  - export API_REGISTRY_PATH="$CI_REGISTRY_IMAGE/api:$IMAGE_TAG"
 
 test:
   stage: test
@@ -20,7 +21,7 @@ test:
   services:
     - postgres
   cache:
-    key: build-cache
+    key: test-cache
     paths:
       - deps/
       - _build/
@@ -35,7 +36,7 @@ test:
     paths:
       - apps/neoscan_web/assets/static/docs/api.apib
 
-neoscan-docs:
+docs:
   stage: docs
   image:
     name: humangeo/aglio
@@ -46,115 +47,96 @@ neoscan-docs:
     paths:
       - apps/neoscan_web/assets/static/docs/index.html
 
-neoscan-build:
+build:
   stage: build
-  image: docker:latest
-  services:
-    - docker:dind
+  image: bitwalker/alpine-elixir-phoenix:1.7.0
+  cache:
+    key: build-cache
+    paths:
+    - deps/
+    - _build/
+  variables:
+    MIX_ENV: prod
   script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker build -t $REGISTRY_PATH .
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker push $REGISTRY_PATH
-    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $REGISTRY_PATH $CI_REGISTRY_IMAGE || true"
-    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE || true"
+  - mix local.rebar --force
+  - mix local.hex --force
+  - mix deps.get
+  - cd apps/neoscan_web/assets && npm install && npm run deploy
+  - cd ../../.. && mix compile
+  - mix phx.digest
+  - mix release --name=neoscan_sync --env=prod
+  - mix release --name=neoscan_api --env=prod
+  - mkdir -p export/neoscan_sync && mkdir -p export/neoscan_api
+  - RELEASE_DIR=`ls -d _build/prod/rel/neoscan_sync/releases/*/` && tar -xf "$RELEASE_DIR/neoscan_sync.tar.gz" -C export/neoscan_sync/
+  - RELEASE_DIR=`ls -d _build/prod/rel/neoscan_api/releases/*/` && tar -xf "$RELEASE_DIR/neoscan_api.tar.gz" -C export/neoscan_api/
+  - rm -Rf _build/prod/lib/neo*
+  artifacts:
+    paths:
+    - export
 
-haproxy-build:
-  stage: build
+docker:
+  stage: docker
   image: docker:latest
   services:
     - docker:dind
   script:
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - cd haproxy && docker build -t $HAPROXY_REGISTRY_PATH .
+    - docker build --build-arg APP=neoscan_sync -t $SYNC_REGISTRY_PATH .
+    - docker build --build-arg APP=neoscan_api -t $API_REGISTRY_PATH .
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker push $HAPROXY_REGISTRY_PATH
+    - docker push $SYNC_REGISTRY_PATH
+    - docker push $API_REGISTRY_PATH
+    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $SYNC_REGISTRY_PATH $CI_REGISTRY_IMAGE/sync || true"
+    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $API_REGISTRY_PATH $CI_REGISTRY_IMAGE/api || true"
+    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/sync || true"
+    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/api || true"
 
 staging:
   stage: deploy
+  image:
+    name: lachlanevenson/k8s-kubectl
+    entrypoint: [""]
   environment: staging
   script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker-compose -f docker-compose.prod.yml up -d
+  - mkdir ~/.kube && echo "${STAGING_KUB_CONFIG}" > ~/.kube/config
+  - ./deploy
   variables:
-    HOST: neoscan.backslash.fr
-  tags:
-    - staging
+    STAGING: "true"
   when: manual
 
-testnet:
+staging-network:
   stage: deploy
-  environment: testnet
+  image:
+    name: lachlanevenson/k8s-kubectl
+    entrypoint: [""]
   script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker-compose -f docker-compose.prod.yml up -d
+  - mkdir ~/.kube && echo "${STAGING_KUB_CONFIG}" > ~/.kube/config
+  - ./deploy-network
   variables:
-    HOST: neoscan-testnet.io
-    NEO_SEED_1: http://api.otcgo.cn:20332
-    NEO_SEED_2: https://seed1.neo.org:20331
-    NEO_SEED_3: http://seed2.neo.org:20332
-    NEO_SEED_4: http://seed3.neo.org:20332
-    NEO_SEED_5: http://seed4.neo.org:20332
-    NEO_SEED_6: http://test1.cityofzion.io:8880
-    NEO_SEED_7: http://test2.cityofzion.io:8880
-    NEO_SEED_8: http://test3.cityofzion.io:8880
-    NEO_SEED_9: http://test4.cityofzion.io:8880
-    NEO_SEED_10: http://test5.cityofzion.io:8880
-    TEST_NET: "true"
-    NEO_NOTIFICATIONS_SERVER: http://notiftest1.neeeo.org/v1
-  tags:
-    - testnet
+    STAGING: "true"
   when: manual
-  only:
-      - master
-
-nex_testnet:
-  stage: deploy
-  environment: nex_testnet
-  script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker-compose -f docker-compose.prod.yml up -d
-  variables:
-    HOST: nex.neoscan-testnet.io
-    NEO_SEED_1: http://5.35.241.70:10001
-    NEO_SEED_2: http://5.35.241.70:10002
-    NEO_SEED_3: http://5.35.241.70:10003
-    NEO_SEED_4: http://5.35.241.70:10004
-    TEST_NET: "true"
-    NEO_NOTIFICATIONS_SERVER: http://nexnotifications.neeeo.org/v1
-  tags:
-    - nextestnet
-  when: manual
-  only:
-      - master
-
-coz_testnet:
-  stage: deploy
-  environment: coz_testnet
-  script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker-compose -f docker-compose.prod.yml up -d
-  variables:
-    HOST: coz.neoscan-testnet.io
-    NEO_SEED_1: http://188.68.34.29:10004
-    TEST_NET: "true"
-    NEO_NOTIFICATIONS_SERVER: http://coznotifications.neeeo.org/v1
-  tags:
-    - coztestnet
-  when: manual
-  only:
-      - master
 
 production:
   stage: deploy
+  image:
+    name: lachlanevenson/k8s-kubectl
+    entrypoint: [""]
   environment: production
   script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker-compose -f docker-compose.prod.yml up -d
-  variables:
-    HOST: api.neoscan.io
-  tags:
-    - production
-  when: manual
+    - mkdir ~/.kube && echo "${PROD1_KUB_CONFIG}" > ~/.kube/config
+    - ./deploy
   only:
     - master
+  when: manual
+
+production-newtork:
+  stage: deploy
+  image:
+    name: lachlanevenson/k8s-kubectl
+    entrypoint: [""]
+  script:
+  - mkdir ~/.kube && echo "${PROD1_KUB_CONFIG}" > ~/.kube/config
+  - ./deploy-network
+  only:
+  - master
+  when: manual

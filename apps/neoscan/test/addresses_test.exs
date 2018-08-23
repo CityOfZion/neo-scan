@@ -3,6 +3,7 @@ defmodule Neoscan.AddressesTest do
   import Neoscan.Factory
 
   alias Neoscan.Addresses
+  alias Neoscan.Flush
 
   @governing_token Application.fetch_env!(:neoscan, :governing_token)
   @utility_token Application.fetch_env!(:neoscan, :utility_token)
@@ -27,6 +28,8 @@ defmodule Neoscan.AddressesTest do
       transaction_hash: @governing_token,
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
+
+    Flush.all()
 
     balances = Addresses.get_balances(address_history.address_hash)
     assert 1 == Enum.count(balances)
@@ -96,6 +99,8 @@ defmodule Neoscan.AddressesTest do
       name: [%{"lang" => "zh", "name" => "My Token"}]
     })
 
+    Flush.all()
+
     balances = Addresses.get_balance_history(address_history.address_hash)
 
     assert [
@@ -106,7 +111,9 @@ defmodule Neoscan.AddressesTest do
 
   test "get/1" do
     address = insert(:address)
-    assert address == Addresses.get(address.hash)
+
+    assert Map.drop(address, [:__struct__, :__meta__]) ==
+             Map.drop(Addresses.get(address.hash), [:__struct__, :__meta__])
   end
 
   test "get_split_balance/1" do
@@ -176,6 +183,8 @@ defmodule Neoscan.AddressesTest do
       precision: 8,
       name: [%{"lang" => "en", "name" => "my deprecated token"}]
     })
+
+    Flush.all()
 
     assert %{
              gas: %{
@@ -412,6 +421,8 @@ defmodule Neoscan.AddressesTest do
       asset_hash: @utility_token,
       value: 4.8
     })
+
+    Flush.all()
 
     assert %{entries: entries, page_number: 1, page_size: 15, total_entries: 12, total_pages: 1} =
              Addresses.get_transaction_abstracts(address_hash, 1)

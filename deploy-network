@@ -1,0 +1,40 @@
+apk add gettext
+
+if [ -z "$STAGING" ]; then
+    export WORKLOAD_NAME=api-neoscan-io
+    export STATIC_IP_NAME=neoscan-io
+    envsubst < ingress.yaml > ingress-neoscan-io.yaml
+    envsubst < nodeport.yaml > nodeport-neoscan-io.yaml
+
+    export WORKLOAD_NAME=api-neoscan-testnet-io
+    export STATIC_IP_NAME=neoscan-testnet-io
+    envsubst < ingress.yaml > ingress-neoscan-testnet-io.yaml
+    envsubst < nodeport.yaml > nodeport-neoscan-testnet-io.yaml
+
+    export WORKLOAD_NAME=api-nex-neoscan-testnet-io
+    export STATIC_IP_NAME=nex-neoscan-testnet-io
+    envsubst < ingress.yaml > ingress-nex-neoscan-testnet-io.yaml
+    envsubst < nodeport.yaml > nodeport-nex-neoscan-testnet-io.yaml
+
+    export WORKLOAD_NAME=api-coz-neoscan-testnet-io
+    export STATIC_IP_NAME=coz-neoscan-testnet-io
+    envsubst < ingress.yaml > ingress-coz-neoscan-testnet-io.yaml
+    envsubst < nodeport.yaml > nodeport-coz-neoscan-testnet-io.yaml
+
+    kubectl apply -f nodeport-neoscan-io.yaml
+    kubectl apply -f ingress-neoscan-io.yaml
+    kubectl apply -f nodeport-neoscan-testnet-io.yaml
+    kubectl apply -f ingress-neoscan-testnet-io.yaml
+    kubectl apply -f nodeport-nex-neoscan-testnet-io.yaml
+    kubectl apply -f ingress-nex-neoscan-testnet-io.yaml
+    kubectl apply -f nodeport-coz-neoscan-testnet-io.yaml
+    kubectl apply -f ingress-coz-neoscan-testnet-io.yaml
+else
+    export WORKLOAD_NAME=api-neoscan-io
+    export STATIC_IP_NAME=staging-neoscan-io
+    envsubst < ingress.yaml > ingress-staging-neoscan-io.yaml
+    envsubst < nodeport.yaml > nodeport-staging-neoscan-io.yaml
+
+    kubectl apply -f nodeport-staging-neoscan-io.yaml
+    kubectl apply -f ingress-staging-neoscan-io.yaml
+fi

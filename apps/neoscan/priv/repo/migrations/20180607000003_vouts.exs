@@ -26,5 +26,77 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     create(index(:vouts, [:address_hash, :spent]))
     create(index(:vouts, [:address_hash, :claimed]))
     create(index(:vouts, [:address_hash, :claimed, :spent]))
+
+    create table(:vouts_queue, primary_key: false) do
+      add(:transaction_hash, :binary, null: false)
+      add(:n, :integer, null: false)
+      add(:claimed, :boolean, null: false, default: false)
+      add(:spent, :boolean, null: false, default: false)
+      add(:end_block_index, :integer)
+    end
+
+    execute """
+      CREATE OR REPLACE FUNCTION flush_vouts_queue()
+        RETURNS bool
+        LANGUAGE plpgsql
+        AS $body$
+        DECLARE
+            v_inserts int;
+            v_updates int;
+            v_prunes int;
+        BEGIN
+            IF NOT pg_try_advisory_xact_lock('vouts_queue'::regclass::oid::bigint) THEN
+                 RAISE NOTICE 'skipping vouts_queue flush';
+                 RETURN false;
+            END IF;
+
+            WITH
+            aggregated_queue AS (
+                SELECT transaction_hash, n, BOOL_OR(claimed) as claimed, BOOL_OR(spent) as spent, MAX(end_block_index) as end_block_index
+                FROM vouts_queue
+                GROUP BY transaction_hash, n
+            ),
+            perform_updates AS (
+                UPDATE vouts
+                SET
+                  claimed = vouts.claimed or aggregated_queue.claimed,
+                  spent = vouts.spent or aggregated_queue.spent,
+                  end_block_index = GREATEST(vouts.end_block_index, aggregated_queue.end_block_index)
+                FROM aggregated_queue
+                WHERE aggregated_queue.transaction_hash = vouts.transaction_hash and aggregated_queue.n = vouts.n
+                RETURNING 1
+            ),
+            perform_prune AS (
+                DELETE FROM vouts_queue
+                RETURNING 1
+            )
+            SELECT
+                (SELECT count(*) FROM perform_updates) updates,
+                (SELECT count(*) FROM perform_prune) prunes
+            INTO v_updates, v_prunes;
+
+            RAISE NOTICE 'performed vouts_queue flush: % updates, % prunes', v_updates, v_prunes;
+
+            RETURN true;
+        END;
+        $body$;
+    """
+
+    execute """
+      CREATE OR REPLACE FUNCTION flush_vouts_queue_trigger() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+      IF random() < 0.001 THEN
+          PERFORM flush_vouts_queue();
+      END IF;
+      RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER vouts_queue_trigger
+      AFTER INSERT ON vouts_queue
+      FOR EACH ROW EXECUTE PROCEDURE flush_vouts_queue_trigger();
+    """
   end
 end
