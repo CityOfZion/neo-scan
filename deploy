@@ -75,11 +75,12 @@ if [ -z "$STAGING" ]; then
     export NEO_SEED_3=http://seed2.neo.org:20332
     export NEO_SEED_4=http://seed3.neo.org:20332
     export NEO_SEED_5=http://seed4.neo.org:20332
-    export NEO_SEED_6=http://test1.cityofzion.io:8880
-    export NEO_SEED_7=http://test2.cityofzion.io:8880
-    export NEO_SEED_8=http://test3.cityofzion.io:8880
-    export NEO_SEED_9=http://test4.cityofzion.io:8880
-    export NEO_SEED_10=http://test5.cityofzion.io:8880
+    export NEO_SEED_6=https://test1.cityofzion.io
+    export NEO_SEED_7=https://test2.cityofzion.io
+    export NEO_SEED_8=https://test3.cityofzion.io
+    export NEO_SEED_9=https://test4.cityofzion.io
+    export NEO_SEED_10=https://test5.cityofzion.io
+    export NEO_SEED_11=http://seed5.neo.org:20332
     export TEST_NET="true"
     export NEO_NOTIFICATIONS_SERVER=http://notiftest1.neeeo.org/v1
     export REGISTRY_PATH=${SYNC_REGISTRY_PATH}
