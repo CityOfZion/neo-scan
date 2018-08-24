@@ -9,5 +9,6 @@ spec:
   ports:  
   - name: http
     port: 4000
+    nodePort: ${PORT}
     targetPort: 4000
     protocol: TCP
