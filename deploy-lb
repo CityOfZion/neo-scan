@@ -1,0 +1,42 @@
+export CLUSTER=staging
+export INSTANCE_GROUP=gke-staging-pool-1-f4928420-grp
+export ZONE=us-central1-a
+export IP_NAME=staging-neoscan-io
+
+create_backend_service()
+{
+    PORT=$1
+    SERVICE=$2
+    gcloud compute instance-groups set-named-ports ${INSTANCE_GROUP} --named-ports=port${PORT}:${PORT} --zone=${ZONE}
+    gcloud compute http-health-checks create ${CLUSTER}-${SERVICE}-hc --check-interval=60s --timeout=60 --healthy-threshold=1 --unhealthy-threshold=10 --port=${PORT}
+    gcloud compute backend-services create ${CLUSTER}-${SERVICE}-be --connection-draining-timeout=0 --http-health-checks=${CLUSTER}-${SERVICE}-hc --protocol=http --port-name=port${PORT} --global
+    gcloud compute backend-services add-backend ${CLUSTER}-${SERVICE}-be --instance-group=${INSTANCE_GROUP} --balancing-mode=RATE --max-rate-per-instance=1.0 --capacity-scaler=1.0 --instance-group-zone=${ZONE} --global
+}
+
+create_backend_service 30000 neoscan-io
+create_backend_service 30001 neoscan-testnet-io
+create_backend_service 30002 nex-neoscan-testnet-io
+create_backend_service 30003 coz-neoscan-testnet-io
+
+export SERVICE=neoscan-io
+
+gcloud compute url-maps create ${CLUSTER}-lb --default-service ${CLUSTER}-${SERVICE}-be
+gcloud compute target-http-proxies create ${CLUSTER}-http-lb-proxy --url-map ${CLUSTER}-lb
+gcloud compute forwarding-rules create ${CLUSTER}-http-fw-rule \
+    --address ${IP_NAME} \
+    --global \
+    --target-http-proxy ${CLUSTER}-http-lb-proxy \
+    --ports 80
+
+add_route()
+{
+    SERVICE=$1
+    HOST=$2
+    gcloud compute url-maps add-path-matcher ${CLUSTER}-lb --path-matcher-name=${CLUSTER}-${SERVICE}-pm --default-service=${CLUSTER}-${SERVICE}-be --new-hosts=${HOST}
+}
+
+
+add_route neoscan-io neoscan-io.backslash.fr
+add_route neoscan-testnet-io neoscan-testnet-io.backslash.fr
+add_route nex-neoscan-testnet-io nex-neoscan-testnet-io.backslash.fr
+add_route coz-neoscan-testnet-io coz-neoscan-testnet-io.backslash.fr
