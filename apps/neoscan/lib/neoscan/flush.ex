@@ -20,9 +20,9 @@ defmodule Neoscan.Flush do
   end
 
   def all do
-    address_balances()
-    addresses()
-    address_transaction_balances()
     vouts()
+    address_balances()
+    address_transaction_balances()
+    addresses()
   end
 end

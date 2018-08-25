@@ -2,6 +2,9 @@ defmodule Neoscan.Repo.Migrations.Vouts do
   use Ecto.Migration
 
   def change do
+
+    execute "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";";
+
     create table(:vouts, primary_key: false) do
       add(:transaction_hash, :binary, null: false, primary_key: true)
       add(:n, :integer, null: false, primary_key: true)
@@ -28,11 +31,15 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     create(index(:vouts, [:address_hash, :claimed, :spent]))
 
     create table(:vouts_queue, primary_key: false) do
+      add(:uuid, :uuid, null: false)
+      add(:vin_transaction_hash, :binary, null: true)
       add(:transaction_hash, :binary, null: false)
       add(:n, :integer, null: false)
       add(:claimed, :boolean, null: false, default: false)
       add(:spent, :boolean, null: false, default: false)
       add(:end_block_index, :integer)
+      add(:block_time, :naive_datetime, null: false)
+      timestamps()
     end
 
     execute """
@@ -51,9 +58,15 @@ defmodule Neoscan.Repo.Migrations.Vouts do
             END IF;
 
             WITH
+            selected_queue AS (
+                SELECT vouts_queue.vin_transaction_hash, vouts_queue.transaction_hash, vouts_queue.n, vouts_queue.claimed,
+                vouts_queue.spent, vouts_queue.end_block_index, vouts_queue.block_time,
+                vouts_queue.inserted_at, vouts_queue.updated_at, vouts.address_hash, vouts.asset_hash, vouts.value
+                FROM vouts_queue JOIN vouts USING (transaction_hash, n)
+            ),
             aggregated_queue AS (
                 SELECT transaction_hash, n, BOOL_OR(claimed) as claimed, BOOL_OR(spent) as spent, MAX(end_block_index) as end_block_index
-                FROM vouts_queue
+                FROM selected_queue
                 GROUP BY transaction_hash, n
             ),
             perform_updates AS (
@@ -66,16 +79,23 @@ defmodule Neoscan.Repo.Migrations.Vouts do
                 WHERE aggregated_queue.transaction_hash = vouts.transaction_hash and aggregated_queue.n = vouts.n
                 RETURNING 1
             ),
+            perform_inserts AS (
+                INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
+                SELECT address_hash, vin_transaction_hash, asset_hash, value * -1.0, block_time, inserted_at, updated_at
+                FROM selected_queue WHERE spent = true
+                RETURNING 1
+            ),
             perform_prune AS (
-                DELETE FROM vouts_queue
+                DELETE FROM vouts_queue WHERE uuid IN (SELECT uuid FROM selected_queue)
                 RETURNING 1
             )
             SELECT
                 (SELECT count(*) FROM perform_updates) updates,
+                (SELECT count(*) FROM perform_inserts) inserts,
                 (SELECT count(*) FROM perform_prune) prunes
-            INTO v_updates, v_prunes;
+            INTO v_updates, v_inserts, v_prunes;
 
-            RAISE NOTICE 'performed vouts_queue flush: % updates, % prunes', v_updates, v_prunes;
+            RAISE NOTICE 'performed vouts_queue flush: % updates, % inserts, % prunes', v_updates, v_inserts, v_prunes;
 
             RETURN true;
         END;

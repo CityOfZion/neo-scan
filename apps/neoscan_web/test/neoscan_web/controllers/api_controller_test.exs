@@ -730,6 +730,8 @@ defmodule NeoscanWeb.ApiControllerTest do
       vout_transaction_hash: vout3.transaction_hash
     })
 
+    Flush.all()
+
     address_hash = Base58.encode(vout.address_hash)
 
     conn =
