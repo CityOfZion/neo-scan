@@ -12,7 +12,6 @@ defmodule Neoscan.Repo.Migrations.Addresses do
     end
 
     create table(:addresses_queue, primary_key: false) do
-      add(:uuid, :uuid, null: false)
       add(:hash, :binary, null: false)
       add(:first_transaction_time, :naive_datetime, null: false)
       add(:last_transaction_time, :naive_datetime, null: false)
@@ -39,16 +38,13 @@ defmodule Neoscan.Repo.Migrations.Addresses do
             END IF;
 
             WITH
-            selected_queue AS (
-              SELECT * FROM addresses_queue
-            ),
             aggregated_queue AS (
                 SELECT hash, MIN(first_transaction_time) as first_transaction_time,
                 MAX(last_transaction_time) as last_transaction_time,
                 SUM(tx_count) as tx_count,
                 MIN(inserted_at) as inserted_at,
                 MAX(updated_at) as updated_at
-                FROM selected_queue
+                FROM addresses_queue
                 GROUP BY hash
             ),
             perform_updates AS (
@@ -64,7 +60,7 @@ defmodule Neoscan.Repo.Migrations.Addresses do
                 RETURNING 1
             ),
             perform_prune AS (
-                DELETE FROM addresses_queue WHERE uuid IN (SELECT uuid FROM selected_queue)
+                DELETE FROM addresses_queue
                 RETURNING 1
             )
             SELECT

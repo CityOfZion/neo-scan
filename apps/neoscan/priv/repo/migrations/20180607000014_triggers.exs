@@ -62,8 +62,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vins() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO vouts_queue (uuid, transaction_hash, n, claimed, spent, end_block_index)
-        VALUES (uuid_generate_v4(), NEW.vout_transaction_hash, NEW.vout_n, false, true, NEW.block_index);
+        INSERT INTO vouts_queue (transaction_hash, n, claimed, spent, end_block_index)
+        VALUES ( NEW.vout_transaction_hash, NEW.vout_n, false, true, NEW.block_index);
 
         INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
         SELECT address_hash, NEW.transaction_hash, asset_hash, value * -1.0, NEW.block_time, NEW.inserted_at, NEW.updated_at FROM vouts
@@ -84,8 +84,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION toggle_vout_claimed_on_claim_insertion() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO vouts_queue (uuid, transaction_hash, n, claimed, spent, end_block_index)
-        VALUES (uuid_generate_v4(), NEW.vout_transaction_hash, NEW.vout_n, true, false, null);
+        INSERT INTO vouts_queue (transaction_hash, n, claimed, spent, end_block_index)
+        VALUES (NEW.vout_transaction_hash, NEW.vout_n, true, false, null);
         RETURN NULL;
       END;
       $body$;
@@ -102,8 +102,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_from_address_history() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO addresses_queue (uuid, hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at)
-        VALUES (uuid_generate_v4(), NEW.address_hash, NEW.block_time, NEW.block_time, 0, NEW.inserted_at, NEW.updated_at);
+        INSERT INTO addresses_queue (hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.block_time, NEW.block_time, 0, NEW.inserted_at, NEW.updated_at);
         RETURN NULL;
       END;
       $body$;
@@ -120,8 +120,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_balances_from_address_history() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO address_balances_queue (uuid, address_hash, asset_hash, value, inserted_at, updated_at)
-        VALUES (uuid_generate_v4(), NEW.address_hash, NEW.asset_hash, NEW.value, NEW.inserted_at, NEW.updated_at);
+        INSERT INTO address_balances_queue (address_hash, asset_hash, value, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.asset_hash, NEW.value, NEW.inserted_at, NEW.updated_at);
         RETURN NULL;
       END;
       $body$;
@@ -138,8 +138,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_transaction_balances_from_address_history() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO address_transaction_balances_queue (uuid, address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
-        VALUES (uuid_generate_v4(), NEW.address_hash, NEW.transaction_hash, NEW.asset_hash, NEW.value, NEW.block_time, NEW.inserted_at, NEW.updated_at);
+        INSERT INTO address_transaction_balances_queue (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.transaction_hash, NEW.asset_hash, NEW.value, NEW.block_time, NEW.inserted_at, NEW.updated_at);
         RETURN NULL;
       END;
       $body$;
@@ -227,8 +227,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_tx_count_from_address_transactions() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO addresses_queue (uuid, hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at)
-        VALUES (uuid_generate_v4(), NEW.address_hash, NEW.block_time, NEW.block_time, 1, now(), now());
+        INSERT INTO addresses_queue (hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.block_time, NEW.block_time, 1, now(), now());
         RETURN NULL;
       END;
       $body$;

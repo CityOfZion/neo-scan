@@ -2,8 +2,6 @@ defmodule Neoscan.Repo.Migrations.Vouts do
   use Ecto.Migration
 
   def change do
-    execute "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";";
-
     create table(:vouts, primary_key: false) do
       add(:transaction_hash, :binary, null: false, primary_key: true)
       add(:n, :integer, null: false, primary_key: true)
@@ -30,7 +28,6 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     create(index(:vouts, [:address_hash, :claimed, :spent]))
 
     create table(:vouts_queue, primary_key: false) do
-      add(:uuid, :uuid, null: false)
       add(:transaction_hash, :binary, null: false)
       add(:n, :integer, null: false)
       add(:claimed, :boolean, null: false, default: false)
@@ -54,12 +51,9 @@ defmodule Neoscan.Repo.Migrations.Vouts do
             END IF;
 
             WITH
-            selected_queue AS (
-              SELECT * FROM vouts_queue
-            ),
             aggregated_queue AS (
                 SELECT transaction_hash, n, BOOL_OR(claimed) as claimed, BOOL_OR(spent) as spent, MAX(end_block_index) as end_block_index
-                FROM selected_queue
+                FROM vouts_queue
                 GROUP BY transaction_hash, n
             ),
             perform_updates AS (
@@ -73,7 +67,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
                 RETURNING 1
             ),
             perform_prune AS (
-                DELETE FROM vouts_queue WHERE uuid IN (SELECT uuid FROM selected_queue)
+                DELETE FROM vouts_queue
                 RETURNING 1
             )
             SELECT

@@ -16,7 +16,6 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
     create(index(:address_transaction_balances, [:transaction_hash, :asset_hash]))
 
     create table(:address_transaction_balances_queue, primary_key: false) do
-      add(:uuid, :uuid, null: false)
       add(:address_hash, :binary, null: false)
       add(:transaction_hash, :binary, null: false)
       add(:asset_hash, :binary, null: false)
@@ -41,12 +40,9 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
             END IF;
 
             WITH
-            selected_queue AS (
-                SELECT * FROM address_transaction_balances_queue
-            ),
             aggregated_queue AS (
                 SELECT address_hash, transaction_hash, asset_hash, SUM(value) as value, MIN(block_time) as block_time, MIN(inserted_at) as inserted_at, MAX(updated_at) as updated_at
-                FROM selected_queue
+                FROM address_transaction_balances_queue
                 GROUP BY address_hash, transaction_hash, asset_hash
             ),
             perform_updates AS (
@@ -60,7 +56,7 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
                 RETURNING 1
             ),
             perform_prune AS (
-                DELETE FROM address_transaction_balances_queue WHERE uuid IN (SELECT uuid FROM selected_queue)
+                DELETE FROM address_transaction_balances_queue
                 RETURNING 1
             )
             SELECT
