@@ -31,7 +31,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     create(index(:vouts, [:address_hash, :claimed, :spent]))
 
     create table(:vouts_queue, primary_key: false) do
-      add(:uuid, :uuid, null: false)
+      add(:uuid, :uuid, null: false, primary_key: true)
       add(:vin_transaction_hash, :binary, null: true)
       add(:transaction_hash, :binary, null: false)
       add(:n, :integer, null: false)
