@@ -43,28 +43,33 @@ defmodule NeoscanWeb.ApiControllerTest do
       get(conn, api_path(conn, :get_balance, Base58.encode(vout1.address_hash)))
       |> BlueBird.ConnLogger.save()
 
+    address_hash_b58 = Base58.encode(vout1.address_hash)
+    amount = vout3.value + vout1.value
+
     assert %{
-             "address" => Base58.encode(vout1.address_hash),
+             "address" => ^address_hash_b58,
              "balance" => [
                %{
-                 "amount" => vout3.value + vout1.value,
+                 "amount" => ^amount,
                  "asset" => "NEO",
-                 "unspent" => [
-                   %{
-                     "n" => vout3.n,
-                     "txid" => Base.encode16(vout3.transaction_hash, case: :lower),
-                     "value" => vout3.value
-                   },
-                   %{
-                     "n" => vout1.n,
-                     "txid" => Base.encode16(vout1.transaction_hash, case: :lower),
-                     "value" => vout1.value
-                   }
-                 ]
+                 "unspent" => unspent
                },
                %{"amount" => 2.0, "asset" => "My Token", "unspent" => []}
              ]
-           } == json_response(conn, 200)
+           } = json_response(conn, 200)
+
+    assert [
+             %{
+               "n" => vout3.n,
+               "txid" => Base.encode16(vout3.transaction_hash, case: :lower),
+               "value" => vout3.value
+             },
+             %{
+               "n" => vout1.n,
+               "txid" => Base.encode16(vout1.transaction_hash, case: :lower),
+               "value" => vout1.value
+             }
+           ] == Enum.sort_by(unspent, &(-&1["value"]))
 
     conn = get(conn, api_path(conn, :get_balance, "==#$%")) |> BlueBird.ConnLogger.save()
     assert %{"errors" => ["address is not a valid base58"]} == json_response(conn, 400)
