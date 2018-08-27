@@ -3,8 +3,6 @@ defmodule Neoscan.Repo.Migrations.Vouts do
 
   def change do
 
-    execute "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";";
-
     create table(:vouts, primary_key: false) do
       add(:transaction_hash, :binary, null: false, primary_key: true)
       add(:n, :integer, null: false, primary_key: true)
@@ -31,7 +29,6 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     create(index(:vouts, [:address_hash, :claimed, :spent]))
 
     create table(:vouts_queue, primary_key: false) do
-      add(:uuid, :uuid, null: false, primary_key: true)
       add(:vin_transaction_hash, :binary, null: true)
       add(:transaction_hash, :binary, null: false)
       add(:n, :integer, null: false)
@@ -58,15 +55,11 @@ defmodule Neoscan.Repo.Migrations.Vouts do
             END IF;
 
             WITH
-            selected_queue AS (
-                SELECT vouts_queue.vin_transaction_hash, vouts_queue.transaction_hash, vouts_queue.n, vouts_queue.claimed,
-                vouts_queue.spent, vouts_queue.end_block_index, vouts_queue.block_time,
-                vouts_queue.inserted_at, vouts_queue.updated_at, vouts.address_hash, vouts.asset_hash, vouts.value
-                FROM vouts_queue JOIN vouts USING (transaction_hash, n)
-            ),
             aggregated_queue AS (
-                SELECT transaction_hash, n, BOOL_OR(claimed) as claimed, BOOL_OR(spent) as spent, MAX(end_block_index) as end_block_index
-                FROM selected_queue
+                SELECT (array_remove(array_agg(vin_transaction_hash), NULL))[1] as vin_transaction_hash,
+                  transaction_hash, n, BOOL_OR(claimed) as claimed, BOOL_OR(spent) as spent, MAX(end_block_index) as end_block_index,
+                  MAX(block_time) as block_time, MIN(inserted_at) as inserted_at, MAX(updated_at) as updated_at
+                FROM vouts_queue
                 GROUP BY transaction_hash, n
             ),
             perform_updates AS (
@@ -77,16 +70,20 @@ defmodule Neoscan.Repo.Migrations.Vouts do
                   end_block_index = GREATEST(vouts.end_block_index, aggregated_queue.end_block_index)
                 FROM aggregated_queue
                 WHERE aggregated_queue.transaction_hash = vouts.transaction_hash and aggregated_queue.n = vouts.n
-                RETURNING 1
+                RETURNING aggregated_queue.vin_transaction_hash, aggregated_queue.transaction_hash, aggregated_queue.n, aggregated_queue.claimed,
+                aggregated_queue.spent, aggregated_queue.end_block_index, aggregated_queue.block_time,
+                aggregated_queue.inserted_at, aggregated_queue.updated_at, vouts.address_hash, vouts.asset_hash, vouts.value
             ),
             perform_inserts AS (
                 INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
                 SELECT address_hash, vin_transaction_hash, asset_hash, value * -1.0, block_time, inserted_at, updated_at
-                FROM selected_queue WHERE spent = true
+                FROM perform_updates WHERE spent = true
                 RETURNING 1
             ),
             perform_prune AS (
-                DELETE FROM vouts_queue WHERE uuid IN (SELECT uuid FROM selected_queue)
+                DELETE FROM vouts_queue USING perform_updates
+                WHERE vouts_queue.transaction_hash = perform_updates.transaction_hash AND
+                    vouts_queue.n = perform_updates.n
                 RETURNING 1
             )
             SELECT
@@ -105,7 +102,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     execute """
       CREATE OR REPLACE FUNCTION flush_vouts_queue_trigger() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-      IF random() < 0.001 THEN
+      IF random() < 0.01 THEN
           PERFORM flush_vouts_queue();
       END IF;
       RETURN NULL;

@@ -25,8 +25,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_vout_updates_based_on_vins() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO vouts_queue (uuid, vin_transaction_hash, transaction_hash, n, claimed, spent, end_block_index, block_time, inserted_at, updated_at)
-        VALUES (uuid_generate_v4(), NEW.transaction_hash, NEW.vout_transaction_hash, NEW.vout_n, false, true, NEW.block_index, NEW.block_time, NEW.inserted_at, NEW.updated_at);
+        INSERT INTO vouts_queue (vin_transaction_hash, transaction_hash, n, claimed, spent, end_block_index, block_time, inserted_at, updated_at)
+        VALUES (NEW.transaction_hash, NEW.vout_transaction_hash, NEW.vout_n, false, true, NEW.block_index, NEW.block_time, NEW.inserted_at, NEW.updated_at);
         RETURN NULL;
       END;
       $body$;
@@ -43,8 +43,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_vout_updates_based_on_claims() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO vouts_queue (uuid, transaction_hash, n, claimed, spent, end_block_index, block_time, inserted_at, updated_at)
-        VALUES (uuid_generate_v4(), NEW.vout_transaction_hash, NEW.vout_n, true, false, null, NEW.block_time, NEW.inserted_at, NEW.updated_at);
+        INSERT INTO vouts_queue (transaction_hash, n, claimed, spent, end_block_index, block_time, inserted_at, updated_at)
+        VALUES (NEW.vout_transaction_hash, NEW.vout_n, true, false, null, NEW.block_time, NEW.inserted_at, NEW.updated_at);
         RETURN NULL;
       END;
       $body$;
