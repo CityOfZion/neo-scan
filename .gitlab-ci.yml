@@ -123,10 +123,10 @@ production:
     entrypoint: [""]
   environment: production
   script:
-    - mkdir ~/.kube && echo "${PROD1_KUB_CONFIG}" > ~/.kube/config
+    - mkdir ~/.kube && echo "${PROD2_KUB_CONFIG}" > ~/.kube/config
     - ./deploy
-#  only:
-#    - master
+  only:
+    - master
   when: manual
 
 production-newtork:
@@ -135,7 +135,7 @@ production-newtork:
     name: lachlanevenson/k8s-kubectl
     entrypoint: [""]
   script:
-  - mkdir ~/.kube && echo "${PROD1_KUB_CONFIG}" > ~/.kube/config
+  - mkdir ~/.kube && echo "${PROD2_KUB_CONFIG}" > ~/.kube/config
   - ./deploy-network
   only:
   - master
