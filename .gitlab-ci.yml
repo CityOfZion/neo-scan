@@ -127,6 +127,7 @@ production:
     - ./deploy
   only:
     - master
+    - optimize_insert3
   when: manual
 
 production-newtork:
@@ -138,5 +139,6 @@ production-newtork:
   - mkdir ~/.kube && echo "${PROD2_KUB_CONFIG}" > ~/.kube/config
   - ./deploy-network
   only:
-  - master
+    - master
+    - optimize_insert3
   when: manual
