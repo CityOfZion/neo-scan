@@ -52,11 +52,11 @@ defmodule NeoscanSync.Syncer do
       Converter.convert_block(block_raw)
     catch
       error ->
-        Logger.error("error while downloading block #{inspect({index, error})}")
+        # Logger.error("error while downloading block #{inspect({index, error})}")
         download_block(index)
 
       error, reason ->
-        Logger.error("error while downloading block #{inspect({index, error, reason})}")
+        # Logger.error("error while downloading block #{inspect({index, error, reason})}")
         download_block(index)
     end
   end

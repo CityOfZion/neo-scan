@@ -1,7 +1,7 @@
-export CLUSTER=staging
-export INSTANCE_GROUP=gke-staging-pool-1-f4928420-grp
+export CLUSTER=production
+export INSTANCE_GROUP=gke-production-2-default-pool-c5dff25a-grp
 export ZONE=us-central1-a
-export IP_NAME=staging-neoscan-io
+export IP_NAME=production-neoscan
 
 create_backend_service()
 {
@@ -35,8 +35,7 @@ add_route()
     gcloud compute url-maps add-path-matcher ${CLUSTER}-lb --path-matcher-name=${CLUSTER}-${SERVICE}-pm --default-service=${CLUSTER}-${SERVICE}-be --new-hosts=${HOST}
 }
 
-
-add_route neoscan-io neoscan-io.backslash.fr
-add_route neoscan-testnet-io neoscan-testnet-io.backslash.fr
-add_route nex-neoscan-testnet-io nex-neoscan-testnet-io.backslash.fr
-add_route coz-neoscan-testnet-io coz-neoscan-testnet-io.backslash.fr
+add_route neoscan-io n.backslash.fr
+add_route neoscan-testnet-io nt.backslash.fr
+add_route nex-neoscan-testnet-io nnt.backslash.fr
+add_route coz-neoscan-testnet-io cnt.backslash.fr
