@@ -1,4 +1,4 @@
-FROM bitwalker/alpine-elixir:1.7.0
+FROM bitwalker/alpine-elixir:1.7.3
 
 ARG APP
 ENV APP=$APP
