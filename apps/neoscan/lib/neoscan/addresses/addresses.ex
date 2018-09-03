@@ -251,14 +251,13 @@ defmodule Neoscan.Addresses do
     }
   end
 
-  defp get_transaction_abstract_value(%{value: value, address_to: "fees"}), do: abs(value)
-
   defp get_transaction_abstract_value(%{
          value: value,
          asset_hash: @utility_token,
+         address_to: address_to,
          transaction: %{net_fee: net_fee}
        })
-       when value < 0 do
+       when value < 0 and address_to != "fees" do
     abs(value) - net_fee
   end
 
