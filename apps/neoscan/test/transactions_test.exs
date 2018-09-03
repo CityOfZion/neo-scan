@@ -102,6 +102,7 @@ defmodule Neoscan.TransactionsTest do
     vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
+
     Flush.all()
 
     transaction_hash = vout2.transaction_hash

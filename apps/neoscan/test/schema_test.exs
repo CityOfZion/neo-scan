@@ -36,6 +36,7 @@ defmodule Neoscan.SchemaTest do
   test "toggle vout spent" do
     vin = insert(:vin)
     insert(:vout, %{n: vin.vout_n, transaction_hash: vin.vout_transaction_hash})
+    Flush.all()
 
     vout =
       Repo.one(
@@ -49,6 +50,7 @@ defmodule Neoscan.SchemaTest do
     assert vout.end_block_index == vin.block_index
 
     vout = insert(:vout)
+    Flush.all()
 
     vout =
       Repo.one(
@@ -74,6 +76,8 @@ defmodule Neoscan.SchemaTest do
     claim = insert(:claim)
     insert(:vout, %{n: claim.vout_n, transaction_hash: claim.vout_transaction_hash})
 
+    Flush.all()
+
     vout =
       Repo.one(
         from(
@@ -85,6 +89,7 @@ defmodule Neoscan.SchemaTest do
     assert vout.claimed
 
     vout = insert(:vout)
+    Flush.all()
 
     vout =
       Repo.one(

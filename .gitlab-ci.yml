@@ -17,7 +17,7 @@ before_script:
 
 test:
   stage: test
-  image: bitwalker/alpine-elixir-phoenix:1.7.0
+  image: bitwalker/alpine-elixir-phoenix:1.7.3
   services:
     - postgres
   cache:
@@ -49,7 +49,7 @@ docs:
 
 build:
   stage: build
-  image: bitwalker/alpine-elixir-phoenix:1.7.0
+  image: bitwalker/alpine-elixir-phoenix:1.7.3
   cache:
     key: build-cache
     paths:
@@ -123,10 +123,11 @@ production:
     entrypoint: [""]
   environment: production
   script:
-    - mkdir ~/.kube && echo "${PROD1_KUB_CONFIG}" > ~/.kube/config
+    - mkdir ~/.kube && echo "${PROD3_KUB_CONFIG}" > ~/.kube/config
     - ./deploy
   only:
     - master
+    - optimize_insert3
   when: manual
 
 production-newtork:
@@ -135,8 +136,9 @@ production-newtork:
     name: lachlanevenson/k8s-kubectl
     entrypoint: [""]
   script:
-  - mkdir ~/.kube && echo "${PROD1_KUB_CONFIG}" > ~/.kube/config
+  - mkdir ~/.kube && echo "${PROD3_KUB_CONFIG}" > ~/.kube/config
   - ./deploy-network
   only:
-  - master
+    - master
+    - optimize_insert3
   when: manual

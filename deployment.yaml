@@ -22,7 +22,7 @@ spec:
                 - ${WORKLOAD_NAME}
             topologyKey: "kubernetes.io/hostname"
       containers:
-      - name: neoscan
+      - name: ${WORKLOAD_NAME}
 #        resources:
 #          requests:
 #            memory: "${MEMORY_REQUEST}"
