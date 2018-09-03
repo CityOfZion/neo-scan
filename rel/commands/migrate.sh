@@ -1,3 +1,3 @@
 #!/bin/sh
 
-bin/neoscan command Elixir.Neoscan.Release.Tasks migrate 
+bin/${APP} command Elixir.Neoscan.Release.Tasks migrate

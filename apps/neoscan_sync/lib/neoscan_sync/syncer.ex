@@ -11,7 +11,7 @@ defmodule NeoscanSync.Syncer do
 
   @parallelism 16
   @update_interval 1_000
-  @block_chunk_size 5_000
+  @block_chunk_size 500
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -51,19 +51,25 @@ defmodule NeoscanSync.Syncer do
       ^index = block_raw.index
       Converter.convert_block(block_raw)
     catch
-      error ->
-        Logger.error("error while downloading block #{inspect({index, error})}")
+      _error ->
+        # Logger.error("error while downloading block #{inspect({index, error})}")
         download_block(index)
 
-      error, reason ->
-        Logger.error("error while downloading block #{inspect({index, error, reason})}")
+      _error, _reason ->
+        # Logger.error("error while downloading block #{inspect({index, error, reason})}")
         download_block(index)
     end
   end
 
   def insert_block(block) do
     try do
-      Repo.transaction(fn -> Repo.insert!(block, timeout: :infinity) end, timeout: :infinity)
+      Repo.transaction(
+        fn ->
+          Repo.insert!(block, timeout: :infinity, returning: false)
+        end,
+        timeout: :infinity
+      )
+
       :ok
     catch
       error ->
@@ -75,6 +81,7 @@ defmodule NeoscanSync.Syncer do
 
       error, reason ->
         Logger.error("error while loading block #{inspect({block.index, error, reason})}")
+
         insert_block(block)
     end
   end
@@ -101,8 +108,9 @@ defmodule NeoscanSync.Syncer do
         insert_block(block)
         Monitor.incr(:insert_blocks_time, Time.diff(Time.utc_now(), now, :microseconds))
         Monitor.incr(:insert_blocks_count, 1)
+        Monitor.incr(:insert_transactions_count, block.tx_count)
       end,
-      max_concurrency: 1,
+      max_concurrency: System.schedulers_online(),
       timeout: :infinity
     )
     |> Stream.run()

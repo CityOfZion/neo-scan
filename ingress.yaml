@@ -1,0 +1,10 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ${STATIC_IP_NAME} 
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "${STATIC_IP_NAME}"
+spec:
+  backend:
+    serviceName: ${WORKLOAD_NAME}
+    servicePort: 4000

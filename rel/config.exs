@@ -14,16 +14,25 @@ environment :prod do
   set cookie: :"UHLs;22CbwNqpN?3g9`c|?.>XO;s%]yP0aup<SmL]`.8bAbujy1[%4.23%1Ya"	
 end
 
-release :neoscan do
+release :neoscan_sync do
   set version: current_version(:neoscan)
   set commands: [migrate: "rel/commands/migrate.sh", seed: "rel/commands/seed.sh"]
   set applications: [
         :runtime_tools,
-        :neoprice,
+        :neoscan,
+        neoscan_node: :permanent,
+        neoscan_sync: :permanent,
+      ]
+end
+
+release :neoscan_api do
+  set version: current_version(:neoscan)
+  set commands: [migrate: "rel/commands/migrate.sh", seed: "rel/commands/seed.sh"]
+  set applications: [
+        :runtime_tools,
         :neoscan,
         neoscan_cache: :permanent,
         neoscan_node: :permanent,
-        neoscan_sync: :permanent,
         neoscan_web: :permanent
       ]
 end

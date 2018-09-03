@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: pghero 
+  labels:
+    app: pghero
+spec:
+  template:
+    metadata:
+      labels:
+        app: pghero
+    spec:
+      containers:
+      - name: pghero
+        image: ankane/pghero
+        stdin: true
+        tty: true
+        env:
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-db-credentials
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-db-credentials
+              key: password
+        - name: DATABASE_URL
+          value: "postgres://$(DB_USERNAME):$(DB_PASSWORD)@127.0.0.1:5432/neoscan-io"
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        command: ["/cloud_sql_proxy",
+                  "-instances=$(DB_INSTANCE)=tcp:5432",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+        env:
+        - name: DB_INSTANCE
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-db-credentials
+              key: instance
+        volumeMounts:
+        - name: cloudsql-instance-credentials
+          mountPath: /secrets/cloudsql
+          readOnly: true
+      volumes:
+      - name: cloudsql-instance-credentials
+        secret:
+          secretName: cloudsql-instance-credentials
