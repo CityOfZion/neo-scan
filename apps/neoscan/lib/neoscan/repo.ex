@@ -7,6 +7,8 @@ defmodule Neoscan.Repo do
   DATABASE_URL environment variable.
   """
   def init(_, opts) do
-    {:ok, Keyword.put(opts, :url, System.get_env("DATABASE_URL"))}
+    pool_size = System.get_env("POOL_SIZE")
+    pool_size = if is_nil(pool_size), do: 10, else: String.to_integer(pool_size)
+    {:ok, Keyword.put(opts, :pool_size, pool_size)}
   end
 end

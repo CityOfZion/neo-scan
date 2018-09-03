@@ -7,7 +7,6 @@ defmodule NeoscanCache.Cache do
   use GenServer
   alias Neoscan.Blocks
   alias Neoscan.Transactions
-  alias Neoscan.Addresses
   alias Neoscan.Counters
   alias Neoscan.BlockGasGeneration
   alias NeoscanCache.CryptoCompareWrapper
@@ -139,13 +138,11 @@ defmodule NeoscanCache.Cache do
     Process.send_after(self(), :sync, @update_interval)
     blocks = Blocks.paginate(1).entries
     transactions = Transactions.paginate(1).entries
-    addresses = Addresses.paginate(1).entries
     stats = get_general_stats()
 
     set(:blocks, blocks)
     set(:transactions, transactions)
     set(:stats, stats)
-    set(:addresses, addresses)
   end
 
   def sync_price() do

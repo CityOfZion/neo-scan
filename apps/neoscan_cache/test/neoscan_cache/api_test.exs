@@ -18,10 +18,6 @@ defmodule NeoscanCache.ApiTest do
     assert [_, %{vouts: [_]}] = Api.get_transactions()
   end
 
-  test "get_addresses/0" do
-    assert is_list(Api.get_addresses())
-  end
-
   test "get_price/0" do
     assert %{
              gas: %{

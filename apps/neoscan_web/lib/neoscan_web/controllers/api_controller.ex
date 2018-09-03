@@ -156,7 +156,7 @@ defmodule NeoscanWeb.ApiController do
   api :GET, "/api/main_net/v1/get_claimed/:address" do
     title("Get address claimed transactions")
     description("Returns the claimed transactions for an address, from its hash")
-    parameter(:hash, :string, description: "base 58 address")
+    parameter(:address, :string, description: "base 58 address")
   end
 
   def get_claimed(conn, params) do
@@ -167,7 +167,7 @@ defmodule NeoscanWeb.ApiController do
   api :GET, "/api/main_net/v1/get_block/:block_hash" do
     title("Get block")
     description("Returns the block model from its hash or index")
-    parameter(:hash, :string, description: "base 16 block hash")
+    parameter(:block_hash, :string, description: "base 16 block hash")
   end
 
   def get_block(conn, params) do

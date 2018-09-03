@@ -2,18 +2,16 @@ defmodule NeoscanWeb.AddressControllerTest do
   use NeoscanWeb.ConnCase
 
   import NeoscanWeb.Factory
+  alias Neoscan.Flush
 
-  @neo_asset_hash <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147, 144,
-                    175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124, 155>>
-
-  @gas_asset_hash <<96, 44, 121, 113, 139, 22, 228, 66, 222, 88, 119, 142, 20, 141, 11, 16, 132,
-                    227, 178, 223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45, 231>>
+  @governing_token Application.fetch_env!(:neoscan, :governing_token)
+  @utility_token Application.fetch_env!(:neoscan, :utility_token)
 
   test "/address/:address", %{conn: conn} do
-    address_history = insert(:address_history, %{asset_hash: @neo_asset_hash, value: 5.0})
+    address_history = insert(:address_history, %{asset_hash: @governing_token, value: 5.0})
 
     insert(:address_history, %{
-      asset_hash: @gas_asset_hash,
+      asset_hash: @utility_token,
       address_hash: address_history.address_hash,
       value: 9.5
     })
@@ -25,12 +23,12 @@ defmodule NeoscanWeb.AddressControllerTest do
       insert(:address_history, %{address_hash: address_history.address_hash, value: 432.5})
 
     insert(:asset, %{
-      transaction_hash: @neo_asset_hash,
+      transaction_hash: @governing_token,
       name: [%{"lang" => "en", "name" => "NEO"}]
     })
 
     insert(:asset, %{
-      transaction_hash: @gas_asset_hash,
+      transaction_hash: @utility_token,
       name: [%{"lang" => "en", "name" => "GAS"}]
     })
 
@@ -53,6 +51,8 @@ defmodule NeoscanWeb.AddressControllerTest do
       address_hash: address_history.address_hash,
       transaction_hash: transaction.hash
     })
+
+    Flush.all()
 
     address_hash = Base58.encode(address_history.address_hash)
     conn = get(conn, "/address/#{address_hash}")
