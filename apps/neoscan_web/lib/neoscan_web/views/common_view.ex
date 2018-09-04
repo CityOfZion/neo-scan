@@ -1,7 +1,7 @@
 defmodule NeoscanWeb.CommonView do
-  alias Plug.Conn
   alias NeoscanWeb.Explanations
   alias NeoscanWeb.ViewHelper
+  alias Neoscan.Asset
   alias Neoscan.Vm.Disassembler
 
   def get_transaction_name("contract_transaction"), do: "Contract"
@@ -98,17 +98,13 @@ defmodule NeoscanWeb.CommonView do
 
   def render_date_time(date_time), do: DateTime.to_unix(date_time)
 
-  def render_asset_name(conn, asset) do
-    lang = Conn.get_session(conn, "locale")
+  def render_asset_name(%{:name => name} = asset) when is_list(name) do
+    updated_asset = Asset.update_name(asset)
+    updated_asset.name
+  end
 
-    specific_name =
-      Enum.find(asset.name, fn x -> x["lang"] == lang end) ||
-        Enum.find(asset.name, fn x -> String.starts_with?(x["lang"], lang) end) ||
-        Enum.find(asset.name, fn x -> x["lang"] == "en" end) ||
-        Enum.find(asset.name, fn x -> String.starts_with?(x["lang"], "en") end) ||
-        List.first(asset.name)
-
-    specific_name["name"]
+  def render_asset_name(asset) do
+    asset.name
   end
 
   def has_script?(scripts), do: not is_nil(get_script(scripts))

@@ -9,7 +9,7 @@
   <ul id="extra-information" class="asset-left-information-bar">
     <li class="border-right border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Name" %></p>
-      <p class="large-detail-text"><%= render_asset_name(@conn, @asset) %></p>
+      <p class="large-detail-text"><%= render_asset_name(@asset) %></p>
     </li>
     <li class="border-right border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Type" %></p>

@@ -17,7 +17,7 @@
       <%= for asset <- @assets do %>
         <div class="full-width-bar asset">
           <div class="information-wrapper">
-            <p class="medium-detail-text col-3-width"><span class="fa <%= render_asset_style(asset.type) %>"></span><%= render_asset_name(@conn, asset) %></p>
+            <p class="medium-detail-text col-3-width"><span class="fa <%= render_asset_style(asset.type) %>"></span><%= render_asset_name(asset) %></p>
             <div class="secondary-info-wrapper">
               <a href="<%= asset_path(@conn, :index, render_hash(asset.transaction_hash))%>" alt="<%= gettext "View asset"%>" title="<%= gettext "View asset"%>" class="large-blue-link col-6-width"><%= render_hash(asset.transaction_hash) %></a>
               <p class="medium-detail-text col-3-width remove-550px">
