@@ -13,14 +13,20 @@ defmodule NeoscanWeb.AddressControllerTest do
     insert(:address_history, %{
       asset_hash: @utility_token,
       address_hash: address_history.address_hash,
-      value: 9.5
+      value: Decimal.new("9.5")
     })
 
     balance_1 =
-      insert(:address_history, %{address_hash: address_history.address_hash, value: 35.5})
+      insert(:address_history, %{
+        address_hash: address_history.address_hash,
+        value: Decimal.new("35.5")
+      })
 
     balance_2 =
-      insert(:address_history, %{address_hash: address_history.address_hash, value: 432.5})
+      insert(:address_history, %{
+        address_hash: address_history.address_hash,
+        value: Decimal.new("432.5")
+      })
 
     insert(:asset, %{
       transaction_hash: @governing_token,

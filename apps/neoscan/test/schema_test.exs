@@ -152,12 +152,12 @@ defmodule Neoscan.SchemaTest do
     Flush.all()
 
     [ah1, ah2] = Repo.all(from(a in AddressHistory, where: a.address_hash == ^vout.address_hash))
-    assert ah1.value == -ah2.value
+    assert Decimal.equal?(ah1.value, Decimal.minus(ah2.value))
 
     address_balance =
       Repo.one(from(a in AddressBalance, where: a.address_hash == ^vout.address_hash))
 
-    assert 0 == address_balance.value
+    assert Decimal.equal?(0, address_balance.value)
   end
 
   test "vout vin trigger (vin inserted before vout)" do
@@ -176,14 +176,14 @@ defmodule Neoscan.SchemaTest do
         )
       )
 
-    assert ah1.value == -ah2.value
+    assert Decimal.equal?(ah1.value, Decimal.minus(ah2.value))
     assert ah1.block_time == vin.block_time
     assert ah2.block_time == vout.block_time
 
     address_balance =
       Repo.one(from(a in AddressBalance, where: a.address_hash == ^vout.address_hash))
 
-    assert 0 == address_balance.value
+    assert Decimal.equal?(0, address_balance.value)
   end
 
   test "trigger address history" do
@@ -220,6 +220,10 @@ defmodule Neoscan.SchemaTest do
       Repo.one(from(a in AddressBalance, where: a.address_hash == ^address_history.address_hash))
 
     assert address_balance.address_hash == address_history.address_hash
-    assert address_balance.value == address_history.value + address_history2.value
+
+    assert Decimal.equal?(
+             address_balance.value,
+             Decimal.add(address_history.value, address_history2.value)
+           )
   end
 end

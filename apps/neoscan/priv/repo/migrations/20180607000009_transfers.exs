@@ -6,7 +6,7 @@ defmodule Neoscan.Repo.Migrations.Transfers do
       add(:transaction_hash, :binary, null: false)
       add(:address_from, :binary, null: false)
       add(:address_to, :binary, null: false)
-      add(:amount, :float, null: false)
+      add(:amount, :decimal, null: false)
       add(:contract, :binary, null: false)
       add(:block_index, :integer, null: false)
       add(:block_time, :naive_datetime, null: false)

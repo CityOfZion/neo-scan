@@ -43,18 +43,20 @@ defmodule NeoscanWeb.Api do
 
     unclaimed =
       Enum.reduce(vouts, 0, fn vout, acc ->
-        value = round(vout.value)
+        value = Decimal.round(vout.value)
         start_index = vout.start_block_index
         end_index = vout.end_block_index
         end_index = if is_nil(end_index), do: current_index, else: end_index
 
         generated =
-          value * BlockGasGeneration.get_range_amount(start_index, end_index - 1) / @total_neo
+          Decimal.mult(value, BlockGasGeneration.get_range_amount(start_index, end_index - 1))
+          |> Decimal.div(@total_neo)
 
         sys_fee =
-          value * BlocksCache.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
+          Decimal.mult(value, BlocksCache.get_sys_fees_in_range(start_index, end_index - 1))
+          |> Decimal.div(@total_neo)
 
-        acc + sys_fee + generated
+        Decimal.add(acc, sys_fee) |> Decimal.add(generated)
       end)
 
     %{:address => Base58.encode(address_hash), :unclaimed => unclaimed}
@@ -82,17 +84,19 @@ defmodule NeoscanWeb.Api do
 
     claimable =
       Enum.map(vouts, fn vout ->
-        value = round(vout.value)
+        value = Decimal.round(vout.value)
         start_index = vout.start_block_index
         end_index = vout.end_block_index
 
         generated =
-          value * BlockGasGeneration.get_range_amount(start_index, end_index - 1) / @total_neo
+          Decimal.mult(value, BlockGasGeneration.get_range_amount(start_index, end_index - 1))
+          |> Decimal.div(@total_neo)
 
         sys_fee =
-          value * BlocksCache.get_sys_fees_in_range(start_index, end_index - 1) / @total_neo
+          Decimal.mult(value, BlocksCache.get_sys_fees_in_range(start_index, end_index - 1))
+          |> Decimal.div(@total_neo)
 
-        unclaimed = sys_fee + generated
+        unclaimed = Decimal.add(sys_fee, generated)
 
         %{
           value: value,
@@ -109,7 +113,7 @@ defmodule NeoscanWeb.Api do
     unclaimed =
       claimable
       |> Enum.map(& &1.unclaimed)
-      |> Enum.sum()
+      |> Enum.reduce(0, &Decimal.add/2)
 
     %{address: Base58.encode(address_hash), claimable: claimable, unclaimed: unclaimed}
   end
@@ -229,7 +233,7 @@ defmodule NeoscanWeb.Api do
 
   defp render_amount(value) do
     value
-    |> :erlang.float_to_binary([:compact, {:decimals, 10}])
+    |> Decimal.to_string(:normal)
     |> String.trim_trailing("0")
     |> String.trim_trailing(".")
   end

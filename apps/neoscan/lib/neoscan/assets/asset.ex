@@ -16,12 +16,12 @@ defmodule Neoscan.Asset do
     )
 
     field(:admin, :binary)
-    field(:amount, :float)
+    field(:amount, :decimal)
     field(:name, {:array, :map})
     field(:owner, :binary)
     field(:precision, :integer)
     field(:type, :string)
-    field(:issued, :float)
+    field(:issued, :decimal)
     field(:block_time, :utc_datetime)
     field(:contract, :binary)
 
@@ -51,8 +51,10 @@ defmodule Neoscan.Asset do
     end
   end
 
-  def compute_value(amount, precision, "NEP5"), do: amount / :math.pow(10, precision)
-  def compute_value(amount, _, _), do: amount
+  def compute_value(amount, precision, "NEP5"),
+    do: Decimal.div(amount, round(:math.pow(10, precision))) |> Decimal.reduce()
+
+  def compute_value(amount, _, _), do: amount |> Decimal.reduce()
 
   def update_struct(
         %{amount: amount, asset: %{precision: precision, type: type, name: name} = asset} = struct
