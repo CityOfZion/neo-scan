@@ -175,6 +175,13 @@ defmodule NeoVM.ExecutionEngine do
   #  @_THROW 0xF0
   #  @_THROWIFNOT 0xF1
 
+  defguard is_integer_1_op(opcode) when opcode == @_INVERT or (opcode >= @_INC and opcode <= @_NZ)
+
+  defguard is_integer_2_op(opcode)
+           when (opcode >= @_ADD and opcode <= @_SHR) or
+                  (opcode >= @_NUMEQUAL and opcode <= @_MAX) or
+                  (opcode >= @_AND and opcode <= @_XOR)
+
   defmodule VmFaultError do
     defexception message: "Error while executing code"
   end
@@ -200,148 +207,97 @@ defmodule NeoVM.ExecutionEngine do
     {rest, [value | stack]}
   end
 
-  def do_execute(<<opcode, rest::binary>>, stack) when opcode >= @_PUSH1 and opcode <= @_PUSH16 do
-    {rest, [opcode - @_PUSH1 + 1 | stack]}
+  def do_execute(<<opcode, rest::binary>>, stack), do: {rest, do_execute(opcode, stack)}
+
+  def do_execute(opcode, stack) when opcode >= @_PUSH1 and opcode <= @_PUSH16 do
+    [opcode - @_PUSH1 + 1 | stack]
   end
 
-  def do_execute(<<opcode, rest::binary>>, [x1 | stack])
-      when opcode == @_INVERT or (opcode >= @_INC and opcode <= @_NZ) do
-    {rest, [do_execute_integer_1(opcode, get_integer(x1)) | stack]}
+  def do_execute(opcode, [x1 | stack]) when is_integer_1_op(opcode) do
+    [do_execute_integer_1(opcode, get_integer(x1)) | stack]
   end
 
-  def do_execute(<<opcode, rest::binary>>, [x2, x1 | stack])
-      when (opcode >= @_ADD and opcode <= @_SHR) or (opcode >= @_NUMEQUAL and opcode <= @_MAX) or
-             (opcode >= @_AND and opcode <= @_XOR) do
-    {rest, [do_execute_integer_2(opcode, get_integer(x1), get_integer(x2)) | stack]}
+  def do_execute(opcode, [x2, x1 | stack]) when is_integer_2_op(opcode) do
+    [do_execute_integer_2(opcode, get_integer(x1), get_integer(x2)) | stack]
   end
 
-  def do_execute(<<@_WITHIN, rest::binary>>, [b, a, x | stack]) do
-    {rest, [get_integer(a) <= get_integer(x) and get_integer(x) < get_integer(b) | stack]}
+  def do_execute(@_WITHIN, [b, a, x | stack]) do
+    [get_integer(a) <= get_integer(x) and get_integer(x) < get_integer(b) | stack]
   end
 
-  def do_execute(<<@_EQUAL, rest::binary>>, [b, a | stack]) do
-    {rest, [a == b | stack]}
+  def do_execute(@_EQUAL, [b, a | stack]), do: [a == b | stack]
+  def do_execute(@_BOOLAND, [b, a | stack]), do: [get_boolean(a) and get_boolean(b) | stack]
+  def do_execute(@_BOOLOR, [b, a | stack]), do: [get_boolean(a) or get_boolean(b) | stack]
+
+  def do_execute(@_ARRAYSIZE, [value | stack]) when is_binary(value) do
+    [byte_size(value) | stack]
   end
 
-  def do_execute(<<@_BOOLAND, rest::binary>>, [b, a | stack]) do
-    {rest, [get_boolean(a) and get_boolean(b) | stack]}
+  def do_execute(@_ARRAYSIZE, [value | stack]) when is_list(value) or is_map(value) do
+    [Enum.count(value) | stack]
   end
 
-  def do_execute(<<@_BOOLOR, rest::binary>>, [b, a | stack]) do
-    {rest, [get_boolean(a) or get_boolean(b) | stack]}
-  end
-
-  def do_execute(<<@_ARRAYSIZE, rest::binary>>, [value | stack])
-      when is_binary(value) do
-    {rest, [byte_size(value) | stack]}
-  end
-
-  def do_execute(<<@_ARRAYSIZE, rest::binary>>, [value | stack])
-      when is_list(value) or is_map(value) do
-    {rest, [Enum.count(value) | stack]}
-  end
-
-  def do_execute(<<@_PACK, rest::binary>>, [size | stack]) do
+  def do_execute(@_PACK, [size | stack]) do
     {list, stack} = Enum.split(stack, size)
-    {rest, [list | stack]}
+    [list | stack]
   end
 
-  def do_execute(<<@_UNPACK, rest::binary>>, [value | stack])
-      when is_list(value) do
-    {rest, [Enum.count(value) | value ++ stack]}
+  def do_execute(@_UNPACK, [value | stack]) when is_list(value) do
+    [Enum.count(value) | value ++ stack]
   end
 
-  def do_execute(<<@_PICKITEM, rest::binary>>, [index, list | stack]) when is_list(list) do
-    {rest, [Enum.at(list, index) | stack]}
+  def do_execute(@_PICKITEM, [index, list | stack]) when is_list(list) do
+    [Enum.at(list, index) | stack]
   end
 
-  def do_execute(<<@_PICKITEM, rest::binary>>, [key, map | stack]) when is_map(map) do
-    {rest, [Map.get(map, key) | stack]}
+  def do_execute(@_PICKITEM, [key, map | stack]) when is_map(map) do
+    [Map.get(map, key) | stack]
   end
 
-  def do_execute(<<@_SETITEM, rest::binary>>, [value, key, map | stack]) when is_map(map) do
-    {rest, [Map.put(map, key, value) | stack]}
+  def do_execute(@_SETITEM, [value, key, map | stack]) when is_map(map) do
+    [Map.put(map, key, value) | stack]
   end
 
-  def do_execute(<<@_SETITEM, rest::binary>>, [value, index, list | stack]) when is_list(list) do
-    {rest, [List.replace_at(list, index, value) | stack]}
+  def do_execute(@_SETITEM, [value, index, list | stack]) when is_list(list) do
+    [List.replace_at(list, index, value) | stack]
   end
 
-  def do_execute(<<@_NEWARRAY, rest::binary>>, [size | stack]) do
-    {rest, [List.duplicate(0, size) | stack]}
-  end
+  def do_execute(@_NEWARRAY, [size | stack]), do: [List.duplicate(0, size) | stack]
+  def do_execute(@_NEWMAP, stack), do: [%{} | stack]
+  def do_execute(@_APPEND, [item, list | stack]) when is_list(list), do: [[item | list] | stack]
+  def do_execute(@_REVERSE, [list | stack]) when is_list(list), do: [Enum.reverse(list) | stack]
 
-  def do_execute(<<@_NEWMAP, rest::binary>>, stack) do
-    {rest, [%{} | stack]}
-  end
-
-  def do_execute(<<@_APPEND, rest::binary>>, [item, list | stack]) when is_list(list) do
-    {rest, [[item | list] | stack]}
-  end
-
-  def do_execute(<<@_REVERSE, rest::binary>>, [list | stack]) when is_list(list) do
-    {rest, [Enum.reverse(list) | stack]}
-  end
-
-  def do_execute(<<@_REMOVE, rest::binary>>, [index, list | stack])
+  def do_execute(@_REMOVE, [index, list | stack])
       when is_list(list) and index >= 0 and index < length(list) do
-    {rest, [List.delete_at(list, index) | stack]}
+    [List.delete_at(list, index) | stack]
   end
 
-  def do_execute(<<@_REMOVE, rest::binary>>, [key, map | stack]) when is_map(map) do
-    {rest, [Map.delete(map, key) | stack]}
+  def do_execute(@_REMOVE, [key, map | stack]) when is_map(map) do
+    [Map.delete(map, key) | stack]
   end
 
-  def do_execute(<<@_HASKEY, rest::binary>>, [index, list | stack])
-      when is_list(list) and index >= 0 do
-    {rest, [index < length(list) | stack]}
+  def do_execute(@_HASKEY, [index, list | stack]) when is_list(list) and index >= 0 do
+    [index < length(list) | stack]
   end
 
-  def do_execute(<<@_HASKEY, rest::binary>>, [key, map | stack]) when is_map(map) do
-    {rest, [Map.has_key?(map, key) | stack]}
+  def do_execute(@_HASKEY, [key, map | stack]) when is_map(map) do
+    [Map.has_key?(map, key) | stack]
   end
 
-  def do_execute(<<@_KEYS, rest::binary>>, [map | stack]) when is_map(map) do
-    {rest, [Map.keys(map) | stack]}
-  end
+  def do_execute(@_KEYS, [map | stack]) when is_map(map), do: [Map.keys(map) | stack]
+  def do_execute(@_VALUES, [map | stack]) when is_map(map), do: [Map.values(map) | stack]
+  def do_execute(@_VALUES, [list | stack]) when is_list(list), do: [list | stack]
 
-  def do_execute(<<@_VALUES, rest::binary>>, [map | stack]) when is_map(map) do
-    {rest, [Map.values(map) | stack]}
-  end
+  def do_execute(@_SHA256, [x | stack]), do: [Crypto.sha256(get_binary(x)) | stack]
+  def do_execute(@_SHA1, [x | stack]), do: [Crypto.sha1(get_binary(x)) | stack]
+  def do_execute(@_RIPEMD160, [x | stack]), do: [Crypto.ripemd160(get_binary(x)) | stack]
+  def do_execute(@_HASH160, [x | stack]), do: [Crypto.hash160(get_binary(x)) | stack]
+  def do_execute(@_HASH256, [x | stack]), do: [Crypto.hash256(get_binary(x)) | stack]
 
-  def do_execute(<<@_VALUES, rest::binary>>, [list | stack]) when is_list(list) do
-    {rest, [list | stack]}
-  end
-
-  def do_execute(<<@_SHA256, rest::binary>>, [x | stack]) do
-    hash = Crypto.sha256(get_binary(x))
-    {rest, [hash | stack]}
-  end
-
-  def do_execute(<<@_SHA1, rest::binary>>, [x | stack]) do
-    hash = Crypto.sha1(get_binary(x))
-    {rest, [hash | stack]}
-  end
-
-  def do_execute(<<@_RIPEMD160, rest::binary>>, [x | stack]) do
-    hash = Crypto.ripemd160(get_binary(x))
-    {rest, [hash | stack]}
-  end
-
-  def do_execute(<<@_HASH160, rest::binary>>, [x | stack]) do
-    hash = Crypto.hash160(get_binary(x))
-    {rest, [hash | stack]}
-  end
-
-  def do_execute(<<@_HASH256, rest::binary>>, [x | stack]) do
-    hash = Crypto.hash256(get_binary(x))
-    {rest, [hash | stack]}
-  end
-
-  def do_execute(binary, stack) do
+  def do_execute(opcode, stack) do
     raise VmFaultError,
       message: """
-      binary: #{Base.encode16(binary)}
+      opcode: #{Base.encode16(<<opcode>>)}
       stack: #{inspect(stack)}
       """
   end
@@ -372,8 +328,13 @@ defmodule NeoVM.ExecutionEngine do
   def do_execute_integer_2(@_MUL, x1, x2), do: x1 * x2
   def do_execute_integer_2(@_DIV, x1, x2), do: x1 / x2
   def do_execute_integer_2(@_MOD, x1, x2), do: rem(x1, x2)
-  def do_execute_integer_2(@_SHL, x1, x2), do: x1 <<< x2
-  def do_execute_integer_2(@_SHR, x1, x2), do: x1 >>> x2
+
+  def do_execute_integer_2(@_SHL, x1, x2),
+    do: x1 <<< x2
+
+  def do_execute_integer_2(@_SHR, x1, x2),
+    do: x1 >>> x2
+
   def do_execute_integer_2(@_NUMEQUAL, x1, x2), do: x1 == x2
   def do_execute_integer_2(@_NUMNOTEQUAL, x1, x2), do: x1 != x2
   def do_execute_integer_2(@_LT, x1, x2), do: x1 < x2
