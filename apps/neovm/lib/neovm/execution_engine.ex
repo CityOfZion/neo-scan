@@ -164,16 +164,20 @@ defmodule NeoVM.ExecutionEngine do
   # Used as a value type
   #  @_NEWSTRUCT 0xC6
   @_NEWMAP 0xC7
-  #  @_APPEND 0xC8
-  #  @_REVERSE 0xC9
-  #  @_REMOVE 0xCA
-  #  @_HASKEY 0xCB
-  #  @_KEYS 0xCC
-  #  @_VALUES 0xCD
+  @_APPEND 0xC8
+  @_REVERSE 0xC9
+  @_REMOVE 0xCA
+  @_HASKEY 0xCB
+  @_KEYS 0xCC
+  @_VALUES 0xCD
   #
   #  # Exceptions
   #  @_THROW 0xF0
   #  @_THROWIFNOT 0xF1
+
+  defmodule VmFaultError do
+    defexception message: "Error while executing code"
+  end
 
   def execute(binary) do
     execute(binary, [])
@@ -182,8 +186,13 @@ defmodule NeoVM.ExecutionEngine do
   def execute(<<>>, stack), do: stack
 
   def execute(binary, stack) do
-    {rest, stack} = do_execute(binary, stack)
-    execute(rest, stack)
+    try do
+      {rest, stack} = do_execute(binary, stack)
+      execute(rest, stack)
+    rescue
+      error ->
+        {:error, error}
+    end
   end
 
   def do_execute(<<opcode, value::binary-size(opcode), rest::binary>>, stack)
@@ -266,6 +275,44 @@ defmodule NeoVM.ExecutionEngine do
     {rest, [%{} | stack]}
   end
 
+  def do_execute(<<@_APPEND, rest::binary>>, [item, list | stack]) when is_list(list) do
+    {rest, [[item | list] | stack]}
+  end
+
+  def do_execute(<<@_REVERSE, rest::binary>>, [list | stack]) when is_list(list) do
+    {rest, [Enum.reverse(list) | stack]}
+  end
+
+  def do_execute(<<@_REMOVE, rest::binary>>, [index, list | stack])
+      when is_list(list) and index >= 0 and index < length(list) do
+    {rest, [List.delete_at(list, index) | stack]}
+  end
+
+  def do_execute(<<@_REMOVE, rest::binary>>, [key, map | stack]) when is_map(map) do
+    {rest, [Map.delete(map, key) | stack]}
+  end
+
+  def do_execute(<<@_HASKEY, rest::binary>>, [index, list | stack])
+      when is_list(list) and index >= 0 do
+    {rest, [index < length(list) | stack]}
+  end
+
+  def do_execute(<<@_HASKEY, rest::binary>>, [key, map | stack]) when is_map(map) do
+    {rest, [Map.has_key?(map, key) | stack]}
+  end
+
+  def do_execute(<<@_KEYS, rest::binary>>, [map | stack]) when is_map(map) do
+    {rest, [Map.keys(map) | stack]}
+  end
+
+  def do_execute(<<@_VALUES, rest::binary>>, [map | stack]) when is_map(map) do
+    {rest, [Map.values(map) | stack]}
+  end
+
+  def do_execute(<<@_VALUES, rest::binary>>, [list | stack]) when is_list(list) do
+    {rest, [list | stack]}
+  end
+
   def do_execute(<<@_SHA256, rest::binary>>, [x | stack]) do
     hash = Crypto.sha256(get_binary(x))
     {rest, [hash | stack]}
@@ -289,6 +336,14 @@ defmodule NeoVM.ExecutionEngine do
   def do_execute(<<@_HASH256, rest::binary>>, [x | stack]) do
     hash = Crypto.hash256(get_binary(x))
     {rest, [hash | stack]}
+  end
+
+  def do_execute(binary, stack) do
+    raise VmFaultError,
+      message: """
+      binary: #{Base.encode16(binary)}
+      stack: #{inspect(stack)}
+      """
   end
 
   def do_execute_integer_1(@_INVERT, x1), do: ~~~x1
