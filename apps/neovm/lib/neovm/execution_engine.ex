@@ -153,7 +153,7 @@ defmodule NeoVM.ExecutionEngine do
   #  @_CHECKSIG 0xAC
   #  @_VERIFY 0xAD
   #  @_CHECKMULTISIG 0xAE
-  #
+
   #  Array
   @_ARRAYSIZE 0xC0
   @_PACK 0xC1
@@ -163,7 +163,7 @@ defmodule NeoVM.ExecutionEngine do
   # Used as a reference type
   @_NEWARRAY 0xC5
   # Used as a value type
-  #  @_NEWSTRUCT 0xC6
+  @_NEWSTRUCT 0xC6
   @_NEWMAP 0xC7
   @_APPEND 0xC8
   @_REVERSE 0xC9
@@ -414,6 +414,7 @@ defmodule NeoVM.ExecutionEngine do
   end
 
   def do_execute(@_NEWARRAY, [size | stack]), do: [List.duplicate(0, size) | stack]
+  def do_execute(@_NEWSTRUCT, [size | stack]), do: [List.duplicate(false, size) | stack]
   def do_execute(@_NEWMAP, stack), do: [%{} | stack]
   def do_execute(@_APPEND, [item, list | stack]) when is_list(list), do: [[item | list] | stack]
   def do_execute(@_REVERSE, [list | stack]) when is_list(list), do: [Enum.reverse(list) | stack]

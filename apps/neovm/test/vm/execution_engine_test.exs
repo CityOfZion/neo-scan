@@ -379,6 +379,10 @@ defmodule NeoVM.ExecutionEngineTest do
     assert [[0, 0, 0, 0]] == ExecutionEngine.execute(<<0x54, 0xC5>>)
   end
 
+  test "NEWSTRUCT" do
+    assert [[false, false, false, false]] == ExecutionEngine.execute(<<0x54, 0xC6>>)
+  end
+
   test "APPEND" do
     assert [[4, 3, 2, 1]] == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x53, 0xC1, 0x54, 0xC8>>)
     assert {:error, _} = ExecutionEngine.execute(<<0xC8>>)
