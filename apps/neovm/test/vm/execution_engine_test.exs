@@ -71,6 +71,69 @@ defmodule NeoVM.ExecutionEngineTest do
     assert {:error, _} = ExecutionEngine.execute(<<0x53, 0x6B, 0x6A, 0x6C, 0x6C>>)
   end
 
+  test "XDROP" do
+    assert [3, 1] == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x51, 0x6D>>)
+    assert {:error, _} = ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x57, 0x6D>>)
+  end
+
+  test "XSWAP" do
+    assert [2, 3, 1] == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x51, 0x72>>)
+    assert {:error, _} = ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x58, 0x72>>)
+  end
+
+  test "XTUCK" do
+    assert [5, 4, 3, 5, 2, 1] ==
+             ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x54, 0x55, 0x53, 0x73>>)
+
+    assert {:error, _} = ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x58, 0x73>>)
+  end
+
+  test "DEPTH" do
+    assert [3, 1, 2, 3] == ExecutionEngine.execute(<<0x53, 0x52, 0x51, 0x74>>)
+  end
+
+  test "DROP" do
+    assert [2, 1] == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x75>>)
+  end
+
+  test "DUP" do
+    assert [3, 3, 2, 1] == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x76>>)
+  end
+
+  test "NIP" do
+    assert [3, 1] == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x77>>)
+  end
+
+  test "OVER" do
+    assert [2, 3, 2, 1] == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x78>>)
+  end
+
+  test "PICK" do
+    assert [2, 5, 4, 3, 2, 1] ==
+             ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x54, 0x55, 0x53, 0x79>>)
+
+    assert {:error, _} = ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x58, 0x79>>)
+  end
+
+  test "ROLL" do
+    assert [2, 5, 4, 3, 1] ==
+             ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x54, 0x55, 0x53, 0x7A>>)
+
+    assert {:error, _} = ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x58, 0x7A>>)
+  end
+
+  test "ROT" do
+    assert [1, 3, 2] == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x7B>>)
+  end
+
+  test "SWAP" do
+    assert [2, 3, 1] == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x7C>>)
+  end
+
+  test "TUCK" do
+    assert [3, 2, 3, 1] == ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x7D>>)
+  end
+
   test "AND" do
     assert [8] == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x0B, 0x84>>)
   end

@@ -38,30 +38,30 @@ defmodule NeoVM.ExecutionEngine do
   @_TOALTSTACK 0x6B
   # Puts the input onto the top of the main stack. Removes it from the alt stack.
   @_FROMALTSTACK 0x6C
-  #  @_XDROP 0x6D
-  #  @_XSWAP 0x72
-  #  @_XTUCK 0x73
-  #  # Puts the number of stack items onto the stack.
-  #  @_DEPTH 0x74
-  #  # Removes the top stack item.
-  #  @_DROP 0x75
-  #  # Duplicates the top stack item.
-  #  @_DUP 0x76
-  #  # Removes the second-to-top stack item.
-  #  @_NIP 0x77
-  #  # Copies the second-to-top stack item to the top.
-  #  @_OVER 0x78
-  #  # The item n back in the stack is copied to the top.
-  #  @_PICK 0x79
-  #  # The item n back in the stack is moved to the top.
-  #  @_ROLL 0x7A
-  #  # The top three items on the stack are rotated to the left.
-  #  @_ROT 0x7B
-  #  # The top two items on the stack are swapped.
-  #  @_SWAP 0x7C
-  #  # The item at the top of the stack is copied and inserted before the second-to-top item.
-  #  @_TUCK 0x7D
-  #
+  @_XDROP 0x6D
+  @_XSWAP 0x72
+  @_XTUCK 0x73
+  # Puts the number of stack items onto the stack.
+  @_DEPTH 0x74
+  # Removes the top stack item.
+  @_DROP 0x75
+  # Duplicates the top stack item.
+  @_DUP 0x76
+  # Removes the second-to-top stack item.
+  @_NIP 0x77
+  # Copies the second-to-top stack item to the top.
+  @_OVER 0x78
+  # The item n back in the stack is copied to the top.
+  @_PICK 0x79
+  # The item n back in the stack is moved to the top.
+  @_ROLL 0x7A
+  # The top three items on the stack are rotated to the left.
+  @_ROT 0x7B
+  # The top two items on the stack are swapped.
+  @_SWAP 0x7C
+  # The item at the top of the stack is copied and inserted before the second-to-top item.
+  @_TUCK 0x7D
+
   #  Splice
   # Concatenates two strings.
   @_CAT 0x7E
@@ -281,6 +281,68 @@ defmodule NeoVM.ExecutionEngine do
 
   def do_execute(@_PUSHM1, stack), do: [-1 | stack]
   def do_execute(@_NOP, stack), do: stack
+
+  def do_execute(@_XDROP, [n | stack]) do
+    n = get_integer(n)
+
+    if n >= 0 and n < length(stack) do
+      List.delete_at(stack, get_integer(n))
+    else
+      raise(VmFaultError, message: "XDROP out of range")
+    end
+  end
+
+  def do_execute(@_XSWAP, [n | [head | _] = stack]) do
+    n = get_integer(n)
+
+    if n >= 0 and n < length(stack) do
+      stack
+      |> List.replace_at(0, Enum.at(stack, n))
+      |> List.replace_at(n, head)
+    else
+      raise(VmFaultError, message: "XSWAP out of range")
+    end
+  end
+
+  def do_execute(@_XTUCK, [n | [head | _] = stack]) do
+    n = get_integer(n)
+
+    if n >= 0 and n < length(stack) do
+      List.insert_at(stack, n, head)
+    else
+      raise(VmFaultError, message: "XTUCK out of range")
+    end
+  end
+
+  def do_execute(@_DEPTH, stack), do: [length(stack) | stack]
+  def do_execute(@_DROP, [_ | stack]), do: stack
+  def do_execute(@_DUP, [head | stack]), do: [head, head | stack]
+  def do_execute(@_NIP, [head, _ | stack]), do: [head | stack]
+  def do_execute(@_OVER, [x2, x1 | stack]), do: [x1, x2, x1 | stack]
+
+  def do_execute(@_PICK, [n | stack]) do
+    n = get_integer(n)
+
+    if n >= 0 and n < length(stack) do
+      [Enum.at(stack, n) | stack]
+    else
+      raise(VmFaultError, message: "PICK out of range")
+    end
+  end
+
+  def do_execute(@_ROLL, [n | stack]) do
+    n = get_integer(n)
+
+    if n >= 0 and n < length(stack) do
+      [Enum.at(stack, n) | List.delete_at(stack, n)]
+    else
+      raise(VmFaultError, message: "ROLL out of range")
+    end
+  end
+
+  def do_execute(@_ROT, [x3, x2, x1 | stack]), do: [x1, x3, x2 | stack]
+  def do_execute(@_SWAP, [x2, x1 | stack]), do: [x1, x2 | stack]
+  def do_execute(@_TUCK, [x2, x1 | stack]), do: [x2, x1, x2 | stack]
 
   def do_execute(@_CAT, [binary2, binary1 | stack]) do
     [get_binary(binary1) <> get_binary(binary2) | stack]
