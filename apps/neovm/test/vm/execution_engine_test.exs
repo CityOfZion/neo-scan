@@ -63,6 +63,14 @@ defmodule NeoVM.ExecutionEngineTest do
     assert [] == ExecutionEngine.execute(<<0x01, 0x00, 0x64, 0x00, 0x05, 0x51, 0x52>>)
   end
 
+  test "DUPFROMALTSTACK / TOALTSTACK / FROMALTSTACK" do
+    assert [3] == ExecutionEngine.execute(<<0x53>>)
+    assert [] == ExecutionEngine.execute(<<0x53, 0x6B>>)
+    assert [3] == ExecutionEngine.execute(<<0x53, 0x6B, 0x6A>>)
+    assert [3, 3] == ExecutionEngine.execute(<<0x53, 0x6B, 0x6A, 0x6C>>)
+    assert {:error, _} = ExecutionEngine.execute(<<0x53, 0x6B, 0x6A, 0x6C, 0x6C>>)
+  end
+
   test "AND" do
     assert [8] == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x0B, 0x84>>)
   end

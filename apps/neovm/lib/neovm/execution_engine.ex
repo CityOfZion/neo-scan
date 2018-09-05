@@ -31,13 +31,13 @@ defmodule NeoVM.ExecutionEngine do
   #  @_APPCALL 0x67
   #  @_SYSCALL 0x68
   #  @_TAILCALL 0x69
-  #
-  #  #  Stack
-  #  @_DUPFROMALTSTACK 0x6A
-  #  # Puts the input onto the top of the alt stack. Removes it from the main stack.
-  #  @_TOALTSTACK 0x6B
-  #  # Puts the input onto the top of the main stack. Removes it from the alt stack.
-  #  @_FROMALTSTACK 0x6C
+
+  #  Stack
+  @_DUPFROMALTSTACK 0x6A
+  # Puts the input onto the top of the alt stack. Removes it from the main stack.
+  @_TOALTSTACK 0x6B
+  # Puts the input onto the top of the main stack. Removes it from the alt stack.
+  @_FROMALTSTACK 0x6C
   #  @_XDROP 0x6D
   #  @_XSWAP 0x72
   #  @_XTUCK 0x73
@@ -188,64 +188,90 @@ defmodule NeoVM.ExecutionEngine do
   end
 
   def execute(binary) do
-    execute(binary, 0, [])
+    state = %{alt_stack: [], evaluation_stack: []}
+
+    case execute(binary, 0, state) do
+      %{evaluation_stack: evaluation_stack} ->
+        evaluation_stack
+
+      otherwise ->
+        otherwise
+    end
   end
 
-  def execute(binary, cursor, stack) when cursor == byte_size(binary), do: stack
+  def execute(binary, cursor, state) when cursor == byte_size(binary), do: state
 
-  def execute(binary, cursor, stack) do
+  def execute(binary, cursor, state) do
     <<_::binary-size(cursor), rest::binary>> = binary
 
     try do
-      {cursor, stack} = do_execute(rest, cursor, stack)
-      execute(binary, cursor, stack)
+      {cursor, state} = do_execute(rest, cursor, state)
+      execute(binary, cursor, state)
     rescue
       error ->
         {:error, error}
     end
   end
 
-  def do_execute(<<opcode, value::binary-size(opcode), _::binary>>, cursor, stack)
+  def do_execute(<<opcode, value::binary-size(opcode), _::binary>>, cursor, state)
       when opcode >= @_PUSHBYTES1 and opcode <= @_PUSHBYTES75 do
-    {cursor + opcode + 1, [value | stack]}
+    {cursor + opcode + 1, %{state | evaluation_stack: [value | state.evaluation_stack]}}
   end
 
-  def do_execute(<<@_PUSHDATA1, size, data::binary-size(size), _::binary>>, cursor, stack) do
-    {cursor + size + 2, [data | stack]}
+  def do_execute(<<@_PUSHDATA1, size, data::binary-size(size), _::binary>>, cursor, state) do
+    {cursor + size + 2, %{state | evaluation_stack: [data | state.evaluation_stack]}}
   end
 
   def do_execute(
         <<@_PUSHDATA2, size::integer-size(16), data::binary-size(size), _::binary>>,
         cursor,
-        stack
+        state
       ) do
-    {cursor + size + 3, [data | stack]}
+    {cursor + size + 3, %{state | evaluation_stack: [data | state.evaluation_stack]}}
   end
 
   def do_execute(
         <<@_PUSHDATA4, size::integer-size(32), data::binary-size(size), _::binary>>,
         cursor,
-        stack
+        state
       ) do
-    {cursor + size + 5, [data | stack]}
+    {cursor + size + 5, %{state | evaluation_stack: [data | state.evaluation_stack]}}
   end
 
-  def do_execute(<<opcode, offset::signed-integer-size(16), rest::binary>>, cursor, stack)
+  def do_execute(<<opcode, offset::signed-integer-size(16), rest::binary>>, cursor, state)
       when cursor + offset >= 0 and byte_size(rest) >= cursor and opcode >= @_JMP and
              opcode <= @_JMPIFNOT do
     case opcode do
       @_JMP ->
-        {cursor + offset, stack}
+        {cursor + offset, state}
 
       _ ->
-        [boolean | stack] = stack
+        [boolean | stack] = state.evaluation_stack
         offset = if get_boolean(boolean) == (@_JMPIF == opcode), do: offset, else: 3
-        {cursor + offset, stack}
+        {cursor + offset, %{state | evaluation_stack: stack}}
     end
   end
 
-  def do_execute(<<opcode, _::binary>>, cursor, stack),
-    do: {cursor + 1, do_execute(opcode, stack)}
+  def do_execute(<<@_DUPFROMALTSTACK, _::binary>>, cursor, %{alt_stack: [item | _]} = state) do
+    {cursor + 1, %{state | evaluation_stack: [item | state.evaluation_stack]}}
+  end
+
+  def do_execute(
+        <<@_TOALTSTACK, _::binary>>,
+        cursor,
+        %{evaluation_stack: [item | evaluation_stack]} = state
+      ) do
+    {cursor + 1,
+     %{state | alt_stack: [item | state.alt_stack], evaluation_stack: evaluation_stack}}
+  end
+
+  def do_execute(<<@_FROMALTSTACK, _::binary>>, cursor, %{alt_stack: [item | alt_stack]} = state) do
+    {cursor + 1,
+     %{state | alt_stack: alt_stack, evaluation_stack: [item | state.evaluation_stack]}}
+  end
+
+  def do_execute(<<opcode, _::binary>>, cursor, state),
+    do: {cursor + 1, %{state | evaluation_stack: do_execute(opcode, state.evaluation_stack)}}
 
   def do_execute(@_PUSH0, stack), do: [<<>> | stack]
 
