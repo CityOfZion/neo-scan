@@ -22,6 +22,27 @@ defmodule NeoVM.ExecutionEngineTest do
            ] == ExecutionEngine.execute(binary)
   end
 
+  test "PUSH0" do
+    assert [<<>>] == ExecutionEngine.execute(<<0x00>>)
+  end
+
+  test "PUSHDATA1" do
+    assert [<<0x35, 0x49>>] == ExecutionEngine.execute(<<0x4C, 0x02, 0x35, 0x49>>)
+  end
+
+  test "PUSHDATA2" do
+    assert [<<0x35, 0x49>>] == ExecutionEngine.execute(<<0x4D, 0x00, 0x02, 0x35, 0x49>>)
+  end
+
+  test "PUSHDATA4" do
+    assert [<<0x35, 0x49>>] ==
+             ExecutionEngine.execute(<<0x4E, 0x00, 0x00, 0x00, 0x02, 0x35, 0x49>>)
+  end
+
+  test "PUSHM1" do
+    assert [-1] == ExecutionEngine.execute(<<0x4F>>)
+  end
+
   test "AND" do
     assert [8] == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x0B, 0x84>>)
   end
@@ -104,6 +125,31 @@ defmodule NeoVM.ExecutionEngineTest do
   test "MAX" do
     assert [8] == ExecutionEngine.execute(<<0x01, 0x07, 0x01, 0x08, 0xA4>>)
     assert [8] == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x07, 0xA4>>)
+  end
+
+  test "CAT" do
+    assert ["hello world"] ==
+             ExecutionEngine.execute(
+               <<0x4C, 0x06>> <> "hello " <> <<0x4C, 0x05>> <> "world" <> <<0x7E>>
+             )
+  end
+
+  test "SUBSTR" do
+    assert ["lo wo"] ==
+             ExecutionEngine.execute(<<0x4C, 0x0B>> <> "hello world" <> <<0x53, 0x55, 0x7F>>)
+  end
+
+  test "LEFT" do
+    assert ["hel"] == ExecutionEngine.execute(<<0x4C, 0x0B>> <> "hello world" <> <<0x53, 0x80>>)
+  end
+
+  test "RIGHT" do
+    assert ["lo world"] ==
+             ExecutionEngine.execute(<<0x4C, 0x0B>> <> "hello world" <> <<0x53, 0x81>>)
+  end
+
+  test "SIZE" do
+    assert [11] == ExecutionEngine.execute(<<0x4C, 0x0B>> <> "hello world" <> <<0x82>>)
   end
 
   test "INVERT" do
@@ -274,5 +320,14 @@ defmodule NeoVM.ExecutionEngineTest do
 
     assert [[3, 2, 1]] ==
              ExecutionEngine.execute(<<0x51, 0x52, 0x53, 0x53, 0xC1, 0xC2, 0xC1, 0xCD>>)
+  end
+
+  test "THROW" do
+    assert {:error, _} = ExecutionEngine.execute(<<0xF0>>)
+  end
+
+  test "THROWIFNOT" do
+    assert [] == ExecutionEngine.execute(<<0x51, 0xF1>>)
+    assert {:error, _} = ExecutionEngine.execute(<<0x50, 0xF1>>)
   end
 end

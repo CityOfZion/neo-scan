@@ -1,19 +1,20 @@
 defmodule NeoVM.ExecutionEngine do
   import Bitwise
   alias NeoVM.Crypto
+
   # An empty array of bytes is pushed onto the stack.
-  #  @_PUSH0 0x00
+  @_PUSH0 0x00
   # b'\x01-b'\x4B The next opcode bytes is data to be pushed onto the stack
   @_PUSHBYTES1 0x01
   @_PUSHBYTES75 0x4B
-  #  # The next byte contains the number of bytes to be pushed onto the stack.
-  #  @_PUSHDATA1 0x4C
-  #  # The next two bytes contain the number of bytes to be pushed onto the stack.
-  #  @_PUSHDATA2 0x4D
-  #  # The next four bytes contain the number of bytes to be pushed onto the stack.
-  #  @_PUSHDATA4 0x4E
-  #  # The number -1 is pushed onto the stack.
-  #  @_PUSHM1 0x4F
+  # The next byte contains the number of bytes to be pushed onto the stack.
+  @_PUSHDATA1 0x4C
+  # The next two bytes contain the number of bytes to be pushed onto the stack.
+  @_PUSHDATA2 0x4D
+  # The next four bytes contain the number of bytes to be pushed onto the stack.
+  @_PUSHDATA4 0x4E
+  # The number -1 is pushed onto the stack.
+  @_PUSHM1 0x4F
   # The number 1 is pushed onto the stack.
   @_PUSH1 0x51
   # The number 16 is pushed onto the stack.
@@ -61,17 +62,17 @@ defmodule NeoVM.ExecutionEngine do
   #  # The item at the top of the stack is copied and inserted before the second-to-top item.
   #  @_TUCK 0x7D
   #
-  #  #  Splice
-  #  # Concatenates two strings.
-  #  @_CAT 0x7E
-  #  # Returns a section of a string.
-  #  @_SUBSTR 0x7F
-  #  # Keeps only characters left of the specified point in a string.
-  #  @_LEFT 0x80
-  #  # Keeps only characters right of the specified point in a string.
-  #  @_RIGHT 0x81
-  #  # Returns the length of the input string.
-  #  @_SIZE 0x82
+  #  Splice
+  # Concatenates two strings.
+  @_CAT 0x7E
+  # Returns a section of a string.
+  @_SUBSTR 0x7F
+  # Keeps only characters left of the specified point in a string.
+  @_LEFT 0x80
+  # Keeps only characters right of the specified point in a string.
+  @_RIGHT 0x81
+  # Returns the length of the input string.
+  @_SIZE 0x82
   #
   #  Bitwise logic
   # Flips all of the bits in the input.
@@ -139,13 +140,13 @@ defmodule NeoVM.ExecutionEngine do
   @_MAX 0xA4
   # Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
   @_WITHIN 0xA5
-  #
-  #  #  Crypto
+
+  #  Crypto
   #  The input is hashed using RIPEMD-160.
   @_RIPEMD160 0xA6
-  #  # The input is hashed using SHA-1.
+  # The input is hashed using SHA-1.
   @_SHA1 0xA7
-  #  # The input is hashed using SHA-256.
+  # The input is hashed using SHA-256.
   @_SHA256 0xA8
   @_HASH160 0xA9
   @_HASH256 0xAA
@@ -170,10 +171,10 @@ defmodule NeoVM.ExecutionEngine do
   @_HASKEY 0xCB
   @_KEYS 0xCC
   @_VALUES 0xCD
-  #
-  #  # Exceptions
-  #  @_THROW 0xF0
-  #  @_THROWIFNOT 0xF1
+
+  # Exceptions
+  @_THROW 0xF0
+  @_THROWIFNOT 0xF1
 
   defguard is_integer_1_op(opcode) when opcode == @_INVERT or (opcode >= @_INC and opcode <= @_NZ)
 
@@ -207,10 +208,52 @@ defmodule NeoVM.ExecutionEngine do
     {rest, [value | stack]}
   end
 
+  def do_execute(<<@_PUSHDATA1, size, data::binary-size(size), rest::binary>>, stack) do
+    {rest, [data | stack]}
+  end
+
+  def do_execute(
+        <<@_PUSHDATA2, size::integer-size(16), data::binary-size(size), rest::binary>>,
+        stack
+      ) do
+    {rest, [data | stack]}
+  end
+
+  def do_execute(
+        <<@_PUSHDATA4, size::integer-size(32), data::binary-size(size), rest::binary>>,
+        stack
+      ) do
+    {rest, [data | stack]}
+  end
+
   def do_execute(<<opcode, rest::binary>>, stack), do: {rest, do_execute(opcode, stack)}
+
+  def do_execute(@_PUSH0, stack), do: [<<>> | stack]
 
   def do_execute(opcode, stack) when opcode >= @_PUSH1 and opcode <= @_PUSH16 do
     [opcode - @_PUSH1 + 1 | stack]
+  end
+
+  def do_execute(@_PUSHM1, stack), do: [-1 | stack]
+
+  def do_execute(@_CAT, [binary2, binary1 | stack]) do
+    [get_binary(binary1) <> get_binary(binary2) | stack]
+  end
+
+  def do_execute(@_SUBSTR, [count, index, binary | stack]) when index >= 0 and count >= 0 do
+    [String.slice(get_binary(binary), get_integer(index), get_integer(count)) | stack]
+  end
+
+  def do_execute(@_LEFT, [index, binary | stack]) when index >= 0 do
+    [elem(String.split_at(get_binary(binary), get_integer(index)), 0) | stack]
+  end
+
+  def do_execute(@_RIGHT, [index, binary | stack]) when index >= 0 do
+    [elem(String.split_at(get_binary(binary), get_integer(index)), 1) | stack]
+  end
+
+  def do_execute(@_SIZE, [binary | stack]) do
+    [byte_size(get_binary(binary)) | stack]
   end
 
   def do_execute(opcode, [x1 | stack]) when is_integer_1_op(opcode) do
@@ -293,6 +336,14 @@ defmodule NeoVM.ExecutionEngine do
   def do_execute(@_RIPEMD160, [x | stack]), do: [Crypto.ripemd160(get_binary(x)) | stack]
   def do_execute(@_HASH160, [x | stack]), do: [Crypto.hash160(get_binary(x)) | stack]
   def do_execute(@_HASH256, [x | stack]), do: [Crypto.hash256(get_binary(x)) | stack]
+
+  def do_execute(@_THROW, _) do
+    raise VmFaultError, message: "THROW"
+  end
+
+  def do_execute(@_THROWIFNOT, [boolean | stack]) do
+    if get_boolean(boolean), do: stack, else: raise(VmFaultError, message: "THROW")
+  end
 
   def do_execute(opcode, stack) do
     raise VmFaultError,
