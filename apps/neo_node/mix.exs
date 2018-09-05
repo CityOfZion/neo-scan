@@ -62,7 +62,8 @@ defmodule NeoNode.Mixfile do
       {:poison, "~> 3.1"},
       {:base58, github: "adrienmo/base58"},
       {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
-      {:excoveralls, "~> 0.8", only: :test}
+      {:excoveralls, "~> 0.8", only: :test},
+      {:decimal, "~> 1.0"}
     ]
   end
 end

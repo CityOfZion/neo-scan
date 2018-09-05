@@ -10,14 +10,14 @@ defmodule Neoscan.BlockGasGeneration do
   """
   def get_amount_generate_in_block(nil), do: nil
 
-  def get_amount_generate_in_block(0), do: Enum.at(@generation_amount, 0) * 1.0
+  def get_amount_generate_in_block(0), do: Enum.at(@generation_amount, 0) |> Decimal.new()
 
   def get_amount_generate_in_block(index) do
     if Integer.floor_div(index, @decrement_interval) > @generation_length do
-      0.0
+      Decimal.new(0)
     else
       position = Integer.floor_div(index, @decrement_interval)
-      Enum.at(@generation_amount, position) * 1.0
+      Enum.at(@generation_amount, position) |> Decimal.new()
     end
   end
 

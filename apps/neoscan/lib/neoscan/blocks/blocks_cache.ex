@@ -15,7 +15,7 @@ defmodule Neoscan.BlocksCache do
 
   @impl true
   def init(:ok) do
-    {:ok, %{min: nil, max: nil, segment_tree: SegmentTree.new(@max_index, &Kernel.+/2)}}
+    {:ok, %{min: nil, max: nil, segment_tree: SegmentTree.new(@max_index, &Decimal.add/2)}}
   end
 
   def get_sys_fees_in_range(_, -1), do: 0

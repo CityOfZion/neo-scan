@@ -19,9 +19,9 @@ defmodule Neoscan.Block do
     field(:lag, :integer, virtual: true)
     field(:version, :integer)
     field(:tx_count, :integer)
-    field(:total_sys_fee, :float)
-    field(:total_net_fee, :float)
-    field(:gas_generated, :float)
+    field(:total_sys_fee, :decimal)
+    field(:total_net_fee, :decimal)
+    field(:gas_generated, :decimal)
     has_many(:transactions, Transaction, foreign_key: :block_hash, references: :hash)
 
     timestamps()

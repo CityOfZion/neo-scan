@@ -152,7 +152,7 @@ defmodule Neoscan.Addresses do
   defp reduce_address_history([%{assets: assets, time: time} | rest], balances, acc) do
     new_balances =
       Enum.reduce(assets, balances, fn {name, value}, acc ->
-        Map.update!(acc, name, &(&1 - value))
+        Map.update!(acc, name, &Decimal.sub(&1, value))
       end)
 
     assets = Enum.map(balances, fn {key, value} -> %{key => value} end)
@@ -165,7 +165,9 @@ defmodule Neoscan.Addresses do
     |> Enum.map(&Asset.update_struct/1)
     |> Enum.map(&{&1.asset.name, &1.value})
     |> Enum.group_by(fn {asset_name, _} -> asset_name end, fn {_, value} -> value end)
-    |> Enum.map(fn {asset_name, value_list} -> {asset_name, Enum.sum(value_list)} end)
+    |> Enum.map(fn {asset_name, value_list} ->
+      {asset_name, Enum.reduce(value_list, 0, &Decimal.add/2)}
+    end)
     |> Enum.into(%{})
   end
 
@@ -221,10 +223,10 @@ defmodule Neoscan.Addresses do
       )
 
     atbs_query =
-      if value < 0 do
-        from(atb in atbs_query, where: atb.value > 0.0)
+      if Decimal.negative?(value) do
+        from(atb in atbs_query, where: fragment("sign(?)", atb.value) > 0.0)
       else
-        from(atb in atbs_query, where: atb.value < 0.0)
+        from(atb in atbs_query, where: fragment("sign(?)", atb.value) < 0.0)
       end
 
     Enum.map(Repo.all(atbs_query), &Asset.update_struct/1)
@@ -253,22 +255,25 @@ defmodule Neoscan.Addresses do
 
   defp get_transaction_abstract_value(%{
          value: value,
-         asset_hash: @utility_token,
+         asset_hash: asset_hash,
          address_to: address_to,
          transaction: %{net_fee: net_fee}
-       })
-       when value < 0 and address_to != "fees" do
-    abs(value) - net_fee
+       }) do
+    cond do
+      asset_hash == @utility_token and Decimal.negative?(value) and address_to != "fees" ->
+        Decimal.abs(value) |> Decimal.sub(net_fee) |> Decimal.reduce()
+
+      true ->
+        Decimal.abs(value) |> Decimal.reduce()
+    end
   end
 
-  defp get_transaction_abstract_value(%{value: value}), do: abs(value)
-
   # self transfer for gas claim
-  defp get_transaction_abstract_actors(%{value: 0.0, address_hash: address_hash}),
+  defp get_transaction_abstract_actors(%{value: %Decimal{coef: 0}, address_hash: address_hash}),
     do: {address_hash, address_hash}
 
   defp get_transaction_abstract_actors(abt) do
-    is_sender = abt.value < 0
+    is_sender = Decimal.negative?(abt.value)
     original = abt.address_hash
     other = get_transaction_abstract_other_actor(abt, is_sender)
     if is_sender, do: {original, other}, else: {other, original}

@@ -16,7 +16,7 @@ defmodule Neoscan.Transfer do
 
     field(:address_from, :binary)
     field(:address_to, :binary)
-    field(:amount, :float)
+    field(:amount, :decimal)
 
     belongs_to(
       :asset,
