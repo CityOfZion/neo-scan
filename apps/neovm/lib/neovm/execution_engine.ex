@@ -20,12 +20,12 @@ defmodule NeoVM.ExecutionEngine do
   # The number 16 is pushed onto the stack.
   @_PUSH16 0x60
 
-  #  #  Flow control
-  #  # Does nothing.
-  #  @_NOP 0x61
-  #  @_JMP 0x62
-  #  @_JMPIF 0x63
-  #  @_JMPIFNOT 0x64
+  #  Flow control
+  # Does nothing.
+  @_NOP 0x61
+  @_JMP 0x62
+  @_JMPIF 0x63
+  @_JMPIFNOT 0x64
   #  @_CALL 0x65
   #  @_RET 0x66
   #  @_APPCALL 0x67
@@ -188,45 +188,64 @@ defmodule NeoVM.ExecutionEngine do
   end
 
   def execute(binary) do
-    execute(binary, [])
+    execute(binary, 0, [])
   end
 
-  def execute(<<>>, stack), do: stack
+  def execute(binary, cursor, stack) when cursor == byte_size(binary), do: stack
 
-  def execute(binary, stack) do
+  def execute(binary, cursor, stack) do
+    <<_::binary-size(cursor), rest::binary>> = binary
+
     try do
-      {rest, stack} = do_execute(binary, stack)
-      execute(rest, stack)
+      {cursor, stack} = do_execute(rest, cursor, stack)
+      execute(binary, cursor, stack)
     rescue
       error ->
         {:error, error}
     end
   end
 
-  def do_execute(<<opcode, value::binary-size(opcode), rest::binary>>, stack)
+  def do_execute(<<opcode, value::binary-size(opcode), _::binary>>, cursor, stack)
       when opcode >= @_PUSHBYTES1 and opcode <= @_PUSHBYTES75 do
-    {rest, [value | stack]}
+    {cursor + opcode + 1, [value | stack]}
   end
 
-  def do_execute(<<@_PUSHDATA1, size, data::binary-size(size), rest::binary>>, stack) do
-    {rest, [data | stack]}
-  end
-
-  def do_execute(
-        <<@_PUSHDATA2, size::integer-size(16), data::binary-size(size), rest::binary>>,
-        stack
-      ) do
-    {rest, [data | stack]}
+  def do_execute(<<@_PUSHDATA1, size, data::binary-size(size), _::binary>>, cursor, stack) do
+    {cursor + size + 2, [data | stack]}
   end
 
   def do_execute(
-        <<@_PUSHDATA4, size::integer-size(32), data::binary-size(size), rest::binary>>,
+        <<@_PUSHDATA2, size::integer-size(16), data::binary-size(size), _::binary>>,
+        cursor,
         stack
       ) do
-    {rest, [data | stack]}
+    {cursor + size + 3, [data | stack]}
   end
 
-  def do_execute(<<opcode, rest::binary>>, stack), do: {rest, do_execute(opcode, stack)}
+  def do_execute(
+        <<@_PUSHDATA4, size::integer-size(32), data::binary-size(size), _::binary>>,
+        cursor,
+        stack
+      ) do
+    {cursor + size + 5, [data | stack]}
+  end
+
+  def do_execute(<<opcode, offset::signed-integer-size(16), rest::binary>>, cursor, stack)
+      when cursor + offset >= 0 and byte_size(rest) >= cursor and opcode >= @_JMP and
+             opcode <= @_JMPIFNOT do
+    case opcode do
+      @_JMP ->
+        {cursor + offset, stack}
+
+      _ ->
+        [boolean | stack] = stack
+        offset = if get_boolean(boolean) == (@_JMPIF == opcode), do: offset, else: 3
+        {cursor + offset, stack}
+    end
+  end
+
+  def do_execute(<<opcode, _::binary>>, cursor, stack),
+    do: {cursor + 1, do_execute(opcode, stack)}
 
   def do_execute(@_PUSH0, stack), do: [<<>> | stack]
 
@@ -235,6 +254,7 @@ defmodule NeoVM.ExecutionEngine do
   end
 
   def do_execute(@_PUSHM1, stack), do: [-1 | stack]
+  def do_execute(@_NOP, stack), do: stack
 
   def do_execute(@_CAT, [binary2, binary1 | stack]) do
     [get_binary(binary1) <> get_binary(binary2) | stack]

@@ -43,6 +43,26 @@ defmodule NeoVM.ExecutionEngineTest do
     assert [-1] == ExecutionEngine.execute(<<0x4F>>)
   end
 
+  test "NOP" do
+    assert [] == ExecutionEngine.execute(<<0x61>>)
+  end
+
+  test "JMP" do
+    assert [] == ExecutionEngine.execute(<<0x62, 0x00, 0x05, 0x51, 0x52>>)
+    assert {:error, _} = ExecutionEngine.execute(<<0x62, 0xFF, 0x05, 0x51, 0x52>>)
+    assert {:error, _} = ExecutionEngine.execute(<<0x62, 0x00, 0x15, 0x51, 0x52>>)
+  end
+
+  test "JMPIF" do
+    assert [] == ExecutionEngine.execute(<<0x51, 0x63, 0x00, 0x05, 0x51, 0x52>>)
+    assert [2, 1] == ExecutionEngine.execute(<<0x01, 0x00, 0x63, 0x00, 0x05, 0x51, 0x52>>)
+  end
+
+  test "JMPIFNOT" do
+    assert [2, 1] == ExecutionEngine.execute(<<0x51, 0x64, 0x00, 0x05, 0x51, 0x52>>)
+    assert [] == ExecutionEngine.execute(<<0x01, 0x00, 0x64, 0x00, 0x05, 0x51, 0x52>>)
+  end
+
   test "AND" do
     assert [8] == ExecutionEngine.execute(<<0x01, 0x08, 0x01, 0x0B, 0x84>>)
   end
