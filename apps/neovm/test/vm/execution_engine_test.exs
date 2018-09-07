@@ -317,6 +317,32 @@ defmodule NeoVM.ExecutionEngineTest do
            ] == ExecutionEngine.execute(<<0x01, 0x00, 0xA9>>)
   end
 
+  test "VERIFY" do
+    signature =
+      Base.decode16!(
+        "CD0CA967D11CEA78E25AD16F15DBE77672258BFEC59FF3617C95E317ACFF063A48D35F71AA5CE7D735977412186E1572507D0F4D204C5BCB6C90E03B8B857FBD"
+      )
+
+    public_key =
+      Base.decode16!("036FBCB5E138C1CE5360E861674C03228AF735A9114A5B7FB4121B8350129F3FFE")
+
+    message = "abcdef"
+
+    assert [true] ==
+             ExecutionEngine.execute(
+               <<byte_size(message), message::binary, byte_size(signature), signature::binary,
+                 byte_size(public_key), public_key::binary, 0xAD>>
+             )
+
+    message2 = "abcdefg"
+
+    assert [false] ==
+             ExecutionEngine.execute(
+               <<byte_size(message2), message2::binary, byte_size(signature), signature::binary,
+                 byte_size(public_key), public_key::binary, 0xAD>>
+             )
+  end
+
   test "WITHIN" do
     assert [true] == ExecutionEngine.execute(<<0x01, 0x02, 0x01, 0x01, 0x01, 0x03, 0xA5>>)
 

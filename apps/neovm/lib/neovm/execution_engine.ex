@@ -150,8 +150,8 @@ defmodule NeoVM.ExecutionEngine do
   @_SHA256 0xA8
   @_HASH160 0xA9
   @_HASH256 0xAA
-  #  @_CHECKSIG 0xAC
-  #  @_VERIFY 0xAD
+  # @_CHECKSIG 0xAC
+  @_VERIFY 0xAD
   #  @_CHECKMULTISIG 0xAE
 
   #  Array
@@ -445,6 +445,10 @@ defmodule NeoVM.ExecutionEngine do
   def do_execute(@_RIPEMD160, [x | stack]), do: [Crypto.ripemd160(get_binary(x)) | stack]
   def do_execute(@_HASH160, [x | stack]), do: [Crypto.hash160(get_binary(x)) | stack]
   def do_execute(@_HASH256, [x | stack]), do: [Crypto.hash256(get_binary(x)) | stack]
+
+  def do_execute(@_VERIFY, [public_key, signature, message | stack]) do
+    [Crypto.verify_signature(message, signature, public_key) | stack]
+  end
 
   def do_execute(@_THROW, _) do
     raise VmFaultError, message: "THROW"
