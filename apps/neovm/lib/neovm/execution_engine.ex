@@ -447,7 +447,10 @@ defmodule NeoVM.ExecutionEngine do
   def do_execute(@_HASH256, [x | stack]), do: [Crypto.hash256(get_binary(x)) | stack]
 
   def do_execute(@_VERIFY, [public_key, signature, message | stack]) do
-    [Crypto.verify_signature(message, signature, public_key) | stack]
+    [
+      Crypto.verify_signature(get_binary(message), get_binary(signature), get_binary(public_key))
+      | stack
+    ]
   end
 
   def do_execute(@_THROW, _) do
