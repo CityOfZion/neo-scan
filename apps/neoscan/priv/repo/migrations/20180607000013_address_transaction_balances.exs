@@ -6,7 +6,7 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
       add(:address_hash, :binary, primary_key: true)
       add(:transaction_hash, :binary, primary_key: true)
       add(:asset_hash, :binary, primary_key: true)
-      add(:value, :float, null: false)
+      add(:value, :decimal, null: false)
       add(:block_time,  :naive_datetime, null: false)
       timestamps()
     end
@@ -18,7 +18,7 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
       add(:address_hash, :binary, null: false)
       add(:transaction_hash, :binary, null: false)
       add(:asset_hash, :binary, null: false)
-      add(:value, :float, null: false)
+      add(:value, :decimal, null: false)
       add(:block_time,  :naive_datetime, null: false)
       timestamps()
     end

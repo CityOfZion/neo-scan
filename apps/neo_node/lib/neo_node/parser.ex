@@ -23,8 +23,8 @@ defmodule NeoNode.Parser do
   defp parse_transaction_type("EnrollmentTransaction"), do: :enrollment_transaction
   defp parse_transaction_type("StateTransaction"), do: :state_transaction
 
-  defp parse_float(nil), do: nil
-  defp parse_float(string), do: elem(Float.parse(string), 0)
+  defp parse_decimal(nil), do: nil
+  defp parse_decimal(string), do: Decimal.new(string)
 
   defp parse_claims(nil), do: []
   defp parse_claims(claims), do: Enum.map(claims, &parse_vin/1)
@@ -43,7 +43,7 @@ defmodule NeoNode.Parser do
       address: parse58(vout["address"]),
       asset: parse16(vout["asset"]),
       n: vout["n"],
-      value: parse_float(vout["value"])
+      value: parse_decimal(vout["value"])
     }
   end
 
@@ -73,8 +73,8 @@ defmodule NeoNode.Parser do
   def parse_asset(asset) do
     %{
       admin: parse58(asset["admin"]),
-      amount: parse_float(asset["amount"]),
-      available: parse_float(asset["available"]),
+      amount: parse_decimal(asset["amount"]),
+      available: parse_decimal(asset["available"]),
       expiration: asset["expiration"],
       frozen: asset["frozen"],
       transaction_hash: parse16(asset["id"]),
@@ -121,8 +121,8 @@ defmodule NeoNode.Parser do
       block_time: DateTime.from_unix!(transaction["blocktime"]),
       block_hash: parse16(transaction["blockhash"]),
       size: transaction["size"],
-      sys_fee: parse_float(transaction["sys_fee"]),
-      net_fee: parse_float(transaction["net_fee"]),
+      sys_fee: parse_decimal(transaction["sys_fee"]),
+      net_fee: parse_decimal(transaction["net_fee"]),
       hash: parse16(transaction["txid"]),
       type: parse_transaction_type(transaction["type"]),
       version: transaction["version"],

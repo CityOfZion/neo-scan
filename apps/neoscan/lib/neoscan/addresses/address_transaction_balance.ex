@@ -36,7 +36,7 @@ defmodule Neoscan.AddressTransactionBalance do
       primary_key: true
     )
 
-    field(:value, :float)
+    field(:value, :decimal)
     field(:block_time, :utc_datetime)
 
     timestamps()

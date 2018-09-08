@@ -5,7 +5,7 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
     create table(:address_balances, primary_key: false) do
       add(:address_hash, :binary, primary_key: true)
       add(:asset_hash, :binary, primary_key: true)
-      add(:value, :float, null: false)
+      add(:value, :decimal, null: false)
 
       timestamps()
     end
@@ -13,7 +13,7 @@ defmodule Neoscan.Repo.Migrations.AddressBalances do
     create table(:address_balances_queue, primary_key: false) do
       add(:address_hash, :binary, null: false)
       add(:asset_hash, :binary, null: false)
-      add(:value, :float, null: false)
+      add(:value, :decimal, null: false)
 
       timestamps()
     end

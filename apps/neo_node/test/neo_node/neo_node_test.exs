@@ -48,11 +48,11 @@ defmodule NeoNodeTest do
                    hash:
                      <<251, 91, 215, 43, 45, 103, 146, 215, 93, 194, 241, 8, 79, 250, 158, 159,
                        112, 202, 133, 84, 60, 113, 122, 107, 19, 217, 149, 155, 69, 42, 87, 214>>,
-                   net_fee: 0.0,
+                   net_fee: Decimal.new(0),
                    nonce: 2_083_236_893,
                    scripts: [],
                    size: 10,
-                   sys_fee: 0.0,
+                   sys_fee: Decimal.new(0),
                    type: :miner_transaction,
                    version: 0,
                    vins: [],
@@ -63,7 +63,7 @@ defmodule NeoNodeTest do
                      admin:
                        <<23, 218, 23, 69, 233, 181, 73, 189, 11, 250, 26, 86, 153, 113, 199, 126,
                          186, 48, 205, 90, 75, 177, 213, 88, 117>>,
-                     amount: 1.0e8,
+                     amount: Decimal.new(100_000_000),
                      available: nil,
                      expiration: nil,
                      frozen: nil,
@@ -93,11 +93,11 @@ defmodule NeoNodeTest do
                      <<197, 111, 51, 252, 110, 207, 205, 12, 34, 92, 74, 179, 86, 254, 229, 147,
                        144, 175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255, 124,
                        155>>,
-                   net_fee: 0.0,
+                   net_fee: Decimal.new(0),
                    nonce: nil,
                    scripts: [],
                    size: 107,
-                   sys_fee: 0.0,
+                   sys_fee: Decimal.new(0),
                    type: :register_transaction,
                    version: 0,
                    vins: [],
@@ -108,7 +108,7 @@ defmodule NeoNodeTest do
                      admin:
                        <<23, 159, 127, 208, 150, 211, 126, 210, 192, 227, 247, 240, 207, 201, 36,
                          190, 239, 79, 252, 235, 104, 117, 247, 96, 242>>,
-                     amount: 1.0e8,
+                     amount: Decimal.new(100_000_000),
                      available: nil,
                      expiration: nil,
                      frozen: nil,
@@ -138,11 +138,11 @@ defmodule NeoNodeTest do
                      <<96, 44, 121, 113, 139, 22, 228, 66, 222, 88, 119, 142, 20, 141, 11, 16,
                        132, 227, 178, 223, 253, 93, 230, 183, 177, 108, 238, 121, 105, 40, 45,
                        231>>,
-                   net_fee: 0.0,
+                   net_fee: Decimal.new(0),
                    nonce: nil,
                    scripts: [],
                    size: 106,
-                   sys_fee: 0.0,
+                   sys_fee: Decimal.new(0),
                    type: :register_transaction,
                    version: 0,
                    vins: [],
@@ -159,11 +159,11 @@ defmodule NeoNodeTest do
                    hash:
                      <<54, 49, 246, 96, 36, 202, 111, 91, 3, 61, 126, 8, 9, 235, 153, 52, 67, 55,
                        72, 48, 2, 90, 249, 4, 251, 81, 176, 51, 79, 18, 124, 218>>,
-                   net_fee: 0.0,
+                   net_fee: Decimal.new(0),
                    nonce: nil,
                    scripts: [%{"invocation" => "", "verification" => "51"}],
                    size: 69,
-                   sys_fee: 0.0,
+                   sys_fee: Decimal.new(0),
                    type: :issue_transaction,
                    version: 0,
                    vins: [],
@@ -177,7 +177,7 @@ defmodule NeoNodeTest do
                            147, 144, 175, 133, 96, 190, 14, 147, 15, 174, 190, 116, 166, 218, 255,
                            124, 155>>,
                        n: 0,
-                       value: 1.0e8
+                       value: Decimal.new(100_000_000)
                      }
                    ]
                  }
@@ -227,11 +227,11 @@ defmodule NeoNodeTest do
                hash:
                  <<158, 149, 38, 97, 94, 231, 212, 96, 237, 68, 92, 135, 60, 74, 249, 27, 247,
                    191, 204, 103, 230, 228, 63, 234, 240, 81, 185, 98, 166, 223, 10, 152>>,
-               net_fee: 0.0,
+               net_fee: Decimal.new(0),
                nonce: 3_576_443_283,
                scripts: [],
                size: 10,
-               sys_fee: 0.0,
+               sys_fee: Decimal.new(0),
                type: :miner_transaction,
                version: 0,
                vins: [],
@@ -268,8 +268,8 @@ defmodule NeoNodeTest do
                admin:
                  <<23, 218, 23, 69, 233, 181, 73, 189, 11, 250, 26, 86, 153, 113, 199, 126, 186,
                    48, 205, 90, 75, 177, 213, 88, 117>>,
-               amount: 100_000_000,
-               available: 100_000_000,
+               amount: Decimal.new(100_000_000),
+               available: Decimal.new(100_000_000),
                expiration: 4_000_000,
                frozen: false,
                issuer:
