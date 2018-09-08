@@ -19,9 +19,6 @@ defmodule Neoscan.Repo.Migrations.Transactions do
     end
 
     create(index(:transactions, [:block_hash]))
-    create(index(:transactions, [:block_index]))
     create(index(:transactions, [:block_index], where: "type != 'miner_transaction'", name: "partial_index_block_index"))
-    create(index(:transactions, [:block_time]))
-    create(index(:transactions, [:type]))
   end
 end
