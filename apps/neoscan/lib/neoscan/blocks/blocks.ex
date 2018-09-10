@@ -36,13 +36,25 @@ defmodule Neoscan.Blocks do
 
   defp _get(hash) when is_binary(hash) do
     Repo.one(
-      from(e in Block, where: e.hash == ^hash, preload: [transactions: ^transaction_query()])
+      from(
+        e in Block,
+        where: e.hash == ^hash,
+        preload: [
+          transactions: ^transaction_query()
+        ]
+      )
     )
   end
 
   defp _get(index) when is_integer(index) do
     Repo.one(
-      from(e in Block, where: e.index == ^index, preload: [transactions: ^transaction_query()])
+      from(
+        e in Block,
+        where: e.index == ^index,
+        preload: [
+          transactions: ^transaction_query()
+        ]
+      )
     )
   end
 
@@ -65,9 +77,12 @@ defmodule Neoscan.Blocks do
         ],
         limit: @page_size,
         select:
-          merge(e, %{
-            lag: fragment("extract(epoch FROM (? - lead(?) OVER ()))::integer", e.time, e.time)
-          })
+          merge(
+            e,
+            %{
+              lag: fragment("extract(epoch FROM (? - lead(?) OVER ()))::integer", e.time, e.time)
+            }
+          )
       )
 
     Repo.paginate(block_query, page: page, page_size: @page_size)
@@ -116,5 +131,33 @@ defmodule Neoscan.Blocks do
       )
 
     Repo.all(query)
+  end
+
+  def get_sys_fees_in_range(min, max) do
+    query2 =
+      from(
+        b in Block,
+        where: b.index <= ^max,
+        select: map(b, [:index, :cumulative_sys_fee, :total_sys_fee]),
+        order_by: [desc: :index],
+        limit: 1
+      )
+
+    query1 =
+      from(
+        b in Block,
+        where: b.index == ^min,
+        select: map(b, [:index, :cumulative_sys_fee, :total_sys_fee]),
+        order_by: [desc: :index],
+        limit: 1
+      )
+
+    case Repo.all(query2) ++ Repo.all(query1) do
+      [%{cumulative_sys_fee: fee_a}, %{cumulative_sys_fee: fee_b, total_sys_fee: fee_c}] ->
+        Decimal.sub(Decimal.add(fee_a, fee_c), fee_b)
+
+      _ ->
+        Decimal.new(0.0)
+    end
   end
 end

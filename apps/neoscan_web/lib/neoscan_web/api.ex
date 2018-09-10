@@ -8,7 +8,6 @@ defmodule NeoscanWeb.Api do
   @total_neo 100_000_000
 
   alias Neoscan.Blocks
-  alias Neoscan.BlocksCache
   alias Neoscan.Counters
   alias Neoscan.Transactions
   alias Neoscan.Addresses
@@ -48,15 +47,13 @@ defmodule NeoscanWeb.Api do
         end_index = vout.end_block_index
         end_index = if is_nil(end_index), do: current_index, else: end_index
 
-        generated =
-          Decimal.mult(value, BlockGasGeneration.get_range_amount(start_index, end_index - 1))
-          |> Decimal.div(@total_neo)
+        gas_generated = BlockGasGeneration.get_range_amount(start_index, end_index - 1)
+        gas_sys_fee = Blocks.get_sys_fees_in_range(start_index, end_index - 1)
 
-        sys_fee =
-          Decimal.mult(value, BlocksCache.get_sys_fees_in_range(start_index, end_index - 1))
-          |> Decimal.div(@total_neo)
+        delta =
+          Decimal.div(Decimal.mult(value, Decimal.add(gas_generated, gas_sys_fee)), @total_neo)
 
-        Decimal.add(acc, sys_fee) |> Decimal.add(generated)
+        Decimal.add(acc, delta)
       end)
 
     %{:address => Base58.encode(address_hash), :unclaimed => unclaimed}
@@ -93,7 +90,7 @@ defmodule NeoscanWeb.Api do
           |> Decimal.div(@total_neo)
 
         sys_fee =
-          Decimal.mult(value, BlocksCache.get_sys_fees_in_range(start_index, end_index - 1))
+          Decimal.mult(value, Blocks.get_sys_fees_in_range(start_index, end_index - 1))
           |> Decimal.div(@total_neo)
 
         unclaimed = Decimal.add(sys_fee, generated)
