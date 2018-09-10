@@ -6,12 +6,10 @@ defmodule Neoscan.Repo.Migrations.AddressHistories do
       add(:address_hash, :binary, null: false)
       add(:transaction_hash, :binary, null: false)
       add(:asset_hash, :binary, null: false)
-      add(:value, :float, null: false)
+      add(:value, :decimal, null: false)
       add(:block_time,  :naive_datetime, null: false)
 
       timestamps()
     end
-
-    create(index(:address_histories, [:address_hash, :block_time]))
   end
 end

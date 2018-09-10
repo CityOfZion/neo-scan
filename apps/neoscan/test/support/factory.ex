@@ -40,9 +40,9 @@ defmodule Neoscan.Factory do
       time: DateTime.utc_now(),
       version: 2,
       tx_count: 0,
-      total_sys_fee: 0,
-      total_net_fee: 0,
-      gas_generated: 8.1
+      total_sys_fee: Decimal.new(0),
+      total_net_fee: Decimal.new(0),
+      gas_generated: Decimal.new("8.1")
     }
   end
 
@@ -53,8 +53,8 @@ defmodule Neoscan.Factory do
       block_index: sequence(1, & &1),
       block_time: DateTime.utc_now(),
       attributes: [],
-      net_fee: 0.0,
-      sys_fee: 0.0,
+      net_fee: Decimal.new("0.0"),
+      sys_fee: Decimal.new("0.0"),
       nonce: 5,
       scripts: [],
       size: 123,
@@ -69,7 +69,7 @@ defmodule Neoscan.Factory do
       n: sequence(1, & &1),
       address_hash: :crypto.strong_rand_bytes(32),
       asset_hash: :crypto.strong_rand_bytes(32),
-      value: 1.23,
+      value: Decimal.new("1.23"),
       claimed: false,
       spent: false,
       start_block_index: sequence(1, & &1),
@@ -101,7 +101,7 @@ defmodule Neoscan.Factory do
       address_hash: :crypto.strong_rand_bytes(32),
       transaction_hash: :crypto.strong_rand_bytes(32),
       asset_hash: :crypto.strong_rand_bytes(32),
-      value: 5.0,
+      value: Decimal.new("5.0"),
       block_time: DateTime.utc_now()
     }
   end
@@ -110,7 +110,7 @@ defmodule Neoscan.Factory do
     %AddressBalance{
       address_hash: :crypto.strong_rand_bytes(32),
       asset_hash: :crypto.strong_rand_bytes(32),
-      value: 5.0
+      value: Decimal.new("5.0")
     }
   end
 
@@ -136,7 +136,7 @@ defmodule Neoscan.Factory do
       transaction_hash: :crypto.strong_rand_bytes(32),
       address_from: :crypto.strong_rand_bytes(32),
       address_to: :crypto.strong_rand_bytes(32),
-      amount: 5.0,
+      amount: Decimal.new("5.0"),
       contract: :crypto.strong_rand_bytes(32),
       block_index: 12,
       block_time: DateTime.utc_now()
@@ -147,12 +147,12 @@ defmodule Neoscan.Factory do
     %Asset{
       transaction_hash: :crypto.strong_rand_bytes(32),
       admin: :crypto.strong_rand_bytes(32),
-      amount: 5.0,
+      amount: Decimal.new("5.0"),
       name: [%{"lang" => "en", "name" => "truc"}],
       owner: :crypto.strong_rand_bytes(32),
       precision: 12,
       type: "token",
-      issued: 1.0,
+      issued: Decimal.new("1.0"),
       contract: :crypto.strong_rand_bytes(32),
       block_time: DateTime.utc_now()
     }

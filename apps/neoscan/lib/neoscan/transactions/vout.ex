@@ -34,7 +34,7 @@ defmodule Neoscan.Vout do
       type: :binary
     )
 
-    field(:value, :float)
+    field(:value, :decimal)
     field(:block_time, :utc_datetime)
     field(:claimed, :boolean)
     field(:spent, :boolean)

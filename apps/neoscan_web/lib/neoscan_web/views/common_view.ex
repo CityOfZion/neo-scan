@@ -2,7 +2,7 @@ defmodule NeoscanWeb.CommonView do
   alias NeoscanWeb.Explanations
   alias NeoscanWeb.ViewHelper
   alias Neoscan.Asset
-  alias Neoscan.Vm.Disassembler
+  alias NeoVM.Disassembler
 
   def get_transaction_name("contract_transaction"), do: "Contract"
   def get_transaction_name("claim_transaction"), do: "Gas Claim"

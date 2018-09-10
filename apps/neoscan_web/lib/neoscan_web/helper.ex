@@ -44,7 +44,7 @@ defmodule NeoscanWeb.Helper do
       transfer_from_minted
       |> Enum.group_by(& &1.asset, & &1.value)
       |> Enum.map(fn {asset, values} ->
-        %{address_hash: <<0>>, asset: asset, value: Enum.sum(values)}
+        %{address_hash: <<0>>, asset: asset, value: Enum.reduce(values, 0, &Decimal.add/2)}
       end)
 
     registered =

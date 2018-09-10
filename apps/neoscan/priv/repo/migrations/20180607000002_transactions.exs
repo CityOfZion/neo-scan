@@ -8,8 +8,8 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add(:block_index, :integer, null: false)
       add(:block_time, :naive_datetime, null: false)
       add(:attributes, {:array, :map}, null: false)
-      add(:net_fee, :float, null: false)
-      add(:sys_fee, :float, null: false)
+      add(:net_fee, :decimal, null: false)
+      add(:sys_fee, :decimal, null: false)
       add(:nonce, :bigint, null: true)
       add(:scripts, {:array, :map}, null: false)
       add(:size, :integer, null: false)
@@ -19,9 +19,6 @@ defmodule Neoscan.Repo.Migrations.Transactions do
     end
 
     create(index(:transactions, [:block_hash]))
-    create(index(:transactions, [:block_index]))
     create(index(:transactions, [:block_index], where: "type != 'miner_transaction'", name: "partial_index_block_index"))
-    create(index(:transactions, [:block_time]))
-    create(index(:transactions, [:type]))
   end
 end

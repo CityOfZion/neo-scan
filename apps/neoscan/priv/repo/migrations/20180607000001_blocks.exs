@@ -13,9 +13,9 @@ defmodule Neoscan.Repo.Migrations.Blocks do
       add(:time, :naive_datetime, null: false)
       add(:version, :integer, null: false)
       add(:tx_count, :integer, null: false)
-      add(:total_sys_fee, :float, null: false)
-      add(:total_net_fee, :float, null: false)
-      add(:gas_generated, :float, null: false)
+      add(:total_sys_fee, :decimal, null: false)
+      add(:total_net_fee, :decimal, null: false)
+      add(:gas_generated, :decimal, null: false)
 
       timestamps()
     end

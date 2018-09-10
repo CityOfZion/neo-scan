@@ -10,7 +10,7 @@ services:
 
   phoenix:
     container_name: "phoenixdev"
-    image: bitwalker/alpine-elixir-phoenix:1.7.0
+    image: bitwalker/alpine-elixir-phoenix:1.7.3
     command: sh -c "while true; do echo Alive; sleep 100; done"
     volumes:
       - ./:/data

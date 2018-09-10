@@ -8,7 +8,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
       add(:n, :integer, null: false, primary_key: true)
       add(:address_hash, :binary, null: false)
       add(:asset_hash, :binary, null: false)
-      add(:value, :float, null: false)
+      add(:value, :decimal, null: false)
       add(:block_time, :naive_datetime, null: false)
 
       add(:claimed, :boolean, null: false, default: false)
@@ -19,13 +19,10 @@ defmodule Neoscan.Repo.Migrations.Vouts do
       timestamps()
     end
 
-    create(index(:vouts, [:transaction_hash]))
-
     #partial index is used to get unspent blocks
     create(index(:vouts, [:address_hash, :asset_hash]))
     create(index(:vouts, [:address_hash], where: "asset_hash = E'\\\\xC56F33FC6ECFCD0C225C4AB356FEE59390AF8560BE0E930FAEBE74A6DAFF7C9B' and claimed = false", name: "partial_vout_index"))
     create(index(:vouts, [:address_hash, :spent]))
-    create(index(:vouts, [:address_hash, :claimed]))
     create(index(:vouts, [:address_hash, :claimed, :spent]))
 
     create table(:vouts_queue, primary_key: false) do

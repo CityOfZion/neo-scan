@@ -26,7 +26,7 @@ defmodule Neoscan.AddressBalance do
       primary_key: true
     )
 
-    field(:value, :float)
+    field(:value, :decimal)
 
     timestamps()
   end

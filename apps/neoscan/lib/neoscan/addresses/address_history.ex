@@ -33,7 +33,7 @@ defmodule Neoscan.AddressHistory do
       type: :binary
     )
 
-    field(:value, :float)
+    field(:value, :decimal)
     field(:block_time, :utc_datetime)
 
     timestamps()

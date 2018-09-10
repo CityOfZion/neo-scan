@@ -6,20 +6,19 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
       add(:address_hash, :binary, primary_key: true)
       add(:transaction_hash, :binary, primary_key: true)
       add(:asset_hash, :binary, primary_key: true)
-      add(:value, :float, null: false)
+      add(:value, :decimal, null: false)
       add(:block_time,  :naive_datetime, null: false)
       timestamps()
     end
 
     create(index(:address_transaction_balances, [:address_hash, :block_time]))
-    create(index(:address_transaction_balances, [:transaction_hash]))
     create(index(:address_transaction_balances, [:transaction_hash, :asset_hash]))
 
     create table(:address_transaction_balances_queue, primary_key: false) do
       add(:address_hash, :binary, null: false)
       add(:transaction_hash, :binary, null: false)
       add(:asset_hash, :binary, null: false)
-      add(:value, :float, null: false)
+      add(:value, :decimal, null: false)
       add(:block_time,  :naive_datetime, null: false)
       timestamps()
     end
