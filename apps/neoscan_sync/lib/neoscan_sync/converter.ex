@@ -131,6 +131,7 @@ defmodule NeoscanSync.Converter do
       transactions: Enum.map(block_raw.tx, &convert_transaction(&1, block_raw)),
       total_sys_fee: Enum.reduce(Enum.map(block_raw.tx, & &1.sys_fee), 0, &Decimal.add/2),
       total_net_fee: Enum.reduce(Enum.map(block_raw.tx, & &1.net_fee), 0, &Decimal.add/2),
+      cumulative_sys_fee: Decimal.new(0),
       gas_generated: BlockGasGeneration.get_amount_generate_in_block(block_raw.index),
       tx_count: Enum.count(block_raw.tx)
     }

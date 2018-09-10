@@ -21,6 +21,7 @@ defmodule Neoscan.Block do
     field(:tx_count, :integer)
     field(:total_sys_fee, :decimal)
     field(:total_net_fee, :decimal)
+    field(:cumulative_sys_fee, :decimal)
     field(:gas_generated, :decimal)
     has_many(:transactions, Transaction, foreign_key: :block_hash, references: :hash)
 
