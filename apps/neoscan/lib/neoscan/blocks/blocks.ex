@@ -137,7 +137,7 @@ defmodule Neoscan.Blocks do
     query2 =
       from(
         b in Block,
-        where: b.index <= ^max,
+        where: b.index <= ^max and b.cumulative_sys_fee > 0.0,
         select: map(b, [:index, :cumulative_sys_fee, :total_sys_fee]),
         order_by: [desc: :index],
         limit: 1
