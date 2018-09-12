@@ -308,7 +308,7 @@ defmodule NeoscanWeb.ApiControllerTest do
         address_hash: address_hash,
         transaction_hash: transaction2.hash,
         asset_hash: asset_hash,
-        value: Decimal.new("5.0")
+        value: Decimal.new("50.0")
       })
 
     vout2 = insert(:vout, %{asset_hash: asset_hash, value: Decimal.new("7.0")})
@@ -507,7 +507,7 @@ defmodule NeoscanWeb.ApiControllerTest do
              %{
                "address_from" => address_hash_str,
                "address_to" => Base58.encode(vout3.address_hash),
-               "amount" => "5",
+               "amount" => "50",
                "asset" => asset_hash_str,
                "block_height" => transaction3.block_index,
                "time" => DateTime.to_unix(transaction3.block_time),
@@ -516,7 +516,7 @@ defmodule NeoscanWeb.ApiControllerTest do
              %{
                "address_from" => Base58.encode(vout2.address_hash),
                "address_to" => address_hash_str,
-               "amount" => "5",
+               "amount" => "50",
                "asset" => asset_hash_str,
                "block_height" => transaction2.block_index,
                "time" => DateTime.to_unix(transaction2.block_time),

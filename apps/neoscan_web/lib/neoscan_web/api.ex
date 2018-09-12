@@ -230,9 +230,8 @@ defmodule NeoscanWeb.Api do
 
   defp render_amount(value) do
     value
+    |> Decimal.reduce()
     |> Decimal.to_string(:normal)
-    |> String.trim_trailing("0")
-    |> String.trim_trailing(".")
   end
 
   defp render_transaction_abstract_address("burn", _), do: "burn"
