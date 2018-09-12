@@ -35,7 +35,12 @@ defmodule Neoscan.BlocksTest do
 
   test "get_sys_fees_in_range/2" do
     assert Decimal.equal?("0.0", Blocks.get_sys_fees_in_range(12, 15))
-    for x <- 0..9, do: insert(:block, %{index: x, total_sys_fee: Decimal.new("0.0")})
+    for x <- 3..9, do: insert(:block, %{index: x, total_sys_fee: Decimal.new("0.0")})
+
+    insert(:block, %{index: 0, total_sys_fee: Decimal.new("1.0")})
+    insert(:block, %{index: 1, total_sys_fee: Decimal.new("1.0")})
+    insert(:block, %{index: 2, total_sys_fee: Decimal.new("1.0")})
+
     insert(:block, %{index: 10, total_sys_fee: Decimal.new("1.0")})
     insert(:block, %{index: 11, total_sys_fee: Decimal.new("1.0")})
     insert(:block, %{index: 12, total_sys_fee: Decimal.new("2.0")})
@@ -47,5 +52,50 @@ defmodule Neoscan.BlocksTest do
     assert Decimal.equal?("11.0", Blocks.get_sys_fees_in_range(12, 15))
     assert Decimal.equal?("17.0", Blocks.get_sys_fees_in_range(11, 16))
     assert Decimal.equal?("17.0", Blocks.get_sys_fees_in_range(11, 19))
+    assert Decimal.equal?("3.0", Blocks.get_sys_fees_in_range(0, 2))
+  end
+
+  test "get_cumulative_fees/1" do
+    insert(:block, %{index: 0, total_sys_fee: Decimal.new("1.0")})
+    insert(:block, %{index: 1, total_sys_fee: Decimal.new("1.0")})
+    insert(:block, %{index: 2, total_sys_fee: Decimal.new("1.0")})
+
+    assert %{
+             -1 => Decimal.new(0.0),
+             0 => Decimal.new(0.0),
+             1 => Decimal.new(0.0),
+             2 => Decimal.new(0.0)
+           } == Blocks.get_cumulative_fees([0, 1, 2])
+
+    Flush.all()
+
+    assert %{
+             -1 => Decimal.new(0.0),
+             0 => Decimal.new(1.0),
+             1 => Decimal.new(2.0),
+             2 => Decimal.new(3.0)
+           } == Blocks.get_cumulative_fees([0, 1, 2])
+
+    insert(:block, %{index: 3, total_sys_fee: Decimal.new("2.0")})
+
+    assert %{
+             -1 => Decimal.new(0.0),
+             0 => Decimal.new(1.0),
+             1 => Decimal.new(2.0),
+             2 => Decimal.new(3.0),
+             3 => Decimal.new(3.0)
+           } == Blocks.get_cumulative_fees([0, 1, 2, 3])
+
+    Flush.all()
+
+    assert %{
+             -1 => Decimal.new(0.0),
+             0 => Decimal.new(1.0),
+             1 => Decimal.new(2.0),
+             2 => Decimal.new(3.0),
+             3 => Decimal.new(5.0)
+           } == Blocks.get_cumulative_fees([0, 1, 2, 3])
+
+    assert %{-1 => Decimal.new(0.0), 5 => Decimal.new(5.0)} == Blocks.get_cumulative_fees([-1, 5])
   end
 end

@@ -133,6 +133,39 @@ defmodule Neoscan.Blocks do
     Repo.all(query)
   end
 
+  def get_cumulative_fees(indexes) do
+    max_query =
+      from(
+        b in Block,
+        where: b.cumulative_sys_fee > 0.0,
+        select: b.cumulative_sys_fee,
+        order_by: [desc: :index],
+        limit: 1
+      )
+
+    max = Repo.one(max_query) || Decimal.new(0.0)
+
+    all_query =
+      from(
+        b in Block,
+        where: b.index in ^indexes,
+        select: map(b, [:index, :cumulative_sys_fee])
+      )
+
+    values = Repo.all(all_query)
+
+    map =
+      Map.new(values, fn %{index: index, cumulative_sys_fee: cumulative_sys_fee} ->
+        {index, cumulative_sys_fee || max}
+      end)
+
+    map = Map.put(map, -1, Decimal.new(0.0))
+
+    map = Enum.reduce(indexes, map, fn index, acc -> Map.put_new(acc, index, max) end)
+
+    map
+  end
+
   def get_sys_fees_in_range(min, max) do
     query2 =
       from(
@@ -146,15 +179,16 @@ defmodule Neoscan.Blocks do
     query1 =
       from(
         b in Block,
-        where: b.index == ^min,
+        where: b.index == ^(min - 1),
         select: map(b, [:index, :cumulative_sys_fee, :total_sys_fee]),
         order_by: [desc: :index],
         limit: 1
       )
 
-    case Repo.all(query2) ++ Repo.all(query1) do
-      [%{cumulative_sys_fee: fee_a}, %{cumulative_sys_fee: fee_b, total_sys_fee: fee_c}] ->
-        Decimal.sub(Decimal.add(fee_a, fee_c), fee_b)
+    case Repo.all(query2) ++
+           if(min == 0, do: [%{cumulative_sys_fee: Decimal.new(0.0)}], else: Repo.all(query1)) do
+      [%{cumulative_sys_fee: fee_a}, %{cumulative_sys_fee: fee_b}] ->
+        Decimal.sub(fee_a, fee_b)
 
       _ ->
         Decimal.new(0.0)

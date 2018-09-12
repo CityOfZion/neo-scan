@@ -15,7 +15,7 @@ defmodule Neoscan.Repo.Migrations.Blocks do
       add(:tx_count, :integer, null: false)
       add(:total_sys_fee, :decimal, null: false)
       add(:total_net_fee, :decimal, null: false)
-      add(:cumulative_sys_fee, :decimal, null: false)
+      add(:cumulative_sys_fee, :decimal, null: true)
       add(:gas_generated, :decimal, null: false)
 
       timestamps()
