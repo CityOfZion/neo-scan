@@ -42,6 +42,7 @@ defmodule NeoscanCache.Factory do
       tx_count: 0,
       total_sys_fee: Decimal.new(0),
       total_net_fee: Decimal.new(0),
+      cumulative_sys_fee: Decimal.new(0),
       gas_generated: Decimal.new("8.1")
     }
   end

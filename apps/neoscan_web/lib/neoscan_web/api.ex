@@ -8,7 +8,6 @@ defmodule NeoscanWeb.Api do
   @total_neo 100_000_000
 
   alias Neoscan.Blocks
-  alias Neoscan.BlocksCache
   alias Neoscan.Counters
   alias Neoscan.Transactions
   alias Neoscan.Addresses
@@ -40,23 +39,27 @@ defmodule NeoscanWeb.Api do
   def get_unclaimed(address_hash) do
     vouts = Transactions.get_unclaimed_vouts(address_hash)
     current_index = Counters.count_blocks() - 1
+    indexes = extract_indexes_from_vouts(vouts)
+    cumulative_sys_fee_map = Blocks.get_cumulative_fees([current_index - 1 | indexes])
 
     unclaimed =
       Enum.reduce(vouts, 0, fn vout, acc ->
         value = Decimal.round(vout.value)
         start_index = vout.start_block_index
-        end_index = vout.end_block_index
-        end_index = if is_nil(end_index), do: current_index, else: end_index
+        end_index = vout.end_block_index || current_index
 
-        generated =
-          Decimal.mult(value, BlockGasGeneration.get_range_amount(start_index, end_index - 1))
-          |> Decimal.div(@total_neo)
+        gas_generated = BlockGasGeneration.get_range_amount(start_index, end_index - 1)
 
-        sys_fee =
-          Decimal.mult(value, BlocksCache.get_sys_fees_in_range(start_index, end_index - 1))
-          |> Decimal.div(@total_neo)
+        gas_sys_fee =
+          Decimal.sub(
+            cumulative_sys_fee_map[end_index - 1],
+            cumulative_sys_fee_map[start_index - 1]
+          )
 
-        Decimal.add(acc, sys_fee) |> Decimal.add(generated)
+        delta =
+          Decimal.div(Decimal.mult(value, Decimal.add(gas_generated, gas_sys_fee)), @total_neo)
+
+        Decimal.add(acc, delta)
       end)
 
     %{:address => Base58.encode(address_hash), :unclaimed => unclaimed}
@@ -79,8 +82,21 @@ defmodule NeoscanWeb.Api do
     %{:address => Base58.encode(address_hash), :claimed => claimed}
   end
 
+  defp extract_indexes_from_vouts(vouts) do
+    vouts
+    |> Enum.map(fn %{start_block_index: start_block_index, end_block_index: end_block_index} ->
+      if is_nil(end_block_index),
+        do: [start_block_index - 1],
+        else: [start_block_index - 1, end_block_index - 1]
+    end)
+    |> List.flatten()
+    |> Enum.dedup()
+  end
+
   def get_claimable(address_hash) do
     vouts = Transactions.get_claimable_vouts(address_hash)
+    indexes = extract_indexes_from_vouts(vouts)
+    cumulative_sys_fee_map = Blocks.get_cumulative_fees(indexes)
 
     claimable =
       Enum.map(vouts, fn vout ->
@@ -89,11 +105,16 @@ defmodule NeoscanWeb.Api do
         end_index = vout.end_block_index
 
         generated =
-          Decimal.mult(value, BlockGasGeneration.get_range_amount(start_index, end_index - 1))
+          BlockGasGeneration.get_range_amount(start_index, end_index - 1)
+          |> Decimal.mult(value)
           |> Decimal.div(@total_neo)
 
         sys_fee =
-          Decimal.mult(value, BlocksCache.get_sys_fees_in_range(start_index, end_index - 1))
+          Decimal.sub(
+            cumulative_sys_fee_map[end_index - 1],
+            cumulative_sys_fee_map[start_index - 1]
+          )
+          |> Decimal.mult(value)
           |> Decimal.div(@total_neo)
 
         unclaimed = Decimal.add(sys_fee, generated)
