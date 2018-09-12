@@ -33,28 +33,6 @@ defmodule Neoscan.BlocksTest do
     assert 4 == Blocks.get_max_index()
   end
 
-  test "get_sys_fees_in_range/2" do
-    assert Decimal.equal?("0.0", Blocks.get_sys_fees_in_range(12, 15))
-    for x <- 3..9, do: insert(:block, %{index: x, total_sys_fee: Decimal.new("0.0")})
-
-    insert(:block, %{index: 0, total_sys_fee: Decimal.new("1.0")})
-    insert(:block, %{index: 1, total_sys_fee: Decimal.new("1.0")})
-    insert(:block, %{index: 2, total_sys_fee: Decimal.new("1.0")})
-
-    insert(:block, %{index: 10, total_sys_fee: Decimal.new("1.0")})
-    insert(:block, %{index: 11, total_sys_fee: Decimal.new("1.0")})
-    insert(:block, %{index: 12, total_sys_fee: Decimal.new("2.0")})
-    insert(:block, %{index: 13, total_sys_fee: Decimal.new("2.0")})
-    insert(:block, %{index: 14, total_sys_fee: Decimal.new("3.0")})
-    insert(:block, %{index: 15, total_sys_fee: Decimal.new("4.0")})
-    insert(:block, %{index: 16, total_sys_fee: Decimal.new("5.0")})
-    Flush.all()
-    assert Decimal.equal?("11.0", Blocks.get_sys_fees_in_range(12, 15))
-    assert Decimal.equal?("17.0", Blocks.get_sys_fees_in_range(11, 16))
-    assert Decimal.equal?("17.0", Blocks.get_sys_fees_in_range(11, 19))
-    assert Decimal.equal?("3.0", Blocks.get_sys_fees_in_range(0, 2))
-  end
-
   test "get_cumulative_fees/1" do
     insert(:block, %{index: 0, total_sys_fee: Decimal.new("1.0")})
     insert(:block, %{index: 1, total_sys_fee: Decimal.new("1.0")})
