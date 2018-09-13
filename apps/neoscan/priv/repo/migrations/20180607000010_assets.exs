@@ -9,6 +9,7 @@ defmodule Neoscan.Repo.Migrations.Assets do
       add(:name, {:array, :map}, null: false)
       add(:owner, :binary, null: false)
       add(:precision, :integer, null: false)
+      add(:symbol, :string, null: true)
       add(:type, :string, null: false)
       add(:issued, :decimal)
       add(:block_time, :naive_datetime, null: false)

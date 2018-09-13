@@ -26,29 +26,17 @@
           <a href="<%= address_path(@conn, :index, render_address_hash(@asset.admin))%>" class="large-blue-link"><%= render_address_hash(@asset.admin) %></a>
       <% end %>
     </li>
-    <li class="border-right border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
-      <p class="small-detail-text"><%= gettext "Issued" %></p>
-      <p class="large-detail-text"><%= render_balance(@asset.issued, @asset.precision) %></p>
-    </li>
-    <li class="border-right border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
-      <p class="small-detail-text"><%= gettext "Supply" %></p>
-      <p class="large-detail-text"><%= render_balance(@asset.amount, @asset.precision) %></p>
-    </li>
     <li class="border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Precision" %></p>
       <p class="large-detail-text"><%= @asset.precision %></p>
     </li>
     <li class="border-right border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Transactions"%></p>
-      <p class="large-detail-text"><%= @asset.tx_count %></p>
+      <p class="large-detail-text"><%= @asset.tx_count || 0 %></p>
     </li>
     <li class="border-right remove-border-right-660px remove-border-bottom-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Addresses"%></p>
-      <p class="large-detail-text"><%= @asset.addr_count %></p>
-    </li>
-    <li class="remove-border-bottom-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
-      <p class="small-detail-text"><%= gettext "Created"%></p>
-      <p class=" wallet-address"><span class="utc_time"><%= get_minutes(@asset.block_time)%></span></a>
+      <p class="large-detail-text"><%= @asset.addr_count || 0 %></p>
     </li>
   </ul>
 </section>

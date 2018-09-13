@@ -8,6 +8,7 @@ defmodule Neoscan.Assets do
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.Asset
+  alias Neoscan.Counter
 
   @doc """
   Gets a single asset by its hash value
@@ -18,7 +19,30 @@ defmodule Neoscan.Assets do
       nill
   """
   def get(hash) do
-    Repo.one(from(e in Asset, where: e.transaction_hash == ^hash))
+    query =
+      from(
+        a in Asset,
+        left_join: ca in Counter,
+        on: a.transaction_hash == ca.ref and ca.name == "addresses_by_asset",
+        left_join: ct in Counter,
+        on: a.transaction_hash == ct.ref and ct.name == "transactions_by_asset",
+        where: a.transaction_hash == ^hash,
+        select: %{
+          transaction_hash: a.transaction_hash,
+          name: a.name,
+          block_time: a.block_time,
+          type: a.type,
+          owner: a.owner,
+          admin: a.admin,
+          issued: a.issued,
+          precision: a.precision,
+          amount: a.amount,
+          addr_count: ca.value,
+          tx_count: ct.value
+        }
+      )
+
+    Repo.one(query)
   end
 
   @doc """
@@ -28,7 +52,31 @@ defmodule Neoscan.Assets do
       [%Asset{}, ...]
   """
   def paginate(page) do
-    assets_query = from(e in Asset, order_by: [desc: e.block_time], limit: @page_size)
+    assets_query =
+      from(
+        a in Asset,
+        left_join: ca in Counter,
+        on: a.transaction_hash == ca.ref and ca.name == "addresses_by_asset",
+        left_join: ct in Counter,
+        on: a.transaction_hash == ct.ref and ct.name == "transactions_by_asset",
+        order_by: [desc: fragment("coalesce(?, 0)", ct.value)],
+        limit: @page_size,
+        select: %{
+          transaction_hash: a.transaction_hash,
+          name: a.name,
+          block_time: a.block_time,
+          type: a.type,
+          owner: a.owner,
+          admin: a.admin,
+          issued: a.issued,
+          precision: a.precision,
+          amount: a.amount,
+          symbol: a.symbol,
+          addr_count: ca.value,
+          tx_count: ct.value
+        }
+      )
+
     Repo.paginate(assets_query, page: page, page_size: @page_size)
   end
 end

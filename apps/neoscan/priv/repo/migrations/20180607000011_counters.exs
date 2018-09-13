@@ -4,23 +4,25 @@ defmodule Neoscan.Repo.Migrations.Counters do
   def change do
     create table(:counters_cached, primary_key: false) do
       add(:name, :string, primary_key: true)
+      add(:ref, :binary, primary_key: true)
       add(:value, :integer, null: false)
     end
 
     create table(:counters_queue, primary_key: false) do
       add(:name, :string, null: false)
+      add(:ref, :binary, null: false)
       add(:value, :integer, null: false)
     end
 
     execute """
     CREATE OR REPLACE VIEW counters AS
-      SELECT name, SUM(value) AS value
+      SELECT name, ref, SUM(value) AS value
       FROM (
-        SELECT name, value FROM counters_queue
+        SELECT name, ref, value FROM counters_queue
          UNION ALL
-        SELECT name, value FROM counters_cached
+        SELECT name, ref, value FROM counters_cached
           ) combine
-      GROUP BY name;
+      GROUP BY name, ref;
 
     """
 
@@ -41,13 +43,13 @@ defmodule Neoscan.Repo.Migrations.Counters do
 
             WITH
             aggregated_queue AS (
-                SELECT name, SUM(value) AS value
+                SELECT name, ref, SUM(value) AS value
                 FROM counters_queue
-                GROUP BY name
+                GROUP BY name, ref
             ),
             perform_updates AS (
                 INSERT INTO counters_cached
-                SELECT name, value
+                SELECT name, ref, value
                 FROM aggregated_queue
                 ON CONFLICT ON CONSTRAINT counters_cached_pkey DO
                 UPDATE SET value = counters_cached.value + EXCLUDED.value

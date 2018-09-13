@@ -162,6 +162,7 @@ defmodule NeoscanWeb.Factory do
   def counter_factory do
     %CounterQueue{
       name: sequence("name"),
+      ref: <<0>>,
       value: sequence(1, & &1)
     }
   end

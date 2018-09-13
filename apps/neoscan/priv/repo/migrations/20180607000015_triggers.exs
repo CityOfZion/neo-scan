@@ -158,7 +158,7 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION block_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO counters_queue (name, value) VALUES ('blocks', 1), ('transactions', NEW.tx_count - 1);
+        INSERT INTO counters_queue (name, ref, value) VALUES ('blocks', E'\\\\x00', 1), ('transactions', E'\\\\x00', NEW.tx_count - 1);
         RETURN NULL;
       END;
       $body$;
@@ -173,7 +173,7 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION address_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO counters_queue (name, value) VALUES ('addresses', 1);
+        INSERT INTO counters_queue (name, ref, value) VALUES ('addresses', E'\\\\x00', 1);
         RETURN NULL;
       END;
       $body$;
@@ -188,7 +188,7 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION asset_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO counters_queue (name, value) VALUES ('assets', 1);
+        INSERT INTO counters_queue (name, ref, value) VALUES ('assets', E'\\\\x00', 1);
         RETURN NULL;
       END;
       $body$;
@@ -220,8 +220,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION transaction_by_asset_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO counters_queue (name, value)
-        VALUES ('transactions_by_asset_' || encode(NEW.asset_hash, 'hex'), 1);
+        INSERT INTO counters_queue (name, ref, value)
+        VALUES ('transactions_by_asset', NEW.asset_hash, 1);
         RETURN NULL;
       END;
       $body$;
@@ -236,8 +236,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION address_by_asset_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO counters_queue (name, value)
-        VALUES ('addresses_by_asset_' || encode(NEW.asset_hash, 'hex'), 1);
+        INSERT INTO counters_queue (name, ref, value)
+        VALUES ('addresses_by_asset', NEW.asset_hash, 1);
         RETURN NULL;
       END;
       $body$;
