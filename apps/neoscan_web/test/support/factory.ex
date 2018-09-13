@@ -60,7 +60,8 @@ defmodule NeoscanWeb.Factory do
       scripts: [],
       size: 123,
       type: Enum.random(@transaction_type),
-      version: 0
+      version: 0,
+      n: sequence(1, & &1)
     }
   end
 
@@ -83,6 +84,7 @@ defmodule NeoscanWeb.Factory do
       transaction_hash: :crypto.strong_rand_bytes(32),
       vout_transaction_hash: :crypto.strong_rand_bytes(32),
       vout_n: sequence(1, & &1),
+      n: sequence(1, & &1),
       block_index: sequence(1, & &1),
       block_time: DateTime.utc_now()
     }

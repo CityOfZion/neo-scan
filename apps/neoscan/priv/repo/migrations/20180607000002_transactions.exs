@@ -15,6 +15,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       add(:size, :integer, null: false)
       add(:type, :string, null: false)
       add(:version, :integer, null: false)
+      add(:n, :integer, null: false)
       timestamps()
     end
 

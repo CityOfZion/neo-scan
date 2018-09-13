@@ -25,6 +25,7 @@ defmodule Neoscan.Transaction do
     field(:size, :integer)
     field(:type, :string)
     field(:version, :integer)
+    field(:n, :integer)
     has_many(:vouts, Vout, foreign_key: :transaction_hash, references: :hash)
     has_many(:vins, Vin, foreign_key: :transaction_hash, references: :hash)
     has_many(:claims, Claim, foreign_key: :transaction_hash, references: :hash)
