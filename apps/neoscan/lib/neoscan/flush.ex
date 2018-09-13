@@ -21,10 +21,15 @@ defmodule Neoscan.Flush do
     Ecto.Adapters.SQL.query(Repo, "SELECT flush_vouts_queue()", [], timeout: :infinity)
   end
 
+  def blocks do
+    Ecto.Adapters.SQL.query(Repo, "SELECT flush_blocks_queue()", [], timeout: :infinity)
+  end
+
   def all do
     vouts()
     address_balances()
     address_transaction_balances()
     addresses()
+    blocks()
   end
 end

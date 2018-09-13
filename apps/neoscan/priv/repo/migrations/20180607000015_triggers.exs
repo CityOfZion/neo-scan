@@ -2,6 +2,25 @@ defmodule Neoscan.Repo.Migrations.Triggers do
   use Ecto.Migration
 
   def change do
+
+    # generate blocks_queue on blocks insertion
+
+    execute """
+    CREATE OR REPLACE FUNCTION genereate_blocks_queue() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        INSERT INTO blocks_queue (index, total_sys_fee)
+        VALUES (NEW.index, NEW.total_sys_fee);
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER genereate_blocks_queue_trigger
+      AFTER INSERT ON blocks FOR each row
+      EXECUTE PROCEDURE genereate_blocks_queue();
+    """
+
     # generate address history on vouts insertion (+)
 
     execute """

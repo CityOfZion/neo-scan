@@ -36,13 +36,25 @@ defmodule Neoscan.Blocks do
 
   defp _get(hash) when is_binary(hash) do
     Repo.one(
-      from(e in Block, where: e.hash == ^hash, preload: [transactions: ^transaction_query()])
+      from(
+        e in Block,
+        where: e.hash == ^hash,
+        preload: [
+          transactions: ^transaction_query()
+        ]
+      )
     )
   end
 
   defp _get(index) when is_integer(index) do
     Repo.one(
-      from(e in Block, where: e.index == ^index, preload: [transactions: ^transaction_query()])
+      from(
+        e in Block,
+        where: e.index == ^index,
+        preload: [
+          transactions: ^transaction_query()
+        ]
+      )
     )
   end
 
@@ -65,9 +77,12 @@ defmodule Neoscan.Blocks do
         ],
         limit: @page_size,
         select:
-          merge(e, %{
-            lag: fragment("extract(epoch FROM (? - lead(?) OVER ()))::integer", e.time, e.time)
-          })
+          merge(
+            e,
+            %{
+              lag: fragment("extract(epoch FROM (? - lead(?) OVER ()))::integer", e.time, e.time)
+            }
+          )
       )
 
     Repo.paginate(block_query, page: page, page_size: @page_size)
@@ -104,17 +119,36 @@ defmodule Neoscan.Blocks do
     if is_nil(max_index), do: -1, else: max_index
   end
 
-  def get_total_sys_fee(min, max) when max < min, do: []
-
-  def get_total_sys_fee(min, max) do
-    query =
+  def get_cumulative_fees(indexes) do
+    max_query =
       from(
         b in Block,
-        where: b.index >= ^min and b.index <= ^max,
-        select: map(b, [:index, :total_sys_fee]),
-        order_by: :index
+        where: b.cumulative_sys_fee > 0.0,
+        select: b.cumulative_sys_fee,
+        order_by: [desc: :index],
+        limit: 1
       )
 
-    Repo.all(query)
+    max = Repo.one(max_query) || Decimal.new(0.0)
+
+    all_query =
+      from(
+        b in Block,
+        where: b.index in ^indexes,
+        select: map(b, [:index, :cumulative_sys_fee])
+      )
+
+    values = Repo.all(all_query)
+
+    map =
+      Map.new(values, fn %{index: index, cumulative_sys_fee: cumulative_sys_fee} ->
+        {index, cumulative_sys_fee || max}
+      end)
+
+    map = Map.put(map, -1, Decimal.new(0.0))
+
+    map = Enum.reduce(indexes, map, fn index, acc -> Map.put_new(acc, index, max) end)
+
+    map
   end
 end

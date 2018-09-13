@@ -221,6 +221,17 @@ defmodule NeoscanWeb.ApiControllerTest do
       block_index: 8
     })
 
+    insert(:block, %{index: 0, total_sys_fee: Decimal.new("1.0")})
+    insert(:block, %{index: 1, total_sys_fee: Decimal.new("2.0")})
+    insert(:block, %{index: 2, total_sys_fee: Decimal.new("3.0")})
+    insert(:block, %{index: 3, total_sys_fee: Decimal.new("4.0")})
+    insert(:block, %{index: 4, total_sys_fee: Decimal.new("5.0")})
+    insert(:block, %{index: 5, total_sys_fee: Decimal.new("6.0")})
+    insert(:block, %{index: 6, total_sys_fee: Decimal.new("7.0")})
+    insert(:block, %{index: 7, total_sys_fee: Decimal.new("8.0")})
+    insert(:block, %{index: 8, total_sys_fee: Decimal.new("9.0")})
+    insert(:block, %{index: 9, total_sys_fee: Decimal.new("10.0")})
+
     Flush.all()
 
     address_hash = Base58.encode(vout1.address_hash)
@@ -229,7 +240,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     assert %{
              "address" => address_hash,
              "claimable" => claimable,
-             "unclaimed" => 1.68e-6
+             "unclaimed" => 2.85e-6
            } = json_response(conn, 200)
 
     assert [
@@ -238,9 +249,9 @@ defmodule NeoscanWeb.ApiControllerTest do
                "generated" => 4.8e-7,
                "n" => vout4.n,
                "start_height" => 5,
-               "sys_fee" => 0.0,
+               "sys_fee" => 4.2e-7,
                "txid" => Base.encode16(vout4.transaction_hash, case: :lower),
-               "unclaimed" => 4.8e-7,
+               "unclaimed" => 9.0e-7,
                "value" => 2
              },
              %{
@@ -248,9 +259,9 @@ defmodule NeoscanWeb.ApiControllerTest do
                "generated" => 1.2e-6,
                "n" => vout2.n,
                "start_height" => 3,
-               "sys_fee" => 0.0,
+               "sys_fee" => 7.5e-7,
                "txid" => Base.encode16(vout2.transaction_hash, case: :lower),
-               "unclaimed" => 1.2e-6,
+               "unclaimed" => 1.95e-6,
                "value" => 5
              }
            ] == Enum.sort_by(claimable, & &1["value"])
@@ -297,7 +308,7 @@ defmodule NeoscanWeb.ApiControllerTest do
         address_hash: address_hash,
         transaction_hash: transaction2.hash,
         asset_hash: asset_hash,
-        value: Decimal.new("5.0")
+        value: Decimal.new("50.0")
       })
 
     vout2 = insert(:vout, %{asset_hash: asset_hash, value: Decimal.new("7.0")})
@@ -496,7 +507,7 @@ defmodule NeoscanWeb.ApiControllerTest do
              %{
                "address_from" => address_hash_str,
                "address_to" => Base58.encode(vout3.address_hash),
-               "amount" => "5",
+               "amount" => "50",
                "asset" => asset_hash_str,
                "block_height" => transaction3.block_index,
                "time" => DateTime.to_unix(transaction3.block_time),
@@ -505,7 +516,7 @@ defmodule NeoscanWeb.ApiControllerTest do
              %{
                "address_from" => Base58.encode(vout2.address_hash),
                "address_to" => address_hash_str,
-               "amount" => "5",
+               "amount" => "50",
                "asset" => asset_hash_str,
                "block_height" => transaction2.block_index,
                "time" => DateTime.to_unix(transaction2.block_time),
