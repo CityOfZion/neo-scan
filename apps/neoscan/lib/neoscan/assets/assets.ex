@@ -35,6 +35,7 @@ defmodule Neoscan.Assets do
           owner: a.owner,
           admin: a.admin,
           issued: a.issued,
+          symbol: a.symbol,
           precision: a.precision,
           amount: a.amount,
           addr_count: ca.value,

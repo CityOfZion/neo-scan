@@ -23,8 +23,8 @@
             <div class="secondary-info-wrapper">
               <p class="medium-detail-text col-2-width"><%= asset.symbol || "N/A" %></p>
               <p class="medium-detail-text col-3-width"><%= Macro.camelize(asset.type) %></p>
-              <p class="medium-detail-text col-2-width"><%= asset.addr_count || 0 %></p>
-              <p class="medium-detail-text col-2-width remove-550px"><%= asset.tx_count || 0 %></p>
+              <p class="medium-detail-text col-2-width"><%= number_to_delimited(asset.addr_count || 0) %></p>
+              <p class="medium-detail-text col-2-width remove-550px"><%= number_to_delimited(asset.tx_count || 0) %></p>
             </div>
           </div>
         </div>

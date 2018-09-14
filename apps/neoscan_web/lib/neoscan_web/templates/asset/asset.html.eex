@@ -9,7 +9,7 @@
   <ul id="extra-information" class="asset-left-information-bar">
     <li class="border-right border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Name" %></p>
-      <p class="large-detail-text"><%= render_asset_name(@asset) %></p>
+      <p class="large-detail-text"><%= render_asset_name(@asset) %><%= unless is_nil(@asset.symbol), do: " (#{@asset.symbol})" %></p>
     </li>
     <li class="border-right border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Type" %></p>
@@ -26,17 +26,17 @@
           <a href="<%= address_path(@conn, :index, render_address_hash(@asset.admin))%>" class="large-blue-link"><%= render_address_hash(@asset.admin) %></a>
       <% end %>
     </li>
-    <li class="border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+    <li class="border-right tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Precision" %></p>
       <p class="large-detail-text"><%= @asset.precision %></p>
     </li>
     <li class="border-right border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Transactions"%></p>
-      <p class="large-detail-text"><%= @asset.tx_count || 0 %></p>
+      <p class="large-detail-text"><%= number_to_delimited(@asset.tx_count || 0) %></p>
     </li>
-    <li class="border-right remove-border-right-660px remove-border-bottom-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+    <li class="remove-border-right-660px remove-border-bottom-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Addresses"%></p>
-      <p class="large-detail-text"><%= @asset.addr_count || 0 %></p>
+      <p class="large-detail-text"><%= number_to_delimited(@asset.addr_count || 0) %></p>
     </li>
   </ul>
 </section>
