@@ -26,7 +26,7 @@
           <a href="<%= address_path(@conn, :index, render_address_hash(@asset.admin))%>" class="large-blue-link"><%= render_address_hash(@asset.admin) %></a>
       <% end %>
     </li>
-    <li class="border-right tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
+    <li class="border-right border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Precision" %></p>
       <p class="large-detail-text"><%= @asset.precision %></p>
     </li>

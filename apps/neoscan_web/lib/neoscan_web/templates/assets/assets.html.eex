@@ -1,10 +1,10 @@
 <h1 class="content-title"><%= gettext "Assets" %></h1>
 
 <!-- All assets content -->
-<section id="all-assets-wrapper">
+<section id="all-blocks-wrapper">
 
   <div class="detail-bar">
-    <p class="detail-type detail-type-first-3-col"><%= gettext "Name" %></p>
+    <p class="detail-type detail-type-first-4-col"><%= gettext "Name" %></p>
     <p class="detail-type col-2-width"><%= gettext "Symbol" %></p>
     <p class="detail-type col-3-width"><%= gettext "Type" %></p>
     <p class="detail-type col-2-width"><%= gettext "Addresses" %></p>
@@ -13,13 +13,13 @@
   </div>
 
   <!-- Assets -->
-  <section id="assets-wrapper">
+  <section id="blocks-wrapper">
     <div class="assets-list">
       <!-- Asset -->
       <%= for asset <- @assets do %>
         <div class="full-width-bar asset">
           <div class="information-wrapper">
-            <p class="medium-detail-text col-3-width"><span class="fa <%= render_asset_style(asset.type) %>"></span><a href="<%= asset_path(@conn, :index, render_hash(asset.transaction_hash))%>" alt="<%= gettext "View asset"%>" title="<%= gettext "View asset"%>"><%= render_asset_name(asset) %></a></p>
+            <p class="medium-detail-text col-4-width"><span class="fa <%= render_asset_style(asset.type) %>"></span><a href="<%= asset_path(@conn, :index, render_hash(asset.transaction_hash))%>" alt="<%= gettext "View asset"%>" title="<%= gettext "View asset"%>"><%= render_asset_name(asset) %></a></p>
             <div class="secondary-info-wrapper">
               <p class="medium-detail-text col-2-width"><%= asset.symbol || "N/A" %></p>
               <p class="medium-detail-text col-3-width"><%= Macro.camelize(asset.type) %></p>
