@@ -7,6 +7,7 @@ defmodule Neoscan.CounterQueue do
   @primary_key false
   schema "counters_queue" do
     field(:name, :string)
+    field(:ref, :binary)
     field(:value, :integer)
   end
 end
