@@ -1415,7 +1415,15 @@ a:hover {
   color: #2CE3B5;
 }
 
-#blocks-wrapper .full-width-bar.asset {
+#blocks-wrapper .full-width-bar.fa-cube-border {
+    border-left: 4px solid #00A62C;
+}
+
+#blocks-wrapper .full-width-bar.fa-cubes-border {
+    border-left: 4px solid #BEEB00;
+}
+
+#blocks-wrapper .full-width-bar.fa-university-border {
     border-left: 4px solid #FFE859;
 }
 
