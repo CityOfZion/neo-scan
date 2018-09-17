@@ -1415,6 +1415,9 @@ a:hover {
   color: #2CE3B5;
 }
 
+#blocks-wrapper .full-width-bar.asset {
+    border-left: 4px solid #FFE859;
+}
 
 /******************************************
 
