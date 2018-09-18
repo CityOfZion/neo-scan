@@ -13,7 +13,7 @@ defmodule Neoscan.BlockGasGeneration do
   def get_amount_generate_in_block(0), do: Enum.at(@generation_amount, 0) |> Decimal.new()
 
   def get_amount_generate_in_block(index) do
-    if Integer.floor_div(index, @decrement_interval) > @generation_length do
+    if Integer.floor_div(index, @decrement_interval) >= @generation_length do
       Decimal.new(0)
     else
       position = Integer.floor_div(index, @decrement_interval)
