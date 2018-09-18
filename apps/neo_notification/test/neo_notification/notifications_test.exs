@@ -55,7 +55,8 @@ defmodule NeoNotificationTest do
                   <<201, 32, 178, 25, 46, 116, 237, 164, 202, 97, 64, 81, 8, 19, 170, 64, 254,
                     241, 118, 125, 0, 193, 82, 170, 111, 128, 39, 194, 75, 223, 20, 242>>,
                 type: "SmartContract.Runtime.Notify"
-              }
+              },
+              %{notify_type: :others}
             ]} == NeoNotification.get_block_notifications(@notification_url, 1_444_843)
 
     assert 2771 ==
@@ -139,6 +140,8 @@ defmodule NeoNotificationTest do
              Enum.count(
                elem(NeoNotification.get_block_transfers(@notification_url, 1_444_843), 1)
              )
+
+    assert {:error, _} = NeoNotification.get_block_transfers("error", 1_444_843)
   end
 
   test "get_current_height/2" do

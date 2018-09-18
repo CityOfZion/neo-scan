@@ -21,4 +21,9 @@ defmodule Neoscan.CountersTest do
     Flush.all()
     assert 18 == Counters.count_addresses()
   end
+
+  test "count_assets/0" do
+    for _ <- 1..18, do: insert(:asset)
+    assert 18 == Counters.count_assets()
+  end
 end

@@ -35,6 +35,14 @@ defmodule Neoscan.TransactionsTest do
   test "get_for_address/2" do
     transaction1 = insert(:transaction)
     transaction2 = insert(:transaction)
+    asset = insert(:asset)
+
+    insert(:transfer, %{
+      transaction_hash: transaction1.hash,
+      contract: asset.transaction_hash,
+      amount: Decimal.new("18.0")
+    })
+
     address_history = insert(:address_history, %{transaction_hash: transaction1.hash})
 
     insert(:address_history, %{
