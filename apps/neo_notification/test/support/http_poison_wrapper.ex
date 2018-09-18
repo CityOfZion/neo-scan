@@ -148,6 +148,16 @@ defmodule NeoNotification.HTTPPoisonWrapper do
                 "notify_type" => "transfer",
                 "tx" => "0xc920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2",
                 "type" => "SmartContract.Runtime.Notify"
+              },
+              %{
+                "addr_from" => "",
+                "addr_to" => "AHWaJejUjvez5R6SW5kbWrMoLA9vSzTpW9",
+                "amount" => "9096780000000000",
+                "block" => 1_444_843,
+                "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
+                "notify_type" => "random",
+                "tx" => "0xc920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2",
+                "type" => "SmartContract.Runtime.Notify"
               }
             ],
             "total" => 3,
@@ -260,13 +270,13 @@ defmodule NeoNotification.HTTPPoisonWrapper do
     }
   end
 
-  def get("error", _, _), do: {:error, :error}
+  def get("error" <> _, _, _), do: {:error, :error}
 
   def get(url, headers, opts) do
     IO.inspect({url, headers, opts})
     result = HTTPoison.get(url, headers, opts)
     IO.inspect(result)
-    IO.inspect(Poison.decode!(elem(result, 1).body), limit: :infinity)
+    IO.inspect(elem(result, 1), limit: :infinity)
     result
   end
 end
