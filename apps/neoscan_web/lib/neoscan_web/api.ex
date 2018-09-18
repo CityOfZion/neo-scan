@@ -232,7 +232,7 @@ defmodule NeoscanWeb.Api do
   end
 
   def get_height do
-    %{:height => Counters.count_blocks() - 1}
+    %{:height => Blocks.last_index()}
   end
 
   def get_address_abstracts(address_hash, page) do
