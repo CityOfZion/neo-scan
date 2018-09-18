@@ -4,8 +4,10 @@ defmodule Neoscan.Counter do
   """
   use Ecto.Schema
 
-  @primary_key {:name, :string, []}
+  @primary_key false
   schema "counters" do
+    field(:name, :string, primary_key: true)
+    field(:ref, :binary, primary_key: true)
     field(:value, :integer)
   end
 end

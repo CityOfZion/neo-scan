@@ -89,6 +89,9 @@
 						<a href="<%= blocks_path(@conn, :page, "1") %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_blocks_path(@conn), do: " active" %>"><%= gettext "Blocks" %></a>
 					</li>
 					<li>
+						<a href="<%= assets_path(@conn, :page, "1") %>" alt="Explorer" title="Explorer" class="nav-link <%= if is_assets_path(@conn), do: " active" %>"><%= gettext "Assets" %></a>
+					</li>
+					<li>
 						<a href="<%= docs_path(@conn, :index) %>" alt="Explorer" title="Explorer" class="nav-link"><%= gettext "API" %></a>
 					</li>
 				</ul>

@@ -1,6 +1,7 @@
 defmodule NeoscanWeb.CommonView do
   alias NeoscanWeb.Explanations
   alias NeoscanWeb.ViewHelper
+  alias Neoscan.Asset
   alias NeoVM.Disassembler
 
   def get_transaction_name("contract_transaction"), do: "Contract"
@@ -55,8 +56,8 @@ defmodule NeoscanWeb.CommonView do
 
   def check_last(page, total), do: page * 15 < total
 
-  def render_asset_style("GAS"), do: "fa-cubes"
-  def render_asset_style("NEO"), do: "fa-cube"
+  def render_asset_style("utility_token"), do: "fa-cubes"
+  def render_asset_style("governing_token"), do: "fa-cube"
   def render_asset_style(_), do: "fa-university"
 
   def render_hash(hash), do: Base.encode16(hash, case: :lower)
@@ -96,6 +97,15 @@ defmodule NeoscanWeb.CommonView do
   end
 
   def render_date_time(date_time), do: DateTime.to_unix(date_time)
+
+  def render_asset_name(%{:name => name} = asset) when is_list(name) do
+    updated_asset = Asset.update_name(asset)
+    updated_asset.name
+  end
+
+  def render_asset_name(asset) do
+    asset.name
+  end
 
   def has_script?(scripts), do: not is_nil(get_script(scripts))
 

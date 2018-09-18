@@ -21,6 +21,7 @@ defmodule Neoscan.Asset do
     field(:owner, :binary)
     field(:precision, :integer)
     field(:type, :string)
+    field(:symbol, :string)
     field(:issued, :decimal)
     field(:block_time, :utc_datetime)
     field(:contract, :binary)

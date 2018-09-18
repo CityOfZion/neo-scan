@@ -129,6 +129,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
       EXECUTE PROCEDURE generate_address_transaction_balances_from_address_history();
     """
 
+
+
     # Generate address history from transfer
 
     execute """
@@ -156,7 +158,7 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION block_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO counters_queue (name, value) VALUES ('blocks', 1), ('transactions', NEW.tx_count - 1);
+        INSERT INTO counters_queue (name, ref, value) VALUES ('blocks', E'\\\\x00', 1), ('transactions', E'\\\\x00', NEW.tx_count - 1);
         RETURN NULL;
       END;
       $body$;
@@ -171,7 +173,7 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION address_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO counters_queue (name, value) VALUES ('addresses', 1);
+        INSERT INTO counters_queue (name, ref, value) VALUES ('addresses', E'\\\\x00', 1);
         RETURN NULL;
       END;
       $body$;
@@ -181,6 +183,70 @@ defmodule Neoscan.Repo.Migrations.Triggers do
       CREATE TRIGGER address_counter_trigger
       AFTER INSERT ON addresses FOR each row
       EXECUTE PROCEDURE address_counter();
+    """
+
+    execute """
+    CREATE OR REPLACE FUNCTION asset_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        INSERT INTO counters_queue (name, ref, value) VALUES ('assets', E'\\\\x00', 1);
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER asset_counter_trigger
+      AFTER INSERT ON assets FOR each row
+      EXECUTE PROCEDURE asset_counter();
+    """
+
+    execute """
+    CREATE OR REPLACE FUNCTION transaction_assets_trigger() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        INSERT INTO transaction_assets (transaction_hash, asset_hash)
+        VALUES (NEW.transaction_hash, NEW.asset_hash)
+        ON CONFLICT ON CONSTRAINT transaction_assets_pkey DO NOTHING;
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER transaction_assets_trigger
+      AFTER INSERT ON address_transaction_balances FOR each row
+      EXECUTE PROCEDURE transaction_assets_trigger();
+    """
+
+    execute """
+    CREATE OR REPLACE FUNCTION transaction_by_asset_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        INSERT INTO counters_queue (name, ref, value)
+        VALUES ('transactions_by_asset', NEW.asset_hash, 1);
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER transaction_by_asset_counter_trigger
+      AFTER INSERT ON transaction_assets FOR each row
+      EXECUTE PROCEDURE transaction_by_asset_counter();
+    """
+
+    execute """
+    CREATE OR REPLACE FUNCTION address_by_asset_counter() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        INSERT INTO counters_queue (name, ref, value)
+        VALUES ('addresses_by_asset', NEW.asset_hash, 1);
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER address_by_asset_counter_trigger
+      AFTER INSERT ON address_balances FOR each row
+      EXECUTE PROCEDURE address_by_asset_counter();
     """
 
     # transactions

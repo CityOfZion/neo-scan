@@ -34,4 +34,8 @@ defmodule Neoscan.Counters do
       0
     ]
   end
+
+  def count_assets do
+    Repo.one(from(c in Counter, where: c.name == "assets", select: c.value))
+  end
 end
