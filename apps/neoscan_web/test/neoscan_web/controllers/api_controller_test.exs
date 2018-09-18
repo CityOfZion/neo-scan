@@ -154,8 +154,6 @@ defmodule NeoscanWeb.ApiControllerTest do
     insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
-    Flush.all()
-
     insert(:block, %{index: 2, total_sys_fee: Decimal.new("0.0")})
     insert(:block, %{index: 4, total_sys_fee: Decimal.new("0.0")})
     insert(:block, %{index: 5, total_sys_fee: Decimal.new("0.0")})
@@ -167,6 +165,8 @@ defmodule NeoscanWeb.ApiControllerTest do
     insert(:block, %{index: 13, total_sys_fee: Decimal.new("0.0")})
     insert(:block, %{index: 14, total_sys_fee: Decimal.new("0.0")})
     # current index will be 9
+
+    Flush.all()
 
     address_hash = Base58.encode(vout1.address_hash)
 
@@ -819,7 +819,7 @@ defmodule NeoscanWeb.ApiControllerTest do
   end
 
   test "get_height", %{conn: conn} do
-    insert(:counter, %{name: "blocks", value: 156})
+    insert(:block_meta, %{id: 1, index: 155})
     conn = get(conn, api_path(conn, :get_height)) |> BlueBird.ConnLogger.save()
     assert 155 == json_response(conn, 200)["height"]
   end

@@ -2,6 +2,7 @@ defmodule Neoscan.Factory do
   # with Ecto
   use ExMachina.Ecto, repo: Neoscan.Repo
   alias Neoscan.Block
+  alias Neoscan.BlockMeta
   alias Neoscan.Transaction
   alias Neoscan.Vout
   alias Neoscan.Vin
@@ -43,6 +44,14 @@ defmodule Neoscan.Factory do
       total_sys_fee: Decimal.new(0),
       total_net_fee: Decimal.new(0),
       gas_generated: Decimal.new("8.1")
+    }
+  end
+
+  def block_meta_factory do
+    %BlockMeta{
+      id: sequence(1, & &1),
+      index: sequence(1, & &1),
+      cumulative_sys_fee: Decimal.new(0)
     }
   end
 
