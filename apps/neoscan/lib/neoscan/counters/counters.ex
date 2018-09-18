@@ -4,13 +4,14 @@ defmodule Neoscan.Counters do
   import Ecto.Query, warn: false
   alias Neoscan.Repo
   alias Neoscan.Counter
+  alias Neoscan.BlockMeta
 
   def count_addresses do
     Repo.one(from(c in Counter, where: c.name == "addresses", select: c.value))
   end
 
   def count_blocks do
-    Repo.one(from(c in Counter, where: c.name == "blocks", select: c.value))
+    Repo.one(from(c in BlockMeta, where: c.id == 1, select: c.index)) || 0
   end
 
   def _count_transactions do

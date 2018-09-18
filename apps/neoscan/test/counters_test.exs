@@ -12,7 +12,8 @@ defmodule Neoscan.CountersTest do
   end
 
   test "count_blocks/0" do
-    for _ <- 1..18, do: insert(:block)
+    assert 0 == Counters.count_blocks()
+    insert(:block_meta, %{id: 1, index: 18})
     assert 18 == Counters.count_blocks()
   end
 
