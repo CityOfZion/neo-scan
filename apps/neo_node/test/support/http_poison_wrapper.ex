@@ -2245,6 +2245,26 @@ defmodule NeoNode.HTTPPoisonWrapper do
     }
   end
 
+  def handle_post(%{"params" => [], "method" => "getversion", "jsonrpc" => "2.0", "id" => 5}) do
+    body =
+      :zlib.gzip(
+        Poison.encode!(%{
+          "id" => 5,
+          "jsonrpc" => "2.0",
+          "result" => %{
+            "nonce" => 22_173_783,
+            "port" => 10333,
+            "useragent" => "/NEO:2.7.6.1/"
+          }
+        })
+      )
+
+    {
+      :ok,
+      %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}
+    }
+  end
+
   def handle_post(_), do: nil
 
   def block_data(0), do: result(@block0)

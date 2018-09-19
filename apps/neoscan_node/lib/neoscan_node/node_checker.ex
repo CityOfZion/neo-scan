@@ -4,10 +4,11 @@ defmodule NeoscanNode.NodeChecker do
   @neo_node_urls Application.fetch_env!(:neoscan_node, :seeds)
   @neo_notification_urls Application.fetch_env!(:neoscan_node, :notification_seeds)
   @update_interval 100
-  @env_var_prefix "NEO_SEED_"
+  @env_var_nodes "NEO_SEEDS"
   @env_var_neo_notification "NEO_NOTIFICATIONS_SERVER"
   @retry_interval 1_000
   @timeout 15_000
+  @node_list_url Application.fetch_env!(:neoscan_node, :node_list_url)
 
   alias NeoscanNode.EtsProcess
   use GenServer
@@ -20,6 +21,7 @@ defmodule NeoscanNode.NodeChecker do
 
   def init(:ok) do
     EtsProcess.create_table(__MODULE__)
+    {:ok, _} = Task.start(&process_url_task/0)
     {:ok, sync()}
   end
 
@@ -54,6 +56,13 @@ defmodule NeoscanNode.NodeChecker do
 
   defp get_live_notifications, do: get(:live_notifications)
 
+  defp process_url_task do
+    new_list = Enum.uniq(@neo_node_urls ++ get_node_urls())
+    Application.put_env(:neoscan_node, :seeds, new_list)
+    Process.sleep(@timeout)
+    process_url_task()
+  end
+
   def get_random_notification(index) do
     case Enum.filter(get_live_notifications(), &(elem(&1, 1) >= index)) do
       [] ->
@@ -77,19 +86,27 @@ defmodule NeoscanNode.NodeChecker do
   end
 
   defp get_neo_node_urls do
-    1..20
-    |> Enum.map(&"#{@env_var_prefix}#{&1}")
-    |> Enum.map(&System.get_env/1)
-    |> Enum.filter(&(not is_nil(&1) and &1 != ""))
-    |> (&if(&1 == [], do: @neo_node_urls, else: &1)).()
+    nodes_str = System.get_env(@env_var_nodes) || ""
+
+    case String.split(nodes_str, ";") do
+      [""] ->
+        @neo_node_urls
+
+      neo_nodes_urls ->
+        neo_nodes_urls
+    end
   end
 
   defp get_neo_notification_urls do
-    notification_server = System.get_env(@env_var_neo_notification)
+    notifications_str = System.get_env(@env_var_neo_notification) || ""
 
-    if is_nil(notification_server) or notification_server == "",
-      do: @neo_notification_urls,
-      else: [notification_server]
+    case String.split(notifications_str, ";") do
+      [""] ->
+        @neo_notification_urls
+
+      neo_notification_urls ->
+        neo_notification_urls
+    end
   end
 
   defp get_notification_height(url) do
@@ -126,6 +143,32 @@ defmodule NeoscanNode.NodeChecker do
     case :ets.lookup(__MODULE__, key) do
       [{^key, result}] -> result
       _ -> nil
+    end
+  end
+
+  defp keep_correct_version(url) do
+    case NeoNode.get_version(url, 10_000) do
+      {:ok, {:csharp, _}} ->
+        url
+
+      _ ->
+        nil
+    end
+  end
+
+  def get_node_urls do
+    try do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} = HTTPoison.get(@node_list_url)
+      nodes = Poison.decode!(body)
+
+      nodes["sites"]
+      |> Enum.filter(&(&1["type"] == "RPC"))
+      |> Enum.map(&"#{&1["protocol"]}://#{&1["url"]}:#{&1["port"] || 80}")
+      |> pmap(&keep_correct_version/1, @timeout)
+      |> Enum.filter(&(not is_nil(&1)))
+    catch
+      _, _ ->
+        []
     end
   end
 end

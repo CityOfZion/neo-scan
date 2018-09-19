@@ -53,26 +53,8 @@ spec:
           value: ${DB_DATABASE}
         - name: DB_HOSTNAME
           value: 127.0.0.1
-        - name: NEO_SEED_1
-          value: ${NEO_SEED_1}
-        - name: NEO_SEED_2
-          value: ${NEO_SEED_2}
-        - name: NEO_SEED_3
-          value: ${NEO_SEED_3}
-        - name: NEO_SEED_4
-          value: ${NEO_SEED_4}
-        - name: NEO_SEED_5
-          value: ${NEO_SEED_5}
-        - name: NEO_SEED_6
-          value: ${NEO_SEED_6}
-        - name: NEO_SEED_7
-          value: ${NEO_SEED_7}
-        - name: NEO_SEED_8
-          value: ${NEO_SEED_8}
-        - name: NEO_SEED_9
-          value: ${NEO_SEED_9}
-        - name: NEO_SEED_10
-          value: ${NEO_SEED_10}
+        - name: NEO_SEEDS
+          value: ${NEO_SEEDS}
         - name: TEST_NET
           value: "${TEST_NET}"
         - name: NEO_NOTIFICATIONS_SERVER
