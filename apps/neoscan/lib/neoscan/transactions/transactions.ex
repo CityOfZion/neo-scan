@@ -72,11 +72,11 @@ defmodule Neoscan.Transactions do
     %{result | entries: Enum.map(result.entries, &add_extra/1)}
   end
 
-  def get_for_block(block_hash, page) do
+  def get_for_block(block_index, page) do
     transaction_query =
       from(
         t in Transaction,
-        where: t.block_hash == ^block_hash,
+        where: t.block_index == ^block_index,
         preload: [{:transfers, ^transfer_query()}, :asset],
         order_by: [t.block_time, t.n],
         select: t,

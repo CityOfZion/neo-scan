@@ -49,6 +49,7 @@ defmodule NeoscanCache.Factory do
 
   def transaction_factory do
     %Transaction{
+      id: sequence(1, & &1),
       hash: :crypto.strong_rand_bytes(32),
       block_hash: :crypto.strong_rand_bytes(32),
       block_index: sequence(1, & &1),

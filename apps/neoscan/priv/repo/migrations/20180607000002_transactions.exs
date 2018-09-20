@@ -3,6 +3,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
 
   def change do
     create table(:transactions, primary_key: false) do
+      add(:id, :bigint, null: false)
       add(:hash, :binary, primary_key: true)
       add(:block_hash, :binary, null: false)
       add(:block_index, :integer, null: false)
@@ -19,7 +20,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       timestamps()
     end
 
-    create(index(:transactions, [:block_hash]))
+    create(index(:transactions, [:block_index]))
     create(index(:transactions, [:block_index, :n], where: "type != 'miner_transaction'", name: "partial_index_block_index"))
   end
 end

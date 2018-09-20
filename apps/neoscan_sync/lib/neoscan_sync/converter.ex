@@ -92,6 +92,7 @@ defmodule NeoscanSync.Converter do
 
   def convert_transaction(transaction_raw, transaction_n, block_raw) do
     %Transaction{
+      id: block_raw.index * 1_000_00 + transaction_n,
       block_hash: block_raw.hash,
       hash: get_transaction_hash(transaction_raw, block_raw),
       block_index: block_raw.index,
