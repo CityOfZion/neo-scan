@@ -20,7 +20,7 @@ defmodule Neoscan.Repo.Migrations.Transactions do
       timestamps()
     end
 
-    create(index(:transactions, [:block_index]))
-    create(index(:transactions, [:block_index, :n], where: "type != 'miner_transaction'", name: "partial_index_block_index"))
+    create(index(:transactions, [:block_index, :id]))
+    create(index(:transactions, [:id], where: "type != 'miner_transaction'", name: "partial_index_block_index"))
   end
 end

@@ -26,8 +26,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_history_from_vouts() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
-        VALUES (NEW.address_hash, NEW.transaction_hash, NEW.asset_hash, NEW.value, NEW.block_time, NEW.inserted_at, NEW.updated_at);
+        INSERT INTO address_histories (address_hash, transaction_hash, transaction_id, asset_hash, value, block_time, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.transaction_hash, NEW.transaction_id, NEW.asset_hash, NEW.value, NEW.block_time, NEW.inserted_at, NEW.updated_at);
         RETURN NULL;
       END;
       $body$;
@@ -44,8 +44,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_vout_updates_based_on_vins() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO vouts_queue (vin_transaction_hash, transaction_hash, n, claimed, spent, end_block_index, block_time, inserted_at, updated_at)
-        VALUES (NEW.transaction_hash, NEW.vout_transaction_hash, NEW.vout_n, false, true, NEW.block_index, NEW.block_time, NEW.inserted_at, NEW.updated_at);
+        INSERT INTO vouts_queue (vin_transaction_hash, vin_transaction_id, transaction_hash, n, claimed, spent, end_block_index, block_time, inserted_at, updated_at)
+        VALUES (NEW.transaction_hash, NEW.transaction_id, NEW.vout_transaction_hash, NEW.vout_n, false, true, NEW.block_index, NEW.block_time, NEW.inserted_at, NEW.updated_at);
         RETURN NULL;
       END;
       $body$;
@@ -116,8 +116,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_transaction_balances_from_address_history() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO address_transaction_balances_queue (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
-        VALUES (NEW.address_hash, NEW.transaction_hash, NEW.asset_hash, NEW.value, NEW.block_time, NEW.inserted_at, NEW.updated_at);
+        INSERT INTO address_transaction_balances_queue (address_hash, transaction_hash, transaction_id, asset_hash, value, block_time, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.transaction_hash, NEW.transaction_id, NEW.asset_hash, NEW.value, NEW.block_time, NEW.inserted_at, NEW.updated_at);
         RETURN NULL;
       END;
       $body$;
@@ -129,8 +129,6 @@ defmodule Neoscan.Repo.Migrations.Triggers do
       EXECUTE PROCEDURE generate_address_transaction_balances_from_address_history();
     """
 
-
-
     # Generate address history from transfer
 
     execute """
@@ -138,9 +136,9 @@ defmodule Neoscan.Repo.Migrations.Triggers do
       BEGIN
         INSERT INTO address_histories
         SELECT * FROM
-        (VALUES (NEW.address_from, NEW.transaction_hash, NEW.contract, - NEW.amount, NEW.block_time, NEW.inserted_at, NEW.updated_at),
-        (NEW.address_to, NEW.transaction_hash, NEW.contract, NEW.amount, NEW.block_time, NEW.inserted_at, NEW.updated_at)) as
-        tmp (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
+        (VALUES (NEW.address_from, NEW.transaction_hash, NEW.transaction_id, NEW.contract, - NEW.amount, NEW.block_time, NEW.inserted_at, NEW.updated_at),
+        (NEW.address_to, NEW.transaction_hash, NEW.transaction_id, NEW.contract, NEW.amount, NEW.block_time, NEW.inserted_at, NEW.updated_at)) as
+        tmp (address_hash, transaction_hash, transaction_id, asset_hash, value, block_time, inserted_at, updated_at)
         WHERE address_hash != E'\\\\x00';
         RETURN NULL;
       END;
@@ -254,8 +252,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_transactions_from_address_histories() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO address_transactions (address_hash, transaction_hash, block_time, inserted_at, updated_at)
-        VALUES (NEW.address_hash, NEW.transaction_hash, NEW.block_time, NEW.inserted_at, NEW.updated_at)
+        INSERT INTO address_transactions (address_hash, transaction_hash, transaction_id, block_time, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.transaction_hash, NEW.transaction_id, NEW.block_time, NEW.inserted_at, NEW.updated_at)
         ON CONFLICT ON CONSTRAINT address_transactions_pkey DO NOTHING;
         RETURN NULL;
       END;

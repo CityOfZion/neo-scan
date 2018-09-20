@@ -50,8 +50,7 @@ defmodule Neoscan.Transactions do
       from(
         t in Transaction,
         order_by: [
-          desc: t.block_index,
-          desc: t.n
+          desc: t.id
         ],
         preload: [
           {:transfers, ^transfer_query()},
@@ -78,7 +77,7 @@ defmodule Neoscan.Transactions do
         t in Transaction,
         where: t.block_index == ^block_index,
         preload: [{:transfers, ^transfer_query()}, :asset],
-        order_by: [t.block_time, t.n],
+        order_by: [t.id],
         select: t,
         limit: @page_size
       )
@@ -95,7 +94,7 @@ defmodule Neoscan.Transactions do
         on: at.transaction_hash == t.hash,
         where: at.address_hash == ^address_hash,
         preload: [{:transfers, ^transfer_query()}, :asset],
-        order_by: [desc: at.block_time, desc: t.n],
+        order_by: [desc: at.transaction_id],
         select: t
       )
 

@@ -6,6 +6,8 @@ defmodule Neoscan.Transfer do
 
   @primary_key false
   schema "transfers" do
+    field(:transaction_id, :integer)
+
     belongs_to(
       :transaction,
       Transaction,

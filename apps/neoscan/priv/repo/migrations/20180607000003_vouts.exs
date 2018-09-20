@@ -4,6 +4,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
   def change do
 
     create table(:vouts, primary_key: false) do
+      add(:transaction_id, :bigint, null: false)
       add(:transaction_hash, :binary, null: false, primary_key: true)
       add(:n, :integer, null: false, primary_key: true)
       add(:address_hash, :binary, null: false)
@@ -26,6 +27,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     create(index(:vouts, [:address_hash, :claimed, :spent]))
 
     create table(:vouts_queue, primary_key: false) do
+      add(:vin_transaction_id, :bigint, null: true)
       add(:vin_transaction_hash, :binary, null: true)
       add(:transaction_hash, :binary, null: false)
       add(:n, :integer, null: false)
@@ -54,6 +56,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
             WITH
             aggregated_queue AS (
                 SELECT (array_remove(array_agg(vin_transaction_hash), NULL))[1] as vin_transaction_hash,
+                    (array_remove(array_agg(vin_transaction_id), NULL))[1] as vin_transaction_id,
                   transaction_hash, n, BOOL_OR(claimed) as claimed, BOOL_OR(spent) as spent, MAX(end_block_index) as end_block_index,
                   MAX(block_time) as block_time, MIN(inserted_at) as inserted_at, MAX(updated_at) as updated_at
                 FROM vouts_queue
@@ -67,13 +70,13 @@ defmodule Neoscan.Repo.Migrations.Vouts do
                   end_block_index = GREATEST(vouts.end_block_index, aggregated_queue.end_block_index)
                 FROM aggregated_queue
                 WHERE aggregated_queue.transaction_hash = vouts.transaction_hash and aggregated_queue.n = vouts.n
-                RETURNING aggregated_queue.vin_transaction_hash, aggregated_queue.transaction_hash, aggregated_queue.n, aggregated_queue.claimed,
+                RETURNING aggregated_queue.vin_transaction_hash, aggregated_queue.vin_transaction_id, aggregated_queue.transaction_hash, aggregated_queue.n, aggregated_queue.claimed,
                 aggregated_queue.spent, aggregated_queue.end_block_index, aggregated_queue.block_time,
                 aggregated_queue.inserted_at, aggregated_queue.updated_at, vouts.address_hash, vouts.asset_hash, vouts.value
             ),
             perform_inserts AS (
-                INSERT INTO address_histories (address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at)
-                SELECT address_hash, vin_transaction_hash, asset_hash, value * -1.0, block_time, inserted_at, updated_at
+                INSERT INTO address_histories (address_hash, transaction_hash, transaction_id, asset_hash, value, block_time, inserted_at, updated_at)
+                SELECT address_hash, vin_transaction_hash, vin_transaction_id, asset_hash, value * -1.0, block_time, inserted_at, updated_at
                 FROM perform_updates WHERE spent = true
                 RETURNING 1
             ),

@@ -280,6 +280,7 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     vout =
       insert(:vout, %{
+        transaction_id: transaction1.id,
         transaction_hash: transaction1.hash,
         asset_hash: @utility_token,
         value: Decimal.new("5.1")
@@ -289,12 +290,14 @@ defmodule NeoscanWeb.ApiControllerTest do
     address_hash_str = Base58.encode(address_hash)
 
     insert(:vout, %{
+      transaction_id: transaction1.id,
       transaction_hash: transaction1.hash,
       asset_hash: asset_hash,
       value: Decimal.new("2.1")
     })
 
     insert(:vout, %{
+      transaction_id: transaction1.id,
       transaction_hash: transaction1.hash,
       asset_hash: asset_hash,
       value: Decimal.new("3.0")
@@ -306,6 +309,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     vout4 =
       insert(:vout, %{
         address_hash: address_hash,
+        transaction_id: transaction2.id,
         transaction_hash: transaction2.hash,
         asset_hash: asset_hash,
         value: Decimal.new("50.0")
@@ -314,12 +318,14 @@ defmodule NeoscanWeb.ApiControllerTest do
     vout2 = insert(:vout, %{asset_hash: asset_hash, value: Decimal.new("7.0")})
 
     insert(:vin, %{
+      transaction_id: transaction2.id,
       transaction_hash: transaction2.hash,
       vout_n: vout2.n,
       vout_transaction_hash: vout2.transaction_hash
     })
 
     insert(:vout, %{
+      transaction_id: transaction2.id,
       transaction_hash: transaction2.hash,
       asset_hash: asset_hash,
       value: Decimal.new("2.0")
@@ -330,12 +336,14 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     vout3 =
       insert(:vout, %{
+        transaction_id: transaction3.id,
         transaction_hash: transaction3.hash,
         asset_hash: asset_hash,
         value: Decimal.new("5.0")
       })
 
     insert(:vin, %{
+      transaction_id: transaction3.id,
       transaction_hash: transaction3.hash,
       vout_n: vout4.n,
       vout_transaction_hash: vout4.transaction_hash
@@ -346,6 +354,7 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     vout5 =
       insert(:vout, %{
+        transaction_id: transaction5.id,
         transaction_hash: transaction5.hash,
         asset_hash: asset_hash,
         value: Decimal.new("9.0")
@@ -356,18 +365,21 @@ defmodule NeoscanWeb.ApiControllerTest do
     vout6 =
       insert(:vout, %{
         address_hash: address_hash,
+        transaction_id: transaction4.id,
         transaction_hash: transaction4.hash,
         asset_hash: asset_hash,
         value: Decimal.new("14.0")
       })
 
     insert(:vin, %{
+      transaction_id: transaction4.id,
       transaction_hash: transaction4.hash,
       vout_n: vout3.n,
       vout_transaction_hash: vout3.transaction_hash
     })
 
     insert(:vin, %{
+      transaction_id: transaction4.id,
       transaction_hash: transaction4.hash,
       vout_n: vout5.n,
       vout_transaction_hash: vout5.transaction_hash
@@ -378,6 +390,7 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     insert(:vout, %{
       address_hash: address_hash,
+      transaction_id: transaction6.id,
       transaction_hash: transaction6.hash,
       asset_hash: asset_hash,
       value: Decimal.new("13.0")
@@ -385,12 +398,14 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     vout7 =
       insert(:vout, %{
+        transaction_id: transaction6.id,
         transaction_hash: transaction6.hash,
         asset_hash: asset_hash,
         value: Decimal.new("1.0")
       })
 
     insert(:vin, %{
+      transaction_id: transaction6.id,
       transaction_hash: transaction6.hash,
       vout_n: vout6.n,
       vout_transaction_hash: vout6.transaction_hash
@@ -402,6 +417,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     insert(:transfer, %{
       address_from: <<0>>,
       address_to: address_hash,
+      transaction_id: transaction8.id,
       transaction_hash: transaction8.hash,
       contract: asset_hash,
       amount: Decimal.new("18.0")
@@ -413,6 +429,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     insert(:transfer, %{
       address_from: address_hash,
       address_to: <<0>>,
+      transaction_id: transaction9.id,
       transaction_hash: transaction9.hash,
       contract: asset_hash,
       amount: Decimal.new("18.0")
@@ -422,6 +439,7 @@ defmodule NeoscanWeb.ApiControllerTest do
     transaction10 = insert(:transaction)
 
     insert(:vin, %{
+      transaction_id: transaction10.id,
       transaction_hash: transaction10.hash,
       vout_n: vout.n,
       vout_transaction_hash: vout.transaction_hash
@@ -429,6 +447,7 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     insert(:vout, %{
       address_hash: address_hash,
+      transaction_id: transaction10.id,
       transaction_hash: transaction10.hash,
       asset_hash: @utility_token,
       value: Decimal.new("4.9")
@@ -438,6 +457,7 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     insert(:vout, %{
       address_hash: address_hash,
+      transaction_id: transaction11.id,
       transaction_hash: transaction11.hash,
       asset_hash: @utility_token,
       value: Decimal.new("5.0")

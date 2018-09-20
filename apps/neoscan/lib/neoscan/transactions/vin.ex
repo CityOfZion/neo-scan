@@ -5,6 +5,8 @@ defmodule Neoscan.Vin do
 
   @primary_key false
   schema "vins" do
+    field(:transaction_id, :integer)
+
     belongs_to(
       :transaction,
       Transaction,

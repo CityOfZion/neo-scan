@@ -25,6 +25,8 @@ defmodule Neoscan.AddressHistory do
       type: :binary
     )
 
+    field(:transaction_id, :integer)
+
     belongs_to(
       :asset,
       Asset,

@@ -8,6 +8,8 @@ defmodule Neoscan.AddressTransaction do
 
   @primary_key false
   schema "address_transactions" do
+    field(:transaction_id, :integer)
+
     belongs_to(
       :address,
       Address,

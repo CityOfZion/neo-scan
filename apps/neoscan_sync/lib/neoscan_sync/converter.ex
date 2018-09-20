@@ -10,6 +10,7 @@ defmodule NeoscanSync.Converter do
 
   def convert_claim(claim_raw, transaction_raw, block_raw) do
     %Claim{
+      transaction_id: transaction_raw.id,
       transaction_hash: transaction_raw.hash,
       vout_n: claim_raw.vout_n,
       vout_transaction_hash: claim_raw.vout_transaction_hash,
@@ -21,6 +22,7 @@ defmodule NeoscanSync.Converter do
 
   def convert_vin(vin_raw, vin_n, transaction_raw, block_raw) do
     %Vin{
+      transaction_id: transaction_raw.id,
       transaction_hash: transaction_raw.hash,
       vout_n: vin_raw.vout_n,
       vout_transaction_hash: vin_raw.vout_transaction_hash,
@@ -36,6 +38,7 @@ defmodule NeoscanSync.Converter do
 
   def convert_asset(asset_raw, transaction_raw, block_raw) do
     %Asset{
+      transaction_id: transaction_raw.id,
       transaction_hash: transaction_raw.hash,
       admin: asset_raw.admin,
       amount: asset_raw.amount,
@@ -53,6 +56,7 @@ defmodule NeoscanSync.Converter do
 
   def convert_transfer(transfer_raw, transaction_raw, block_raw) do
     %Transfer{
+      transaction_id: transaction_raw.id,
       transaction_hash: transaction_raw.hash,
       address_from: transfer_raw.addr_from,
       address_to: transfer_raw.addr_to,
@@ -67,6 +71,7 @@ defmodule NeoscanSync.Converter do
 
   def convert_vout(vout_raw, transaction_raw, block_raw) do
     %Vout{
+      transaction_id: transaction_raw.id,
       transaction_hash: transaction_raw.hash,
       n: vout_raw.n,
       address_hash: vout_raw.address,
@@ -91,8 +96,10 @@ defmodule NeoscanSync.Converter do
   def get_transaction_hash(transaction_raw, _), do: transaction_raw.hash
 
   def convert_transaction(transaction_raw, transaction_n, block_raw) do
+    transaction_raw = Map.put(transaction_raw, :id, block_raw.index * 1_000_000 + transaction_n)
+
     %Transaction{
-      id: block_raw.index * 1_000_00 + transaction_n,
+      id: transaction_raw.id,
       block_hash: block_raw.hash,
       hash: get_transaction_hash(transaction_raw, block_raw),
       block_index: block_raw.index,

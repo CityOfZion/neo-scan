@@ -7,6 +7,8 @@ defmodule Neoscan.Vout do
 
   @primary_key false
   schema "vouts" do
+    field(:transaction_id, :integer)
+
     belongs_to(
       :transaction,
       Transaction,

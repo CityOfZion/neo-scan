@@ -5,6 +5,8 @@ defmodule Neoscan.Claim do
 
   @primary_key false
   schema "claims" do
+    field(:transaction_id, :integer)
+
     belongs_to(
       :transaction,
       Transaction,
