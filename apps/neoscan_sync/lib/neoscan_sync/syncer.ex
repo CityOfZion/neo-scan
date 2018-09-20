@@ -25,7 +25,7 @@ defmodule NeoscanSync.Syncer do
     {:ok, missing_block_indexes}
   end
 
-  defp get_available_block_index_range do
+  def get_available_block_index_range do
     max_index_in_db = Blocks.get_max_index() + 1
     max_index_available = NeoscanNode.get_last_block_index()
 

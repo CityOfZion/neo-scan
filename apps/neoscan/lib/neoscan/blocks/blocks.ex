@@ -6,6 +6,7 @@ defmodule Neoscan.Blocks do
   import Ecto.Query, warn: true
   alias Neoscan.Repo
   alias Neoscan.Block
+  alias Neoscan.BlockMeta
   alias Neoscan.Transaction
   alias Neoscan.Transfer
   require Logger
@@ -150,5 +151,9 @@ defmodule Neoscan.Blocks do
     map = Enum.reduce(indexes, map, fn index, acc -> Map.put_new(acc, index, max) end)
 
     map
+  end
+
+  def last_index do
+    Repo.one(from(c in BlockMeta, where: c.id == 1, select: c.index)) || 0
   end
 end

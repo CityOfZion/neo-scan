@@ -7,7 +7,8 @@ defmodule NeoscanSync.MonitorTest do
                download_blocks_count: 10,
                download_blocks_time: 300_000,
                insert_blocks_time: 20_000,
-               insert_blocks_count: 5
+               insert_blocks_count: 5,
+               insert_transactions_count: 2
              )
   end
 end

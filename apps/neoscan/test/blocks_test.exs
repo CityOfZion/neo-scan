@@ -76,4 +76,10 @@ defmodule Neoscan.BlocksTest do
 
     assert %{-1 => Decimal.new(0.0), 5 => Decimal.new(5.0)} == Blocks.get_cumulative_fees([-1, 5])
   end
+
+  test "last_index/0" do
+    assert 0 == Blocks.last_index()
+    insert(:block_meta, %{id: 1, index: 18})
+    assert 18 == Blocks.last_index()
+  end
 end
