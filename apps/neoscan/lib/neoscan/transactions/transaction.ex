@@ -14,9 +14,9 @@ defmodule Neoscan.Transaction do
   @primary_key {:hash, :binary, []}
   @foreign_key_type :binary
   schema "transactions" do
-    belongs_to(:block, Block, foreign_key: :block_hash, references: :hash, type: :binary)
+    belongs_to(:block, Block, foreign_key: :block_index, references: :index, type: :integer)
     field(:id, :integer)
-    field(:block_index, :integer)
+    field(:block_hash, :binary)
     field(:block_time, :utc_datetime)
     field(:attributes, {:array, :map})
     field(:net_fee, :decimal)
