@@ -91,7 +91,7 @@ defmodule Neoscan.Transactions do
       from(
         t in Transaction,
         join: at in AddressTransaction,
-        on: at.transaction_hash == t.hash,
+        on: at.transaction_id == t.id,
         where: at.address_hash == ^address_hash,
         preload: [{:transfers, ^transfer_query()}, :asset],
         order_by: [desc: at.transaction_id],
@@ -117,7 +117,7 @@ defmodule Neoscan.Transactions do
         from(
           v in Vout,
           order_by: [asc: v.n],
-          where: v.transaction_hash == ^transaction.hash,
+          where: v.transaction_id == ^transaction.id,
           preload: [:asset]
         )
       )
@@ -129,7 +129,7 @@ defmodule Neoscan.Transactions do
           join: vin in Vin,
           on: vin.vout_n == v.n and vin.vout_transaction_hash == v.transaction_hash,
           order_by: [asc: vin.n],
-          where: vin.transaction_hash == ^transaction.hash,
+          where: vin.transaction_id == ^transaction.id,
           preload: [:asset]
         )
       )
@@ -140,7 +140,7 @@ defmodule Neoscan.Transactions do
           v in Vout,
           join: claim in Claim,
           on: claim.vout_n == v.n and claim.vout_transaction_hash == v.transaction_hash,
-          where: claim.transaction_hash == ^transaction.hash,
+          where: claim.transaction_id == ^transaction.id,
           preload: [:asset]
         )
       )

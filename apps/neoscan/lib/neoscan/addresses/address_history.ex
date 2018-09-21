@@ -20,12 +20,10 @@ defmodule Neoscan.AddressHistory do
     belongs_to(
       :transaction,
       Transaction,
-      foreign_key: :transaction_hash,
-      references: :hash,
-      type: :binary
+      foreign_key: :transaction_id,
+      references: :id,
+      type: :integer
     )
-
-    field(:transaction_id, :integer)
 
     belongs_to(
       :asset,

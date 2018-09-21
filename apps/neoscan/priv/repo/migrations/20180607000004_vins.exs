@@ -4,7 +4,6 @@ defmodule Neoscan.Repo.Migrations.Vins do
   def change do
     create table(:vins, primary_key: false) do
       add(:transaction_id, :bigint, null: false)
-      add(:transaction_hash, :binary, null: false)
       add(:vout_transaction_hash, :binary, null: false, primary_key: true)
       add(:vout_n, :integer, null: false, primary_key: true)
       add(:n, :integer, null: false)
@@ -14,6 +13,6 @@ defmodule Neoscan.Repo.Migrations.Vins do
       timestamps()
     end
 
-    create(index(:vins, [:transaction_hash]))
+    create(index(:vins, [:transaction_id]))
   end
 end

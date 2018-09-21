@@ -5,14 +5,12 @@ defmodule Neoscan.Vin do
 
   @primary_key false
   schema "vins" do
-    field(:transaction_id, :integer)
-
     belongs_to(
       :transaction,
       Transaction,
-      foreign_key: :transaction_hash,
-      references: :hash,
-      type: :binary
+      foreign_key: :transaction_id,
+      references: :id,
+      type: :integer
     )
 
     field(:vout_transaction_hash, :binary)

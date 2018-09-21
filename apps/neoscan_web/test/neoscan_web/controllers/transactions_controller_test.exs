@@ -31,12 +31,12 @@ defmodule NeoscanWeb.TransactionsControllerTest do
 
     insert(:transfer, %{
       contract: asset.transaction_hash,
-      transaction_hash: Enum.at(transactions, 15).hash
+      transaction_id: Enum.at(transactions, 15).id
     })
 
     insert(:transfer, %{
       contract: asset.transaction_hash,
-      transaction_hash: Enum.at(transactions, 2).hash
+      transaction_id: Enum.at(transactions, 2).id
     })
 
     Cache.sync()

@@ -11,7 +11,6 @@ defmodule NeoscanSync.Converter do
   def convert_claim(claim_raw, transaction_raw, block_raw) do
     %Claim{
       transaction_id: transaction_raw.id,
-      transaction_hash: transaction_raw.hash,
       vout_n: claim_raw.vout_n,
       vout_transaction_hash: claim_raw.vout_transaction_hash,
       block_time: block_raw.time,
@@ -23,7 +22,6 @@ defmodule NeoscanSync.Converter do
   def convert_vin(vin_raw, vin_n, transaction_raw, block_raw) do
     %Vin{
       transaction_id: transaction_raw.id,
-      transaction_hash: transaction_raw.hash,
       vout_n: vin_raw.vout_n,
       vout_transaction_hash: vin_raw.vout_transaction_hash,
       n: vin_n,
@@ -57,7 +55,6 @@ defmodule NeoscanSync.Converter do
   def convert_transfer(transfer_raw, transaction_raw, block_raw) do
     %Transfer{
       transaction_id: transaction_raw.id,
-      transaction_hash: transaction_raw.hash,
       address_from: transfer_raw.addr_from,
       address_to: transfer_raw.addr_to,
       amount: transfer_raw.amount * 1.0,

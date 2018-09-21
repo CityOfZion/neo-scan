@@ -84,7 +84,6 @@ defmodule NeoscanCache.Factory do
   def vin_factory do
     %Vin{
       transaction_id: sequence(1, & &1),
-      transaction_hash: :crypto.strong_rand_bytes(32),
       vout_transaction_hash: :crypto.strong_rand_bytes(32),
       vout_n: sequence(1, & &1),
       n: sequence(1, & &1),
@@ -96,7 +95,6 @@ defmodule NeoscanCache.Factory do
   def claim_factory do
     %Claim{
       transaction_id: sequence(1, & &1),
-      transaction_hash: :crypto.strong_rand_bytes(32),
       vout_transaction_hash: :crypto.strong_rand_bytes(32),
       vout_n: sequence(1, & &1),
       block_time: DateTime.utc_now()
@@ -106,7 +104,6 @@ defmodule NeoscanCache.Factory do
   def address_history_factory do
     %AddressHistory{
       address_hash: :crypto.strong_rand_bytes(32),
-      transaction_hash: :crypto.strong_rand_bytes(32),
       transaction_id: sequence(1, & &1),
       asset_hash: :crypto.strong_rand_bytes(32),
       value: Decimal.new("5.0"),
@@ -125,7 +122,6 @@ defmodule NeoscanCache.Factory do
   def address_transaction_factory do
     %AddressTransaction{
       address_hash: :crypto.strong_rand_bytes(32),
-      transaction_hash: :crypto.strong_rand_bytes(32),
       transaction_id: sequence(1, & &1),
       block_time: DateTime.utc_now()
     }
@@ -143,7 +139,6 @@ defmodule NeoscanCache.Factory do
   def transfer_factory do
     %Transfer{
       transaction_id: sequence(1, & &1),
-      transaction_hash: :crypto.strong_rand_bytes(32),
       address_from: :crypto.strong_rand_bytes(32),
       address_to: :crypto.strong_rand_bytes(32),
       amount: Decimal.new("5.0"),

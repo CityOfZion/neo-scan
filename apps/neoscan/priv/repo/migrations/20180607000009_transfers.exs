@@ -4,7 +4,6 @@ defmodule Neoscan.Repo.Migrations.Transfers do
   def change do
     create table(:transfers, primary_key: false) do
       add(:transaction_id, :bigint, null: false)
-      add(:transaction_hash, :binary, null: false)
       add(:address_from, :binary, null: false)
       add(:address_to, :binary, null: false)
       add(:amount, :decimal, null: false)
@@ -15,7 +14,7 @@ defmodule Neoscan.Repo.Migrations.Transfers do
       timestamps()
     end
 
-    create(index(:transfers, [:transaction_hash]))
+    create(index(:transfers, [:transaction_id]))
     create(index(:transfers, [:block_index]))
   end
 end

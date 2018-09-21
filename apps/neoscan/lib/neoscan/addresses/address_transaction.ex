@@ -8,8 +8,6 @@ defmodule Neoscan.AddressTransaction do
 
   @primary_key false
   schema "address_transactions" do
-    field(:transaction_id, :integer)
-
     belongs_to(
       :address,
       Address,
@@ -22,9 +20,9 @@ defmodule Neoscan.AddressTransaction do
     belongs_to(
       :transaction,
       Transaction,
-      foreign_key: :transaction_hash,
-      references: :hash,
-      type: :binary,
+      foreign_key: :transaction_id,
+      references: :id,
+      type: :integer,
       primary_key: true
     )
 
