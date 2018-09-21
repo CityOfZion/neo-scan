@@ -21,6 +21,7 @@ defmodule Neoscan.Repo.Migrations.Vouts do
     end
 
     #partial index is used to get unspent blocks
+    create(index(:vouts, [:transaction_id]))
     create(index(:vouts, [:address_hash, :asset_hash]))
     create(index(:vouts, [:address_hash], where: "asset_hash = E'\\\\xC56F33FC6ECFCD0C225C4AB356FEE59390AF8560BE0E930FAEBE74A6DAFF7C9B' and claimed = false", name: "partial_vout_index"))
     create(index(:vouts, [:address_hash, :spent]))
