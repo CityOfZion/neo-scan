@@ -115,7 +115,7 @@ defmodule Neoscan.Addresses do
         from(
           atb in AddressTransactionBalance,
           where: atb.address_hash == ^hash,
-          order_by: [desc: atb.block_time],
+          order_by: [desc: atb.transaction_id],
           preload: [:asset],
           limit: @balance_history_size
         )
@@ -177,7 +177,7 @@ defmodule Neoscan.Addresses do
         atb in AddressTransactionBalance,
         where: atb.address_hash == ^address_hash,
         preload: [:transaction, :asset],
-        order_by: [desc: atb.block_time]
+        order_by: [desc: atb.transaction_id]
       )
 
     result = Repo.paginate(transaction_query, page: page, page_size: @page_size)
@@ -199,7 +199,7 @@ defmodule Neoscan.Addresses do
           atb.address_hash == ^address_hash1 and atb2.address_hash == ^address_hash2 and
             fragment("sign(?)", atb.value) != fragment("sign(?)", atb2.value),
         preload: [:asset, :transaction],
-        order_by: [desc: atb.block_time]
+        order_by: [desc: atb.transaction_id]
       )
 
     result = Repo.paginate(transaction_query, page: page, page_size: @page_size)
