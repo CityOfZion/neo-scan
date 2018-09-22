@@ -8,7 +8,5 @@ defmodule Neoscan.Repo.Migrations.AddressTransactions do
       add(:block_time,  :naive_datetime, null: false)
       timestamps()
     end
-
-    create(index(:address_transactions, [:address_hash, :transaction_id]))
   end
 end
