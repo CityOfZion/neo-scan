@@ -50,7 +50,7 @@ defmodule Neoscan.Transactions do
       from(
         t in Transaction,
         order_by: [
-          desc: t.block_index
+          desc: t.id
         ],
         preload: [
           {:transfers, ^transfer_query()},
@@ -71,13 +71,13 @@ defmodule Neoscan.Transactions do
     %{result | entries: Enum.map(result.entries, &add_extra/1)}
   end
 
-  def get_for_block(block_hash, page) do
+  def get_for_block(block_index, page) do
     transaction_query =
       from(
         t in Transaction,
-        where: t.block_hash == ^block_hash,
+        where: t.block_index == ^block_index,
         preload: [{:transfers, ^transfer_query()}, :asset],
-        order_by: t.block_time,
+        order_by: [t.id],
         select: t,
         limit: @page_size
       )
@@ -91,10 +91,10 @@ defmodule Neoscan.Transactions do
       from(
         t in Transaction,
         join: at in AddressTransaction,
-        on: at.transaction_hash == t.hash,
+        on: at.transaction_id == t.id,
         where: at.address_hash == ^address_hash,
         preload: [{:transfers, ^transfer_query()}, :asset],
-        order_by: [desc: at.block_time],
+        order_by: [desc: at.transaction_id],
         select: t
       )
 
@@ -117,7 +117,7 @@ defmodule Neoscan.Transactions do
         from(
           v in Vout,
           order_by: [asc: v.n],
-          where: v.transaction_hash == ^transaction.hash,
+          where: v.transaction_id == ^transaction.id,
           preload: [:asset]
         )
       )
@@ -128,7 +128,8 @@ defmodule Neoscan.Transactions do
           v in Vout,
           join: vin in Vin,
           on: vin.vout_n == v.n and vin.vout_transaction_hash == v.transaction_hash,
-          where: vin.transaction_hash == ^transaction.hash,
+          order_by: [asc: vin.n],
+          where: vin.transaction_id == ^transaction.id,
           preload: [:asset]
         )
       )
@@ -139,7 +140,7 @@ defmodule Neoscan.Transactions do
           v in Vout,
           join: claim in Claim,
           on: claim.vout_n == v.n and claim.vout_transaction_hash == v.transaction_hash,
-          where: claim.transaction_hash == ^transaction.hash,
+          where: claim.transaction_id == ^transaction.id,
           preload: [:asset]
         )
       )

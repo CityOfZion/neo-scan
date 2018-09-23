@@ -28,8 +28,13 @@ defmodule Neoscan.Blocks do
     unless is_nil(block) do
       transfers =
         Repo.all(
-          from(t in Transfer, where: t.block_index == ^block.index, select: t.transaction_hash)
+          from(t in Transfer, where: t.block_index == ^block.index, preload: [:transaction])
         )
+
+      transfers =
+        transfers
+        |> Enum.filter(&(not is_nil(&1.transaction)))
+        |> Enum.map(& &1.transaction.hash)
 
       Map.put(block, :transfers, transfers)
     end
