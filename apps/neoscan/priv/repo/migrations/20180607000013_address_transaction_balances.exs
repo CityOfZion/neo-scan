@@ -4,19 +4,18 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
   def change do
     create table(:address_transaction_balances, primary_key: false) do
       add(:address_hash, :binary, primary_key: true)
-      add(:transaction_hash, :binary, primary_key: true)
+      add(:transaction_id, :bigint, primary_key: true)
       add(:asset_hash, :binary, primary_key: true)
       add(:value, :decimal, null: false)
       add(:block_time,  :naive_datetime, null: false)
       timestamps()
     end
 
-    create(index(:address_transaction_balances, [:address_hash, :block_time]))
-    create(index(:address_transaction_balances, [:transaction_hash, :asset_hash]))
+    create(index(:address_transaction_balances, [:transaction_id, :asset_hash]))
 
     create table(:address_transaction_balances_queue, primary_key: false) do
       add(:address_hash, :binary, null: false)
-      add(:transaction_hash, :binary, null: false)
+      add(:transaction_id, :bigint, null: false)
       add(:asset_hash, :binary, null: false)
       add(:value, :decimal, null: false)
       add(:block_time,  :naive_datetime, null: false)
@@ -40,13 +39,13 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
 
             WITH
             aggregated_queue AS (
-                SELECT address_hash, transaction_hash, asset_hash, SUM(value) as value, MIN(block_time) as block_time, MIN(inserted_at) as inserted_at, MAX(updated_at) as updated_at
+                SELECT address_hash, transaction_id, asset_hash, SUM(value) as value, MIN(block_time) as block_time, MIN(inserted_at) as inserted_at, MAX(updated_at) as updated_at
                 FROM address_transaction_balances_queue
-                GROUP BY address_hash, transaction_hash, asset_hash
+                GROUP BY address_hash, transaction_id, asset_hash
             ),
             perform_updates AS (
                 INSERT INTO address_transaction_balances
-                SELECT address_hash, transaction_hash, asset_hash, value, block_time, inserted_at, updated_at
+                SELECT address_hash, transaction_id, asset_hash, value, block_time, inserted_at, updated_at
                 FROM aggregated_queue
                 ON CONFLICT ON CONSTRAINT address_transaction_balances_pkey DO
                 UPDATE SET

@@ -71,7 +71,7 @@ defmodule NeoscanWeb.Api do
     claimed =
       claimed
       |> Enum.group_by(
-        fn {_vout, claim} -> claim.transaction_hash end,
+        fn {_vout, claim} -> claim.transaction_id end,
         fn {vout, _claim} -> vout end
       )
       |> Enum.sort_by(fn {_, [vout | _]} -> vout.start_block_index end)

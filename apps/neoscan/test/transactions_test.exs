@@ -28,8 +28,8 @@ defmodule Neoscan.TransactionsTest do
 
   test "get_for_block/2" do
     block = insert(:block, %{transactions: [insert(:transaction), insert(:transaction)]})
-    assert 2 == Enum.count(Transactions.get_for_block(block.hash, 1))
-    assert 0 == Enum.count(Transactions.get_for_block(block.hash, 2))
+    assert 2 == Enum.count(Transactions.get_for_block(block.index, 1))
+    assert 0 == Enum.count(Transactions.get_for_block(block.index, 2))
   end
 
   test "get_for_address/2" do
@@ -38,16 +38,16 @@ defmodule Neoscan.TransactionsTest do
     asset = insert(:asset)
 
     insert(:transfer, %{
-      transaction_hash: transaction1.hash,
+      transaction_id: transaction1.id,
       contract: asset.transaction_hash,
       amount: Decimal.new("18.0")
     })
 
-    address_history = insert(:address_history, %{transaction_hash: transaction1.hash})
+    address_history = insert(:address_history, %{transaction_id: transaction1.id})
 
     insert(:address_history, %{
       address_hash: address_history.address_hash,
-      transaction_hash: transaction2.hash
+      transaction_id: transaction2.id
     })
 
     transactions = Transactions.get_for_address(address_history.address_hash, 1)
@@ -63,11 +63,10 @@ defmodule Neoscan.TransactionsTest do
     insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
 
     start_block_index = vout1.start_block_index
-    claim_transaction_hash = claim1.transaction_hash
+    claim_transaction_id = claim1.transaction_id
 
     assert [
-             {%{start_block_index: ^start_block_index},
-              %{transaction_hash: ^claim_transaction_hash}},
+             {%{start_block_index: ^start_block_index}, %{transaction_id: ^claim_transaction_id}},
              {%{}, %{}}
            ] =
              Enum.sort_by(

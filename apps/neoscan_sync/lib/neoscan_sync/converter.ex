@@ -10,7 +10,7 @@ defmodule NeoscanSync.Converter do
 
   def convert_claim(claim_raw, transaction_raw, block_raw) do
     %Claim{
-      transaction_hash: transaction_raw.hash,
+      transaction_id: transaction_raw.id,
       vout_n: claim_raw.vout_n,
       vout_transaction_hash: claim_raw.vout_transaction_hash,
       block_time: block_raw.time,
@@ -19,11 +19,12 @@ defmodule NeoscanSync.Converter do
     }
   end
 
-  def convert_vin(vin_raw, transaction_raw, block_raw) do
+  def convert_vin(vin_raw, vin_n, transaction_raw, block_raw) do
     %Vin{
-      transaction_hash: transaction_raw.hash,
+      transaction_id: transaction_raw.id,
       vout_n: vin_raw.vout_n,
       vout_transaction_hash: vin_raw.vout_transaction_hash,
+      n: vin_n,
       block_index: block_raw.index,
       block_time: block_raw.time,
       inserted_at: block_raw.inserted_at,
@@ -35,6 +36,7 @@ defmodule NeoscanSync.Converter do
 
   def convert_asset(asset_raw, transaction_raw, block_raw) do
     %Asset{
+      transaction_id: transaction_raw.id,
       transaction_hash: transaction_raw.hash,
       admin: asset_raw.admin,
       amount: asset_raw.amount,
@@ -52,7 +54,7 @@ defmodule NeoscanSync.Converter do
 
   def convert_transfer(transfer_raw, transaction_raw, block_raw) do
     %Transfer{
-      transaction_hash: transaction_raw.hash,
+      transaction_id: transaction_raw.id,
       address_from: transfer_raw.addr_from,
       address_to: transfer_raw.addr_to,
       amount: transfer_raw.amount * 1.0,
@@ -66,6 +68,7 @@ defmodule NeoscanSync.Converter do
 
   def convert_vout(vout_raw, transaction_raw, block_raw) do
     %Vout{
+      transaction_id: transaction_raw.id,
       transaction_hash: transaction_raw.hash,
       n: vout_raw.n,
       address_hash: vout_raw.address,
@@ -89,8 +92,11 @@ defmodule NeoscanSync.Converter do
 
   def get_transaction_hash(transaction_raw, _), do: transaction_raw.hash
 
-  def convert_transaction(transaction_raw, block_raw) do
+  def convert_transaction(transaction_raw, transaction_n, block_raw) do
+    transaction_raw = Map.put(transaction_raw, :id, block_raw.index * 1_000_000 + transaction_n)
+
     %Transaction{
+      id: transaction_raw.id,
       block_hash: block_raw.hash,
       hash: get_transaction_hash(transaction_raw, block_raw),
       block_index: block_raw.index,
@@ -103,8 +109,10 @@ defmodule NeoscanSync.Converter do
       size: transaction_raw.size,
       type: to_string(transaction_raw.type),
       version: transaction_raw.version,
+      n: transaction_n,
       vouts: Enum.map(transaction_raw.vouts, &convert_vout(&1, transaction_raw, block_raw)),
-      vins: Enum.map(transaction_raw.vins, &convert_vin(&1, transaction_raw, block_raw)),
+      vins:
+        map_with_index(transaction_raw.vins, &convert_vin(&1, &2, transaction_raw, block_raw)),
       claims: Enum.map(transaction_raw.claims, &convert_claim(&1, transaction_raw, block_raw)),
       transfers:
         Enum.map(transaction_raw.transfers, &convert_transfer(&1, transaction_raw, block_raw)),
@@ -128,11 +136,17 @@ defmodule NeoscanSync.Converter do
       size: block_raw.size,
       time: block_raw.time,
       version: block_raw.version,
-      transactions: Enum.map(block_raw.tx, &convert_transaction(&1, block_raw)),
+      transactions: map_with_index(block_raw.tx, &convert_transaction(&1, &2, block_raw)),
       total_sys_fee: Enum.reduce(Enum.map(block_raw.tx, & &1.sys_fee), 0, &Decimal.add/2),
       total_net_fee: Enum.reduce(Enum.map(block_raw.tx, & &1.net_fee), 0, &Decimal.add/2),
       gas_generated: BlockGasGeneration.get_amount_generate_in_block(block_raw.index),
       tx_count: Enum.count(block_raw.tx)
     }
+  end
+
+  defp map_with_index(enumerable, fun) when is_list(enumerable) and is_function(fun, 2) do
+    enumerable
+    |> Enum.with_index()
+    |> Enum.map(fn {item, index} -> fun.(item, index) end)
   end
 end

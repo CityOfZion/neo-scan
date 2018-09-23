@@ -56,11 +56,11 @@ defmodule NeoscanWeb.AddressControllerTest do
 
     insert(:address_history, %{
       address_hash: address_history.address_hash,
-      transaction_hash: transaction.hash
+      transaction_id: transaction.id
     })
 
     insert(:transfer, %{
-      transaction_hash: transaction.hash,
+      transaction_id: transaction.id,
       address_from: <<0>>,
       contract: asset2.transaction_hash
     })

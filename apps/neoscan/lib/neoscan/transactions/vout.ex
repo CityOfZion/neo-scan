@@ -10,12 +10,12 @@ defmodule Neoscan.Vout do
     belongs_to(
       :transaction,
       Transaction,
-      foreign_key: :transaction_hash,
-      references: :hash,
-      type: :binary,
-      primary_key: true
+      foreign_key: :transaction_id,
+      references: :id,
+      type: :integer
     )
 
+    field(:transaction_hash, :binary, primary_key: true)
     field(:n, :integer, primary_key: true)
 
     belongs_to(

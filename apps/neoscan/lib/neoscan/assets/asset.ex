@@ -6,6 +6,8 @@ defmodule Neoscan.Asset do
 
   @primary_key false
   schema "assets" do
+    field(:transaction_id, :integer)
+
     belongs_to(
       :transaction,
       Transaction,
