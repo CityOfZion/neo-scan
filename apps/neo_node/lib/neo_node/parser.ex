@@ -141,4 +141,16 @@ defmodule NeoNode.Parser do
       if(is_nil(contract), do: [], else: [%{"contract" => contract}]) ++
       if is_nil(script), do: [], else: [%{"script" => script}]
   end
+
+  def parse_version(%{"useragent" => user_agent}) do
+    case String.upcase(user_agent) do
+      "/NEO:" <> version ->
+        {:csharp, version}
+
+      _ ->
+        {:python, nil}
+    end
+  end
+
+  def parse_version(_), do: {:unknown, nil}
 end
