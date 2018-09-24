@@ -24,7 +24,7 @@
     </div>
     <%= for %{name: name} = balance <- @balance.tokens do %>
       <div class="individual-wallet-box last">
-        <p class="balance-label"> <i class="fa fa-university wallet-label-icon"></i> <%= name %> ><%= unless is_nil(balance.symbol), do: " (#{balance.symbol})" %></p>
+        <p class="balance-label"> <i class="fa fa-university wallet-label-icon"></i> <%= name %><%= unless is_nil(balance.symbol), do: " (#{balance.symbol})" %></p>
         <div class="total-gas-balance">
           <p class="balance-amount"><%= render_balance(balance) %></p>
         </div>
