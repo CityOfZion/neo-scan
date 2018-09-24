@@ -140,7 +140,8 @@ defmodule Neoscan.Factory do
       hash: :crypto.strong_rand_bytes(32),
       first_transaction_time: DateTime.utc_now(),
       last_transaction_time: DateTime.utc_now(),
-      tx_count: 12
+      tx_count: 12,
+      atb_count: 1
     }
   end
 

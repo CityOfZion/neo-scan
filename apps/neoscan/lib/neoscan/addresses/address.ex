@@ -10,10 +10,7 @@ defmodule Neoscan.Address do
     field(:first_transaction_time, :utc_datetime)
     field(:last_transaction_time, :utc_datetime)
     field(:tx_count, :integer, default: 0)
-
-    # has_many(:claimed, Neoscan.Claims.Claim)
-    # has_many(:vouts, Neoscan.Vouts.Vout)
-    # has_many(:histories, Neoscan.BalanceHistories.History)
+    field(:atb_count, :integer, default: 0)
 
     timestamps()
   end
