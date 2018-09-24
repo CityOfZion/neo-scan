@@ -8,6 +8,7 @@ defmodule NeoscanNode.NodeChecker do
   @env_var_neo_notification "NEO_NOTIFICATIONS_SERVER"
   @retry_interval 1_000
   @timeout 15_000
+  @five_minutes 300_000
   @node_list_url Application.fetch_env!(:neoscan_node, :node_list_url)
 
   alias NeoscanNode.EtsProcess
@@ -63,7 +64,7 @@ defmodule NeoscanNode.NodeChecker do
   defp process_url_task do
     new_list = Enum.uniq(@neo_node_urls ++ get_node_urls())
     Application.put_env(:neoscan_node, :seeds, new_list)
-    Process.sleep(@timeout)
+    Process.sleep(@five_minutes)
     process_url_task()
   end
 
