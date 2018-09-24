@@ -21,7 +21,11 @@ defmodule NeoscanNode.NodeChecker do
 
   def init(:ok) do
     EtsProcess.create_table(__MODULE__)
-    {:ok, _} = Task.start(&process_url_task/0)
+
+    unless has_custom_nodes_conf? do
+      {:ok, _} = Task.start(&process_url_task/0)
+    end
+
     {:ok, sync()}
   end
 
@@ -84,6 +88,8 @@ defmodule NeoscanNode.NodeChecker do
         elem(Enum.random(nodes), 0)
     end
   end
+
+  defp has_custom_nodes_conf?, do: not is_nil(System.get_env(@env_var_nodes))
 
   defp get_neo_node_urls do
     nodes_str = System.get_env(@env_var_nodes) || ""
