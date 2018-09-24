@@ -6,10 +6,10 @@ defmodule Neoscan.Block do
   use Ecto.Schema
   alias Neoscan.Transaction
 
-  @primary_key {:hash, :binary, []}
-  @foreign_key_type :binary
+  @primary_key {:index, :integer, []}
+  @foreign_key_type :integer
   schema "blocks" do
-    field(:index, :integer)
+    field(:hash, :binary)
     field(:merkle_root, :binary)
     field(:next_consensus, :binary)
     field(:nonce, :binary)
@@ -23,7 +23,7 @@ defmodule Neoscan.Block do
     field(:total_net_fee, :decimal)
     field(:cumulative_sys_fee, :decimal)
     field(:gas_generated, :decimal)
-    has_many(:transactions, Transaction, foreign_key: :block_hash, references: :hash)
+    has_many(:transactions, Transaction, foreign_key: :block_index, references: :index)
 
     timestamps()
   end

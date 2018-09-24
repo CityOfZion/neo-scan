@@ -26,7 +26,7 @@ defmodule NeoscanWeb.BlockController do
       if is_nil(block) do
         redirect(conn, to: home_path(conn, :index))
       else
-        transactions = Transactions.get_for_block(block.hash, parsed.page)
+        transactions = Transactions.get_for_block(block.index, parsed.page)
         transactions = Helper.render_transactions(transactions)
         render(conn, "block.html", block: block, transactions: transactions, page: parsed.page)
       end

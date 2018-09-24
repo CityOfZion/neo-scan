@@ -14,8 +14,9 @@ defmodule Neoscan.Transaction do
   @primary_key {:hash, :binary, []}
   @foreign_key_type :binary
   schema "transactions" do
-    belongs_to(:block, Block, foreign_key: :block_hash, references: :hash, type: :binary)
-    field(:block_index, :integer)
+    belongs_to(:block, Block, foreign_key: :block_index, references: :index, type: :integer)
+    field(:id, :integer)
+    field(:block_hash, :binary)
     field(:block_time, :utc_datetime)
     field(:attributes, {:array, :map})
     field(:net_fee, :decimal)
@@ -25,10 +26,11 @@ defmodule Neoscan.Transaction do
     field(:size, :integer)
     field(:type, :string)
     field(:version, :integer)
-    has_many(:vouts, Vout, foreign_key: :transaction_hash, references: :hash)
-    has_many(:vins, Vin, foreign_key: :transaction_hash, references: :hash)
-    has_many(:claims, Claim, foreign_key: :transaction_hash, references: :hash)
-    has_many(:transfers, Transfer, foreign_key: :transaction_hash, references: :hash)
+    field(:n, :integer)
+    has_many(:vouts, Vout, foreign_key: :transaction_id, references: :id)
+    has_many(:vins, Vin, foreign_key: :transaction_id, references: :id)
+    has_many(:claims, Claim, foreign_key: :transaction_id, references: :id)
+    has_many(:transfers, Transfer, foreign_key: :transaction_id, references: :id)
     has_one(:asset, Asset, foreign_key: :transaction_hash, references: :hash)
 
     timestamps()

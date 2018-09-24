@@ -3,6 +3,7 @@ defmodule Neoscan.Repo.Migrations.Assets do
 
   def change do
     create table(:assets, primary_key: false) do
+      add(:transaction_id, :bigint, null: true)
       add(:transaction_hash, :binary, primary_key: true)
       add(:admin, :binary, null: false)
       add(:amount, :decimal, null: false)
