@@ -191,12 +191,14 @@ defmodule Neoscan.AddressesTest do
     insert(:asset, %{
       transaction_hash: <<1, 2, 3>>,
       precision: 25,
+      symbol: "TKN",
       name: [%{"lang" => "en", "name" => "my token"}]
     })
 
     insert(:asset, %{
       transaction_hash: deprecated_asset_hash,
       precision: 8,
+      symbol: "DPTKN",
       name: [%{"lang" => "en", "name" => "my deprecated token"}]
     })
 
@@ -207,6 +209,7 @@ defmodule Neoscan.AddressesTest do
                asset: @utility_token,
                name: "GAS",
                precision: 8,
+               symbol: nil,
                type: "utility_token",
                value: Decimal.new("0.213")
              },
@@ -214,6 +217,7 @@ defmodule Neoscan.AddressesTest do
                asset: @governing_token,
                name: "NEO",
                precision: 0,
+               symbol: nil,
                type: "governing_token",
                value: Decimal.new(5)
              },
@@ -222,6 +226,7 @@ defmodule Neoscan.AddressesTest do
                  asset: <<1, 2, 3>>,
                  name: "my token",
                  precision: 25,
+                 symbol: "TKN",
                  type: "token",
                  value: Decimal.new(12302)
                }
@@ -230,6 +235,7 @@ defmodule Neoscan.AddressesTest do
                %{
                  asset: deprecated_asset_hash,
                  name: "my deprecated token",
+                 symbol: "DPTKN",
                  precision: 8,
                  type: "token",
                  value: Decimal.new(124)

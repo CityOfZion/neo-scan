@@ -38,7 +38,8 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     insert(:asset, %{
       transaction_hash: <<4, 5, 6>>,
-      name: [%{"lang" => "zh", "name" => "My Token"}]
+      name: [%{"lang" => "zh", "name" => "My Token"}],
+      symbol: "TKN"
     })
 
     Flush.all()
@@ -56,9 +57,18 @@ defmodule NeoscanWeb.ApiControllerTest do
                %{
                  "amount" => ^amount,
                  "asset" => "NEO",
+                 "asset_hash" =>
+                   "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+                 "asset_symbol" => "NEO",
                  "unspent" => unspent
                },
-               %{"amount" => 2.0, "asset" => "My Token", "unspent" => []}
+               %{
+                 "amount" => 2.0,
+                 "asset" => "My Token",
+                 "asset_hash" => "040506",
+                 "asset_symbol" => "TKN",
+                 "unspent" => []
+               }
              ]
            } = json_response(conn, 200)
 

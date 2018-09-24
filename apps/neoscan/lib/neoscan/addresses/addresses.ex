@@ -46,6 +46,7 @@ defmodule Neoscan.Addresses do
           where: ab.address_hash == ^hash,
           select: %{
             name: a.name,
+            symbol: a.symbol,
             asset: ab.asset_hash,
             value: ab.value,
             precision: a.precision,

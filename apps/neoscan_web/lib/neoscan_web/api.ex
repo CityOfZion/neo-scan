@@ -18,7 +18,7 @@ defmodule NeoscanWeb.Api do
     unspent = Transactions.get_unspent_vouts(address_hash)
 
     balances =
-      Enum.map(balances, fn %{name: name, asset: asset_hash, value: value} ->
+      Enum.map(balances, fn %{name: name, asset: asset_hash, symbol: asset_symbol, value: value} ->
         unspent2 =
           unspent
           |> Enum.filter(&(&1.asset_hash == asset_hash))
@@ -28,6 +28,8 @@ defmodule NeoscanWeb.Api do
 
         %{
           unspent: unspent2,
+          asset_hash: Base.encode16(asset_hash, case: :lower),
+          asset_symbol: asset_symbol || name,
           asset: name,
           amount: value
         }
