@@ -196,9 +196,13 @@ defmodule NeoVM.Disassembler do
   end
 
   defp reduce_list_to_string(list) do
-    Enum.reduce(list, "", fn code, acc ->
-      work_code_key(code, acc)
-    end)
+    Enum.reduce(
+      list,
+      "",
+      fn code, acc ->
+        work_code_key(code, acc)
+      end
+    )
   end
 
   defp work_code_key(code, acc) do
@@ -273,28 +277,31 @@ defmodule NeoVM.Disassembler do
 
   defp make_list(initial_list) do
     initial_list
-    |> Enum.reduce({initial_list, []}, fn current, {remaining, acc} ->
-      remaining_head =
-        case length(remaining) do
-          0 -> nil
-          _ -> hd(remaining)
+    |> Enum.reduce(
+      {initial_list, []},
+      fn current, {remaining, acc} ->
+        remaining_head =
+          case length(remaining) do
+            0 -> nil
+            _ -> hd(remaining)
+          end
+
+        with true <- remaining_head == current,
+             {:ok, joins} <- extend_the_opcode(current) do
+          {opcodes_to_be_joined, new_remaining} =
+            Enum.split(
+              remaining,
+              joins
+            )
+
+          joined_item = Enum.join(opcodes_to_be_joined)
+          {new_remaining, [joined_item | acc]}
+        else
+          :error -> {tl(remaining), [current | acc]}
+          false -> {remaining, acc}
         end
-
-      with true <- remaining_head == current,
-           {:ok, joins} <- extend_the_opcode(current) do
-        {opcodes_to_be_joined, new_remaining} =
-          Enum.split(
-            remaining,
-            joins
-          )
-
-        joined_item = Enum.join(opcodes_to_be_joined)
-        {new_remaining, [joined_item | acc]}
-      else
-        :error -> {tl(remaining), [current | acc]}
-        false -> {remaining, acc}
       end
-    end)
+    )
     |> elem(1)
     |> Enum.reverse()
   end
@@ -338,12 +345,17 @@ defmodule NeoVM.Disassembler do
             split_newline = String.split(newline, " ")
 
             syscall_fn =
-              case Base.decode16(
-                     Enum.at(split_newline, 1),
-                     case: :lower
-                   ) do
-                {:ok, syscall_arg} -> syscall_arg
-                :error -> "error parsing syscall fn arg"
+              try do
+                {:ok, syscall_arg} =
+                  Base.decode16(
+                    Enum.at(split_newline, 1),
+                    case: :lower
+                  )
+
+                syscall_arg
+              catch
+                _, _ ->
+                  "error parsing syscall fn arg"
               end
 
             Enum.at(split_newline, 0) <> " " <> syscall_fn
