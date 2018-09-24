@@ -23,7 +23,7 @@ defmodule NeoscanNode.NodeChecker do
   def init(:ok) do
     EtsProcess.create_table(__MODULE__)
 
-    unless has_custom_nodes_conf? do
+    unless has_custom_nodes_conf?() do
       {:ok, _} = Task.start(&process_url_task/0)
     end
 
