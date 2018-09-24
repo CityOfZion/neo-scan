@@ -212,6 +212,10 @@ defmodule NeoNodeTest do
     assert 2_400_000 == count
   end
 
+  test "get_version/1" do
+    assert {:ok, {:csharp, "2.7.6.1/"}} == NeoNode.get_version(@fake_node_url)
+  end
+
   test "get_transaction/2" do
     txid = "0x9e9526615ee7d460ed445c873c4af91bf7bfcc67e6e43feaf051b962a6df0a98"
 

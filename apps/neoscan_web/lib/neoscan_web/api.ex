@@ -92,7 +92,7 @@ defmodule NeoscanWeb.Api do
         else: [start_block_index - 1, end_block_index - 1]
     end)
     |> List.flatten()
-    |> Enum.dedup()
+    |> Enum.uniq()
   end
 
   def get_claimable(address_hash) do

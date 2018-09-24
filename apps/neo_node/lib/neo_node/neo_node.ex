@@ -39,6 +39,18 @@ defmodule NeoNode do
     end
   end
 
+  def get_version(url, timeout \\ @timeout) do
+    opts = [ssl: [{:versions, [:"tlsv1.2"]}], timeout: timeout, recv_timeout: timeout]
+
+    case post(url, "getversion", [], opts) do
+      {:ok, response} ->
+        {:ok, Parser.parse_version(response)}
+
+      error ->
+        error
+    end
+  end
+
   def get_block_count(url), do: post(url, "getblockcount", [])
 
   def get_transaction(url, txid) do
@@ -71,7 +83,7 @@ defmodule NeoNode do
     end
   end
 
-  def post(url, method, params) do
+  def post(url, method, params, opts \\ @opts) do
     data =
       Poison.encode!(%{
         "jsonrpc" => "2.0",
@@ -80,7 +92,7 @@ defmodule NeoNode do
         "id" => 5
       })
 
-    result = HTTPPoisonWrapper.post(url, data, @headers, @opts)
+    result = HTTPPoisonWrapper.post(url, data, @headers, opts)
     handle_response(result, url)
   end
 
