@@ -39,7 +39,6 @@ defmodule NeoNodeTest do
                tx: [
                  %{
                    asset: nil,
-                   attributes: [],
                    block_hash:
                      <<212, 37, 97, 227, 211, 14, 21, 190, 100, 0, 182, 223, 47, 50, 142, 2, 210,
                        191, 99, 84, 196, 29, 206, 67, 59, 197, 118, 135, 200, 33, 68, 191>>,
@@ -50,7 +49,12 @@ defmodule NeoNodeTest do
                        112, 202, 133, 84, 60, 113, 122, 107, 19, 217, 149, 155, 69, 42, 87, 214>>,
                    net_fee: Decimal.new(0),
                    nonce: 2_083_236_893,
-                   scripts: [],
+                   extra: %{
+                     attributes: [],
+                     contract: nil,
+                     script: nil,
+                     scripts: []
+                   },
                    size: 10,
                    sys_fee: Decimal.new(0),
                    type: :miner_transaction,
@@ -83,7 +87,6 @@ defmodule NeoNodeTest do
                      type: :governing_token,
                      version: nil
                    },
-                   attributes: [],
                    block_hash:
                      <<212, 37, 97, 227, 211, 14, 21, 190, 100, 0, 182, 223, 47, 50, 142, 2, 210,
                        191, 99, 84, 196, 29, 206, 67, 59, 197, 118, 135, 200, 33, 68, 191>>,
@@ -95,7 +98,12 @@ defmodule NeoNodeTest do
                        155>>,
                    net_fee: Decimal.new(0),
                    nonce: nil,
-                   scripts: [],
+                   extra: %{
+                     attributes: [],
+                     contract: nil,
+                     script: nil,
+                     scripts: []
+                   },
                    size: 107,
                    sys_fee: Decimal.new(0),
                    type: :register_transaction,
@@ -128,7 +136,6 @@ defmodule NeoNodeTest do
                      type: :utility_token,
                      version: nil
                    },
-                   attributes: [],
                    block_hash:
                      <<212, 37, 97, 227, 211, 14, 21, 190, 100, 0, 182, 223, 47, 50, 142, 2, 210,
                        191, 99, 84, 196, 29, 206, 67, 59, 197, 118, 135, 200, 33, 68, 191>>,
@@ -140,7 +147,12 @@ defmodule NeoNodeTest do
                        231>>,
                    net_fee: Decimal.new(0),
                    nonce: nil,
-                   scripts: [],
+                   extra: %{
+                     attributes: [],
+                     contract: nil,
+                     script: nil,
+                     scripts: []
+                   },
                    size: 106,
                    sys_fee: Decimal.new(0),
                    type: :register_transaction,
@@ -150,7 +162,6 @@ defmodule NeoNodeTest do
                  },
                  %{
                    asset: nil,
-                   attributes: [],
                    block_hash:
                      <<212, 37, 97, 227, 211, 14, 21, 190, 100, 0, 182, 223, 47, 50, 142, 2, 210,
                        191, 99, 84, 196, 29, 206, 67, 59, 197, 118, 135, 200, 33, 68, 191>>,
@@ -161,7 +172,12 @@ defmodule NeoNodeTest do
                        72, 48, 2, 90, 249, 4, 251, 81, 176, 51, 79, 18, 124, 218>>,
                    net_fee: Decimal.new(0),
                    nonce: nil,
-                   scripts: [%{"invocation" => "", "verification" => "51"}],
+                   extra: %{
+                     scripts: [%{"invocation" => "", "verification" => "51"}],
+                     contract: nil,
+                     attributes: [],
+                     script: nil
+                   },
                    size: 69,
                    sys_fee: Decimal.new(0),
                    type: :issue_transaction,
@@ -223,7 +239,6 @@ defmodule NeoNodeTest do
              :ok,
              %{
                asset: nil,
-               attributes: [],
                block_hash:
                  <<213, 0, 206, 91, 206, 23, 53, 30, 158, 90, 36, 131, 52, 153, 207, 128, 242,
                    217, 136, 130, 121, 60, 19, 183, 187, 242, 33, 255, 50, 164, 44, 205>>,
@@ -233,7 +248,7 @@ defmodule NeoNodeTest do
                    191, 204, 103, 230, 228, 63, 234, 240, 81, 185, 98, 166, 223, 10, 152>>,
                net_fee: Decimal.new(0),
                nonce: 3_576_443_283,
-               scripts: [],
+               extra: %{attributes: [], contract: nil, script: nil, scripts: []},
                size: 10,
                sys_fee: Decimal.new(0),
                type: :miner_transaction,
@@ -244,13 +259,13 @@ defmodule NeoNodeTest do
              }
            } == NeoNode.get_transaction(@fake_node_url, txid)
 
-    assert {:ok, %{scripts: [%{}, %{"contract" => _}]}} =
+    assert {:ok, %{extra: %{scripts: [%{}], contract: %{}}}} =
              NeoNode.get_transaction(
                @fake_node_url,
                "fd161ccd87deab812daa433cbc0f8f6468de24f1d708187beef5ab9ada7050f3"
              )
 
-    assert {:ok, %{scripts: [%{}, %{}, %{"script" => _}]}} =
+    assert {:ok, %{extra: %{scripts: [%{}, %{}], script: "2102486fd15702c4490a2670" <> _}}} =
              NeoNode.get_transaction(
                @fake_node_url,
                "45ced268026de0fcaf7035e4960e860b98fe1ae5122e716d9daac1163f13e534"
