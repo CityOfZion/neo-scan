@@ -74,10 +74,7 @@ defmodule NeoNodeTest do
                      issuer:
                        <<23, 218, 23, 69, 233, 181, 73, 189, 11, 250, 26, 86, 153, 113, 199, 126,
                          186, 48, 205, 90, 75, 177, 213, 88, 117>>,
-                     name: [
-                       %{"lang" => "zh-CN", "name" => "小蚁股"},
-                       %{"lang" => "en", "name" => "AntShare"}
-                     ],
+                     name: %{"zh-CN" => "小蚁股", "en" => "AntShare"},
                      owner: "00",
                      precision: 0,
                      transaction_hash:
@@ -123,10 +120,7 @@ defmodule NeoNodeTest do
                      issuer:
                        <<23, 159, 127, 208, 150, 211, 126, 210, 192, 227, 247, 240, 207, 201, 36,
                          190, 239, 79, 252, 235, 104, 117, 247, 96, 242>>,
-                     name: [
-                       %{"lang" => "zh-CN", "name" => "小蚁币"},
-                       %{"lang" => "en", "name" => "AntCoin"}
-                     ],
+                     name: %{"zh-CN" => "小蚁币", "en" => "AntCoin"},
                      owner: "00",
                      precision: 8,
                      transaction_hash:
@@ -294,10 +288,7 @@ defmodule NeoNodeTest do
                issuer:
                  <<23, 218, 23, 69, 233, 181, 73, 189, 11, 250, 26, 86, 153, 113, 199, 126, 186,
                    48, 205, 90, 75, 177, 213, 88, 117>>,
-               name: [
-                 %{"lang" => "zh-CN", "name" => "\\u5C0F\\u8681\\u80A1"},
-                 %{"lang" => "en", "name" => "AntShare"}
-               ],
+               name: %{"zh-CN" => "\\u5C0F\\u8681\\u80A1", "en" => "AntShare"},
                owner: "00",
                precision: 0,
                transaction_hash:

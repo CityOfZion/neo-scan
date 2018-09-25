@@ -98,7 +98,7 @@ defmodule NeoscanWeb.CommonView do
 
   def render_date_time(date_time), do: DateTime.to_unix(date_time)
 
-  def render_asset_name(%{:name => name} = asset) when is_list(name) do
+  def render_asset_name(%{:name => name} = asset) when is_map(name) do
     updated_asset = Asset.update_name(asset)
     updated_asset.name
   end

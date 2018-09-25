@@ -162,7 +162,7 @@ defmodule NeoscanWeb.Factory do
       transaction_hash: :crypto.strong_rand_bytes(32),
       admin: :crypto.strong_rand_bytes(32),
       amount: Decimal.new("5.0"),
-      name: [%{"lang" => "en", "name" => "truc"}],
+      name: %{"en" => "truc"},
       owner: :crypto.strong_rand_bytes(32),
       precision: 12,
       type: "token",

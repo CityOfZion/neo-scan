@@ -79,12 +79,18 @@ defmodule NeoNode.Parser do
       frozen: asset["frozen"],
       transaction_hash: parse16(asset["id"]),
       issuer: parse58(asset["issuer"]),
-      name: asset["name"],
+      name: parse_asset_name(asset["name"]),
       owner: asset["owner"],
       precision: asset["precision"],
       type: parse_asset_type(asset["type"]),
       version: asset["version"]
     }
+  end
+
+  defp parse_asset_name(list) when is_list(list) do
+    Enum.reduce(list, %{}, fn %{"lang" => lang, "name" => name}, acc ->
+      Map.put(acc, lang, name)
+    end)
   end
 
   def parse_block(block) do
