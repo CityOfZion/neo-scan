@@ -172,6 +172,11 @@ defmodule Neoscan.Addresses do
     |> Enum.into(%{})
   end
 
+  def get_transaction_abstracts_count(address_hash) do
+    query = from(a in Address, where: a.hash == ^address_hash, select: a.atb_count)
+    Repo.one(query) || 0
+  end
+
   def get_transaction_abstracts_raw(address_hash, page) do
     transaction_query =
       from(
@@ -181,7 +186,15 @@ defmodule Neoscan.Addresses do
         order_by: [desc: atb.transaction_id]
       )
 
-    result = Repo.paginate(transaction_query, page: page, page_size: @page_size)
+    total_entries = get_transaction_abstracts_count(address_hash)
+
+    result =
+      Repo.paginate(transaction_query,
+        page: page,
+        page_size: @page_size,
+        options: [total_entries: total_entries]
+      )
+
     %{result | entries: Enum.map(result.entries, &Asset.update_struct/1)}
   end
 

@@ -269,8 +269,8 @@ defmodule Neoscan.Repo.Migrations.Triggers do
     execute """
     CREATE OR REPLACE FUNCTION generate_address_tx_count_from_address_transactions() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
       BEGIN
-        INSERT INTO addresses_queue (hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at)
-        VALUES (NEW.address_hash, NEW.block_time, NEW.block_time, 1, now(), now());
+        INSERT INTO addresses_queue (hash, first_transaction_time, last_transaction_time, tx_count, atb_count, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.block_time, NEW.block_time, 1, 0, now(), now());
         RETURN NULL;
       END;
       $body$;
@@ -280,6 +280,22 @@ defmodule Neoscan.Repo.Migrations.Triggers do
       CREATE TRIGGER generate_address_tx_count_from_address_transactions_trigger
       AFTER INSERT ON address_transactions FOR each row
       EXECUTE PROCEDURE generate_address_tx_count_from_address_transactions();
+    """
+
+    execute """
+    CREATE OR REPLACE FUNCTION generate_address_atb_count_from_address_transaction_balances() RETURNS TRIGGER LANGUAGE plpgsql AS $body$
+      BEGIN
+        INSERT INTO addresses_queue (hash, first_transaction_time, last_transaction_time, tx_count, atb_count, inserted_at, updated_at)
+        VALUES (NEW.address_hash, NEW.block_time, NEW.block_time, 0, 1, now(), now());
+        RETURN NULL;
+      END;
+      $body$;
+    """
+
+    execute """
+      CREATE TRIGGER generate_address_atb_count_from_address_transaction_balances_trigger
+      AFTER INSERT ON address_transaction_balances FOR each row
+      EXECUTE PROCEDURE generate_address_atb_count_from_address_transaction_balances();
     """
   end
 end

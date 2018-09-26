@@ -6,7 +6,8 @@ defmodule Neoscan.Repo.Migrations.Addresses do
       add(:hash, :binary, primary_key: true)
       add(:first_transaction_time, :naive_datetime, null: false)
       add(:last_transaction_time, :naive_datetime, null: false)
-      add(:tx_count, :integer, null: false, default: 1)
+      add(:tx_count, :integer, null: false, default: 0)
+      add(:atb_count, :integer, null: false, default: 0)
 
       timestamps()
     end
@@ -15,7 +16,8 @@ defmodule Neoscan.Repo.Migrations.Addresses do
       add(:hash, :binary, null: false)
       add(:first_transaction_time, :naive_datetime, null: false)
       add(:last_transaction_time, :naive_datetime, null: false)
-      add(:tx_count, :integer, null: false, default: 1)
+      add(:tx_count, :integer, null: false, default: 0)
+      add(:atb_count, :integer, null: false, default: 0)
 
       timestamps()
     end
@@ -42,6 +44,7 @@ defmodule Neoscan.Repo.Migrations.Addresses do
                 SELECT hash, MIN(first_transaction_time) as first_transaction_time,
                 MAX(last_transaction_time) as last_transaction_time,
                 SUM(tx_count) as tx_count,
+                SUM(atb_count) as atb_count,
                 MIN(inserted_at) as inserted_at,
                 MAX(updated_at) as updated_at
                 FROM addresses_queue
@@ -49,13 +52,14 @@ defmodule Neoscan.Repo.Migrations.Addresses do
             ),
             perform_updates AS (
                 INSERT INTO addresses
-                SELECT hash, first_transaction_time, last_transaction_time, tx_count, inserted_at, updated_at
+                SELECT hash, first_transaction_time, last_transaction_time, tx_count, atb_count, inserted_at, updated_at
                 FROM aggregated_queue
                 ON CONFLICT ON CONSTRAINT addresses_pkey DO
                 UPDATE SET
                   first_transaction_time = LEAST(addresses.first_transaction_time, EXCLUDED.first_transaction_time),
                   last_transaction_time = GREATEST(addresses.last_transaction_time, EXCLUDED.last_transaction_time),
                   tx_count = addresses.tx_count + EXCLUDED.tx_count,
+                  atb_count = addresses.atb_count + EXCLUDED.atb_count,
                   updated_at = GREATEST(addresses.updated_at, EXCLUDED.updated_at)
                 RETURNING 1
             ),

@@ -195,6 +195,7 @@ defmodule Neoscan.SchemaTest do
     assert address.last_transaction_time == address_history.block_time
 
     assert 1 == address.tx_count
+    assert 1 == address.atb_count
 
     address_balance =
       Repo.one(from(a in AddressBalance, where: a.address_hash == ^address_history.address_hash))
@@ -208,6 +209,13 @@ defmodule Neoscan.SchemaTest do
         asset_hash: address_history.asset_hash
       })
 
+    insert(:address_history, %{
+      transaction_id: address_history2.transaction_id,
+      address_hash: address_history.address_hash,
+      asset_hash: <<0, 2>>,
+      block_time: address_history2.block_time
+    })
+
     Flush.all()
 
     address = Repo.one(from(a in Address, where: a.hash == ^address_history.address_hash))
@@ -215,9 +223,16 @@ defmodule Neoscan.SchemaTest do
     assert address.first_transaction_time == address_history.block_time
     assert address.last_transaction_time == address_history2.block_time
     assert 2 == address.tx_count
+    assert 3 == address.atb_count
 
     address_balance =
-      Repo.one(from(a in AddressBalance, where: a.address_hash == ^address_history.address_hash))
+      Repo.one(
+        from(a in AddressBalance,
+          where:
+            a.address_hash == ^address_history.address_hash and
+              a.asset_hash == ^address_history.asset_hash
+        )
+      )
 
     assert address_balance.address_hash == address_history.address_hash
 
