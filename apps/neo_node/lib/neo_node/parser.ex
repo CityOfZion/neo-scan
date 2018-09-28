@@ -79,12 +79,18 @@ defmodule NeoNode.Parser do
       frozen: asset["frozen"],
       transaction_hash: parse16(asset["id"]),
       issuer: parse58(asset["issuer"]),
-      name: asset["name"],
+      name: parse_asset_name(asset["name"]),
       owner: asset["owner"],
       precision: asset["precision"],
       type: parse_asset_type(asset["type"]),
       version: asset["version"]
     }
+  end
+
+  defp parse_asset_name(list) when is_list(list) do
+    Enum.reduce(list, %{}, fn %{"lang" => lang, "name" => name}, acc ->
+      Map.put(acc, lang, name)
+    end)
   end
 
   def parse_block(block) do
@@ -115,9 +121,13 @@ defmodule NeoNode.Parser do
   def parse_transaction(transaction) do
     %{
       asset: parse_transaction_asset(transaction["asset"], transaction),
-      attributes: transaction["attributes"],
       nonce: transaction["nonce"],
-      scripts: parse_scripts(transaction),
+      extra: %{
+        scripts: transaction["scripts"],
+        script: transaction["script"],
+        contract: transaction["contract"],
+        attributes: transaction["attributes"]
+      },
       block_time: DateTime.from_unix!(transaction["blocktime"]),
       block_hash: parse16(transaction["blockhash"]),
       size: transaction["size"],
@@ -130,16 +140,6 @@ defmodule NeoNode.Parser do
       vouts: Enum.map(transaction["vout"], &parse_vout/1),
       claims: parse_claims(transaction["claims"])
     }
-  end
-
-  defp parse_scripts(transaction) do
-    scripts = transaction["scripts"]
-    contract = transaction["contract"]
-    script = transaction["script"]
-
-    scripts ++
-      if(is_nil(contract), do: [], else: [%{"contract" => contract}]) ++
-      if is_nil(script), do: [], else: [%{"script" => script}]
   end
 
   def parse_version(%{"useragent" => user_agent}) do

@@ -40,7 +40,7 @@ defmodule NeoscanSync.TokenSyncer do
     %{
       admin: <<0>>,
       amount: 0.0,
-      name: [%{"lang" => "en", "name" => token.token.name}],
+      name: %{"en" => token.token.name},
       symbol: token.token.symbol,
       owner: <<0>>,
       precision: token.token.decimals,

@@ -7,7 +7,7 @@ defmodule Neoscan.Repo.Migrations.Assets do
       add(:transaction_hash, :binary, primary_key: true)
       add(:admin, :binary, null: false)
       add(:amount, :decimal, null: false)
-      add(:name, {:array, :map}, null: false)
+      add(:name, :map, null: false)
       add(:owner, :binary, null: false)
       add(:precision, :integer, null: false)
       add(:symbol, :string, null: true)

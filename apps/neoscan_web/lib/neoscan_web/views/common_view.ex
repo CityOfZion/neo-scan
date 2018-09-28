@@ -98,32 +98,13 @@ defmodule NeoscanWeb.CommonView do
 
   def render_date_time(date_time), do: DateTime.to_unix(date_time)
 
-  def render_asset_name(%{:name => name} = asset) when is_list(name) do
+  def render_asset_name(%{:name => name} = asset) when is_map(name) do
     updated_asset = Asset.update_name(asset)
     updated_asset.name
   end
 
   def render_asset_name(asset) do
     asset.name
-  end
-
-  def has_script?(scripts), do: not is_nil(get_script(scripts))
-
-  def get_script(scripts) do
-    case Enum.find(scripts, fn script -> Map.has_key?(script, "script") end) do
-      %{"script" => script} -> script
-      _ -> nil
-    end
-  end
-
-  def has_contract?(scripts), do: not is_nil(get_contract(scripts))
-
-  def get_contract(scripts) do
-    contract = Enum.find(scripts, fn script -> Map.has_key?(script, "contract") end)
-
-    unless is_nil(contract) do
-      Poison.encode!(contract)
-    end
   end
 
   def check_if_invocation(map) when is_map(map), do: Map.has_key?(map, "invocation")

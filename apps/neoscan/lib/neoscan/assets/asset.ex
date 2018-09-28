@@ -19,7 +19,7 @@ defmodule Neoscan.Asset do
 
     field(:admin, :binary)
     field(:amount, :decimal)
-    field(:name, {:array, :map})
+    field(:name, :map)
     field(:owner, :binary)
     field(:precision, :integer)
     field(:type, :string)
@@ -37,22 +37,10 @@ defmodule Neoscan.Asset do
     %{asset | name: filter_name(asset.name)}
   end
 
-  def filter_name(asset) do
-    case Enum.find(asset, fn %{"lang" => lang} -> lang == "en" end) do
-      %{"name" => "AntShare"} ->
-        "NEO"
-
-      %{"name" => "AntCoin"} ->
-        "GAS"
-
-      %{"name" => name} ->
-        name
-
-      nil ->
-        %{"name" => name} = Enum.at(asset, 0)
-        name
-    end
-  end
+  def filter_name(%{"en" => "AntShare"}), do: "NEO"
+  def filter_name(%{"en" => "AntCoin"}), do: "GAS"
+  def filter_name(%{"en" => name}), do: name
+  def filter_name(map), do: hd(Map.values(map))
 
   def compute_value(amount, precision, "NEP5"),
     do: Decimal.div(amount, round(:math.pow(10, precision))) |> Decimal.reduce()

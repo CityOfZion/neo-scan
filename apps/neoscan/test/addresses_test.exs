@@ -27,7 +27,7 @@ defmodule Neoscan.AddressesTest do
 
     insert(:asset, %{
       transaction_hash: @governing_token,
-      name: [%{"lang" => "en", "name" => "NEO"}]
+      name: %{"en" => "NEO"}
     })
 
     Flush.all()
@@ -85,19 +85,19 @@ defmodule Neoscan.AddressesTest do
 
     insert(:asset, %{
       transaction_hash: @governing_token,
-      name: [%{"lang" => "en", "name" => "NEO"}]
+      name: %{"en" => "NEO"}
     })
 
     insert(:asset, %{
       transaction_hash: @utility_token,
-      name: [%{"lang" => "en", "name" => "GAS"}]
+      name: %{"en" => "GAS"}
     })
 
     insert(:asset, %{
       transaction_hash: <<4, 5, 6>>,
       type: "NEP5",
       precision: 8,
-      name: [%{"lang" => "zh", "name" => "My Token"}]
+      name: %{"zh" => "My Token"}
     })
 
     Flush.all()
@@ -178,28 +178,28 @@ defmodule Neoscan.AddressesTest do
       transaction_hash: @governing_token,
       type: "governing_token",
       precision: 0,
-      name: [%{"lang" => "en", "name" => "NEO"}]
+      name: %{"en" => "NEO"}
     })
 
     insert(:asset, %{
       transaction_hash: @utility_token,
       type: "utility_token",
       precision: 8,
-      name: [%{"lang" => "en", "name" => "GAS"}]
+      name: %{"en" => "GAS"}
     })
 
     insert(:asset, %{
       transaction_hash: <<1, 2, 3>>,
       precision: 25,
       symbol: "TKN",
-      name: [%{"lang" => "en", "name" => "my token"}]
+      name: %{"en" => "my token"}
     })
 
     insert(:asset, %{
       transaction_hash: deprecated_asset_hash,
       precision: 8,
       symbol: "DPTKN",
-      name: [%{"lang" => "en", "name" => "my deprecated token"}]
+      name: %{"en" => "my deprecated token"}
     })
 
     Flush.all()

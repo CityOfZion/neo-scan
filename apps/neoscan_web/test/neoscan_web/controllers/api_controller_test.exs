@@ -27,7 +27,7 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     insert(:asset, %{
       transaction_hash: @governing_token,
-      name: [%{"lang" => "en", "name" => "NEO"}]
+      name: %{"en" => "NEO"}
     })
 
     insert(:address_history, %{
@@ -38,7 +38,7 @@ defmodule NeoscanWeb.ApiControllerTest do
 
     insert(:asset, %{
       transaction_hash: <<4, 5, 6>>,
-      name: [%{"lang" => "zh", "name" => "My Token"}],
+      name: %{"zh" => "My Token"},
       symbol: "TKN"
     })
 
@@ -92,7 +92,7 @@ defmodule NeoscanWeb.ApiControllerTest do
   test "get_claimed/:address", %{conn: conn} do
     insert(:asset, %{
       transaction_hash: @governing_token,
-      name: [%{"lang" => "en", "name" => "NEO"}]
+      name: %{"en" => "NEO"}
     })
 
     vout1 = insert(:vout, %{asset_hash: @governing_token})
@@ -141,7 +141,7 @@ defmodule NeoscanWeb.ApiControllerTest do
   test "get_unclaimed/:hash", %{conn: conn} do
     insert(:asset, %{
       transaction_hash: @governing_token,
-      name: [%{"lang" => "en", "name" => "NEO"}]
+      name: %{"en" => "NEO"}
     })
 
     vout1 = insert(:vout, %{start_block_index: 4, value: 5.0, asset_hash: @governing_token})
@@ -194,7 +194,7 @@ defmodule NeoscanWeb.ApiControllerTest do
   test "get_claimable/:hash", %{conn: conn} do
     insert(:asset, %{
       transaction_hash: @governing_token,
-      name: [%{"lang" => "en", "name" => "NEO"}]
+      name: %{"en" => "NEO"}
     })
 
     vout1 = insert(:vout, %{asset_hash: @governing_token})

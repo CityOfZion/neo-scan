@@ -30,23 +30,23 @@ defmodule NeoscanWeb.AddressControllerTest do
 
     insert(:asset, %{
       transaction_hash: @governing_token,
-      name: [%{"lang" => "en", "name" => "NEO"}]
+      name: %{"en" => "NEO"}
     })
 
     insert(:asset, %{
       transaction_hash: @utility_token,
-      name: [%{"lang" => "en", "name" => "GAS"}]
+      name: %{"en" => "GAS"}
     })
 
     insert(:asset, %{
       transaction_hash: balance_1.asset_hash,
-      name: [%{"lang" => "en", "name" => "token 1"}]
+      name: %{"en" => "token 1"}
     })
 
     asset2 =
       insert(:asset, %{
         transaction_hash: balance_2.asset_hash,
-        name: [%{"lang" => "en", "name" => "token 2"}]
+        name: %{"en" => "token 2"}
       })
 
     # transaction = insert(:transaction, %{type: "contract_transaction"})
