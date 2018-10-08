@@ -32,7 +32,7 @@
     </div>
   </section>
 
-  <p  class="number-counter"><%= gettext "Assets"%> <%= get_current_min_qtd(@page, @total) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @total) %> <%= gettext "of"%> <%= @total %></p>
+  <p  class="number-counter"><%= gettext "Assets"%> <%= get_current_min_qtd(@page, @total) %> <%= gettext "to"%> <%= get_current_max_qtd(@page, @total) %> <%= gettext "of"%> <%= number_to_delimited(@total) %></p>
   <div class="see-all-button-container">
     <div class="btn-group">
       <%= if @page != 1 do %>

@@ -19,7 +19,7 @@
     </li>
     <li class="border-right border-bottom tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">
       <p class="small-detail-text"><%= gettext "Transactions" %></p>
-      <p class="large-detail-text"><%= @block.tx_count %></p>
+      <p class="large-detail-text"><%= number_to_delimited(@block.tx_count) %></p>
       <span class="tooltiptext"><%= get_explanation("block_transactions") %></span>
     </li>
     <li class="border-bottom border-right-smaller remove-border-right-660px tooltip <%= if get_tooltips(@conn) == "on" do %>add-hover<% end %>">

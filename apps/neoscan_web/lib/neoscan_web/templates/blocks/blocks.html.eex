@@ -29,11 +29,11 @@
             <div class="secondary-info-wrapper">
               <p class="medium-detail-text col-2-width">
                 <span class="tablet-detail-text"><%= gettext "Size"%>: </span>
-                <%=block.size%> <%= gettext "bytes" %>
+                <%= number_to_delimited(block.size) %> <%= gettext "bytes" %>
               </p>
               <p class="medium-detail-text col-2-width">
                 <span class="tablet-detail-text"><%= gettext "Transactions"%>: </span>
-                <%=block.tx_count%>
+                <%= number_to_delimited(block.tx_count) %>
               </p>
               <p class="medium-detail-text col-3-width">
                 <span class="tablet-detail-text"><%= gettext "Created"%>: </span>
@@ -41,7 +41,7 @@
               </p>
               <p class="medium-detail-text col-1-width">
                 <span class="tablet-detail-text"><%= gettext "Block Time"%>: </span>
-                <%= block.lag %> seconds
+                <%= number_to_delimited(block.lag) %> seconds
               </p>
             </div>
           </div>
