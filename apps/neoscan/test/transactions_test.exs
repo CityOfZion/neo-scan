@@ -29,7 +29,7 @@ defmodule Neoscan.TransactionsTest do
   test "get_for_block/2" do
     block = insert(:block, %{transactions: [insert(:transaction), insert(:transaction)]})
     assert 2 == Enum.count(Transactions.get_for_block(block.index, 1))
-    assert 0 == Enum.count(Transactions.get_for_block(block.index, 2))
+    assert Enum.empty(Transactions.get_for_block(block.index, 2)) == true
   end
 
   test "get_for_address/2" do

@@ -8,7 +8,9 @@ defmodule Neoscan.Umbrella.Mixfile do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       name: "NeoScan",
-      elixirc_options: [warnings_as_errors: true],
+      elixirc_options: [
+        warnings_as_errors: true
+      ],
       docs: [
         # The main page in the docs
         main: "NeoScan",
@@ -43,7 +45,8 @@ defmodule Neoscan.Umbrella.Mixfile do
     [
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
       {:excoveralls, "~> 0.8", only: :test},
-      {:distillery, "~> 2.0.0-rc.7", runtime: false}
+      {:distillery, "~> 2.0.0-rc.7", runtime: false},
+      {:credo, "~> 0.10.2"}
     ]
   end
 

@@ -2136,10 +2136,7 @@ defmodule NeoNode.HTTPPoisonWrapper do
     result = handle_post(Poison.decode!(data))
 
     if is_nil(result) do
-      IO.inspect({url, data, headers, opts})
       result = HTTPoison.post(url, data, headers, opts)
-      IO.inspect(result)
-      IO.inspect(Poison.decode!(:zlib.gunzip(elem(result, 1).body)), limit: :infinity)
       result
     else
       result

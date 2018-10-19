@@ -273,10 +273,7 @@ defmodule NeoNotification.HTTPPoisonWrapper do
   def get("error" <> _, _, _), do: {:error, :error}
 
   def get(url, headers, opts) do
-    IO.inspect({url, headers, opts})
     result = HTTPoison.get(url, headers, opts)
-    IO.inspect(result)
-    IO.inspect(elem(result, 1), limit: :infinity)
     result
   end
 end
