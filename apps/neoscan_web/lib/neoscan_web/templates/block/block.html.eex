@@ -85,7 +85,7 @@
       <span class="tooltiptext"><%= get_explanation("bytecode_invocation_script") %></span>
     </div>
     <div class="corner-box">
-      <%= for script <- @block.script do %>
+      <%= for script <- Map.delete(@block.script, :__struct__) do %>
         <%= if check_if_invocation(script) do %>
           <p class="small-detail-text bar-left-blocks"><%= get_inv(script) %></p>
         <% end %>
@@ -98,7 +98,7 @@
       <span class="tooltiptext"><%= get_explanation("bytecode_verification_script") %></span>
     </div>
     <div class="corner-box">
-      <%= for script <- @block.script do %>
+      <%= for script <- Map.delete(@block.script, :__struct__) do %>
         <%= if check_if_verification(script) do %>
           <p class="small-detail-text bar-left-blocks"><%= get_ver(script) %></p>
         <% end %>
@@ -115,7 +115,7 @@
     </div>
     <div class="corner-box">
       <p class="small-detail-text bar-left-blocks">
-        <%= for script <- @block.script do %>
+        <%= for script <- Map.delete(@block.script, :__struct__) do %>
           <%= if check_if_invocation(script) do %>
             <%= for operation <- parse_invocation(script) do %>
               <span class="script-new-line"><%= operation %></span>
@@ -132,7 +132,7 @@
     </div>
     <div class="corner-box">
       <p class="small-detail-text bar-left-blocks">
-      <%= for script <- @block.script do %>
+      <%= for script <- Map.delete(@block.script, :__struct__) do %>
         <%= if check_if_verification(script) do %>
         <%= for operation <- parse_verification(script) do %>
           <span class="script-new-line"><%= operation %></span>

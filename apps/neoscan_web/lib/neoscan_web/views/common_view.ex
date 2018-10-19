@@ -109,28 +109,42 @@ defmodule NeoscanWeb.CommonView do
 
   def check_if_invocation(map) when is_map(map), do: Map.has_key?(map, "invocation")
   def check_if_invocation({"invocation", _hash}), do: true
+  def check_if_invocation({:invocation, nil}), do: true
+  def check_if_invocation({:invocation, _hash}), do: true
   def check_if_invocation({"verification", _hash}), do: false
+  def check_if_invocation({:verification, _hash}), do: false
   def check_if_invocation(nil), do: true
+  def check_if_invocation({:id, _}), do: false
 
   def check_if_verification(map) when is_map(map), do: Map.has_key?(map, "verification")
   def check_if_verification({"verification", _hash}), do: true
+  def check_if_verification({:verification, nil}), do: false
+  def check_if_verification({:verification, _}), do: true
   def check_if_verification({"invocation", _hash}), do: false
+  def check_if_verification({:invocation, _hash}), do: false
   def check_if_verification(nil), do: true
+  def check_if_verification({:id, _}), do: false
 
   def parse_invocation(nil), do: "No Invocation Script"
+  def parse_invocation({:invocation, nil}), do: "No Invocation Script"
   def parse_invocation({"invocation", inv}), do: Disassembler.parse_script(inv)
+  def parse_invocation({:invocation, inv}), do: Disassembler.parse_script(inv)
   def parse_invocation(%{"invocation" => inv}), do: Disassembler.parse_script(inv)
 
   def parse_verification(nil), do: "No Verification Script"
+  def parse_verification({:verification, nil}), do: "No Verification Script"
   def parse_verification({"verification", ver}), do: Disassembler.parse_script(ver)
+  def parse_verification({:verification, ver}), do: Disassembler.parse_script(ver)
   def parse_verification(%{"verification" => ver}), do: Disassembler.parse_script(ver)
 
   def get_inv(nil), do: "No Invocation Script"
   def get_inv({"invocation", inv}), do: inv
+  def get_inv({:invocation, inv}), do: inv
   def get_inv(%{"invocation" => inv}), do: inv
 
   def get_ver(nil), do: "No Verification Script"
   def get_ver({"verification", ver}), do: ver
+  def get_ver({:verification, ver}), do: ver
   def get_ver(%{"verification" => ver}), do: ver
 
   def get_explanation(topic), do: Explanations.get(topic)

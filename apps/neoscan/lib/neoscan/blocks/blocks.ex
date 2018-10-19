@@ -74,14 +74,15 @@ defmodule Neoscan.Blocks do
       iex> paginate(page)
       [%Block{}, ...]
   """
-  def paginate(page) do
+  def paginate(page), do: paginate(page, @page_size)
+
+  def paginate(page, page_size) do
     block_query =
       from(
         e in Block,
         order_by: [
           desc: e.index
         ],
-        limit: @page_size,
         select:
           merge(
             e,
@@ -91,7 +92,7 @@ defmodule Neoscan.Blocks do
           )
       )
 
-    Repo.paginate(block_query, page: page, page_size: @page_size)
+    Repo.paginate(block_query, page: page, page_size: page_size)
   end
 
   def get_missing_block_indexes do
