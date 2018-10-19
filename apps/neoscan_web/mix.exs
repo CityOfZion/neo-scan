@@ -64,6 +64,9 @@ defmodule NeoscanWeb.Mixfile do
       {:cowboy, "~> 1.1"},
       {:cors_plug, "~> 1.5"},
       {:wobserver, "~> 0.1"},
+      {:absinthe, "~> 1.4"},
+      {:absinthe_plug, "~> 1.4"},
+      {:absinthe_phoenix, "~> 1.4"},
       {:timex, "~> 3.3"},
       {:number, "~> 0.5.4"},
       {:base58, github: "adrienmo/base58"}

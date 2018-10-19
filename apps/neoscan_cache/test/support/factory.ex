@@ -34,7 +34,7 @@ defmodule NeoscanCache.Factory do
       next_consensus: :crypto.strong_rand_bytes(32),
       nonce: :crypto.strong_rand_bytes(32),
       script: %{
-        "invocation" => Base.encode16(:crypto.strong_rand_bytes(32))
+        invocation: Base.encode16(:crypto.strong_rand_bytes(32))
       },
       size: 1526,
       time: DateTime.utc_now(),
