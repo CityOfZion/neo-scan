@@ -4,6 +4,7 @@ defmodule Neoscan.Block do
   """
 
   use Ecto.Schema
+  alias Neoscan.Script
   alias Neoscan.Transaction
 
   @primary_key {:index, :integer, []}
@@ -13,7 +14,7 @@ defmodule Neoscan.Block do
     field(:merkle_root, :binary)
     field(:next_consensus, :binary)
     field(:nonce, :binary)
-    field(:script, {:map, :string})
+    embeds_one(:script, Script)
     field(:size, :integer)
     field(:time, :utc_datetime)
     field(:lag, :integer, virtual: true)

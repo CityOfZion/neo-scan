@@ -131,7 +131,10 @@ defmodule NeoscanSync.Converter do
       merkle_root: block_raw.merkle_root,
       next_consensus: block_raw.next_consensus,
       nonce: block_raw.nonce,
-      script: block_raw.script,
+      script: %{
+        invocation: block_raw.script["invocation"],
+        verification: block_raw.script["verification"]
+      },
       size: block_raw.size,
       time: block_raw.time,
       version: block_raw.version,

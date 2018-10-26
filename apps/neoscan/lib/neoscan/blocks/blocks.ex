@@ -7,6 +7,7 @@ defmodule Neoscan.Blocks do
   alias Neoscan.Repo
   alias Neoscan.Block
   alias Neoscan.BlockMeta
+  alias Neoscan.Counters
   alias Neoscan.Transaction
   alias Neoscan.Transfer
   require Logger
@@ -74,14 +75,16 @@ defmodule Neoscan.Blocks do
       iex> paginate(page)
       [%Block{}, ...]
   """
-  def paginate(page) do
+  def paginate(page), do: paginate(page, @page_size)
+
+  def paginate(page, page_size) do
     block_query =
       from(
         e in Block,
         order_by: [
           desc: e.index
         ],
-        limit: @page_size,
+        limit: ^page_size,
         select:
           merge(
             e,
@@ -91,7 +94,11 @@ defmodule Neoscan.Blocks do
           )
       )
 
-    Repo.paginate(block_query, page: page, page_size: @page_size)
+    Repo.paginate(block_query,
+      page: page,
+      page_size: page_size,
+      options: [total_entries: Counters.count_blocks() || 0]
+    )
   end
 
   def get_missing_block_indexes do

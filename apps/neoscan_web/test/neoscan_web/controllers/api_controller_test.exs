@@ -673,6 +673,12 @@ defmodule NeoscanWeb.ApiControllerTest do
       get(conn, api_path(conn, :get_block, Base.encode16(block.hash)))
       |> BlueBird.ConnLogger.save()
 
+    script = %{
+      "id" => block.script.id,
+      "invocation" => block.script.invocation,
+      "verification" => nil
+    }
+
     assert %{
              "confirmations" => 1,
              "hash" => Base.encode16(block.hash, case: :lower),
@@ -682,7 +688,7 @@ defmodule NeoscanWeb.ApiControllerTest do
              "nextconsensus" => Base.encode16(block.next_consensus, case: :lower),
              "nonce" => Base.encode16(block.nonce, case: :lower),
              "previousblockhash" => "",
-             "script" => block.script,
+             "script" => script,
              "size" => block.size,
              "time" => DateTime.to_unix(block.time),
              "transactions" => [Base.encode16(transaction_hash, case: :lower)],

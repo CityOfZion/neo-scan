@@ -86,6 +86,17 @@ defmodule NeoscanWeb.Router do
     get("/get_transaction/:transaction_hash", ApiController, :get_transaction)
   end
 
+  scope "/graphql" do
+    pipe_through(:api)
+
+    forward("/graphiql", Absinthe.Plug.GraphiQL,
+      schema: NeoscanWeb.Schema,
+      interface: :simple
+    )
+
+    forward("/", Absinthe.Plug, schema: NeoscanWeb.Schema)
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", NeoscanWeb do
   #   pipe_through :api
