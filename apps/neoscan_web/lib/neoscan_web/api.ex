@@ -194,9 +194,9 @@ defmodule NeoscanWeb.Api do
   defp render_transaction(transaction) do
     %{
       :txid => Base.encode16(transaction.hash, case: :lower),
-      :attributes => transaction.extra[:attributes] || [],
+      :attributes => transaction.extra["attributes"] || [],
       :net_fee => transaction.net_fee,
-      :scripts => transaction.extra[:scripts] || [],
+      :scripts => transaction.extra["scripts"] || [],
       :size => transaction.size,
       :sys_fee => transaction.sys_fee,
       :type => Macro.camelize(transaction.type),
