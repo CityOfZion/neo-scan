@@ -21,4 +21,16 @@ defmodule NeoscanWeb.Resolvers.Block do
 
     {:ok, resp}
   end
+
+  def get(_, %{params: %{hash: hash}}, _) do
+    block = Blocks.get(hash)
+    if is_nil(block), do: {:error, "block not found"}, else: {:ok, block}
+  end
+
+  def get(_, %{params: %{index: index}}, _) do
+    block = Blocks.get(index)
+    if is_nil(block), do: {:error, "block not found"}, else: {:ok, block}
+  end
+
+  def get(_, _, _), do: {:error, "missing search parameter index or hash"}
 end

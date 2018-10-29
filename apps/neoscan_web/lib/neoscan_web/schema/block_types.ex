@@ -5,20 +5,33 @@ defmodule NeoscanWeb.Schema.BlockTypes do
 
   @desc "Queries for blocks"
   object :block_queries do
-    @desc "Blocks query"
+    @desc """
+      Blocks query.
+      Get blocks, by default you will get the latest 20 blocks
+    """
     field :blocks, :blocks do
       arg(:paginator, :paginator)
       resolve(&Block.all/3)
     end
+
+    @desc """
+      Block query.
+      Get information about one block.
+      Use the filter to get the block using the block by index or hash.
+    """
+    field :block, :block_row do
+      arg(:params, non_null(:params))
+      resolve(&Block.get/3)
+    end
   end
 
-  @desc "Blocks"
+  @desc "Blocks contains rows and pagination data"
   object :blocks do
     field(:block_rows, type: list_of(:block_row))
     field(:pagination, type: :pagination)
   end
 
-  @desc "Block"
+  @desc "a single block row"
   object :block_row do
     field(:cumulative_sys_fee, :decimal)
     field(:gas_generated, :decimal)
@@ -42,5 +55,11 @@ defmodule NeoscanWeb.Schema.BlockTypes do
   object :script do
     field(:invocation, :string)
     field(:verification, :string)
+  end
+
+  @desc "parameters used to get a single block"
+  input_object :params do
+    field(:index, :integer)
+    field(:hash, :string)
   end
 end
