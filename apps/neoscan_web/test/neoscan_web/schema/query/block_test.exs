@@ -130,8 +130,10 @@ defmodule NeoscanWeb.Schema.Query.BlockTest do
 
   test "get one block by hash", %{conn: conn} do
     block = insert(:block)
-    hash = block.hash
-    |> Base.encode16(case: :lower)
+
+    hash =
+      block.hash
+      |> Base.encode16(case: :lower)
 
     conn =
       post(
