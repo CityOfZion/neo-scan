@@ -143,7 +143,7 @@ defmodule NeoscanWeb.Schema.Query.BlockTest do
           query: @query,
           variables: %{
             params: %{
-              hash: block.hash
+              hash: hash
             }
           }
         }
