@@ -9,4 +9,8 @@ defmodule NeoscanWeb.Resolvers.Address do
   end
 
   def get(_, _, _), do: {:error, "missing search parameter hash"}
+
+  def get_gas_generated(_, _, _) do
+    {:ok, Decimal.new("12.21")}
+  end
 end

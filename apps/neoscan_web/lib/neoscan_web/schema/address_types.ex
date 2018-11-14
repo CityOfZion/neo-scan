@@ -23,5 +23,11 @@ defmodule NeoscanWeb.Schema.AddressTypes do
     field(:tx_count, :integer)
     field(:atb_count, :integer)
     field(:hash, :binary58)
+
+    field :gas_generated, type: :decimal do
+      arg(:start_block, non_null(:integer))
+      arg(:end_block, non_null(:integer))
+      resolve(&Address.get_gas_generated/3)
+    end
   end
 end

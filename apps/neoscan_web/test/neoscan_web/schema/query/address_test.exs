@@ -4,13 +4,14 @@ defmodule NeoscanWeb.Schema.Query.AddressTest do
   import NeoscanWeb.Factory
 
   @query """
-  query Address($hash: String!){
+  query Address($hash: String!, $start_block: Int!, $end_block: Int!){
     address(hash: $hash){
       hash
       first_transaction_time
       last_transaction_time
       tx_count
       atb_count
+      gas_generated(start_block: $start_block, end_block: $end_block)
     }
   }
   """
@@ -26,7 +27,9 @@ defmodule NeoscanWeb.Schema.Query.AddressTest do
         %{
           query: @query,
           variables: %{
-            hash: hash
+            hash: hash,
+            start_block: 12,
+            end_block: 15
           }
         }
       )
@@ -39,6 +42,7 @@ defmodule NeoscanWeb.Schema.Query.AddressTest do
                  "atb_count" => _,
                  "first_transaction_time" => _,
                  "hash" => ^hash,
+                 "gas_generated" => "12.21",
                  "last_transaction_time" => _,
                  "tx_count" => _
                }
