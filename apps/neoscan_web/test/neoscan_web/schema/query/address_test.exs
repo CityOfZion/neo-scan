@@ -42,7 +42,7 @@ defmodule NeoscanWeb.Schema.Query.AddressTest do
                  "atb_count" => _,
                  "first_transaction_time" => _,
                  "hash" => ^hash,
-                 "gas_generated" => "12.21",
+                 "gas_generated" => "0.0",
                  "last_transaction_time" => _,
                  "tx_count" => _
                }

@@ -38,6 +38,18 @@ defmodule NeoscanWeb.Api do
     %{:address => Base58.encode(address_hash), :balance => balances}
   end
 
+  @spec get_gas_generated(binary(), integer(), integer()) :: Decimal.t
+  def get_gas_generated(address_hash, start_block, end_block) do
+    vouts = Transactions.get_vouts(address_hash, start_block, end_block)
+    Enum.reduce(vouts, Decimal.new("0.0"), fn vout, acc ->
+      value = Decimal.round(vout.value)
+      start_index = max(vout.start_block_index, start_block)
+      end_index = min(vout.end_block_index, end_block)
+      gas_generated = BlockGasGeneration.get_range_amount(start_index, end_index - 1)
+      Decimal.add(acc, Decimal.div(Decimal.mult(value, gas_generated), @total_neo))
+    end)
+  end
+
   def get_unclaimed(address_hash) do
     vouts = Transactions.get_unclaimed_vouts(address_hash)
     current_index = Counters.count_blocks() - 1
