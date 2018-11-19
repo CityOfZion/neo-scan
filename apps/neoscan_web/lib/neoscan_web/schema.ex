@@ -3,9 +3,11 @@ defmodule NeoscanWeb.Schema do
 
   import_types(Absinthe.Type.Custom)
   import_types(NeoscanWeb.Schema.BlockTypes)
+  import_types(NeoscanWeb.Schema.AddressTypes)
 
   query do
     import_fields(:block_queries)
+    import_fields(:address_queries)
   end
 
   @desc "paginator"
@@ -24,11 +26,21 @@ defmodule NeoscanWeb.Schema do
 
   scalar :binary16 do
     parse(fn input ->
-      Base.decode16!(input)
+      Base.decode16!(input, case: :mixed)
     end)
 
     serialize(fn binary ->
       Base.encode16(binary, case: :lower)
+    end)
+  end
+
+  scalar :binary58 do
+    parse(fn input ->
+      Base58.decode(input)
+    end)
+
+    serialize(fn binary ->
+      Base58.encode(binary)
     end)
   end
 end

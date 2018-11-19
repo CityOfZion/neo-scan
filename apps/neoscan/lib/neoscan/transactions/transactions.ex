@@ -166,6 +166,20 @@ defmodule Neoscan.Transactions do
     )
   end
 
+  @spec get_vouts(binary, integer, integer) :: [any()]
+  def get_vouts(address_hash, start_block, end_block) do
+    Repo.all(
+      from(
+        vout in Vout,
+        where:
+          vout.address_hash == ^address_hash and vout.asset_hash == ^@governing_token and
+            vout.start_block_index <= ^end_block and
+            (vout.end_block_index > ^start_block or is_nil(vout.end_block_index))
+      )
+    )
+  end
+
+  @spec get_claimed_vouts(binary) :: [any()]
   def get_claimed_vouts(address_hash) do
     result =
       Repo.all(

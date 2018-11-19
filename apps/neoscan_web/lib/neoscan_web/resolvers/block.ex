@@ -23,6 +23,7 @@ defmodule NeoscanWeb.Resolvers.Block do
   end
 
   def get(_, %{params: %{hash: hash}}, _) do
+    hash = Base.decode16!(hash, case: :mixed)
     block = Blocks.get(hash)
     if is_nil(block), do: {:error, "block not found"}, else: {:ok, block}
   end

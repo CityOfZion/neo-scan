@@ -121,4 +121,34 @@ defmodule Neoscan.TransactionsTest do
                & &1.start_block_index
              )
   end
+
+  test "get_vouts/3" do
+    insert(:asset, %{transaction_hash: @governing_token})
+    vout1 = insert(:vout, %{asset_hash: @governing_token})
+    vout2 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
+    insert(:vin, %{vout_n: vout2.n, vout_transaction_hash: vout2.transaction_hash})
+    vout3 = insert(:vout, %{address_hash: vout1.address_hash, asset_hash: @governing_token})
+    insert(:vin, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
+    insert(:claim, %{vout_n: vout3.n, vout_transaction_hash: vout3.transaction_hash})
+
+    Flush.all()
+
+    vouts =
+      Transactions.get_vouts(
+        vout1.address_hash,
+        vout1.start_block_index,
+        vout3.start_block_index + 1
+      )
+
+    assert 3 == length(vouts)
+
+    end_block2 =
+      hd(Enum.filter(vouts, &(&1.start_block_index == vout2.start_block_index))).end_block_index
+
+    end_block3 =
+      hd(Enum.filter(vouts, &(&1.start_block_index == vout3.start_block_index))).end_block_index
+
+    assert 2 == length(Transactions.get_vouts(vout1.address_hash, end_block2 + 1, end_block3 + 1))
+    assert 1 == length(Transactions.get_vouts(vout1.address_hash, end_block3 + 1, end_block3 + 1))
+  end
 end
