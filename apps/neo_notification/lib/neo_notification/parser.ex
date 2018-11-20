@@ -9,16 +9,20 @@ defmodule NeoNotification.Parser do
   defp parse_notify_type("transfer"), do: :transfer
 
   def parse_block_notification(block_notification = %{"notify_type" => "transfer"}) do
-    %{
-      addr_from: parse58(block_notification["addr_from"]),
-      addr_to: parse58(block_notification["addr_to"]),
-      amount: parse_integer(block_notification["amount"]),
-      block: block_notification["block"],
-      contract: parse16(block_notification["contract"]),
-      notify_type: parse_notify_type(block_notification["notify_type"]),
-      transaction_hash: parse16(block_notification["tx"]),
-      type: block_notification["type"]
-    }
+    try do
+      %{
+        addr_from: parse58(block_notification["addr_from"]),
+        addr_to: parse58(block_notification["addr_to"]),
+        amount: parse_integer(block_notification["amount"]),
+        block: block_notification["block"],
+        contract: parse16(block_notification["contract"]),
+        notify_type: parse_notify_type(block_notification["notify_type"]),
+        transaction_hash: parse16(block_notification["tx"]),
+        type: block_notification["type"]
+      }
+    catch
+      _, _ -> %{notify_type: :others}
+    end
   end
 
   def parse_block_notification(_), do: %{notify_type: :others}
