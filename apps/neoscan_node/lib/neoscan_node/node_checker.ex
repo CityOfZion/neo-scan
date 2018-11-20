@@ -47,10 +47,16 @@ defmodule NeoscanNode.NodeChecker do
 
     live_nodes = Task.await(task, @timeout)
 
+    live_application_log_nodes =
+      live_nodes
+      |> pmap(&get_application_log/1, @timeout)
+      |> Enum.filter(&(not is_nil(&1)))
+
     last_block_index = Enum.max(Enum.map(live_nodes, &elem(&1, 1)), fn -> 0 end)
     set(:last_block_index, last_block_index)
     set(:live_nodes, live_nodes)
     set(:live_notifications, live_notifications)
+    set(:live_application_log_nodes, live_application_log_nodes)
   end
 
   def handle_info(:sync, _), do: {:noreply, sync()}
@@ -60,6 +66,7 @@ defmodule NeoscanNode.NodeChecker do
   def get_live_nodes, do: get(:live_nodes)
 
   defp get_live_notifications, do: get(:live_notifications)
+  defp get_live_application_log_nodes, do: get(:live_application_log_nodes)
 
   defp process_url_task do
     new_list = Enum.uniq(@neo_node_urls ++ get_node_urls())
@@ -84,6 +91,17 @@ defmodule NeoscanNode.NodeChecker do
       [] ->
         Process.sleep(@retry_interval)
         get_random_node(index)
+
+      nodes ->
+        elem(Enum.random(nodes), 0)
+    end
+  end
+
+  def get_random_application_log_node(index) do
+    case Enum.filter(get_live_application_log_nodes(), &(elem(&1, 1) >= index)) do
+      [] ->
+        Process.sleep(@retry_interval)
+        get_random_application_log_node(index)
 
       nodes ->
         elem(Enum.random(nodes), 0)
@@ -120,6 +138,16 @@ defmodule NeoscanNode.NodeChecker do
     case NeoNotification.get_current_height(url) do
       {:ok, height} ->
         {url, height}
+
+      _ ->
+        nil
+    end
+  end
+
+  def get_application_log({url, count}) do
+    case NeoNode.get_application_log(url, "00") do
+      {:error, :invalid_format} ->
+        {url, count}
 
       _ ->
         nil

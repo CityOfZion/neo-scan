@@ -44,6 +44,9 @@ defmodule NeoNode do
       {:ok, response} ->
         {:ok, Parser.parse_application_log(response)}
 
+      {:error, %{"code" => -2_146_233_033}} ->
+        {:error, :invalid_format}
+
       error ->
         error
     end

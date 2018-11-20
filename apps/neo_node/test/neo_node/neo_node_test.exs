@@ -246,6 +246,12 @@ defmodule NeoNodeTest do
                @fake_node_url,
                "02e17fbff2921c70abd8828e8b0ef82fb2e3a76238c5f296a7d0b9b8a00c0ff4"
              )
+
+    assert {:error, :invalid_format} ==
+             NeoNode.get_application_log(
+               @fake_node_url,
+               "00"
+             )
   end
 
   test "get_transaction/2" do
