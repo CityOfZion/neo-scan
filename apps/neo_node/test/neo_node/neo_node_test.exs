@@ -239,7 +239,7 @@ defmodule NeoNodeTest do
                 contract:
                   <<172, 188, 83, 41, 4, 182, 181, 27, 94, 166, 209, 155, 128, 61, 120, 175, 112,
                     231, 230, 249>>,
-                value: 8_096_980_000_000_000
+                value: 10_000_000
               }
             ]} ==
              NeoNode.get_application_log(

@@ -16,7 +16,6 @@ defmodule NeoscanSync.SyncerTest do
 
   test "import_block/1" do
     assert :ok == Syncer.insert_block(Syncer.download_block(0))
-
     Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
     Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_transaction_balances_queue()", [])
     Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])

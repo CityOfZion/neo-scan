@@ -178,12 +178,20 @@ defmodule NeoNode.Parser do
     %{
       address_from: parse_address(address_from),
       address_to: parse_address(address_to),
-      value: String.to_integer(value),
+      value: parse_integer_value(value),
       contract: parse16(contract)
     }
   end
 
   defp parse_notification(_), do: nil
+
+  defp parse_integer_value(value) do
+    case Base.decode16!(value, case: :mixed) do
+      <<x::integer-little-size(56)>> -> x
+      <<x::integer-little-size(64)>> -> x
+      _ -> 0
+    end
+  end
 
   defp parse_address(address) do
     address
@@ -194,6 +202,7 @@ defmodule NeoNode.Parser do
     |> String.slice(0..7)
     |> (&(@address_version <> address <> &1)).()
     |> Base.decode16!(case: :mixed)
+    |> (&if(&1 == <<23, 27, 182, 49, 176>>, do: <<0>>, else: &1)).()
   end
 
   defp hash256(binary) do

@@ -2343,6 +2343,68 @@ defmodule NeoNode.HTTPPoisonWrapper do
   def contract_data("0x0000000000000000000000000000000000000000"), do: error(@unknown_contract)
   def contract_data(_), do: nil
 
+  def application_log_data("c920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2") do
+    result(%{
+      "executions" => [
+        %{
+          "contract" => "0xf55b248e820c6ecc7e3c4dcb9cf9dbddcdfb3f6c",
+          "gas_consumed" => "5.444",
+          "notifications" => [
+            %{
+              "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
+              "state" => %{
+                "type" => "Array",
+                "value" => [
+                  %{"type" => "ByteArray", "value" => "7472616e73666572"},
+                  %{"type" => "ByteArray", "value" => ""},
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "85104d0b1bc285289b17717a6facaa2cbd1712b3"
+                  },
+                  %{"type" => "ByteArray", "value" => "0060b7c6c5fe11"}
+                ]
+              }
+            },
+            %{
+              "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
+              "state" => %{
+                "type" => "Array",
+                "value" => [
+                  %{"type" => "ByteArray", "value" => "7472616e73666572"},
+                  %{"type" => "ByteArray", "value" => ""},
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "130b891dc5341bcef93c077fc7ec5624ee8776f8"
+                  },
+                  %{"type" => "ByteArray", "value" => "00f87f24795120"}
+                ]
+              }
+            },
+            %{
+              "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
+              "state" => %{
+                "type" => "Array",
+                "value" => [
+                  %{"type" => "ByteArray", "value" => "7472616e73666572"},
+                  %{"type" => "ByteArray", "value" => ""},
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "45bcb590e3e0fb0010d7bfde6f7cd39382fd86e9"
+                  },
+                  %{"type" => "ByteArray", "value" => "00c0b6403b6f0c"}
+                ]
+              }
+            }
+          ],
+          "stack" => [%{"type" => "Integer", "value" => "1"}],
+          "trigger" => "Application",
+          "vmstate" => "HALT, BREAK"
+        }
+      ],
+      "txid" => "0xc920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2"
+    })
+  end
+
   def application_log_data("02e17fbff2921c70abd8828e8b0ef82fb2e3a76238c5f296a7d0b9b8a00c0ff4") do
     result(%{
       "executions" => [
