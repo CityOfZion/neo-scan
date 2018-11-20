@@ -169,6 +169,81 @@ defmodule NeoNotification.HTTPPoisonWrapper do
     }
   end
 
+  def get("#{@notification_url}/notifications/block/2006033?page=1", _, _) do
+    {
+      :ok,
+      %HTTPoison.Response{
+        body:
+          Poison.encode!(%{
+            "current_height" => 2_006_734,
+            "message" => "Results for a block",
+            "results" => [
+              %{
+                "contract" => "0x1d5b6767af6e05dd6ab7e5e4d4894bb5e0fd06ae",
+                "block" => 2_006_033,
+                "tx" => "0x41383bdacaa89c81289542eb276c5ef126ef5438ee16db91e1050cd932ca3a1f",
+                "index" => 0,
+                "notify_type" => "transfer",
+                "state" => %{
+                  "type" => "Array",
+                  "value" => [
+                    %{
+                      "type" => "ByteArray",
+                      "value" => "7472616e73666572"
+                    },
+                    %{
+                      "type" => "ByteArray",
+                      "value" => ""
+                    },
+                    %{
+                      "type" => "ByteArray",
+                      "value" => "117a672273cbd0b876046151d2034715e2ce95bcb8"
+                    },
+                    %{
+                      "type" => "Integer",
+                      "value" => "480000000"
+                    }
+                  ]
+                },
+                "key" => "0x03119c1e0001000000"
+              },
+              %{
+                "contract" => "0x1d5b6767af6e05dd6ab7e5e4d4894bb5e0fd06ae",
+                "block" => 2_006_033,
+                "tx" => "0x41383bdacaa89c81289542eb276c5ef126ef5438ee16db91e1050cd932ca3a1f",
+                "index" => 1,
+                "notify_type" => "mine",
+                "state" => %{
+                  "type" => "Array",
+                  "value" => [
+                    %{
+                      "type" => "ByteArray",
+                      "value" => "6d696e65"
+                    },
+                    %{
+                      "type" => "ByteArray",
+                      "value" => "9ac400"
+                    },
+                    %{
+                      "type" => "Integer",
+                      "value" => "480000000"
+                    }
+                  ]
+                },
+                "key" => "0x03119c1e0002000000"
+              }
+            ],
+            "page" => 1,
+            "page_len" => 500,
+            "total" => 2,
+            "total_pages" => 1
+          }),
+        headers: [],
+        status_code: 200
+      }
+    }
+  end
+
   def get("#{@notification_url}/notifications/block/1444902?page=" <> page, _, _) do
     page = String.to_integer(page)
 

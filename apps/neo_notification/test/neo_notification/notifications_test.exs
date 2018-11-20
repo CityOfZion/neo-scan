@@ -63,6 +63,9 @@ defmodule NeoNotificationTest do
              Enum.count(
                elem(NeoNotification.get_block_notifications(@notification_url, 1_444_902), 1)
              )
+
+    assert {:ok, [%{notify_type: :others}, %{notify_type: :others}]} =
+             NeoNotification.get_block_notifications(@notification_url, 2_006_033)
   end
 
   test "get_tokens/2" do
