@@ -226,6 +226,28 @@ defmodule NeoNodeTest do
     assert {:ok, {:csharp, "2.7.6.1/"}} == NeoNode.get_version(@fake_node_url)
   end
 
+  test "get_application_log" do
+    assert {:ok,
+            [
+              %{
+                address_from:
+                  <<23, 253, 141, 15, 132, 184, 219, 137, 125, 110, 235, 227, 224, 23, 126, 213,
+                    197, 180, 127, 195, 34, 193, 201, 252, 111>>,
+                address_to:
+                  <<23, 99, 31, 11, 129, 194, 42, 201, 149, 240, 182, 179, 122, 238, 123, 144,
+                    188, 76, 243, 107, 125, 218, 193, 225, 196>>,
+                contract:
+                  <<172, 188, 83, 41, 4, 182, 181, 27, 94, 166, 209, 155, 128, 61, 120, 175, 112,
+                    231, 230, 249>>,
+                value: 8_096_980_000_000_000
+              }
+            ]} ==
+             NeoNode.get_application_log(
+               @fake_node_url,
+               "02e17fbff2921c70abd8828e8b0ef82fb2e3a76238c5f296a7d0b9b8a00c0ff4"
+             )
+  end
+
   test "get_transaction/2" do
     txid = "0x9e9526615ee7d460ed445c873c4af91bf7bfcc67e6e43feaf051b962a6df0a98"
 

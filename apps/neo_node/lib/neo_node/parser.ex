@@ -1,4 +1,6 @@
 defmodule NeoNode.Parser do
+  @address_version "17"
+
   defp parse16("0x" <> rest), do: parse16(rest)
 
   defp parse16(string) do
@@ -141,6 +143,70 @@ defmodule NeoNode.Parser do
       claims: parse_claims(transaction["claims"])
     }
   end
+
+  def parse_application_log(%{"executions" => executions}) do
+    executions
+    |> Enum.map(&parse_execution/1)
+    |> List.flatten()
+    |> Enum.filter(&(not is_nil(&1)))
+  end
+
+  defp parse_execution(%{"notifications" => notifications}) do
+    Enum.map(notifications, &parse_notification/1)
+  end
+
+  defp parse_execution(_), do: nil
+
+  defp parse_notification(%{
+         "contract" => contract,
+         "state" => %{
+           "type" => "Array",
+           "value" => [
+             %{"type" => "ByteArray", "value" => "7472616e73666572"},
+             %{
+               "type" => "ByteArray",
+               "value" => address_from
+             },
+             %{
+               "type" => "ByteArray",
+               "value" => address_to
+             },
+             %{"type" => "ByteArray", "value" => value}
+           ]
+         }
+       }) do
+    %{
+      address_from: parse_address(address_from),
+      address_to: parse_address(address_to),
+      value: String.to_integer(value),
+      contract: parse16(contract)
+    }
+  end
+
+  defp parse_notification(_), do: nil
+
+  defp parse_address(address) do
+    address
+    |> (&(@address_version <> &1)).()
+    |> Base.decode16!(case: :mixed)
+    |> hash256()
+    |> Base.encode16()
+    |> String.slice(0..7)
+    |> (&(@address_version <> address <> &1)).()
+    |> Base.decode16!(case: :mixed)
+  end
+
+  defp hash256(binary) do
+    :crypto.hash(:sha256, :crypto.hash(:sha256, binary))
+  end
+
+  # export const getAddressFromScriptHash = (scriptHash: string): string => {
+  #   scriptHash = reverseHex(scriptHash);
+  #   const shaChecksum = hash256(ADDR_VERSION + scriptHash).substr(0, 8);
+  #   return base58.encode(
+  #     Buffer.from(ADDR_VERSION + scriptHash + shaChecksum, "hex")
+  #   );
+  # };
 
   def parse_version(%{"useragent" => user_agent}) do
     case String.upcase(user_agent) do

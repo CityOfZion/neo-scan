@@ -2162,6 +2162,24 @@ defmodule NeoNode.HTTPPoisonWrapper do
 
   def handle_post(%{
         "params" => [hash],
+        "method" => "getapplicationlog",
+        "jsonrpc" => "2.0",
+        "id" => 5
+      }) do
+    data = application_log_data(hash)
+
+    unless is_nil(data) do
+      body = :zlib.gzip(Poison.encode!(Map.merge(%{"jsonrpc" => "2.0", "id" => 5}, data)))
+
+      {
+        :ok,
+        %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}
+      }
+    end
+  end
+
+  def handle_post(%{
+        "params" => [hash],
         "method" => "getcontractstate",
         "jsonrpc" => "2.0",
         "id" => 5
@@ -2324,4 +2342,39 @@ defmodule NeoNode.HTTPPoisonWrapper do
   def contract_data("0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9"), do: result(@contract)
   def contract_data("0x0000000000000000000000000000000000000000"), do: error(@unknown_contract)
   def contract_data(_), do: nil
+
+  def application_log_data("02e17fbff2921c70abd8828e8b0ef82fb2e3a76238c5f296a7d0b9b8a00c0ff4") do
+    result(%{
+      "executions" => [
+        %{
+          "contract" => "0x5fa32bd80c3cf20a25662ea81ed97b89f00ff66c",
+          "gas_consumed" => "2.82",
+          "notifications" => [
+            %{
+              "contract" => "0xacbc532904b6b51b5ea6d19b803d78af70e7e6f9",
+              "state" => %{
+                "type" => "Array",
+                "value" => [
+                  %{"type" => "ByteArray", "value" => "7472616e73666572"},
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "fd8d0f84b8db897d6eebe3e0177ed5c5b47fc322"
+                  },
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "631f0b81c22ac995f0b6b37aee7b90bc4cf36b7d"
+                  },
+                  %{"type" => "ByteArray", "value" => "8096980000000000"}
+                ]
+              }
+            }
+          ],
+          "stack" => [%{"type" => "Integer", "value" => "1"}],
+          "trigger" => "Application",
+          "vmstate" => "HALT, BREAK"
+        }
+      ],
+      "txid" => "0x02e17fbff2921c70abd8828e8b0ef82fb2e3a76238c5f296a7d0b9b8a00c0ff4"
+    })
+  end
 end
