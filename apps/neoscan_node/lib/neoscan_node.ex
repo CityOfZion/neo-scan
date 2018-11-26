@@ -3,7 +3,7 @@ defmodule NeoscanNode do
   alias NeoscanNode.NodeChecker
   alias NeoscanNode.Utils
 
-  @timeout 15_000
+  @timeout 60_000
 
   def get_last_block_index, do: NodeChecker.get_last_block_index()
 
