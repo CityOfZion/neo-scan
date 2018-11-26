@@ -186,11 +186,9 @@ defmodule NeoNode.Parser do
   defp parse_notification(_), do: nil
 
   defp parse_integer_value(value) do
-    case Base.decode16!(value, case: :mixed) do
-      <<x::integer-little-size(56)>> -> x
-      <<x::integer-little-size(64)>> -> x
-      _ -> 0
-    end
+    value
+    |> Base.decode16!(case: :mixed)
+    |> :binary.decode_unsigned(:little)
   end
 
   defp parse_address(address) do

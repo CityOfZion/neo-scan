@@ -1,6 +1,9 @@
 defmodule NeoscanNode do
   @moduledoc false
   alias NeoscanNode.NodeChecker
+  alias NeoscanNode.Utils
+
+  @timeout 15_000
 
   def get_last_block_index, do: NodeChecker.get_last_block_index()
 
@@ -10,7 +13,7 @@ defmodule NeoscanNode do
     node_url = NodeChecker.get_random_node(index)
     {:ok, block} = NeoNode.get_block_by_height(node_url, index)
 
-    updated_transactions = Enum.map(block.tx, &update_transaction(&1, index))
+    updated_transactions = Utils.pmap(block.tx, &update_transaction(&1, index), @timeout)
 
     Map.put(block, :tx, updated_transactions)
   end

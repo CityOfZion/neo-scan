@@ -12,6 +12,7 @@ defmodule NeoscanNode.NodeChecker do
   @node_list_url Application.fetch_env!(:neoscan_node, :node_list_url)
 
   alias NeoscanNode.EtsProcess
+  alias NeoscanNode.Utils
   use GenServer
   require Logger
 
@@ -36,20 +37,20 @@ defmodule NeoscanNode.NodeChecker do
     task =
       Task.async(fn ->
         get_neo_node_urls()
-        |> pmap(&get_node_height/1, @timeout)
+        |> Utils.pmap(&get_node_height/1, @timeout)
         |> Enum.filter(&(not is_nil(&1)))
       end)
 
     live_notifications =
       get_neo_notification_urls()
-      |> pmap(&get_notification_height/1, @timeout)
+      |> Utils.pmap(&get_notification_height/1, @timeout)
       |> Enum.filter(&(not is_nil(&1)))
 
     live_nodes = Task.await(task, @timeout)
 
     live_application_log_nodes =
       live_nodes
-      |> pmap(&get_application_log/1, @timeout)
+      |> Utils.pmap(&get_application_log/1, @timeout)
       |> Enum.filter(&(not is_nil(&1)))
 
     last_block_index = Enum.max(Enum.map(live_nodes, &elem(&1, 1)), fn -> 0 end)
@@ -164,14 +165,6 @@ defmodule NeoscanNode.NodeChecker do
     end
   end
 
-  defp pmap(collection, func, timeout) do
-    collection
-    |> Enum.map(&Task.async(fn -> func.(&1) end))
-    |> Enum.map(&(Task.yield(&1, timeout) || Task.shutdown(&1)))
-    |> Enum.filter(&(is_tuple(&1) and elem(&1, 0) == :ok))
-    |> Enum.map(fn {:ok, result} -> result end)
-  end
-
   def set(key, value), do: :ets.insert(__MODULE__, {key, value})
 
   def get(key) do
@@ -199,7 +192,7 @@ defmodule NeoscanNode.NodeChecker do
       nodes["sites"]
       |> Enum.filter(&(&1["type"] == "RPC"))
       |> Enum.map(&"#{&1["protocol"]}://#{&1["url"]}:#{&1["port"] || 80}")
-      |> pmap(&keep_correct_version/1, @timeout)
+      |> Utils.pmap(&keep_correct_version/1, @timeout)
       |> Enum.filter(&(not is_nil(&1)))
     catch
       _, _ ->
