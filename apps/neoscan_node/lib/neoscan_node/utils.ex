@@ -6,4 +6,10 @@ defmodule NeoscanNode.Utils do
     |> Enum.filter(&(is_tuple(&1) and elem(&1, 0) == :ok))
     |> Enum.map(fn {:ok, result} -> result end)
   end
+
+  def pmap2(collection, func, timeout) do
+    collection
+    |> Task.async_stream(func, ordered: false, timeout: timeout)
+    |> Enum.map(fn {:ok, result} -> result end)
+  end
 end

@@ -13,7 +13,7 @@ defmodule NeoscanNode do
     node_url = NodeChecker.get_random_node(index)
     {:ok, block} = NeoNode.get_block_by_height(node_url, index)
 
-    updated_transactions = Utils.pmap(block.tx, &update_transaction(&1, index), @timeout)
+    updated_transactions = Utils.pmap2(block.tx, &update_transaction(&1, index), @timeout)
 
     Map.put(block, :tx, updated_transactions)
   end
