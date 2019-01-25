@@ -52,7 +52,12 @@ config :neoscan_node,
     "http://seed7.ngd.network:10332",
     "http://seed8.ngd.network:10332",
     "http://seed9.ngd.network:10332",
-    "http://seed10.ngd.network:10332"
+    "http://seed10.ngd.network:10332",
+    "https://m1.neo.neonexchange.org",
+    "https://m2.neo.neonexchange.org",
+    "https://m3.neo.neonexchange.org",
+    "https://m4.neo.neonexchange.org",
+    "https://m5.neo.neonexchange.org"
   ]
 
 if Mix.env() == :test do
