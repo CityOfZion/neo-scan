@@ -10,6 +10,7 @@ defmodule NeoscanNode.NodeChecker do
   @timeout 15_000
   @five_minutes 300_000
   @node_list_url Application.fetch_env!(:neoscan_node, :node_list_url)
+  @first_transaction_hash "0xc920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2"
 
   alias NeoscanNode.EtsProcess
   alias NeoscanNode.Utils
@@ -146,8 +147,8 @@ defmodule NeoscanNode.NodeChecker do
   end
 
   def get_application_log({url, count}) do
-    case NeoNode.get_application_log(url, "00") do
-      {:error, :invalid_format} ->
+    case NeoNode.get_application_log(url, @first_transaction_hash) do
+      {:ok, [_, _, _]} ->
         {url, count}
 
       _ ->
