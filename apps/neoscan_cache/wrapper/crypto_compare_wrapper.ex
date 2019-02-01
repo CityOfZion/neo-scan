@@ -1,9 +1,6 @@
 defmodule NeoscanCache.CryptoCompareWrapper do
-  def pricemultifull(list1, list2) do
-    CryptoCompare.pricemultifull(list1, list2)
-  end
-
-  def histo_day(from, to, opts), do: CryptoCompare.histo_day(from, to, opts)
-  def histo_hour(from, to, opts), do: CryptoCompare.histo_hour(from, to, opts)
-  def histo_minute(from, to, opts), do: CryptoCompare.histo_minute(from, to, opts)
+  defdelegate pricemultifull(list1, list2), to: CryptoCompare
+  defdelegate histo_day(from, to, opts), to: CryptoCompare
+  defdelegate histo_hour(from, to, opts), to: CryptoCompare
+  defdelegate histo_minute(from, to, opts), to: CryptoCompare
 end

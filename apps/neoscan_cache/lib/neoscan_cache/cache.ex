@@ -160,45 +160,44 @@ defmodule NeoscanCache.Cache do
   end
 
   def sync_price_details() do
-    case CryptoCompareWrapper.pricemultifull(@from_symbols, @to_symbols) do
-      {:ok, price} ->
-        price = %{
-          neo: %{
-            btc: price[:RAW][:NEO][:BTC],
-            usd: price[:RAW][:NEO][:USD]
-          },
-          gas: %{
-            btc: add_gas_market_cap(price[:RAW][:GAS][:BTC]),
-            usd: add_gas_market_cap(price[:RAW][:GAS][:USD])
-          }
-        }
+    {:ok, price} = CryptoCompareWrapper.pricemultifull(@from_symbols, @to_symbols)
 
-        set(:price, price)
+    price = %{
+      neo: %{
+        btc: price[:RAW][:NEO][:BTC],
+        usd: price[:RAW][:NEO][:USD]
+      },
+      gas: %{
+        btc: add_gas_market_cap(price[:RAW][:GAS][:BTC]),
+        usd: add_gas_market_cap(price[:RAW][:GAS][:USD])
+      }
+    }
 
-      _ ->
-        Logger.warn("could not sync price")
-    end
+    set(:price, price)
+  catch
+    _, _ ->
+      Logger.warn("could not sync price")
   end
 
   def sync_price_history(from, to, definition) do
     {function, aggregate, limit} = get_price_config(definition)
 
-    case apply(
-           CryptoCompareWrapper,
-           function,
-           [from, to, [extraParams: "neoscan", aggregate: aggregate, limit: limit]]
-         ) do
-      {:ok, %{Data: data}} ->
-        history =
-          Enum.reduce(data, %{}, fn %{time: time, open: value}, acc ->
-            Map.put(acc, time, value)
-          end)
+    {:ok, %{Data: data}} =
+      apply(
+        CryptoCompareWrapper,
+        function,
+        [from, to, [extraParams: "neoscan", aggregate: aggregate, limit: limit]]
+      )
 
-        set({from, to, definition}, history)
+    history =
+      Enum.reduce(data, %{}, fn %{time: time, open: value}, acc ->
+        Map.put(acc, time, value)
+      end)
 
-      _ ->
-        Logger.warn("could not sync #{inspect({from, to, definition})} price")
-    end
+    set({from, to, definition}, history)
+  catch
+    _, _ ->
+      Logger.warn("could not sync price")
   end
 
   def get_price_history(from, to, definition) do
