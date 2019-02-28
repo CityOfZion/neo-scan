@@ -206,7 +206,7 @@ defmodule Neoscan.Addresses do
         atb in AddressTransactionBalance,
         where: atb.address_hash == ^address_hash and atb.block_time < ^end_timestamp,
         preload: [:transaction, :asset],
-        order_by: [desc: atb.transaction_id],
+        order_by: [desc: atb.block_time],
         limit: ^limit
       )
 

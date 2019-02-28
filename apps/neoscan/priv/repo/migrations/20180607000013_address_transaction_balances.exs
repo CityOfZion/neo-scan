@@ -12,6 +12,7 @@ defmodule Neoscan.Repo.Migrations.AddressTransactionBalances do
     end
 
     create(index(:address_transaction_balances, [:transaction_id, :asset_hash]))
+    create(index(:address_transaction_balances, [:address_hash, :block_time]))
 
     create table(:address_transaction_balances_queue, primary_key: false) do
       add(:address_hash, :binary, null: false)
