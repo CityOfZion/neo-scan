@@ -54,9 +54,9 @@ defmodule NeoscanWeb.Schema.Query.AddressTest do
 
   test "transaction abstract", %{conn: conn} do
     query = """
-    query Address($hash: String!, $end_timestamp: Int!, $limit: Int!){
+    query Address($hash: String!, $start_timestamp: Int!, $end_timestamp: Int!, $limit: Int!){
       address(hash: $hash){
-        transaction_abstracts(end_timestamp: $end_timestamp, limit: $limit){
+        transaction_abstracts(start_timestamp: $start_timestamp, end_timestamp: $end_timestamp, limit: $limit){
           txid
           time
           block_height
@@ -324,6 +324,7 @@ defmodule NeoscanWeb.Schema.Query.AddressTest do
           variables: %{
             hash: Base58.encode(address_hash),
             end_timestamp: 1_651_328_616,
+            start_timestamp: 0,
             limit: 15
           }
         }
@@ -424,6 +425,7 @@ defmodule NeoscanWeb.Schema.Query.AddressTest do
           variables: %{
             hash: Base58.encode(address_hash),
             end_timestamp: 1_651_328_616,
+            start_timestamp: DateTime.to_unix(vout.block_time),
             limit: 4
           }
         }
@@ -441,6 +443,7 @@ defmodule NeoscanWeb.Schema.Query.AddressTest do
           variables: %{
             hash: Base58.encode(address_hash),
             end_timestamp: 0,
+            start_timestamp: 0,
             limit: 4
           }
         }

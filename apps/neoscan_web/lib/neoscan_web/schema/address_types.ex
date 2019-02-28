@@ -41,6 +41,7 @@ defmodule NeoscanWeb.Schema.AddressTypes do
     end
 
     field :transaction_abstracts, type: list_of(:transaction_abstract) do
+      arg(:start_timestamp, non_null(:integer))
       arg(:end_timestamp, non_null(:integer))
       arg(:limit, non_null(:integer))
       resolve(&Address.get_transaction_abstracts/3)

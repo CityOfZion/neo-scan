@@ -198,13 +198,16 @@ defmodule Neoscan.Addresses do
     %{result | entries: Enum.map(result.entries, &Asset.update_struct/1)}
   end
 
-  def get_transaction_abstracts_raw(address_hash, end_timestamp, limit) do
+  def get_transaction_abstracts_raw(address_hash, start_timestamp, end_timestamp, limit) do
     end_timestamp = DateTime.from_unix!(end_timestamp)
+    start_timestamp = DateTime.from_unix!(start_timestamp)
 
     transaction_query =
       from(
         atb in AddressTransactionBalance,
-        where: atb.address_hash == ^address_hash and atb.block_time < ^end_timestamp,
+        where:
+          atb.address_hash == ^address_hash and atb.block_time < ^end_timestamp and
+            atb.block_time >= ^start_timestamp,
         preload: [:transaction, :asset],
         order_by: [desc: atb.block_time],
         limit: ^limit
@@ -220,8 +223,8 @@ defmodule Neoscan.Addresses do
     %{result | entries: create_transaction_abstracts(result.entries)}
   end
 
-  def get_transaction_abstracts(address_hash, end_timestamp, limit) do
-    result = get_transaction_abstracts_raw(address_hash, end_timestamp, limit)
+  def get_transaction_abstracts(address_hash, start_timestamp, end_timestamp, limit) do
+    result = get_transaction_abstracts_raw(address_hash, start_timestamp, end_timestamp, limit)
     create_transaction_abstracts(result)
   end
 
