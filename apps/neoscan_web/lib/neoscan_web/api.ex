@@ -273,8 +273,10 @@ defmodule NeoscanWeb.Api do
     %{:height => Blocks.last_index()}
   end
 
-  def get_address_transaction_abstracts(address_hash, end_timestamp, limit) do
-    result = Addresses.get_transaction_abstracts(address_hash, end_timestamp, limit)
+  def get_address_transaction_abstracts(address_hash, start_timestamp, end_timestamp, limit) do
+    result =
+      Addresses.get_transaction_abstracts(address_hash, start_timestamp, end_timestamp, limit)
+
     Enum.map(result, &render_transaction_abstract/1)
   end
 

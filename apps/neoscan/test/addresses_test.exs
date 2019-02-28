@@ -250,8 +250,8 @@ defmodule Neoscan.AddressesTest do
     assert 5 == Enum.count(Addresses.paginate(2))
   end
 
-  test "get_transaction_abstracts/3 smoke test" do
-    assert [] == Addresses.get_transaction_abstracts(<<>>, 0, 0)
+  test "get_transaction_abstracts/4 smoke test" do
+    assert [] == Addresses.get_transaction_abstracts(<<>>, 0, 0, 0)
   end
 
   test "get_transaction_abstracts/2" do
