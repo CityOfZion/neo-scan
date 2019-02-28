@@ -13,4 +13,8 @@ defmodule NeoscanWeb.Resolvers.Address do
   def get_gas_generated(%{hash: hash}, %{start_block: start_block, end_block: end_block}, _) do
     {:ok, NeoscanWeb.Api.get_gas_generated(hash, start_block, end_block)}
   end
+
+  def get_transaction_abstracts(%{hash: hash}, %{end_timestamp: end_timestamp, limit: limit}, _) do
+    {:ok, NeoscanWeb.Api.get_address_transaction_abstracts(hash, end_timestamp, limit)}
+  end
 end
