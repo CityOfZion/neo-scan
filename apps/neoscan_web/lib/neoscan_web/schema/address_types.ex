@@ -16,6 +16,16 @@ defmodule NeoscanWeb.Schema.AddressTypes do
     end
   end
 
+  object :transaction_abstract do
+    field(:txid, :string)
+    field(:time, :integer)
+    field(:block_height, :integer)
+    field(:asset, :string)
+    field(:amount, :string)
+    field(:address_to, :string)
+    field(:address_from, :string)
+  end
+
   @desc "a single address row"
   object :address_row do
     field(:first_transaction_time, :naive_datetime)
@@ -28,6 +38,12 @@ defmodule NeoscanWeb.Schema.AddressTypes do
       arg(:start_block, non_null(:integer))
       arg(:end_block, non_null(:integer))
       resolve(&Address.get_gas_generated/3)
+    end
+
+    field :transaction_abstracts, type: list_of(:transaction_abstract) do
+      arg(:end_timestamp, non_null(:integer))
+      arg(:limit, non_null(:integer))
+      resolve(&Address.get_transaction_abstracts/3)
     end
   end
 end
