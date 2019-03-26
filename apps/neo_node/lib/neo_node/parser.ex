@@ -171,19 +171,37 @@ defmodule NeoNode.Parser do
                "type" => "ByteArray",
                "value" => address_to
              },
-             %{"type" => "ByteArray", "value" => value}
+             amount
            ]
          }
        }) do
-    %{
-      address_from: parse_address(address_from),
-      address_to: parse_address(address_to),
-      value: parse_integer_value(value),
-      contract: parse16(contract)
-    }
+    case parse_notification_amount(amount) do
+      nil ->
+        nil
+
+      value ->
+        %{
+          address_from: parse_address(address_from),
+          address_to: parse_address(address_to),
+          value: value,
+          contract: parse16(contract)
+        }
+    end
   end
 
   defp parse_notification(_), do: nil
+
+  defp parse_notification_amount(%{"type" => "ByteArray", "value" => value}) do
+    parse_integer_value(value)
+  end
+
+  defp parse_notification_amount(%{"type" => "Integer", "value" => value}) do
+    String.to_integer(value)
+  end
+
+  defp parse_notification_amount(_) do
+    nil
+  end
 
   defp parse_integer_value(value) do
     value

@@ -247,6 +247,26 @@ defmodule NeoNodeTest do
                "02e17fbff2921c70abd8828e8b0ef82fb2e3a76238c5f296a7d0b9b8a00c0ff4"
              )
 
+    assert {:ok,
+            [
+              %{
+                address_from:
+                  <<23, 9, 7, 122, 77, 254, 237, 52, 234, 225, 28, 236, 163, 209, 103, 22, 118,
+                    187, 47, 144, 235, 112, 206, 140, 82>>,
+                address_to:
+                  <<23, 181, 42, 170, 1, 183, 192, 199, 6, 172, 91, 115, 77, 9, 230, 113, 106,
+                    158, 92, 209, 82, 222, 83, 80, 229>>,
+                contract:
+                  <<160, 119, 124, 60, 226, 177, 105, 212, 162, 59, 203, 164, 86, 94, 50, 37, 160,
+                    18, 45, 149>>,
+                value: 421_665_426_308
+              }
+            ]} ==
+             NeoNode.get_application_log(
+               @fake_node_url,
+               "d9da12cf0b61fe19188d6f94f004c792af948db25772f440d1ce04152d806bf4"
+             )
+
     assert {:error, :invalid_format} ==
              NeoNode.get_application_log(
                @fake_node_url,
