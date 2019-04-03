@@ -1,6 +1,11 @@
 defmodule NeoNode.HTTPPoisonWrapper do
   @moduledoc false
 
+  @contracts [
+    "ecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
+    "3a4acd3647086e7c44398aac0349802e6a171129"
+  ]
+
   @unknown_block %{
     code: -100,
     message: "Unknown block"
@@ -2502,7 +2507,7 @@ defmodule NeoNode.HTTPPoisonWrapper do
 
   def application_log_data(_), do: nil
 
-  def invoke_function_data("3a4acd3647086e7c44398aac0349802e6a171129", "name") do
+  def invoke_function_data(contract, "name") when contract in @contracts do
     result(%{
       "gas_consumed" => "0.207",
       "script" => "00c108646563696d616c73672911176a2e804903ac8a39447c6e084736cd4a3a",
@@ -2511,7 +2516,7 @@ defmodule NeoNode.HTTPPoisonWrapper do
     })
   end
 
-  def invoke_function_data("3a4acd3647086e7c44398aac0349802e6a171129", "symbol") do
+  def invoke_function_data(contract, "symbol") when contract in @contracts do
     result(%{
       "gas_consumed" => "0.207",
       "script" => "00c108646563696d616c73672911176a2e804903ac8a39447c6e084736cd4a3a",
@@ -2520,7 +2525,7 @@ defmodule NeoNode.HTTPPoisonWrapper do
     })
   end
 
-  def invoke_function_data("3a4acd3647086e7c44398aac0349802e6a171129", "decimals") do
+  def invoke_function_data(contract, "decimals") when contract in @contracts do
     result(%{
       "gas_consumed" => "0.207",
       "script" => "00c108646563696d616c73672911176a2e804903ac8a39447c6e084736cd4a3a",
