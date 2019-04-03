@@ -37,7 +37,6 @@ defmodule NeoscanNode do
   defp get_transfers(_, _), do: []
 
   def get_tokens do
-    notification_url = NodeChecker.get_random_notification(0)
-    NeoNotification.get_tokens(notification_url)
+    {:ok, []}
   end
 end

@@ -1,20 +1,5 @@
 use Mix.Config
 
-if Mix.env() == :test do
-  config :neoscan_node,
-    notification_seeds: [
-      "http://notifications1.neeeo.org/v1"
-    ]
-else
-  config :neoscan_node,
-    notification_seeds: [
-      "http://notifications1.neeeo.org/v1",
-      "http://notifications2.neeeo.org/v1",
-      "http://notifications3.neeeo.org/v1",
-      "http://notifications4.neeeo.org/v1"
-    ]
-end
-
 config :neoscan_node,
   node_list_url:
     "https://raw.githubusercontent.com/CityOfZion/neo-mon/master/docs/assets/mainnet.json"

@@ -157,6 +157,18 @@ defmodule NeoNode.Parser do
 
   defp parse_execution(_), do: nil
 
+  def parse_invoke(%{"stack" => stack}) when is_list(stack) do
+    Enum.map(stack, &parse_invoke_elem/1)
+  end
+
+  defp parse_invoke_elem(%{"type" => "ByteArray", "value" => string}) do
+    Base.decode16!(string, case: :mixed)
+  end
+
+  defp parse_invoke_elem(%{"type" => "Integer", "value" => integer}) do
+    String.to_integer(integer)
+  end
+
   defp parse_notification(%{
          "contract" => contract,
          "state" => %{

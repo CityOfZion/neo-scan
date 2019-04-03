@@ -58,7 +58,6 @@ defmodule NeoscanNode.Mixfile do
       {:poison, "~> 3.1"},
       {:httpoison, "~> 0.11 or ~> 0.12 or ~> 0.13"},
       {:neo_node, in_umbrella: true},
-      {:neo_notification, in_umbrella: true},
       {:excoveralls, "~> 0.8", only: :test}
     ]
   end

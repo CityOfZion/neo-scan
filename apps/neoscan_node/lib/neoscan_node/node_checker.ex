@@ -1,15 +1,13 @@
 defmodule NeoscanNode.NodeChecker do
   @moduledoc false
 
+  @node_list_url Application.fetch_env!(:neoscan_node, :node_list_url)
   @neo_node_urls Application.fetch_env!(:neoscan_node, :seeds)
-  @neo_notification_urls Application.fetch_env!(:neoscan_node, :notification_seeds)
   @update_interval 100
   @env_var_nodes "NEO_SEEDS"
-  @env_var_neo_notification "NEO_NOTIFICATIONS_SERVER"
   @retry_interval 1_000
   @timeout 15_000
   @five_minutes 300_000
-  @node_list_url Application.fetch_env!(:neoscan_node, :node_list_url)
   @invalid_hash "00"
 
   alias NeoscanNode.EtsProcess
@@ -35,19 +33,10 @@ defmodule NeoscanNode.NodeChecker do
   def sync() do
     Process.send_after(self(), :sync, @update_interval)
 
-    task =
-      Task.async(fn ->
-        get_neo_node_urls()
-        |> Utils.pmap(&get_node_height/1, @timeout)
-        |> Enum.filter(&(not is_nil(&1)))
-      end)
-
-    live_notifications =
-      get_neo_notification_urls()
-      |> Utils.pmap(&get_notification_height/1, @timeout)
+    live_nodes =
+      get_neo_node_urls()
+      |> Utils.pmap(&get_node_height/1, @timeout)
       |> Enum.filter(&(not is_nil(&1)))
-
-    live_nodes = Task.await(task, @timeout)
 
     live_application_log_nodes =
       live_nodes
@@ -57,7 +46,6 @@ defmodule NeoscanNode.NodeChecker do
     last_block_index = Enum.max(Enum.map(live_nodes, &elem(&1, 1)), fn -> 0 end)
     set(:last_block_index, last_block_index)
     set(:live_nodes, live_nodes)
-    set(:live_notifications, live_notifications)
     set(:live_application_log_nodes, live_application_log_nodes)
   end
 
@@ -67,7 +55,6 @@ defmodule NeoscanNode.NodeChecker do
 
   def get_live_nodes, do: get(:live_nodes)
 
-  defp get_live_notifications, do: get(:live_notifications)
   defp get_live_application_log_nodes, do: get(:live_application_log_nodes)
 
   defp process_url_task do
@@ -75,17 +62,6 @@ defmodule NeoscanNode.NodeChecker do
     Application.put_env(:neoscan_node, :seeds, new_list)
     Process.sleep(@five_minutes)
     process_url_task()
-  end
-
-  def get_random_notification(index) do
-    case Enum.filter(get_live_notifications(), &(elem(&1, 1) >= index)) do
-      [] ->
-        Process.sleep(@retry_interval)
-        get_random_notification(index)
-
-      nodes ->
-        elem(Enum.random(nodes), 0)
-    end
   end
 
   def get_random_node(index) do
@@ -121,28 +97,6 @@ defmodule NeoscanNode.NodeChecker do
 
       neo_nodes_urls ->
         neo_nodes_urls
-    end
-  end
-
-  defp get_neo_notification_urls do
-    notifications_str = System.get_env(@env_var_neo_notification) || ""
-
-    case String.split(notifications_str, ";") do
-      [""] ->
-        @neo_notification_urls
-
-      neo_notification_urls ->
-        neo_notification_urls
-    end
-  end
-
-  defp get_notification_height(url) do
-    case NeoNotification.get_current_height(url) do
-      {:ok, height} ->
-        {url, height}
-
-      _ ->
-        nil
     end
   end
 

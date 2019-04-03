@@ -2179,6 +2179,24 @@ defmodule NeoNode.HTTPPoisonWrapper do
   end
 
   def handle_post(%{
+        "params" => [hash, fun_name, _],
+        "method" => "invokefunction",
+        "jsonrpc" => "2.0",
+        "id" => 5
+      }) do
+    data = invoke_function_data(hash, fun_name)
+
+    unless is_nil(data) do
+      body = :zlib.gzip(Poison.encode!(Map.merge(%{"jsonrpc" => "2.0", "id" => 5}, data)))
+
+      {
+        :ok,
+        %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}
+      }
+    end
+  end
+
+  def handle_post(%{
         "params" => [hash],
         "method" => "getcontractstate",
         "jsonrpc" => "2.0",
@@ -2483,4 +2501,33 @@ defmodule NeoNode.HTTPPoisonWrapper do
   end
 
   def application_log_data(_), do: nil
+
+  def invoke_function_data("3a4acd3647086e7c44398aac0349802e6a171129", "name") do
+    result(%{
+      "gas_consumed" => "0.207",
+      "script" => "00c108646563696d616c73672911176a2e804903ac8a39447c6e084736cd4a3a",
+      "stack" => [%{"type" => "ByteArray", "value" => "4e455820546f6b656e"}],
+      "state" => "HALT, BREAK"
+    })
+  end
+
+  def invoke_function_data("3a4acd3647086e7c44398aac0349802e6a171129", "symbol") do
+    result(%{
+      "gas_consumed" => "0.207",
+      "script" => "00c108646563696d616c73672911176a2e804903ac8a39447c6e084736cd4a3a",
+      "stack" => [%{"type" => "ByteArray", "value" => "4e4558"}],
+      "state" => "HALT, BREAK"
+    })
+  end
+
+  def invoke_function_data("3a4acd3647086e7c44398aac0349802e6a171129", "decimals") do
+    result(%{
+      "gas_consumed" => "0.207",
+      "script" => "00c108646563696d616c73672911176a2e804903ac8a39447c6e084736cd4a3a",
+      "stack" => [%{"type" => "Integer", "value" => "8"}],
+      "state" => "HALT, BREAK"
+    })
+  end
+
+  def invoke_function_data(_, _), do: nil
 end

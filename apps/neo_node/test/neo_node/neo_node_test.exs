@@ -381,4 +381,14 @@ defmodule NeoNodeTest do
     assert {:error, %{"code" => -100, "message" => _message}} =
              NeoNode.get_contract(@fake_node_url, "0x0000000000000000000000000000000000000000")
   end
+
+  test "get_nep5_contract/2" do
+    assert %{
+             decimals: 8,
+             hash: "3a4acd3647086e7c44398aac0349802e6a171129",
+             name: "NEX Token",
+             symbol: "NEX"
+           } ==
+             NeoNode.get_nep5_contract(@fake_node_url, "3a4acd3647086e7c44398aac0349802e6a171129")
+  end
 end

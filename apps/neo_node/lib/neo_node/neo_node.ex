@@ -96,6 +96,32 @@ defmodule NeoNode do
     end
   end
 
+  def invoke_contract_function(url, hash, function, params) do
+    case post(url, "invokefunction", [hash, function, params]) do
+      {:ok, response} ->
+        {:ok, Parser.parse_invoke(response)}
+
+      error ->
+        error
+    end
+  end
+
+  def get_nep5_contract(url, hash) do
+    with {:ok, [name]} <- invoke_contract_function(url, hash, "name", []),
+         {:ok, [symbol]} <- invoke_contract_function(url, hash, "symbol", []),
+         {:ok, [decimals]} <- invoke_contract_function(url, hash, "decimals", []) do
+      %{
+        name: name,
+        symbol: symbol,
+        decimals: decimals,
+        hash: hash
+      }
+    else
+      _ ->
+        {:error, :no_contract}
+    end
+  end
+
   def post(url, method, params, opts \\ @opts) do
     data =
       Poison.encode!(%{

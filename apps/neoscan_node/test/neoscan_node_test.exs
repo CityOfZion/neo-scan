@@ -25,7 +25,7 @@ defmodule NeoscanNodeTest do
   end
 
   test "get_tokens" do
-    assert 2 == Enum.count(elem(NeoscanNode.get_tokens(), 1))
+    assert {:ok, []} == NeoscanNode.get_tokens()
   end
 
   test "get nodes" do
