@@ -34,7 +34,9 @@ defmodule NeoscanSync.TokenSyncer do
 
   def get_token(index, contract) do
     try do
-      {:ok, token} = NeoscanNode.get_nep5_token_from_contract(index, contract)
+      {:ok, token} =
+        NeoscanNode.get_nep5_token_from_contract(index, Base.encode16(contract, case: :lower))
+
       Repo.insert(convert_token_to_asset(token), on_conflict: :nothing)
     catch
       error, reason ->

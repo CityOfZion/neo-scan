@@ -4,6 +4,7 @@ defmodule NeoscanSync.Syncer do
   alias NeoscanSync.Converter
   alias Neoscan.Repo
   alias Neoscan.Blocks
+  alias NeoscanSync.TokenSyncer
 
   use GenServer
 
@@ -63,6 +64,12 @@ defmodule NeoscanSync.Syncer do
 
   def insert_block(block) do
     try do
+      Enum.map(block.transactions, fn %{transfers: transfers} ->
+        Enum.map(transfers, fn %{contract: contract} ->
+          TokenSyncer.retrieve_contract(block.index, contract)
+        end)
+      end)
+
       Repo.transaction(
         fn ->
           Repo.insert!(block, timeout: :infinity, returning: false)
