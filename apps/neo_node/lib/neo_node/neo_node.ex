@@ -110,12 +110,13 @@ defmodule NeoNode do
     with {:ok, [name]} <- invoke_contract_function(url, hash, "name", []),
          {:ok, [symbol]} <- invoke_contract_function(url, hash, "symbol", []),
          {:ok, [decimals]} <- invoke_contract_function(url, hash, "decimals", []) do
-      %{
-        name: name,
-        symbol: symbol,
-        decimals: decimals,
-        hash: hash
-      }
+      {:ok,
+       %{
+         name: name,
+         symbol: symbol,
+         decimals: decimals,
+         hash: hash
+       }}
     else
       _ ->
         {:error, :no_contract}

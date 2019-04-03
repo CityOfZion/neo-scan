@@ -36,7 +36,8 @@ defmodule NeoscanNode do
 
   defp get_transfers(_, _), do: []
 
-  def get_tokens do
-    {:ok, []}
+  def get_nep5_token_from_contract(index, contract) do
+    node_url = NodeChecker.get_random_node(index)
+    NeoNode.get_nep5_contract(node_url, contract)
   end
 end
