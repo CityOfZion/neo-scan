@@ -114,7 +114,7 @@ defmodule NeoNode do
        %{
          name: name,
          symbol: symbol,
-         decimals: decimals,
+         decimals: if(is_integer(decimals), do: decimals, else: 0),
          hash: hash
        }}
     else

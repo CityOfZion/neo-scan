@@ -37,7 +37,7 @@ defmodule NeoscanSync.TokenSyncer do
       {:ok, token} =
         NeoscanNode.get_nep5_token_from_contract(index, Base.encode16(contract, case: :lower))
 
-      Repo.insert(convert_token_to_asset(token), on_conflict: :nothing)
+      Repo.insert(convert_token_to_asset(contract, token), on_conflict: :nothing)
     catch
       error, reason ->
         Logger.error("error while getting token block #{inspect({contract, error, reason})}")
@@ -45,7 +45,7 @@ defmodule NeoscanSync.TokenSyncer do
     end
   end
 
-  def convert_token_to_asset(token) do
+  def convert_token_to_asset(contract, token) do
     %Asset{
       admin: <<0>>,
       amount: 0.0,
@@ -57,7 +57,7 @@ defmodule NeoscanSync.TokenSyncer do
       issued: 0.0,
       block_time: DateTime.utc_now(),
       contract: <<0>>,
-      transaction_hash: token.hash,
+      transaction_hash: contract,
       inserted_at: DateTime.utc_now(),
       updated_at: DateTime.utc_now()
     }
