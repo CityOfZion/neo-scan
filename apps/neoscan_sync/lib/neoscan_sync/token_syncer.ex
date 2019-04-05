@@ -6,6 +6,8 @@ defmodule NeoscanSync.TokenSyncer do
 
   require Logger
 
+  @max_retry 5
+
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
@@ -21,7 +23,7 @@ defmodule NeoscanSync.TokenSyncer do
       if contract in contracts do
         state
       else
-        get_token(index, contract)
+        get_token(index, contract, @max_retry)
         %{state | contracts: [contract | contracts]}
       end
 
@@ -32,16 +34,20 @@ defmodule NeoscanSync.TokenSyncer do
     GenServer.cast(__MODULE__, {:contract, index, contract})
   end
 
-  def get_token(index, contract) do
+  @spec get_token(integer(), binary(), integer()) :: :ok | {:error, :max_retry}
+  def get_token(_, _, 0), do: {:error, :max_retry}
+
+  def get_token(index, contract, retry) do
     try do
       {:ok, token} =
         NeoscanNode.get_nep5_token_from_contract(index, Base.encode16(contract, case: :lower))
 
       Repo.insert(convert_token_to_asset(contract, token), on_conflict: :nothing)
+      :ok
     catch
       error, reason ->
-        Logger.error("error while getting token block #{inspect({contract, error, reason})}")
-        get_token(index, contract)
+        Logger.error("error while getting token #{inspect({contract, error, reason})}")
+        get_token(index, contract, retry - 1)
     end
   end
 
