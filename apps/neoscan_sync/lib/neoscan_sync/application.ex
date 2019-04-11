@@ -24,6 +24,10 @@ defmodule NeoscanSync.Application do
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_all, name: NeoscanSync.Supervisor]
-    Supervisor.start_link(if(@should_start, do: children, else: [Monitor.worker()]), opts)
+
+    Supervisor.start_link(
+      if(@should_start, do: children, else: [Monitor.worker(), worker(TokenSyncer, [])]),
+      opts
+    )
   end
 end

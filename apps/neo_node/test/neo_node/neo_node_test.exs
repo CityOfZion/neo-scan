@@ -226,6 +226,54 @@ defmodule NeoNodeTest do
     assert {:ok, {:csharp, "2.7.6.1/"}} == NeoNode.get_version(@fake_node_url)
   end
 
+  test "get_application_log" do
+    assert {:ok,
+            [
+              %{
+                address_from:
+                  <<23, 253, 141, 15, 132, 184, 219, 137, 125, 110, 235, 227, 224, 23, 126, 213,
+                    197, 180, 127, 195, 34, 193, 201, 252, 111>>,
+                address_to:
+                  <<23, 99, 31, 11, 129, 194, 42, 201, 149, 240, 182, 179, 122, 238, 123, 144,
+                    188, 76, 243, 107, 125, 218, 193, 225, 196>>,
+                contract:
+                  <<172, 188, 83, 41, 4, 182, 181, 27, 94, 166, 209, 155, 128, 61, 120, 175, 112,
+                    231, 230, 249>>,
+                value: 10_000_000
+              }
+            ]} ==
+             NeoNode.get_application_log(
+               @fake_node_url,
+               "02e17fbff2921c70abd8828e8b0ef82fb2e3a76238c5f296a7d0b9b8a00c0ff4"
+             )
+
+    assert {:ok,
+            [
+              %{
+                address_from:
+                  <<23, 9, 7, 122, 77, 254, 237, 52, 234, 225, 28, 236, 163, 209, 103, 22, 118,
+                    187, 47, 144, 235, 112, 206, 140, 82>>,
+                address_to:
+                  <<23, 181, 42, 170, 1, 183, 192, 199, 6, 172, 91, 115, 77, 9, 230, 113, 106,
+                    158, 92, 209, 82, 222, 83, 80, 229>>,
+                contract:
+                  <<160, 119, 124, 60, 226, 177, 105, 212, 162, 59, 203, 164, 86, 94, 50, 37, 160,
+                    18, 45, 149>>,
+                value: 421_665_426_308
+              }
+            ]} ==
+             NeoNode.get_application_log(
+               @fake_node_url,
+               "d9da12cf0b61fe19188d6f94f004c792af948db25772f440d1ce04152d806bf4"
+             )
+
+    assert {:error, :invalid_format} ==
+             NeoNode.get_application_log(
+               @fake_node_url,
+               "00"
+             )
+  end
+
   test "get_transaction/2" do
     txid = "0x9e9526615ee7d460ed445c873c4af91bf7bfcc67e6e43feaf051b962a6df0a98"
 
@@ -332,5 +380,16 @@ defmodule NeoNodeTest do
 
     assert {:error, %{"code" => -100, "message" => _message}} =
              NeoNode.get_contract(@fake_node_url, "0x0000000000000000000000000000000000000000")
+  end
+
+  test "get_nep5_contract/2" do
+    assert {:ok,
+            %{
+              decimals: 8,
+              hash: "3a4acd3647086e7c44398aac0349802e6a171129",
+              name: "NEX Token",
+              symbol: "NEX"
+            }} ==
+             NeoNode.get_nep5_contract(@fake_node_url, "3a4acd3647086e7c44398aac0349802e6a171129")
   end
 end

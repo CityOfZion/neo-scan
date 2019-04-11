@@ -24,10 +24,6 @@ defmodule NeoscanNodeTest do
     assert 3 == Enum.count(transaction.transfers)
   end
 
-  test "get_tokens" do
-    assert 2 == Enum.count(elem(NeoscanNode.get_tokens(), 1))
-  end
-
   test "get nodes" do
     assert is_list(NeoscanNode.NodeChecker.get_node_urls())
   end

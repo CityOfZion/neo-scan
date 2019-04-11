@@ -39,6 +39,19 @@ defmodule NeoNode do
     end
   end
 
+  def get_application_log(url, hash) do
+    case post(url, "getapplicationlog", [hash]) do
+      {:ok, response} ->
+        {:ok, Parser.parse_application_log(response)}
+
+      {:error, %{"code" => -2_146_233_033}} ->
+        {:error, :invalid_format}
+
+      error ->
+        error
+    end
+  end
+
   def get_version(url, timeout \\ @timeout) do
     opts = [ssl: [{:versions, [:"tlsv1.2"]}], timeout: timeout, recv_timeout: timeout]
 
@@ -80,6 +93,33 @@ defmodule NeoNode do
 
       error ->
         error
+    end
+  end
+
+  def invoke_contract_function(url, hash, function, params) do
+    case post(url, "invokefunction", [hash, function, params]) do
+      {:ok, response} ->
+        {:ok, Parser.parse_invoke(response)}
+
+      error ->
+        error
+    end
+  end
+
+  def get_nep5_contract(url, hash) do
+    with {:ok, [name]} <- invoke_contract_function(url, hash, "name", []),
+         {:ok, [symbol]} <- invoke_contract_function(url, hash, "symbol", []),
+         {:ok, [decimals]} <- invoke_contract_function(url, hash, "decimals", []) do
+      {:ok,
+       %{
+         name: name,
+         symbol: symbol,
+         decimals: if(is_integer(decimals), do: decimals, else: 0),
+         hash: hash
+       }}
+    else
+      _ ->
+        {:error, :no_contract}
     end
   end
 

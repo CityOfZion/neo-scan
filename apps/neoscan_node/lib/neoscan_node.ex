@@ -1,6 +1,9 @@
 defmodule NeoscanNode do
   @moduledoc false
   alias NeoscanNode.NodeChecker
+  alias NeoscanNode.Utils
+
+  @timeout 60_000
 
   def get_last_block_index, do: NodeChecker.get_last_block_index()
 
@@ -9,25 +12,32 @@ defmodule NeoscanNode do
   def get_block_with_transfers(index) do
     node_url = NodeChecker.get_random_node(index)
     {:ok, block} = NeoNode.get_block_by_height(node_url, index)
-    notification_url = NodeChecker.get_random_notification(index)
-    {:ok, transfers} = NeoNotification.get_block_transfers(notification_url, index)
-    grouped_transfers = Enum.group_by(transfers, & &1.transaction_hash)
 
-    updated_transactions =
-      Enum.map(
-        block.tx,
-        fn transaction ->
-          transfers = grouped_transfers[transaction.hash]
-          transfers = if is_nil(transfers), do: [], else: transfers
-          Map.put(transaction, :transfers, transfers)
-        end
-      )
+    updated_transactions = Utils.pmap2(block.tx, &update_transaction(&1, index), @timeout)
 
     Map.put(block, :tx, updated_transactions)
   end
 
-  def get_tokens do
-    notification_url = NodeChecker.get_random_notification(0)
-    NeoNotification.get_tokens(notification_url)
+  defp update_transaction(transaction, index) do
+    Map.put(transaction, :transfers, get_transfers(transaction, index))
+  end
+
+  defp get_transfers(%{type: :invocation_transaction, hash: hash} = transaction, index) do
+    node_url = NodeChecker.get_random_application_log_node(index)
+
+    case NeoNode.get_application_log(node_url, Base.encode16(hash, case: :lower)) do
+      {:ok, transfers} ->
+        transfers
+
+      _ ->
+        get_transfers(transaction, index)
+    end
+  end
+
+  defp get_transfers(_, _), do: []
+
+  def get_nep5_token_from_contract(index, contract) do
+    node_url = NodeChecker.get_random_node(index)
+    NeoNode.get_nep5_contract(node_url, contract)
   end
 end

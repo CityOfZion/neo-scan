@@ -55,9 +55,9 @@ defmodule NeoscanSync.Converter do
   def convert_transfer(transfer_raw, transaction_raw, block_raw) do
     %Transfer{
       transaction_id: transaction_raw.id,
-      address_from: transfer_raw.addr_from,
-      address_to: transfer_raw.addr_to,
-      amount: transfer_raw.amount * 1.0,
+      address_from: transfer_raw.address_from,
+      address_to: transfer_raw.address_to,
+      amount: transfer_raw.value * 1.0,
       contract: transfer_raw.contract,
       block_index: block_raw.index,
       block_time: block_raw.time,

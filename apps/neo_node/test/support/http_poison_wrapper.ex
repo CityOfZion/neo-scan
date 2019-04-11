@@ -1,6 +1,11 @@
 defmodule NeoNode.HTTPPoisonWrapper do
   @moduledoc false
 
+  @contracts [
+    "ecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
+    "3a4acd3647086e7c44398aac0349802e6a171129"
+  ]
+
   @unknown_block %{
     code: -100,
     message: "Unknown block"
@@ -2162,6 +2167,42 @@ defmodule NeoNode.HTTPPoisonWrapper do
 
   def handle_post(%{
         "params" => [hash],
+        "method" => "getapplicationlog",
+        "jsonrpc" => "2.0",
+        "id" => 5
+      }) do
+    data = application_log_data(hash)
+
+    unless is_nil(data) do
+      body = :zlib.gzip(Poison.encode!(Map.merge(%{"jsonrpc" => "2.0", "id" => 5}, data)))
+
+      {
+        :ok,
+        %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}
+      }
+    end
+  end
+
+  def handle_post(%{
+        "params" => [hash, fun_name, _],
+        "method" => "invokefunction",
+        "jsonrpc" => "2.0",
+        "id" => 5
+      }) do
+    data = invoke_function_data(hash, fun_name)
+
+    unless is_nil(data) do
+      body = :zlib.gzip(Poison.encode!(Map.merge(%{"jsonrpc" => "2.0", "id" => 5}, data)))
+
+      {
+        :ok,
+        %HTTPoison.Response{headers: [{"Content-Encoding", "gzip"}], status_code: 200, body: body}
+      }
+    end
+  end
+
+  def handle_post(%{
+        "params" => [hash],
         "method" => "getcontractstate",
         "jsonrpc" => "2.0",
         "id" => 5
@@ -2324,4 +2365,174 @@ defmodule NeoNode.HTTPPoisonWrapper do
   def contract_data("0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9"), do: result(@contract)
   def contract_data("0x0000000000000000000000000000000000000000"), do: error(@unknown_contract)
   def contract_data(_), do: nil
+
+  def application_log_data("c920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2") do
+    result(%{
+      "executions" => [
+        %{
+          "contract" => "0xf55b248e820c6ecc7e3c4dcb9cf9dbddcdfb3f6c",
+          "gas_consumed" => "5.444",
+          "notifications" => [
+            %{
+              "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
+              "state" => %{
+                "type" => "Array",
+                "value" => [
+                  %{"type" => "ByteArray", "value" => "7472616e73666572"},
+                  %{"type" => "ByteArray", "value" => ""},
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "85104d0b1bc285289b17717a6facaa2cbd1712b3"
+                  },
+                  %{"type" => "ByteArray", "value" => "0060b7c6c5fe11"}
+                ]
+              }
+            },
+            %{
+              "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
+              "state" => %{
+                "type" => "Array",
+                "value" => [
+                  %{"type" => "ByteArray", "value" => "7472616e73666572"},
+                  %{"type" => "ByteArray", "value" => ""},
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "130b891dc5341bcef93c077fc7ec5624ee8776f8"
+                  },
+                  %{"type" => "ByteArray", "value" => "00f87f24795120"}
+                ]
+              }
+            },
+            %{
+              "contract" => "0xecc6b20d3ccac1ee9ef109af5a7cdb85706b1df9",
+              "state" => %{
+                "type" => "Array",
+                "value" => [
+                  %{"type" => "ByteArray", "value" => "7472616e73666572"},
+                  %{"type" => "ByteArray", "value" => ""},
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "45bcb590e3e0fb0010d7bfde6f7cd39382fd86e9"
+                  },
+                  %{"type" => "ByteArray", "value" => "00c0b6403b6f0c"}
+                ]
+              }
+            }
+          ],
+          "stack" => [%{"type" => "Integer", "value" => "1"}],
+          "trigger" => "Application",
+          "vmstate" => "HALT, BREAK"
+        }
+      ],
+      "txid" => "0xc920b2192e74eda4ca6140510813aa40fef1767d00c152aa6f8027c24bdf14f2"
+    })
+  end
+
+  def application_log_data("02e17fbff2921c70abd8828e8b0ef82fb2e3a76238c5f296a7d0b9b8a00c0ff4") do
+    result(%{
+      "executions" => [
+        %{
+          "contract" => "0x5fa32bd80c3cf20a25662ea81ed97b89f00ff66c",
+          "gas_consumed" => "2.82",
+          "notifications" => [
+            %{
+              "contract" => "0xacbc532904b6b51b5ea6d19b803d78af70e7e6f9",
+              "state" => %{
+                "type" => "Array",
+                "value" => [
+                  %{"type" => "ByteArray", "value" => "7472616e73666572"},
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "fd8d0f84b8db897d6eebe3e0177ed5c5b47fc322"
+                  },
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "631f0b81c22ac995f0b6b37aee7b90bc4cf36b7d"
+                  },
+                  %{"type" => "ByteArray", "value" => "8096980000000000"}
+                ]
+              }
+            }
+          ],
+          "stack" => [%{"type" => "Integer", "value" => "1"}],
+          "trigger" => "Application",
+          "vmstate" => "HALT, BREAK"
+        }
+      ],
+      "txid" => "0x02e17fbff2921c70abd8828e8b0ef82fb2e3a76238c5f296a7d0b9b8a00c0ff4"
+    })
+  end
+
+  def application_log_data("d9da12cf0b61fe19188d6f94f004c792af948db25772f440d1ce04152d806bf4") do
+    result(%{
+      "executions" => [
+        %{
+          "contract" => "0xaca78e0cf4742efca860a2d99b4e72bdff3ee675",
+          "gas_consumed" => "8.31",
+          "notifications" => [
+            %{
+              "contract" => "0xa0777c3ce2b169d4a23bcba4565e3225a0122d95",
+              "state" => %{
+                "type" => "Array",
+                "value" => [
+                  %{"type" => "ByteArray", "value" => "7472616e73666572"},
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "09077a4dfeed34eae11ceca3d1671676bb2f90eb"
+                  },
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "b52aaa01b7c0c706ac5b734d09e6716a9e5cd152"
+                  },
+                  %{"type" => "Integer", "value" => "421665426308"}
+                ]
+              }
+            }
+          ],
+          "stack" => [%{"type" => "Integer", "value" => "1"}],
+          "trigger" => "Application",
+          "vmstate" => "HALT, BREAK"
+        }
+      ],
+      "txid" => "0xd9da12cf0b61fe19188d6f94f004c792af948db25772f440d1ce04152d806bf4"
+    })
+  end
+
+  def application_log_data("00") do
+    error(%{
+      "code" => -2_146_233_033,
+      "message" => "One of the identified items was in an invalid format."
+    })
+  end
+
+  def application_log_data(_), do: nil
+
+  def invoke_function_data(contract, "name") when contract in @contracts do
+    result(%{
+      "gas_consumed" => "0.207",
+      "script" => "00c108646563696d616c73672911176a2e804903ac8a39447c6e084736cd4a3a",
+      "stack" => [%{"type" => "ByteArray", "value" => "4e455820546f6b656e"}],
+      "state" => "HALT, BREAK"
+    })
+  end
+
+  def invoke_function_data(contract, "symbol") when contract in @contracts do
+    result(%{
+      "gas_consumed" => "0.207",
+      "script" => "00c108646563696d616c73672911176a2e804903ac8a39447c6e084736cd4a3a",
+      "stack" => [%{"type" => "ByteArray", "value" => "4e4558"}],
+      "state" => "HALT, BREAK"
+    })
+  end
+
+  def invoke_function_data(contract, "decimals") when contract in @contracts do
+    result(%{
+      "gas_consumed" => "0.207",
+      "script" => "00c108646563696d616c73672911176a2e804903ac8a39447c6e084736cd4a3a",
+      "stack" => [%{"type" => "Integer", "value" => "8"}],
+      "state" => "HALT, BREAK"
+    })
+  end
+
+  def invoke_function_data(_, _), do: nil
 end

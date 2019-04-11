@@ -1,4 +1,6 @@
 defmodule NeoNode.Parser do
+  @address_version "17"
+
   defp parse16("0x" <> rest), do: parse16(rest)
 
   defp parse16(string) do
@@ -141,6 +143,107 @@ defmodule NeoNode.Parser do
       claims: parse_claims(transaction["claims"])
     }
   end
+
+  def parse_application_log(%{"executions" => executions}) do
+    executions
+    |> Enum.map(&parse_execution/1)
+    |> List.flatten()
+    |> Enum.filter(&(not is_nil(&1)))
+  end
+
+  defp parse_execution(%{"notifications" => notifications}) do
+    Enum.map(notifications, &parse_notification/1)
+  end
+
+  defp parse_execution(_), do: nil
+
+  def parse_invoke(%{"stack" => stack}) when is_list(stack) do
+    Enum.map(stack, &parse_invoke_elem/1)
+  end
+
+  defp parse_invoke_elem(%{"type" => "ByteArray", "value" => string}) do
+    Base.decode16!(string, case: :mixed)
+  end
+
+  defp parse_invoke_elem(%{"type" => "Integer", "value" => integer}) do
+    String.to_integer(integer)
+  end
+
+  defp parse_notification(%{
+         "contract" => contract,
+         "state" => %{
+           "type" => "Array",
+           "value" => [
+             %{"type" => "ByteArray", "value" => "7472616e73666572"},
+             %{
+               "type" => "ByteArray",
+               "value" => address_from
+             },
+             %{
+               "type" => "ByteArray",
+               "value" => address_to
+             },
+             amount
+           ]
+         }
+       }) do
+    case parse_notification_amount(amount) do
+      nil ->
+        nil
+
+      value ->
+        %{
+          address_from: parse_address(address_from),
+          address_to: parse_address(address_to),
+          value: value,
+          contract: parse16(contract)
+        }
+    end
+  end
+
+  defp parse_notification(_), do: nil
+
+  defp parse_notification_amount(%{"type" => "ByteArray", "value" => value}) do
+    parse_integer_value(value)
+  end
+
+  defp parse_notification_amount(%{"type" => "Integer", "value" => value}) do
+    String.to_integer(value)
+  end
+
+  defp parse_notification_amount(_) do
+    nil
+  end
+
+  defp parse_integer_value(value) do
+    value
+    |> Base.decode16!(case: :mixed)
+    |> :binary.decode_unsigned(:little)
+  end
+
+  defp parse_address(address) do
+    address
+    |> (&(@address_version <> &1)).()
+    |> Base.decode16!(case: :mixed)
+    |> hash256()
+    |> Base.encode16()
+    |> String.slice(0..7)
+    |> (&(@address_version <> address <> &1)).()
+    |> Base.decode16!(case: :mixed)
+    |> (&if(&1 == <<23, 27, 182, 49, 176>>, do: <<0>>, else: &1)).()
+  end
+
+  defp hash256(binary) do
+    :crypto.hash(:sha256, :crypto.hash(:sha256, binary))
+  end
+
+  # export const getAddressFromScriptHash = (scriptHash: string): string => {
+  #   scriptHash = reverseHex(scriptHash);
+  #   const shaChecksum = hash256(ADDR_VERSION + scriptHash).substr(0, 8);
+  #   return base58.encode(
+  #     Buffer.from(ADDR_VERSION + scriptHash + shaChecksum, "hex")
+  #   );
+  # };
 
   def parse_version(%{"useragent" => user_agent}) do
     case String.upcase(user_agent) do

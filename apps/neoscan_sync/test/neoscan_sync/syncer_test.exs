@@ -16,7 +16,6 @@ defmodule NeoscanSync.SyncerTest do
 
   test "import_block/1" do
     assert :ok == Syncer.insert_block(Syncer.download_block(0))
-
     Ecto.Adapters.SQL.query!(Repo, "SELECT flush_addresses_queue()", [])
     Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_transaction_balances_queue()", [])
     Ecto.Adapters.SQL.query!(Repo, "SELECT flush_address_balances_queue()", [])
@@ -40,6 +39,9 @@ defmodule NeoscanSync.SyncerTest do
     assert 48 == Enum.count(Repo.all(from(AddressBalance)))
     assert 48 == Enum.count(Repo.all(from(AddressHistory)))
     assert 3 == Enum.count(Repo.all(from(Transfer)))
+
+    Process.sleep(5_000)
+    assert 3 == Enum.count(Repo.all(from(Asset)))
   end
 
   test "sync_indexes/1" do
