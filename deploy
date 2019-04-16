@@ -35,25 +35,11 @@ export CPU_REQUEST="200m"
 export POOL_SIZE=2
 
 export REPLICAS=1
-export DB_DATABASE=coz-neoscan-testnet-io
-export HOST=coz.neoscan-testnet.io
-export NEO_SEEDS=http://188.68.34.29:10004
-export TEST_NET="true"
-export NEO_NOTIFICATIONS_SERVER=http://coznotifications.neeeo.org/v1
-export WORKLOAD_NAME=sync-coz-neoscan-testnet-io
-export REGISTRY_PATH=${SYNC_REGISTRY_PATH}
-envsubst < deployment.yaml > deployment-sync-coz-testnet-neoscan-io.yaml
-
-export WORKLOAD_NAME=api-coz-neoscan-testnet-io
-export REGISTRY_PATH=${API_REGISTRY_PATH}
-envsubst < deployment.yaml > deployment-api-coz-testnet-neoscan-io.yaml
-
 export DB_DATABASE=nex-neoscan-testnet-io
 export WORKLOAD_NAME=sync-nex-neoscan-testnet-io
 export HOST=nex.neoscan-testnet.io
 export NEO_SEEDS="http://5.35.241.70:10001;http://5.35.241.70:10002;http://5.35.241.70:10003;http://5.35.241.70:10004"
 export TEST_NET="true"
-export NEO_NOTIFICATIONS_SERVER=http://nexnotifications.neeeo.org/v1
 export REGISTRY_PATH=${SYNC_REGISTRY_PATH}
 envsubst < deployment.yaml > deployment-sync-nex-testnet-neoscan-io.yaml
 
@@ -67,7 +53,6 @@ export WORKLOAD_NAME=sync-neoscan-testnet-io
 export HOST=neoscan-testnet.io
 export NEO_SEEDS="http://api.otcgo.cn:20332;https://seed1.neo.org:20331;http://seed2.neo.org:20332;http://seed3.neo.org:20332;http://seed4.neo.org:20332;https://test1.cityofzion.io;https://test2.cityofzion.io;https://test3.cityofzion.io;https://test4.cityofzion.io;https://test5.cityofzion.io;http://seed5.neo.org:20332"
 export TEST_NET="true"
-export NEO_NOTIFICATIONS_SERVER=http://notiftest1.neeeo.org/v1
 export REGISTRY_PATH=${SYNC_REGISTRY_PATH}
 envsubst < deployment.yaml > deployment-sync-testnet-neoscan-io.yaml
 
@@ -82,7 +67,5 @@ envsubst < deployment.yaml > deployment-api-testnet-neoscan-io.yaml
 
 kubectl apply -f deployment-api-testnet-neoscan-io.yaml
 kubectl apply -f deployment-sync-testnet-neoscan-io.yaml
-kubectl apply -f deployment-api-coz-testnet-neoscan-io.yaml
-kubectl apply -f deployment-sync-coz-testnet-neoscan-io.yaml
 kubectl apply -f deployment-api-nex-testnet-neoscan-io.yaml
 kubectl apply -f deployment-sync-nex-testnet-neoscan-io.yaml

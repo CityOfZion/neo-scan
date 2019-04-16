@@ -12,11 +12,6 @@ export WORKLOAD_NAME=api-nex-neoscan-testnet-io
 export PORT=30002
 envsubst < nodeport.yaml > nodeport-nex-neoscan-testnet-io.yaml
 
-export WORKLOAD_NAME=api-coz-neoscan-testnet-io
-export PORT=30003
-envsubst < nodeport.yaml > nodeport-coz-neoscan-testnet-io.yaml
-
 kubectl apply -f nodeport-neoscan-io.yaml
 kubectl apply -f nodeport-neoscan-testnet-io.yaml
 kubectl apply -f nodeport-nex-neoscan-testnet-io.yaml
-kubectl apply -f nodeport-coz-neoscan-testnet-io.yaml
