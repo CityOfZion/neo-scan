@@ -47,50 +47,39 @@ defmodule NeoscanSync.Syncer do
   end
 
   def download_block(index) do
-    try do
-      block_raw = NeoscanNode.get_block_with_transfers(index)
-      ^index = block_raw.index
-      Converter.convert_block(block_raw)
-    catch
-      error ->
-        Logger.error("error while downloading block #{inspect({index, error})}")
-        download_block(index)
-
-      error, reason ->
-        Logger.error("error while downloading block #{inspect({index, error, reason})}")
-        download_block(index)
-    end
+    block_raw = NeoscanNode.get_block_with_transfers(index)
+    ^index = block_raw.index
+    Converter.convert_block(block_raw)
+  catch
+    error, reason ->
+      Logger.error("error while downloading block #{inspect({index, error, reason})}")
+      Logger.error("#{inspect(__STACKTRACE__)}")
+      download_block(index)
   end
 
   def insert_block(block) do
-    try do
-      Enum.map(block.transactions, fn %{transfers: transfers} ->
-        Enum.map(transfers, fn %{contract: contract} ->
-          TokenSyncer.retrieve_contract(block.index, contract)
-        end)
+    Enum.each(block.transactions, fn %{transfers: transfers} ->
+      Enum.each(transfers, fn %{contract: contract} ->
+        TokenSyncer.retrieve_contract(block.index, contract)
       end)
+    end)
 
-      Repo.transaction(
-        fn ->
-          Repo.insert!(block, timeout: :infinity, returning: false)
-        end,
-        timeout: :infinity
-      )
+    Repo.transaction(
+      fn ->
+        Repo.insert!(block, timeout: :infinity, returning: false)
+      end,
+      timeout: :infinity
+    )
 
-      :ok
-    catch
-      error ->
-        Logger.error("error while loading block #{inspect({block.index, error})}")
-        insert_block(block)
+    :ok
+  catch
+    :error, %ConstraintError{constraint: "blocks_pkey"} ->
+      Logger.error("block already #{block.index} in the database")
 
-      :error, %ConstraintError{constraint: "blocks_pkey"} ->
-        Logger.error("block already #{block.index} in the database")
-
-      error, reason ->
-        Logger.error("error while loading block #{inspect({block.index, error, reason})}")
-
-        insert_block(block)
-    end
+    error, reason ->
+      Logger.error("error while loading block #{inspect({block.index, error, reason})}")
+      Logger.error("#{inspect(__STACKTRACE__)}")
+      insert_block(block)
   end
 
   def sync_indexes(indexes) do
