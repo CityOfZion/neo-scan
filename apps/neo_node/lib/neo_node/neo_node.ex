@@ -46,6 +46,9 @@ defmodule NeoNode do
 
       {:error, %{"code" => -2_146_233_033}} ->
         {:error, :invalid_format}
+ 
+      {:error, %{"code" => -32602}} ->
+        {:error, :invalid_format}
 
       error ->
         error
