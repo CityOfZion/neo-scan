@@ -30,7 +30,7 @@ defmodule NeoscanSync.Syncer do
     max_index_in_db = Blocks.get_max_index() + 1
     max_index_available = NeoscanNode.get_last_block_index()
 
-    if max_index_in_db > max_index_available do
+    if is_nil(max_index_available) || max_index_in_db > max_index_available do
       []
     else
       Enum.to_list(max_index_in_db..max_index_available)
