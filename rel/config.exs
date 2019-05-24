@@ -36,3 +36,16 @@ release :neoscan_api do
         neoscan_web: :permanent
       ]
 end
+
+release :neoscan_full do
+  set version: current_version(:neoscan)
+  set commands: [migrate: "rel/commands/migrate.sh", seed: "rel/commands/seed.sh"]
+  set applications: [
+        :runtime_tools,
+        :neoscan,
+        neoscan_sync: :permanent,
+        neoscan_cache: :permanent,
+        neoscan_node: :permanent,
+        neoscan_web: :permanent
+      ]
+end
