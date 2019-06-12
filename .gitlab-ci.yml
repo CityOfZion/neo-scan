@@ -98,6 +98,9 @@ docker:
     - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/sync || true"
     - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/api || true"
     - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push $CI_REGISTRY_IMAGE/full || true"
+    - docker login -u $NEOSCAN_DOCKER_USER -p "$NEOSCAN_DOCKER_PASSWORD"
+    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker tag $FULL_REGISTRY_PATH cityofzion/neoscan || true"
+    - "[ \"$CI_COMMIT_REF_SLUG\" == \"master\" ] && docker push cityofzion/neoscan || true"
 
 staging:
   stage: deploy
