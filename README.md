@@ -1,4 +1,4 @@
-# Neoscan 
+# Neoscan
 
 [![Gitlab](https://gitlab.com/CityOfZion/neo-scan/badges/master/build.svg)](https://gitlab.com/CityOfZion/neo-scan/pipelines)
 [![Coveralls](https://img.shields.io/coveralls/CityOfZion/neo-scan.svg?branch=master)](https://coveralls.io/github/CityOfZion/neo-scan)
@@ -13,7 +13,7 @@ Using docker you can start the project with:
 - `cd /data`
 
 # Development
-- Please run the tests after any changes 
+- Please run the tests after any changes
 - Please run the formatter after any changes `mix format` (you can use precommit hook: https://github.com/jasongoodwin/elixir-mix-format-pre-commit-hook)
 
 To run, first install Elixir and Phoenix at:
@@ -30,7 +30,7 @@ To start your The Application/Phoenix server:
 
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
-  * Install Node.js dependencies with `cd apps`, `cd neoscan_web`, then `cd assets && npm install`
+  * Install Node.js dependencies with `cd apps\neoscan_web\assets && npm install && cd /data`
   * Start Phoenix endpoint with `mix phx.server`
 
 
