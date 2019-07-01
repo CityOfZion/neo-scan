@@ -30,7 +30,7 @@ To start your The Application/Phoenix server:
 
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
-  * Install Node.js dependencies with `cd apps/neoscan_web/assets && npm install && cd /data`
+  * Install Node.js dependencies with `cd /data/apps/neoscan_web/assets && npm install && cd /data`
   * Start Phoenix endpoint with `mix phx.server`
 
 
