@@ -50,6 +50,7 @@ Start your Application/Phoenix server:
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
   * Install Node.js dependencies with `cd /data/apps/neoscan_web/assets && npm install && cd /data`
+    **Note** If you're not using docker, you should cd to the root of the repository.
   * Start Phoenix endpoint with `mix phx.server`
 
 
