@@ -67,7 +67,7 @@ To tarball:
 
 To file:
 
-`pg_dump -U postgres -h localhost -W -F t neoscan_dev > neoscan_dev_testnet.tar`
+`pg_dump -U postgres -h localhost -W -F t neoscan_dev > neoscan_dev_testnet`
 
 Restore:
 
