@@ -30,7 +30,7 @@ To run, first install Elixir and Phoenix at:
 
 ## Run Docker
 
-You can skip this section if you do not wish to with docker. 
+You can skip this section if you do not wish to run docker. 
 
 Using docker you can start the project with:
 - `docker-compose up -d`
