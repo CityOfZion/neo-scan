@@ -7,6 +7,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      NEO_SEEDS: "http://api.otcgo.cn:20332;https://seed1.neo.org:20331;http://seed2.neo.org:20332;http://seed3.neo.org:20332;http://seed4.neo.org:20332;https://test1.cityofzion.io;https://test2.cityofzion.io;https://test3.cityofzion.io;https://test4.cityofzion.io;https://test5.cityofzion.io;http://seed5.neo.org:20332"
 
   phoenix:
     container_name: "phoenixdev"
