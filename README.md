@@ -30,7 +30,7 @@ To run, first install Elixir and Phoenix at:
 
 ## Run Docker
 
-You can skip this section if you do not wish to run docker. 
+You can skip this section if you do not wish to run docker.
 
 Using docker you can start the project with:
 - `docker-compose up -d`
@@ -46,7 +46,7 @@ To run the tests:
 
 ### Raise Main Net Phoenix
 
-To start your The Application/Phoenix server:
+To start the Application/Phoenix server:
 
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
@@ -55,7 +55,7 @@ To start your The Application/Phoenix server:
 
 ### Raise Test Net Phoenix
 
-To start your The Application/Phoenix server:
+To start the Application/Phoenix server:
 
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
@@ -76,7 +76,7 @@ To tarball:
 
 To file:
 
-`pg_dump -U postgres -h localhost -W -F t neoscan_dev > neoscan_dev_testnet`
+`pg_dump -U postgres -h localhost -W neoscan_dev > neoscan_dev_testnet`
 
 Restore:
 
