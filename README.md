@@ -2,7 +2,7 @@
 
 # Contents
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
-- [How to contribute](#how-to-contribute)
+- [How to Contribute](#how-to-contribute)
 - [Run Docker](#run-docker)
 - [Run Tests](#run-tests)
 - [Raise Main Net Phoenix](#raise-main-net-phoenix)
