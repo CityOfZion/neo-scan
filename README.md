@@ -1,5 +1,10 @@
 # Neoscan
 
+[![Gitlab](https://gitlab.com/CityOfZion/neo-scan/badges/master/build.svg)](https://gitlab.com/CityOfZion/neo-scan/pipelines)
+[![Coveralls](https://img.shields.io/coveralls/CityOfZion/neo-scan.svg?branch=master)](https://coveralls.io/github/CityOfZion/neo-scan)
+
+Elixir + Phoenix Blockchain explorer for NEO
+
 # Contents
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
 - [How to Contribute](#how-to-contribute)
@@ -11,11 +16,6 @@
 - [Learn More](#learn-more)
 
 <!-- /TOC -->
-
-[![Gitlab](https://gitlab.com/CityOfZion/neo-scan/badges/master/build.svg)](https://gitlab.com/CityOfZion/neo-scan/pipelines)
-[![Coveralls](https://img.shields.io/coveralls/CityOfZion/neo-scan.svg?branch=master)](https://coveralls.io/github/CityOfZion/neo-scan)
-
-Elixir + Phoenix Blockchain explorer for NEO
 
 # How to Contribute
 
