@@ -1,5 +1,6 @@
 defmodule NeoNode.Parser do
   @address_version "17"
+  @fault_vm_state "FAULT"
 
   defp parse16("0x" <> rest), do: parse16(rest)
 
@@ -151,8 +152,12 @@ defmodule NeoNode.Parser do
     |> Enum.filter(&(not is_nil(&1)))
   end
 
-  defp parse_execution(%{"notifications" => notifications}) do
-    Enum.map(notifications, &parse_notification/1)
+  defp parse_execution(%{"notifications" => notifications, "vmstate" => vm_state}) do
+    if vm_state =~ @fault_vm_state do
+      []
+    else
+      Enum.map(notifications, &parse_notification/1)
+    end
   end
 
   defp parse_execution(_), do: nil
