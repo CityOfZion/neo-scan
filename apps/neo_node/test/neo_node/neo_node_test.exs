@@ -247,6 +247,12 @@ defmodule NeoNodeTest do
                "02e17fbff2921c70abd8828e8b0ef82fb2e3a76238c5f296a7d0b9b8a00c0ff4"
              )
 
+    assert {:ok, []} ==
+             NeoNode.get_application_log(
+               @fake_node_url,
+               "d9da12cf0b61fe19188d6f94f004c792af948db25772f440d1ce04152d806bf5"
+             )
+
     assert {:ok,
             [
               %{

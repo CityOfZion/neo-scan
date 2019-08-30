@@ -2498,6 +2498,41 @@ defmodule NeoNode.HTTPPoisonWrapper do
     })
   end
 
+  def application_log_data("d9da12cf0b61fe19188d6f94f004c792af948db25772f440d1ce04152d806bf5") do
+    result(%{
+      "executions" => [
+        %{
+          "contract" => "0xaca78e0cf4742efca860a2d99b4e72bdff3ee675",
+          "gas_consumed" => "8.31",
+          "notifications" => [
+            %{
+              "contract" => "0xa0777c3ce2b169d4a23bcba4565e3225a0122d95",
+              "state" => %{
+                "type" => "Array",
+                "value" => [
+                  %{"type" => "ByteArray", "value" => "7472616e73666572"},
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "09077a4dfeed34eae11ceca3d1671676bb2f90eb"
+                  },
+                  %{
+                    "type" => "ByteArray",
+                    "value" => "b52aaa01b7c0c706ac5b734d09e6716a9e5cd152"
+                  },
+                  %{"type" => "Integer", "value" => "421665426308"}
+                ]
+              }
+            }
+          ],
+          "stack" => [%{"type" => "Integer", "value" => "1"}],
+          "trigger" => "Application",
+          "vmstate" => "HALT, FAULT, BREAK"
+        }
+      ],
+      "txid" => "0xd9da12cf0b61fe19188d6f94f004c792af948db25772f440d1ce04152d806bf4"
+    })
+  end
+
   def application_log_data("00") do
     error(%{
       "code" => -2_146_233_033,
