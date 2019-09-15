@@ -1,8 +1,13 @@
 # Neoscan
 
+[![Gitlab](https://gitlab.com/CityOfZion/neo-scan/badges/master/build.svg)](https://gitlab.com/CityOfZion/neo-scan/pipelines)
+[![Coveralls](https://img.shields.io/coveralls/CityOfZion/neo-scan.svg?branch=master)](https://coveralls.io/github/CityOfZion/neo-scan)
+
+Elixir + Phoenix Blockchain explorer for NEO
+
 # Contents
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
-- [How to contribute](#how-to-contribute)
+- [How to Contribute](#how-to-contribute)
 - [Run Docker](#run-docker)
 - [Run Tests](#run-tests)
 - [Raise Main Net Phoenix](#raise-main-net-phoenix)
@@ -11,11 +16,6 @@
 - [Learn More](#learn-more)
 
 <!-- /TOC -->
-
-[![Gitlab](https://gitlab.com/CityOfZion/neo-scan/badges/master/build.svg)](https://gitlab.com/CityOfZion/neo-scan/pipelines)
-[![Coveralls](https://img.shields.io/coveralls/CityOfZion/neo-scan.svg?branch=master)](https://coveralls.io/github/CityOfZion/neo-scan)
-
-Elixir + Phoenix Blockchain explorer for NEO
 
 # How to Contribute
 
@@ -30,7 +30,7 @@ To run, first install Elixir and Phoenix at:
 
 ## Run Docker
 
-You can skip this section if you do not wish to run docker. 
+You can skip this section if you do not wish to run docker.
 
 Using docker you can start the project with:
 - `docker-compose up -d`
@@ -46,7 +46,7 @@ To run the tests:
 
 ### Raise Main Net Phoenix
 
-To start your The Application/Phoenix server:
+To start the Application/Phoenix server:
 
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
@@ -55,7 +55,7 @@ To start your The Application/Phoenix server:
 
 ### Raise Test Net Phoenix
 
-To start your The Application/Phoenix server:
+To start the Application/Phoenix server:
 
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
@@ -76,7 +76,7 @@ To tarball:
 
 To file:
 
-`pg_dump -U postgres -h localhost -W -F t neoscan_dev > neoscan_dev_testnet`
+`pg_dump -U postgres -h localhost -W neoscan_dev > neoscan_dev_testnet`
 
 Restore:
 
