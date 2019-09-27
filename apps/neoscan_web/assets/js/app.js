@@ -24,7 +24,7 @@ import socket from './home_app'
 const moment = require("moment");
 
 const get_local_time = time => {
-    return (moment.unix(time).format('DD-MM-YYYY') + ' | ' + moment.unix(time).format('HH:mm:ss:SSS A') + ' | ' + moment.unix(time).format('x') + ' (Unix ms)')
+    return (moment.unix(time).format('DD-MM-YYYY') + ' | ' + moment.unix(time).format('HH:mm:ss:SSS'))
 }
 
 function isNumber(n) {

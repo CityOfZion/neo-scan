@@ -16,7 +16,6 @@ create_backend_service()
 create_backend_service 30000 neoscan-io
 create_backend_service 30001 neoscan-testnet-io
 create_backend_service 30002 nex-neoscan-testnet-io
-create_backend_service 30003 coz-neoscan-testnet-io
 
 export SERVICE=neoscan-io
 
@@ -38,4 +37,3 @@ add_route()
 add_route neoscan-io n.backslash.fr
 add_route neoscan-testnet-io nt.backslash.fr
 add_route nex-neoscan-testnet-io nnt.backslash.fr
-add_route coz-neoscan-testnet-io cnt.backslash.fr
