@@ -51,6 +51,18 @@ defmodule NeoscanSync.Syncer do
     ^index = block_raw.index
     Converter.convert_block(block_raw)
   catch
+    _, {:badmatch, {:error, "%HTTPoison.Error{id: nil, reason: :timeout} " <> url}} ->
+      Logger.debug("HTTP request timeout for #{url}")
+      download_block(index)
+
+    _, {:badmatch, {:error, "%HTTPoison.Error{id: nil, reason: :checkout_timeout}" <> _}} ->
+      Logger.debug("HTTP pool checkout timeout")
+      download_block(index)
+
+    _, {:badmatch, {:error, "%HTTPoison.Error{id: nil, reason: :connect_timeout} " <> url}} ->
+      Logger.debug("HTTP request connect timeout for #{url}")
+      download_block(index)
+
     error, reason ->
       Logger.error("error while downloading block #{inspect({index, error, reason})}")
       Logger.error("#{inspect(__STACKTRACE__)}")
@@ -90,7 +102,7 @@ defmodule NeoscanSync.Syncer do
       fn n ->
         now = Time.utc_now()
         block = download_block(n)
-        Monitor.incr(:download_blocks_time, Time.diff(Time.utc_now(), now, :microseconds))
+        Monitor.incr(:download_blocks_time, Time.diff(Time.utc_now(), now, :microsecond))
         Monitor.incr(:download_blocks_count, 1)
         block
       end,
@@ -102,7 +114,7 @@ defmodule NeoscanSync.Syncer do
       fn {:ok, block} ->
         now = Time.utc_now()
         insert_block(block)
-        Monitor.incr(:insert_blocks_time, Time.diff(Time.utc_now(), now, :microseconds))
+        Monitor.incr(:insert_blocks_time, Time.diff(Time.utc_now(), now, :microsecond))
         Monitor.incr(:insert_blocks_count, 1)
         Monitor.incr(:insert_transactions_count, block.tx_count)
       end,

@@ -1,43 +1,25 @@
 defmodule NeoscanCache.Cache do
-  @moduledoc """
-  GenServer module responsable to store blocks, states, trasactions and assets,
-  Common interface to handle it is NeoscanCache.Api module(look there for more info)
-  """
-
   use GenServer
-  alias Neoscan.Blocks
-  alias Neoscan.Transactions
-  alias Neoscan.Counters
-  alias Neoscan.BlockGasGeneration
-  alias NeoscanCache.CryptoCompareWrapper
-
-  alias NeoscanCache.EtsProcess
 
   require Logger
 
-  @update_interval 1_000
-  @update_interval_price 30_000
-  @crypto_compare_request_interval 1_000
+  # Callbacks
 
-  @period ["1d", "1w", "1m", "3m"]
-  @to_symbols ["USD", "BTC"]
-  @from_symbols ["NEO", "GAS"]
-
-  require Logger
-
-  # starts the genserver
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
-  # run initial queries and fill state with all info needed in the app,
-  # then sends message with new state to server module
+  @impl true
   def init(:ok) do
-    EtsProcess.create_table(__MODULE__)
-    Process.send_after(self(), :broadcast, 30_000)
-    sync()
-    sync_price()
-    {:ok, :ok}
+    :ets.new(__MODULE__, [
+      :set,
+      :named_table,
+      :public,
+      read_concurrency: true,
+      write_concurrency: true
+    ])
+
+    {:ok, %{}}
   end
 
   def set(key, value) do
@@ -45,174 +27,34 @@ defmodule NeoscanCache.Cache do
   end
 
   def get(key) do
-    try do
-      :ets.lookup(__MODULE__, key)
-    rescue
-      ArgumentError ->
-        Logger.warn("ETS is not initialized")
-        nil
-    else
+    case :ets.lookup(__MODULE__, key) do
       [{^key, result}] ->
         result
 
       _ ->
         nil
     end
-  end
-
-  defp get_blocks do
-    blocks = Enum.take(get(:blocks), 5)
-
-    Enum.map(
-      blocks,
-      &%{
-        hash: Base.encode16(&1.hash, case: :lower),
-        index: &1.index,
-        size: &1.size,
-        time: DateTime.to_unix(&1.time),
-        tx_count: &1.tx_count
-      }
-    )
-  end
-
-  defp get_transactions do
-    transactions = Enum.take(get(:transactions), 5)
-
-    Enum.map(
-      transactions,
-      &%{
-        txid: Base.encode16(&1.hash, case: :lower),
-        type: &1.type,
-        time: DateTime.to_unix(&1.block_time)
-      }
-    )
-  end
-
-  def handle_info(:broadcast, state) do
-    blocks = get_blocks()
-    transactions = get_transactions()
-
-    payload = %{
-      "blocks" => blocks,
-      "transactions" => transactions,
-      "transfers" => [],
-      "price" => get(:price),
-      "stats" => get(:stats)
-    }
-
-    if function_exported?(NeoscanWeb.Endpoint, :broadcast, 3) do
-      apply(NeoscanWeb.Endpoint, :broadcast, ["room:home", "change", payload])
-    end
-
-    # In 10 seconds
-    Process.send_after(self(), :broadcast, 1_000)
-    {:noreply, state}
-  end
-
-  def handle_info(:sync_price, _) do
-    sync_price()
-    {:noreply, :ok}
-  end
-
-  def handle_info(:sync, _) do
-    sync()
-    {:noreply, :ok}
-  end
-
-  # handles misterious messages received by unknown caller
-  def handle_info({_ref, {:ok, _port, _pid}}, state) do
-    {:noreply, state}
-  end
-
-  def get_general_stats do
-    %{
-      :total_blocks => Counters.count_blocks(),
-      :total_transactions => Counters.count_transactions(),
-      :total_transfers => 0,
-      :total_addresses => Counters.count_addresses()
-    }
-  end
-
-  # update nodes and stats information
-  def sync() do
-    Process.send_after(self(), :sync, @update_interval)
-    blocks = Blocks.paginate(1).entries
-    transactions = Transactions.paginate(1).entries
-    stats = get_general_stats()
-
-    set(:blocks, blocks)
-    set(:transactions, transactions)
-    set(:stats, stats)
-  end
-
-  def sync_price() do
-    Process.send_after(self(), :sync_price, @update_interval_price)
-    sync_price_details()
-    # spawn a separate process to sync history without hammering cryptocompare api
-    spawn(fn ->
-      for from <- @from_symbols,
-          to <- @to_symbols,
-          period <- @period do
-        Process.sleep(@crypto_compare_request_interval)
-        sync_price_history(from, to, period)
-      end
-    end)
-  end
-
-  def sync_price_details() do
-    {:ok, price} = CryptoCompareWrapper.pricemultifull(@from_symbols, @to_symbols)
-
-    price = %{
-      neo: %{
-        btc: price[:RAW][:NEO][:BTC],
-        usd: price[:RAW][:NEO][:USD]
-      },
-      gas: %{
-        btc: add_gas_market_cap(price[:RAW][:GAS][:BTC]),
-        usd: add_gas_market_cap(price[:RAW][:GAS][:USD])
-      }
-    }
-
-    set(:price, price)
-  catch
-    _, _ ->
-      Logger.warn("could not sync price")
-  end
-
-  def sync_price_history(from, to, definition) do
-    {function, aggregate, limit} = get_price_config(definition)
-
-    {:ok, %{Data: data}} =
-      apply(
-        CryptoCompareWrapper,
-        function,
-        [from, to, [extraParams: "neoscan", aggregate: aggregate, limit: limit]]
-      )
-
-    history =
-      Enum.reduce(data, %{}, fn %{time: time, open: value}, acc ->
-        Map.put(acc, time, value)
-      end)
-
-    set({from, to, definition}, history)
-  catch
-    _, _ ->
-      Logger.warn("could not sync price")
+  rescue
+    ArgumentError ->
+      Logger.warn("ETS is not initialized")
+      nil
   end
 
   def get_price_history(from, to, definition) do
-    history = get({from, to, definition})
-    if is_nil(history), do: %{}, else: history
+    get({from, to, definition})
   end
 
-  defp get_price_config("3m"), do: {:histo_day, 1, 90}
-  defp get_price_config("1m"), do: {:histo_hour, 6, 120}
-  defp get_price_config("1w"), do: {:histo_hour, 1, 168}
-  defp get_price_config("1d"), do: {:histo_minute, 10, 144}
-
-  defp add_gas_market_cap(info) do
-    current_index = Counters.count_blocks()
-    current_index = if is_nil(current_index), do: 0, else: current_index - 1
-    %{info | MKTCAP: info[:PRICE] * BlockGasGeneration.get_range_amount(0, current_index)}
+  def set_price_history(from, to, definition, history) do
+    set({from, to, definition}, history)
   end
+
+  def get_price, do: get(:price)
+  def get_blocks, do: get(:blocks)
+  def get_transactions, do: get(:transactions)
+  def get_stats, do: get(:stats)
+
+  def set_price(price), do: set(:price, price)
+  def set_blocks(blocks), do: set(:blocks, blocks)
+  def set_transactions(transactions), do: set(:transactions, transactions)
+  def set_stats(stats), do: set(:stats, stats)
 end

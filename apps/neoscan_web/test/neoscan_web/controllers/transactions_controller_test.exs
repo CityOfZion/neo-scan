@@ -1,7 +1,7 @@
 defmodule NeoscanWeb.TransactionsControllerTest do
   use NeoscanWeb.ConnCase
 
-  alias NeoscanCache.Cache
+  alias NeoscanCache.DbPoller
 
   import NeoscanWeb.Factory
 
@@ -39,7 +39,7 @@ defmodule NeoscanWeb.TransactionsControllerTest do
       transaction_id: Enum.at(transactions, 2).id
     })
 
-    Cache.sync()
+    DbPoller.do_poll()
 
     conn = get(conn, "/transactions/1")
     body = html_response(conn, 200)
