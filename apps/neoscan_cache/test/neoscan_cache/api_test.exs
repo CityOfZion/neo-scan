@@ -3,7 +3,7 @@ defmodule NeoscanCache.ApiTest do
   import NeoscanCache.Factory
 
   alias NeoscanCache.Api
-  alias NeoscanCache.Cache
+  alias NeoscanCache.DbPoller
 
   test "get_blocks/0" do
     assert is_list(Api.get_blocks())
@@ -20,7 +20,7 @@ defmodule NeoscanCache.ApiTest do
     })
 
     insert(:transaction, %{type: "contract_transaction"})
-    Cache.sync()
+    DbPoller.do_poll()
     assert [_, %{vouts: [_]}] = Api.get_transactions()
   end
 

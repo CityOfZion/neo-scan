@@ -3,12 +3,12 @@ defmodule NeoscanWeb.RoomChannelTest do
   alias NeoscanWeb.RoomChannel
   import NeoscanWeb.Factory
 
-  alias NeoscanCache.Cache
+  alias NeoscanCache.DbPoller
 
   test "join room" do
     insert(:block)
     insert(:transaction, %{type: "contract_transaction"})
-    Cache.sync()
+    DbPoller.do_poll()
 
     {:ok, payload, _socket} = subscribe_and_join(socket("user_id", %{}), RoomChannel, "room:home")
     assert 1 == Enum.count(payload.transactions)

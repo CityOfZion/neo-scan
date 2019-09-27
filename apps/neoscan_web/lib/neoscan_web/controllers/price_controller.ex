@@ -15,6 +15,6 @@ defmodule NeoscanWeb.PriceController do
   end
 
   defp get_graph(from, to, definition) do
-    Cache.get_price_history(String.upcase(from), String.upcase(to), definition)
+    Cache.get_price_history(String.upcase(from), String.upcase(to), definition) || %{}
   end
 end
