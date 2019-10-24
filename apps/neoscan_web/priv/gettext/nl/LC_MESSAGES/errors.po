@@ -62,8 +62,8 @@ msgstr[1] "zou %{count} items moeten hebben"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
-msgstr[0] "moet tenminste %{count} teken hebben"
-msgstr[1] "moet tenminste %{count} tekens hebben"
+msgstr[0] "moet tenminste %{count} teken zijn"
+msgstr[1] "moet tenminste %{count} tekens zijn"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
