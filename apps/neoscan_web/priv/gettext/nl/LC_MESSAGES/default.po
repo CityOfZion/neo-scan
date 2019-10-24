@@ -37,7 +37,7 @@ msgstr "Adres ID"
 
 #: lib/neoscan_web/templates/address/address.html.eex:3
 msgid "Address Information"
-msgstr "Adresse informatie"
+msgstr "Adresinformatie"
 
 #: lib/neoscan_web/templates/addresses/addresses.html.eex:55
 #: lib/neoscan_web/templates/asset/asset.html.eex:44
@@ -52,7 +52,7 @@ msgstr "Beheerder"
 #: lib/neoscan_web/templates/blocks/blocks.html.eex:11
 #: lib/neoscan_web/templates/home/index.html.eex:108
 msgid "All block information"
-msgstr "Alle blok informatie"
+msgstr "Alle blokinformatie"
 
 #: lib/neoscan_web/templates/address/address.html.eex:42
 #: lib/neoscan_web/templates/asset/asset.html.eex:128
@@ -77,14 +77,14 @@ msgstr "Asset-hash"
 
 #: lib/neoscan_web/templates/asset/asset.html.eex:2
 msgid "Asset Information"
-msgstr "Asset-informatie"
+msgstr "Assetinformatie"
 
 #: lib/neoscan_web/templates/address/address.html.eex:63
 #: lib/neoscan_web/templates/asset/asset.html.eex:149
 #: lib/neoscan_web/templates/block/block.html.eex:89
 #: lib/neoscan_web/templates/transactions/transactions.html.eex:47
 msgid "Asset Issue"
-msgstr "Asset problemen"
+msgstr "Asset probleem"
 
 #: lib/neoscan_web/templates/address/address.html.eex:66
 #: lib/neoscan_web/templates/asset/asset.html.eex:152
@@ -108,20 +108,20 @@ msgstr "BTC"
 
 #: lib/neoscan_web/templates/address/address.html.eex:7
 msgid "Back to all addresses"
-msgstr "Terug paar alle adressen"
+msgstr "Terug naar alle adressen"
 
 #: lib/neoscan_web/templates/asset/asset.html.eex:4
 msgid "Back to all assets"
-msgstr "Terug paar alle assets"
+msgstr "Terug naar alle assets"
 
 #: lib/neoscan_web/templates/block/block.html.eex:4
 msgid "Back to all blocks"
-msgstr "Terug paar alle blokken"
+msgstr "Terug naar alle blokken"
 
 #: lib/neoscan_web/templates/asset/asset.html.eex:4
 #: lib/neoscan_web/templates/transaction/transaction.html.eex:10
 msgid "Back to all transactions"
-msgstr "Terug paar alle transacties"
+msgstr "Terug naar alle transacties"
 
 #: lib/neoscan_web/templates/block/block.html.eex:2
 #: lib/neoscan_web/templates/blocks/blocks.html.eex:25
@@ -130,15 +130,15 @@ msgstr "Blok"
 
 #: lib/neoscan_web/templates/layout/app.html.eex:66
 msgid "Block Height, Hash, Address or Transaction id"
-msgstr "Blok Hoogte, Hash, Adresse of Transactie id"
+msgstr "Blokhoogte, Hash, Adres of Transactie id"
 
 #: lib/neoscan_web/templates/block/block.html.eex:1
 msgid "Block Information"
-msgstr "Blok informatie"
+msgstr "Blokinformatie"
 
 #: lib/neoscan_web/templates/block/block.html.eex:16
 msgid "Block index"
-msgstr "Blok index"
+msgstr "Blokindex"
 
 #: lib/neoscan_web/templates/blocks/blocks.html.eex:1
 #: lib/neoscan_web/templates/blocks/blocks.html.eex:57
@@ -166,7 +166,7 @@ msgstr "City Of Zion"
 
 #: lib/neoscan_web/templates/layout/app.html.eex:123
 msgid "City of Zion Github"
-msgstr "City Of Zion Github"
+msgstr "City of Zion Github"
 
 #: lib/neoscan_web/templates/address/address.html.eex:101
 #: lib/neoscan_web/templates/asset/asset.html.eex:187
@@ -231,7 +231,7 @@ msgstr "Huidige marktcapitalisatie"
 #: lib/neoscan_web/templates/block/block.html.eex:156
 #: lib/neoscan_web/templates/transactions/transactions.html.eex:114
 msgid "Data Size"
-msgstr "Datagroote"
+msgstr "Datagrootte"
 
 #: lib/neoscan_web/templates/layout/app.html.eex:75
 msgid "Explorer"
@@ -258,7 +258,7 @@ msgstr "GAS claimen"
 
 #: lib/neoscan_web/templates/block/block.html.eex:56
 msgid "Generated GAS"
-msgstr "Gegenereerd GAS"
+msgstr "Gegenereerde GAS"
 
 #: lib/neoscan_web/templates/home/index.html.eex:70
 msgid "Graph Zoom"
@@ -290,7 +290,7 @@ msgstr "Aanroep"
 #: lib/neoscan_web/templates/asset/asset.html.eex:28
 #: lib/neoscan_web/templates/assets/assets.html.eex:37
 msgid "Issued"
-msgstr "Uitgegevens"
+msgstr "Uitgegeven"
 
 #: lib/neoscan_web/templates/home/index.html.eex:100
 msgid "Last 5 Blocks"
@@ -321,11 +321,11 @@ msgstr "Laatste transacties"
 
 #: lib/neoscan_web/templates/address/address.html.eex:21
 msgid "Loading Unclaimed Gas"
-msgstr "Ongeclaimed GAS laden"
+msgstr "Ongeclaimd GAS laden"
 
 #: lib/neoscan_web/templates/block/block.html.eex:41
 msgid "Merkle root"
-msgstr "Merkle-boom"
+msgstr "Hash-boom"
 
 #: lib/neoscan_web/templates/address/address.html.eex:72
 #: lib/neoscan_web/templates/asset/asset.html.eex:158
@@ -422,7 +422,7 @@ msgstr "Bekijk alle blokken"
 
 #: lib/neoscan_web/templates/home/index.html.eex:95
 msgid "See all transactions"
-msgstr "All transactions"
+msgstr "Bekijk alle transacties"
 
 #: lib/neoscan_web/templates/address/address.html.eex:92
 #: lib/neoscan_web/templates/asset/asset.html.eex:178
@@ -471,7 +471,7 @@ msgstr "De broncode is"
 
 #: lib/neoscan_web/templates/layout/app.html.eex:113
 msgid "The website content is licensed"
-msgstr "De websiteinhoud helft als licentie"
+msgstr "De website inhoud heeft als licentie"
 
 #: lib/neoscan_web/templates/block/block.html.eex:31
 #: lib/neoscan_web/templates/transaction/transaction.html.eex:60
@@ -497,7 +497,7 @@ msgstr "Tooltips aan"
 
 #: lib/neoscan_web/templates/home/index.html.eex:19
 msgid "Total transactions"
-msgstr "Total aantal transacties"
+msgstr "Totaal aantal transacties"
 
 #: lib/neoscan_web/templates/address/address.html.eex:40
 #: lib/neoscan_web/templates/asset/asset.html.eex:126
@@ -620,13 +620,13 @@ msgstr "Welkom Bij NEOSCAN"
 
 #: lib/neoscan_web/templates/home/index.html.eex:4
 msgid "Your home for all NEO related blockchain information"
-msgstr "Jouw thuisbasis vor alle NEO gerelateerde blockchain informatie"
+msgstr "Jouw thuisbasis voor alle NEO gerelateerde blockchain informatie"
 
 #: lib/neoscan_web/templates/block/block.html.eex:52
 #: lib/neoscan_web/templates/blocks/blocks.html.eex:31
 #: lib/neoscan_web/templates/transaction/transaction.html.eex:80
 msgid "bytes"
-msgstr "bytesBytes"
+msgstr "bytes"
 
 #: lib/neoscan_web/templates/layout/app.html.eex:112
 msgid "licensed"
