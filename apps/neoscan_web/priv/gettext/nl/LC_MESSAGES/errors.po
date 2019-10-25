@@ -57,8 +57,8 @@ msgstr[1] "zou %{count} tekens moeten zijn"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
-msgstr[0] "zou %{count} item moeten zijn"
-msgstr[1] "zou %{count} items moeten zijn"
+msgstr[0] "zou %{count} item moeten hebben"
+msgstr[1] "zou %{count} items moeten hebben"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
@@ -67,13 +67,13 @@ msgstr[1] "moet tenminste %{count} tekens zijn"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
-msgstr[0] "Zou tenminste %{count} item moeten zijn"
-msgstr[1] "zou tenminste %{count} items moeten zijn"
+msgstr[0] "Zou tenminste %{count} item moeten hebben"
+msgstr[1] "zou tenminste %{count} items moeten hebben"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
-msgstr[0] "mag maximaal %{count} teken zijn"
-msgstr[1] "mag maximaal %{count} tekens zijn"
+msgstr[0] "mag maximaal %{count} teken hebben"
+msgstr[1] "mag maximaal %{count} tekens hebben"
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
