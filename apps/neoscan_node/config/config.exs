@@ -37,12 +37,7 @@ config :neoscan_node,
     "http://seed7.ngd.network:10332",
     "http://seed8.ngd.network:10332",
     "http://seed9.ngd.network:10332",
-    "http://seed10.ngd.network:10332",
-    "https://m1.neo.nash.io",
-    "https://m2.neo.nash.io",
-    "https://m3.neo.nash.io",
-    "https://m4.neo.nash.io",
-    "https://m5.neo.nash.io"
+    "http://seed10.ngd.network:10332"
   ]
 
 if Mix.env() == :test do
